@@ -11,7 +11,7 @@
 	path = output/js/venn.js
 	url = https://github.com/benfred/venn.js.git
 [submodule "applications/get"]
-	path = applications/get
+	path = applications/get inclusions/xslt-for-docx
 	url = https://github.com/Arithmeticus/xslt-for-docx.git
 [submodule "output/js/tablesorter"]
 	path = output/js/tablesorter
