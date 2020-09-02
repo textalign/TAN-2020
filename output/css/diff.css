@@ -64,7 +64,8 @@ thead > tr:first-of-type > th[colspan] {
    color: green;
    text-decoration: underline;
 }
-.e-div > .e-ref{
+.e-div > .e-ref,
+.e-div > .a-n{
     color: blue
 }
 
@@ -97,23 +98,30 @@ td *,
 .e-div > *{
    display: inline
 }
+body .e-div > .e-div{
+    display: block
+}
 div.e-witness,
 .hide,
 div.e-a.hide,
 div.e-b.hide,
 .label ~ *,
 script,
-.e-div > .a-n,
+/*.e-div > .a-n,*/
 .e-div > .e-n,
+.e-div > .e-ref,
 .a-string-length,
+.a-_len,
 .a-string-pos,
+.a-_pos,
 .a-orig-n,
 .e-div > .e-ref > .e-n,
 .e-div > .a-type,
 .e-div > .e-type,
 .a-part,
 .a-org,
-.a-sample{
+.a-sample,
+.a-q{
    display: none
 }
 /*.venns > .venn:nth-of-type(6) > .label ~ *,
@@ -160,8 +168,12 @@ body > * > .label {
 .explanation {
    margin: 2px 6px 6px 6px;
 }
-.e-div > .e-ref{
+.e-div > .e-ref,
+.e-div > .a-n{
     margin: 0px 4px;
+}
+.e-div > .e-div{
+    margin-left: 10px;
 }
 
 /* OPACITY */

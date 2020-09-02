@@ -17,7 +17,6 @@
 }
 .head,
 .teiHeader,
-div.claim > div:first-of-type,
 tr > td.irrelevant,
 tr > td.label
 {
@@ -231,6 +230,10 @@ tr td.irrelevant {
 .resp:after {
     content: ': ';
 }
+div.lb:before{
+    content: '|';
+}
+
 
 /* cursor */
 .TAN-T-merge .head,
@@ -259,6 +262,7 @@ tr td.irrelevant {
 
 .bibl > .label ~ *,
 .head > .label ~ *,
+.meta .label ~ *,
 .control > .group > .label ~ *,
 /* hide specific elements that you wish to suppress */
 .error,
@@ -288,13 +292,12 @@ tr td.irrelevant {
 .div .tok-ref > .pos,
 div.version > div.ref,
 div.tei .hidden,
-.meta,
-.meta > .src,
 .display-n ~ .n,
 td .n,
 td.ref > div:first-child ~ *,
 td .display-n,
-.emph > .resp
+.emph > .resp,
+.allusion > .type
 {
     display: none
 }
@@ -527,7 +530,8 @@ td.label{
     margin: initial
 }
 .head > .label,
-.bibl-item > .desc {
+.bibl-item > .desc,
+.meta > .claim .label ~ div{
     margin-left: 10px;
 }
 .tok,
@@ -536,13 +540,20 @@ td.label{
 div.a,
 div.b,
 div.common,
-.tei div {
+.tei div
+{
     margin-left: 0px;
 }
 div.group.sortable,
 .claim,
 .bibl-key {
-    margin-bottom: 20px
+    margin-bottom: 20px;
+}
+.meta .claim{
+    margin-bottom: 0px;
+}
+.version-wrapper{
+    margin-bottom: 10px;
 }
 /* opacity */
 .suppressed
@@ -558,12 +569,18 @@ div.group.sortable,
 #parameters .td {
     padding: 0px 8px;
 }
-.n {
+.n{
     padding: 0px 5px;
+}
+.claim > div{
+    padding: 0px 2px 0px 0px;    
 }
 td,
 td div{
     padding: 2px;
+}
+div.lb{
+    padding: 0px;
 }
 td.version.filler{
     padding: 0px;
@@ -596,7 +613,8 @@ table.tablesorter td.stats-diff,
     text-align: right;
 }
 .a,
-.tei .emph {
+.tei .emph,
+.tei .quote{
     text-decoration: underline;
 }
 .b,
