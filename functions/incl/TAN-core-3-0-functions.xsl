@@ -1604,6 +1604,4 @@
    </xsl:function>
    
    
-   
-   
 </xsl:stylesheet>

@@ -2855,7 +2855,16 @@
       <!-- Output: the vocabulary items for that element's attributes (@which, etc.) -->
       <!-- See full tan:vocabulary() function below -->
       <xsl:param name="element" as="element()*"/>
-      <xsl:copy-of select="tan:attribute-vocabulary($element/@*)"/>
+      <xsl:choose>
+         <xsl:when test="exists($element/tan:IRI) and exists($element/tan:name)">
+            <local>
+               <xsl:copy-of select="$element"/>
+            </local>
+         </xsl:when>
+         <xsl:otherwise>
+            <xsl:copy-of select="tan:attribute-vocabulary($element/@*)"/>
+         </xsl:otherwise>
+      </xsl:choose>
    </xsl:function>
 
    <xsl:function name="tan:attribute-vocabulary" as="element()*">
