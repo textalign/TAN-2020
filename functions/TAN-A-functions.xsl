@@ -199,7 +199,7 @@
          select="tan:duplicate-items(tan:token-definition/tan:src)"/>
       <xsl:variable name="work-elements-pass-1" as="element()*">
          <xsl:for-each select="$dependencies/*/tan:head/tan:work">
-            <xsl:variable name="this-src" select="/*/@src"/>
+            <xsl:variable name="this-src" select="root(.)/*/@src"/>
             <xsl:variable name="attr-which-vocabulary" select="tan:attribute-vocabulary(@which)"/>
             <xsl:variable name="this-vocabulary-item"
                select="
@@ -235,9 +235,12 @@
       <xsl:variable name="work-elements-pass-3" as="element()*">
          <xsl:apply-templates select="$work-elements-pass-2" mode="#current"/>
       </xsl:variable>
-       <xsl:variable name="these-vocab-items" select="$this-head/tan:vocabulary/tan:item"/>
-      <xsl:variable name="work-elements-to-integrate-with-existing-vocab-items" select="$work-elements-pass-3[tan:IRI = $these-vocab-items/tan:IRI]"/>
-      <xsl:variable name="work-elements-to-add-as-new-vocab-items" select="$work-elements-pass-3 except $work-elements-to-integrate-with-existing-vocab-items"/>
+      <xsl:variable name="these-vocab-items" select="$this-head/tan:vocabulary/tan:item"/>
+      <xsl:variable name="work-elements-to-integrate-with-existing-vocab-items"
+         select="$work-elements-pass-3[tan:IRI = $these-vocab-items/tan:IRI]"/>
+      <xsl:variable name="work-elements-to-add-as-new-vocab-items"
+         select="$work-elements-pass-3 except $work-elements-to-integrate-with-existing-vocab-items"
+      />
       
       <xsl:variable name="diagnostics-on" select="false()"/>
       <xsl:if test="$diagnostics-on">
@@ -250,7 +253,7 @@
          <xsl:message select="'work elements to add as new vocab items: ', $work-elements-to-add-as-new-vocab-items"/>
       </xsl:if>
       
-      <xsl:copy>
+      <xsl:document>
          <xsl:apply-templates mode="#current">
             <xsl:with-param name="extra-vocabulary"
                select="$work-elements-to-add-as-new-vocab-items" tunnel="yes"/>
@@ -260,7 +263,7 @@
             <xsl:with-param name="token-definition-errors"
                select="$token-definition-source-duplicates"/>
          </xsl:apply-templates>
-      </xsl:copy>
+      </xsl:document>
    </xsl:template>
    
    <xsl:template match="tan:claim/tan:work | tan:object/tan:work | tan:subject/tan:work"
@@ -269,22 +272,17 @@
       <!-- Such a step would ordinarily have been taken in the previous expansion pass,
       on attributes, but it didn't have the extra vocabulary. -->
       <xsl:param name="extra-vocabulary" tunnel="yes" as="element()*"/>
+      <xsl:param name="vocabulary-to-integrate" tunnel="yes" as="element()*"/>
       <xsl:variable name="this-work-id" select="."/>
       <xsl:variable name="this-vocab"
-         select="$extra-vocabulary[self::tan:work][(tan:id | tan:name | tan:alias) = $this-work-id]"/>
+         select="($extra-vocabulary, $vocabulary-to-integrate)[self::tan:work][(tan:id | tan:name | tan:alias) = $this-work-id]"/>
 
-      <xsl:choose>
-         <xsl:when test="exists($this-vocab)">
-            <xsl:for-each select="$this-vocab/tan:id">
-               <work attr="">
-                  <xsl:value-of select="."/>
-               </work>
-            </xsl:for-each>
-         </xsl:when>
-         <xsl:otherwise>
-            <xsl:copy-of select="."/>
-         </xsl:otherwise>
-      </xsl:choose>
+      <xsl:copy-of select="."/>
+      <xsl:for-each select="$this-vocab/tan:id">
+         <work attr="">
+            <xsl:value-of select="."/>
+         </work>
+      </xsl:for-each>
    </xsl:template>
    
    <xsl:template match="tan:vocabulary/tan:item" priority="2" mode="check-referred-doc">
