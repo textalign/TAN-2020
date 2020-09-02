@@ -359,7 +359,7 @@
                             <xsl:value-of select="tan:file[1]/@uri"/>
                         </uri>
                         <length>
-                            <xsl:value-of select="tan:file[2]/@length"/>
+                            <xsl:value-of select="tan:file[1]/@length"/>
                         </length>
                         <diff-count>
                             <xsl:value-of select="count($these-as) - $this-exception-length"/>
