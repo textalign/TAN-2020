@@ -2078,7 +2078,7 @@
             <xsl:when test="count($ints-pass1) lt 2">
                <xsl:sequence select="$ints-pass1"/>
             </xsl:when>
-            <xsl:when test="$ints-pass1[2] le $ints-pass1[1]">
+            <xsl:when test="$ints-pass1[2] lt $ints-pass1[1]">
                <xsl:sequence select="-2"/>
             </xsl:when>
             <xsl:otherwise>

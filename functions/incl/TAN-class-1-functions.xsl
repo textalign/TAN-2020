@@ -2085,8 +2085,21 @@
                         else
                            ()"
                   />
-                  <xsl:variable name="these-poses" select="tan:expand-pos-or-chars((., $this-corresponding-to), $toks-of-interest-count)"/>
-                  <xsl:variable name="this-target-tok" select="$toks-of-interest[position() = $these-poses]"/>
+                  <xsl:variable name="get-everything" select=". eq '1' and $this-corresponding-to eq 'last'"/>
+                  <xsl:variable name="these-poses"
+                     select="
+                        if ($get-everything) then
+                           ()
+                        else
+                           tan:expand-pos-or-chars((., $this-corresponding-to), $toks-of-interest-count)"
+                  />
+                  <xsl:variable name="this-target-tok"
+                     select="
+                        if ($get-everything) then
+                           $toks-of-interest
+                        else
+                           $toks-of-interest[position() = $these-poses]"
+                  />
                   <xsl:if test="exists($this-target-tok)">
                      <push>
                         <xsl:for-each select="$this-target-tok/@q">
