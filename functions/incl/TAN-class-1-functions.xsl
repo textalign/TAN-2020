@@ -41,14 +41,22 @@
 
 
    <xsl:function name="tan:text-join" as="xs:string?">
+      <!-- one-parameter version of the full function below -->
+      <xsl:param name="items" as="item()*"/>
+      <xsl:sequence select="tan:text-join($items, false())"/>
+   </xsl:function>
+   <xsl:function name="tan:text-join" as="xs:string?">
       <!-- Input: any document fragment of a TAN class 1 body, whether raw or resolved -->
       <!-- Output: a single string that joins and normalizes the leaf div text according to TAN rules -->
       <!-- All special leaf-div-end characters will be stripped including the last -->
       <!-- Do not apply this template to class-1 files that have been expanded, because normalization will have already occurred. -->
       <xsl:param name="items" as="item()*"/>
+      <xsl:param name="set-divs-on-new-line" as="xs:boolean"/>
       <xsl:variable name="results" as="element()">
          <results>
-            <xsl:apply-templates select="$items" mode="text-join"/>
+            <xsl:apply-templates select="$items" mode="text-join">
+               <xsl:with-param name="set-divs-on-new-line" tunnel="yes" select="$set-divs-on-new-line"/>
+            </xsl:apply-templates>
          </results>
       </xsl:variable>
       <xsl:value-of select="string-join($results, '')"/>
@@ -61,7 +69,13 @@
       <xsl:apply-templates select="*" mode="#current"/>
    </xsl:template>
    
+   <xsl:template match="*:div[*:div]" mode="text-join">
+      <xsl:param name="set-divs-on-new-line" as="xs:boolean" tunnel="yes" select="false()"/>
+      <xsl:if test="$set-divs-on-new-line">&#xa;</xsl:if>
+      <xsl:apply-templates mode="#current"/>
+   </xsl:template>
    <xsl:template match="*:div[not(*:div)]" mode="text-join">
+      <xsl:param name="set-divs-on-new-line" as="xs:boolean" tunnel="yes" select="false()"/>
       <xsl:variable name="nonspace-text-nodes" select="text()[matches(., '\S')]"/>
       <xsl:variable name="text-nodes-to-process" as="xs:string*">
          <xsl:choose>
@@ -76,6 +90,7 @@
             </xsl:when>
          </xsl:choose>
       </xsl:variable>
+      <xsl:if test="$set-divs-on-new-line">&#xa;</xsl:if>
       <xsl:value-of select="tan:normalize-div-text($text-nodes-to-process, true())"/>
    </xsl:template>
 
@@ -3061,7 +3076,12 @@
          <xsl:apply-templates mode="#current"/>
       </xsl:copy>
    </xsl:template>
-   <xsl:template match="tan:ref" mode="merge-tan-docs merge-tan-doc-leaf-divs">
+   
+   <xsl:template match="tan:ref[tan:n]" mode="merge-tan-docs merge-tan-doc-leaf-divs">
+      <!-- An expanded class-1 file might have two kinds of <ref>s. One is a reconstruction
+      of the reference hierarchy, marked by a text node and one or more <n>s. The other is
+      an empty element with a @q that serves as an anchor from the source class-2 file. This
+      template deals with only the former. The latter should be passed on as-is. -->
       <xsl:variable name="this-src-code" select="concat('#', (@src, ../@src)[1])"/>
       <xsl:copy>
          <xsl:copy-of select="@*"/>
@@ -3072,6 +3092,7 @@
          </v>
       </xsl:copy>
    </xsl:template>
+   
    <xsl:template match="tan:_weight | tan:_rel-pos | tan:_n-pos | tan:_n-integer | tan:non-numbered"
       mode="merge-tan-docs merge-tan-doc-leaf-divs stamp-with-src-attr"/>
    
