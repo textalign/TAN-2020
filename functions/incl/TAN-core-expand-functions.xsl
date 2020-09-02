@@ -1098,18 +1098,20 @@
                         select="tan:vocabulary($these-target-element-names, (), $vocabulary-nodes)"/>
                      <xsl:variable name="vocab-items-available"
                         select="$this-vocabulary/(* except tan:IRI, tan:name, tan:desc)"/>
-                     <xsl:variable name="vocab-items-pointed-to-by-id"
-                        select="$vocab-items-available[(tan:id, tan:alias) = $this-val-without-help-request]"/>
+                     <xsl:variable name="vocab-items-pointed-to-by-alias" select="$vocab-items-available[tan:alias = $this-val-without-help-request]"/>
+                     <xsl:variable name="vocab-items-pointed-to-by-id" select="$vocab-items-available[tan:id = $this-val-without-help-request]"/>
+                     <xsl:variable name="vocab-items-pointed-to-by-alias-or-id"
+                        select="$vocab-items-pointed-to-by-alias | $vocab-items-pointed-to-by-id"/>
                      <xsl:variable name="vocab-items-pointed-to-by-name"
                         select="
-                           if (not(exists($vocab-items-pointed-to-by-id))) then
+                           if (not(exists($vocab-items-pointed-to-by-alias-or-id))) then
                               $vocab-items-available[tan:name = $this-val-name-normalized]
                            else
                               ()"/>
                      <xsl:variable name="this-item-vocabulary"
                         select="
-                           if (exists($vocab-items-pointed-to-by-id)) then
-                              $vocab-items-pointed-to-by-id
+                           if (exists($vocab-items-pointed-to-by-alias-or-id)) then
+                              $vocab-items-pointed-to-by-alias-or-id
                            else
                               $vocab-items-pointed-to-by-name"/>
                      <xsl:variable name="item-is-erroneous"
@@ -1124,7 +1126,7 @@
                         </insertion>
                      </xsl:if>
 
-                     <!-- Group 4: by non-atomized value, so matches are easier -->
+                     <!-- Group 4: by non-atomized value, matching the entire string of the attribute value, to facilitate later deep matches on the attribute -->
                      <xsl:for-each-group select="current-group()" group-by=".">
                         <insertion>
                            <!-- We copy the attribute + value directly into insertion so that it can be found using
@@ -1189,7 +1191,8 @@
                                  <xsl:when test="$use-validation-mode">
                                     <!-- In validation mode we are concerned ultimately with IRIs, which we copy as a way to check to see if
                                     two different idrefs somehow nevertheless point to the same IRI. But that means that any query on the 
-                                    new <[name] attr=""> must point to the one text node inside for the proper value -->
+                                    new <[name] attr=""> must restrict its query to the single text node inside for the proper value and
+                                    not rely upon the string value of the node (which would attract the IRIs). -->
                                     <xsl:for-each-group
                                        select="$this-item-vocabulary/descendant::tan:IRI"
                                        group-by=".">
@@ -1216,6 +1219,35 @@
                               </xsl:choose>
 
                            </xsl:element>
+                           
+                           <!-- Introduced this extra measure Sept 2020 because aliases were not being expanded. -->
+                           <!-- We don't expand work aliases, because sources need to be queried before that can be effectively done. -->
+                           <xsl:if test="not($this-attr-name = 'work')">
+                              <xsl:for-each select="$vocab-items-pointed-to-by-alias">
+                                 <xsl:element name="{$this-attr-name}">
+                                    <xsl:attribute name="attr"/>
+                                    <xsl:value-of select="tan:id[text()][1]"/>
+                                    <xsl:choose>
+                                       <xsl:when test="$use-validation-mode">
+                                          <xsl:copy-of select="tan:distinct-items(tan:IRI)"/>
+                                       </xsl:when>
+                                       <xsl:when test="$distribute-vocabulary and self::tan:item">
+                                          <xsl:copy-of select="."/>
+                                       </xsl:when>
+                                       <xsl:when test="$distribute-vocabulary">
+                                          <item>
+                                             <xsl:copy-of select="@*"/>
+                                             <affects-element>
+                                                <xsl:value-of select="name(.)"/>
+                                             </affects-element>
+                                             <xsl:copy-of select="node()"/>
+                                          </item>
+                                       </xsl:when>
+                                    </xsl:choose>
+
+                                 </xsl:element>
+                              </xsl:for-each>
+                           </xsl:if>
 
                            <!-- The values might yield vocabulary ids that aren't in the original values (e.g., '*'), so expansion should include them -->
                            <xsl:if test="$this-is-joker">
@@ -1563,43 +1595,7 @@
          <xsl:copy-of select="."/>
       </xsl:if>
    </xsl:template>
-
    
-   <!--<xsl:template match="@*" mode="core-expansion-terse-attributes">
-      <xsl:variable name="this-name" select="name(.)"/>
-      <xsl:variable name="this-val-parsed" select="tan:help-extracted(.)"/>
-      <xsl:variable name="this-q-id" select="generate-id(.)"/>
-      <xsl:variable name="multiple-vals-space-delimited"
-         select="$this-name = $names-of-attributes-that-may-take-multiple-space-delimited-values"/>
-      <xsl:variable name="render-lowercase"
-         select="$this-name = $names-of-attributes-that-are-case-indifferent"/>
-      <xsl:variable name="these-vals-1"
-         select="
-            if ($multiple-vals-space-delimited) then
-               tokenize($this-val-parsed/text(), ' ')
-            else
-               $this-val-parsed/text()"/>
-      <xsl:variable name="these-vals-2"
-         select="
-            if ($render-lowercase) then
-               for $i in $these-vals-1
-               return
-                  lower-case($i)
-            else
-               $these-vals-1"/>
-      <xsl:for-each select="$these-vals-2">
-         <xsl:element name="{$this-name}" namespace="tag:textalign.net,2015:ns">
-            <xsl:attribute name="attr"/>
-            <xsl:choose>
-               <!-\- a faulty regular expression will be flagged as erroneous in the parent; its value should be suppressed, to avoid fatal errors -\->
-               <xsl:when test="$this-name = 'rgx' and not(tan:regex-is-valid(.))"/>
-               <xsl:otherwise>
-                  <xsl:value-of select="."/>
-               </xsl:otherwise>
-            </xsl:choose>
-         </xsl:element>
-      </xsl:for-each>
-   </xsl:template>-->
    
 
    <xsl:template match="/*" mode="core-expansion-terse" priority="-2">
