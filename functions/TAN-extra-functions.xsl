@@ -1123,6 +1123,190 @@
          </xsl:otherwise>
       </xsl:choose>
    </xsl:template>
+   
+   
+   <xsl:template match="text() | comment() | processing-instruction()" mode="filter-elements"/>
+   <xsl:template match="document-node()" mode="filter-elements">
+      <xsl:apply-templates mode="#current"/>
+   </xsl:template>
+   <xsl:template match="*" mode="filter-elements">
+      <xsl:param name="keep-elements-whose-names-match" as="xs:string?" tunnel="yes"/>
+      <xsl:param name="keep-elements-whose-names-do-not-match" as="xs:string?" tunnel="yes"/>
+      <xsl:variable name="this-name" select="name(.)"/>
+      <xsl:choose>
+         <xsl:when test="string-length($keep-elements-whose-names-do-not-match) gt 0 
+            and not(matches($this-name, $keep-elements-whose-names-do-not-match))">
+            <xsl:copy-of select="."/>
+         </xsl:when>
+         <xsl:when test="string-length($keep-elements-whose-names-match) gt 0 
+            and matches($this-name, $keep-elements-whose-names-match)">
+            <xsl:copy-of select="."/>
+         </xsl:when>
+         <xsl:otherwise>
+            <xsl:apply-templates mode="#current"/>
+         </xsl:otherwise>
+      </xsl:choose>
+   </xsl:template>
+   
+   <xsl:function name="tan:stamp-diff-with-text-data" as="item()*">
+      <!-- 1-parameter version of tan:stamp-tree-with-text-data() -->
+      <xsl:param name="diff-result" as="element(tan:diff)?"/>
+      <xsl:variable name="out-pass-1" select="tan:stamp-tree-with-text-data($diff-result, false(), '^b$', (), 1)"/>
+      <diff>
+         <xsl:iterate select="$out-pass-1/*">
+            <xsl:param name="next-pos" as="xs:integer" select="1"/>
+            <xsl:variable name="this-length" select="(xs:integer(@_len), string-length(.))[1]"/>
+            <xsl:variable name="new-pos"
+               select="
+                  if (self::tan:common or self::tan:b) then
+                     ($next-pos + $this-length)
+                  else
+                     $next-pos"
+            />
+            
+            <xsl:choose>
+               <xsl:when test="not(self::tan:b)">
+                  <xsl:copy-of select="."/>
+               </xsl:when>
+               <xsl:otherwise>
+                  <xsl:copy>
+                     <xsl:copy-of select="@*"/>
+                     <xsl:attribute name="_pos" select="$next-pos"/>
+                     <xsl:attribute name="_len" select="$this-length"/>
+                  </xsl:copy>
+               </xsl:otherwise>
+            </xsl:choose>
+            <xsl:next-iteration>
+               <xsl:with-param name="next-pos" select="$new-pos"/>
+            </xsl:next-iteration>
+         </xsl:iterate>
+      </diff>
+      <!--<xsl:apply-templates select="$out-pass-1" mode="stamp-b-with-text-data"/>-->
+   </xsl:function>
+   <xsl:template match="tan:b" mode="stamp-b-with-text-data">
+      <xsl:variable name="prev-element" select="preceding-sibling::tan:common[1]"/>
+      <xsl:copy>
+         <xsl:copy-of select="@*"/>
+         <xsl:choose>
+            <xsl:when test="not(exists($prev-element))">
+               <xsl:attribute name="_pos" select="1"/>
+            </xsl:when>
+            <xsl:otherwise>
+               <xsl:attribute name="_pos"
+                  select="xs:integer($prev-element/@_pos) + xs:integer($prev-element/@_len)"/>
+               <xsl:attribute name="_len" select="string-length(.)"/>
+            </xsl:otherwise>
+         </xsl:choose>
+         <xsl:copy-of select="node()"/>
+      </xsl:copy>
+   </xsl:template>
+   
+   <xsl:function name="tan:stamp-tree-with-text-data" as="item()*">
+      <!-- 2-parameter version for the main one below -->
+      <xsl:param name="tree-fragment" as="item()*"/>
+      <xsl:param name="ignore-white-space" as="xs:boolean"/>
+      <xsl:sequence select="tan:stamp-tree-with-text-data($tree-fragment, $ignore-white-space, (), '^(TAN-.+|body|div|common|a)$', 1)"/>
+   </xsl:function>
+   
+   <xsl:function name="tan:stamp-tree-with-text-data" as="item()*">
+      <!-- Input: any tree fragment; a boolean; an integer -->
+      <!-- Output: the same tree fragment, but with @_pos stamped in every element specifying the position of the
+      next enclosed text character, and @_len specifying the string length of the text. If the second parameter 
+      is true, space-only text nodes will be ignored. The third parameter specifies the starting digit for the 
+      next character. -->
+      <!-- Input items will be treated as part of the same whole, not as separate items. If you wish to apply
+      this function to several items independently, the function should be iterated upon. -->
+      <xsl:param name="tree-fragment" as="item()*"/>
+      <xsl:param name="ignore-white-space" as="xs:boolean"/>
+      <xsl:param name="exclude-from-count-elements-whose-names-match" as="xs:string?"/>
+      <xsl:param name="exclude-from-count-elements-whose-names-do-not-match" as="xs:string?"/>
+      <xsl:param name="next-char-number" as="xs:integer"/>
+      <xsl:iterate select="$tree-fragment">
+         <xsl:param name="next-char-pos" as="xs:integer" select="$next-char-number"/>
+         <xsl:variable name="this-fragment" select="."/>
+         <xsl:variable name="this-exception-fragment" as="element()*">
+            <xsl:apply-templates select="$this-fragment" mode="filter-elements">
+               <xsl:with-param name="keep-elements-whose-names-match" as="xs:string?" tunnel="yes" select="$exclude-from-count-elements-whose-names-match"/>
+               <xsl:with-param name="keep-elements-whose-names-do-not-match" as="xs:string?" tunnel="yes" select="$exclude-from-count-elements-whose-names-do-not-match"/>
+            </xsl:apply-templates>
+         </xsl:variable>
+         <xsl:variable name="this-fragment-text"
+            select="
+               if ($ignore-white-space) then
+                  string-join($this-fragment/descendant-or-self::text()[matches(., '\S')])
+               else
+                  string($this-fragment)"
+         />
+         <xsl:variable name="this-exception-text"
+            select="
+               (if ($ignore-white-space) then
+                  string-join($this-exception-fragment/descendant-or-self::text()[matches(., '\S')])
+               else
+                  string-join($this-exception-fragment))
+               "
+         />
+         <xsl:variable name="this-fragment-length" select="string-length($this-fragment-text) - string-length($this-exception-text)"/>
+         <xsl:apply-templates select="." mode="stamp-tree-with-text-data">
+            <xsl:with-param name="ignore-white-space" select="$ignore-white-space" tunnel="yes"/>
+            <xsl:with-param name="next-char-pos" select="$next-char-pos"/>
+            <xsl:with-param name="current-node-length" select="$this-fragment-length"/>
+            <xsl:with-param name="ignore-elements-whose-names-match" select="$exclude-from-count-elements-whose-names-match"/>
+            <xsl:with-param name="ignore-elements-whose-names-do-not-match" select="$exclude-from-count-elements-whose-names-do-not-match"/>
+         </xsl:apply-templates>
+         <xsl:next-iteration>
+            <xsl:with-param name="next-char-pos" select="$next-char-pos + $this-fragment-length"/>
+         </xsl:next-iteration>
+      </xsl:iterate>
+   </xsl:function>
+   
+   <xsl:template match="processing-instruction() | comment() | text()" mode="stamp-tree-with-text-data">
+      <xsl:copy-of select="."/>
+   </xsl:template>
+   <xsl:template match="document-node()" mode="stamp-tree-with-text-data">
+      <xsl:param name="ignore-white-space" tunnel="yes" as="xs:boolean"/>
+      <xsl:param name="next-char-pos" as="xs:integer"/>
+      <xsl:param name="current-node-length" as="xs:integer"/>
+      <xsl:param name="ignore-elements-whose-names-match" as="xs:string?"/>
+      <xsl:param name="ignore-elements-whose-names-do-not-match" as="xs:string?"/>
+      <xsl:document>
+         <xsl:copy-of select="tan:stamp-tree-with-text-data(node(), $ignore-white-space, $ignore-elements-whose-names-match, $ignore-elements-whose-names-do-not-match, $next-char-pos)"/>
+      </xsl:document>
+   </xsl:template>
+   <xsl:template match="*" mode="stamp-tree-with-text-data">
+      <xsl:param name="ignore-white-space" tunnel="yes" as="xs:boolean"/>
+      <xsl:param name="next-char-pos" as="xs:integer"/>
+      <xsl:param name="current-node-length" as="xs:integer"/>
+      <xsl:param name="ignore-elements-whose-names-match" as="xs:string?"/>
+      <xsl:param name="ignore-elements-whose-names-do-not-match" as="xs:string?"/>
+      <xsl:variable name="this-name" select="name(.)"/>
+      <xsl:variable name="ignore-this-element"
+         select="
+            if (string-length($ignore-elements-whose-names-match) gt 0) then
+               matches($this-name, $ignore-elements-whose-names-match)
+            else
+               if (string-length($ignore-elements-whose-names-do-not-match) gt 0)
+               then
+                  (not(matches($this-name, $ignore-elements-whose-names-do-not-match)))
+               else
+                  false()"
+      />
+      <xsl:choose>
+         <xsl:when test="$ignore-this-element">
+            <xsl:copy-of select="."/>
+         </xsl:when>
+         <xsl:otherwise>
+            <xsl:copy>
+               <xsl:copy-of select="@*"/>
+               <xsl:attribute name="_pos" select="$next-char-pos"/>
+               <xsl:attribute name="_len" select="$current-node-length"/>
+               <xsl:copy-of
+                  select="tan:stamp-tree-with-text-data(node(), $ignore-white-space, $ignore-elements-whose-names-match, $ignore-elements-whose-names-do-not-match, $next-char-pos)"
+               />
+            </xsl:copy>
+            
+         </xsl:otherwise>
+      </xsl:choose>
+   </xsl:template>
 
 
    <!-- Functions: sequences-->
