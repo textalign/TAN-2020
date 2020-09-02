@@ -1173,6 +1173,7 @@
                      <xsl:copy-of select="@*"/>
                      <xsl:attribute name="_pos" select="$next-pos"/>
                      <xsl:attribute name="_len" select="$this-length"/>
+                     <xsl:copy-of select="node()"/>
                   </xsl:copy>
                </xsl:otherwise>
             </xsl:choose>
