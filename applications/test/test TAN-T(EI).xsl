@@ -16,9 +16,9 @@
    <xsl:template match="/">
       <test>
          <xsl:message select="'Testing ' || $doc-id || 'at' || $doc-uri"/>
-         <self-r><xsl:copy-of select="$self-resolved"/></self-r>
-         <self-e><xsl:copy-of select="$self-expanded"/></self-e>
-         <diff><xsl:copy-of select="tan:diff('A string is there.', 'A string is here.')"/></diff>
+         <xsl:copy-of select="tan:vocabulary('work', ())"/>
+         <!--<self-r><xsl:copy-of select="$self-resolved"/></self-r>-->
+         <!--<self-e><xsl:copy-of select="$self-expanded"/></self-e>-->
       </test>
    </xsl:template>
    

@@ -5,6 +5,12 @@
     xmlns:array="http://www.w3.org/2005/xpath-functions/array"
     xmlns:tan="tag:textalign.net,2015:ns" exclude-result-prefixes="#all" version="3.0">
     
+    <!-- Catalyzing input: a TAN-A file -->
+    <!-- Secondary input: the catalyzing input expanded, and its sources merged -->
+    <!-- Primary output: an html page or diagnostics -->
+    <!-- Secondary (main) output: none -->
+    
+    <!-- Should output be diverted to diagnostics (master default template in this stylesheet)? -->
     <xsl:param name="output-diagnostics-on" as="xs:boolean" static="yes" select="false()"/>
     
     <xsl:import href="display%20TAN%20as%20HTML.xsl"/>
@@ -22,7 +28,7 @@
     <xsl:param name="stylesheet-is-core-tan-application" select="true()"/>
     <xsl:param name="stylesheet-to-do-list">
         <to-do xmlns="tag:textalign.net,2015:ns">
-            <comment who="kalvesmaki" when="2020-07-28">Develop option based upon nested divs, to parallel the existing structures that rely upon table</comment>
+            <comment who="kalvesmaki" when="2020-07-28">Develop output option using nested HTML divs, to parallel the existing output that uses HTML tables</comment>
         </to-do>
     </xsl:param>
     
@@ -68,6 +74,26 @@
     <!-- The following parameter is very important, allowing you to pick one or more alias @xml:id/@id that should lead to the master source list. Each alias id will be resolved into constituent versions arranged in a tree, with sources nested according to alias group. The default looks at the top <alias> and takes the tokenized @idref values as the starting points -->
     <xsl:param name="sort-and-group-by-what-alias-idrefs" as="xs:string*" select="tokenize(/*/tan:head/tan:vocabulary-key/tan:alias[1]/@idrefs, '\s+')"/>
 
+
+    <!-- Put the TAN-A sources into groups by work. Currently only the first work group will be processed -->
+    <xsl:variable name="valid-src-work-vocab" as="element()*">
+        <xsl:for-each select="$sources-resolved/*">
+            <xsl:sort select="index-of($src-ids, @src)"/>
+            <xsl:variable name="this-src-id" select="@src"/>
+            <xsl:variable name="this-work" select="tan:head/tan:work" as="element()?"/>
+            <xsl:variable name="this-work-vocab" select="tan:element-vocabulary($this-work)"/>
+            <work xmlns="tag:textalign.net,2015:ns">
+                <xsl:copy-of select="$this-src-id"/>
+                <xsl:copy-of select="$this-work-vocab/(tan:item, tan:work)/*"/>
+            </work>
+        </xsl:for-each>
+    </xsl:variable>
+    <xsl:variable name="valid-srcs-by-work" select="tan:group-elements-by-IRI($valid-src-work-vocab)"/>
+    
+    <!-- We accept as valid source ids for the primary merge only candidates from the first work group. -->
+    <xsl:variable name="valid-src-ids"
+        select="$valid-srcs-by-work[1]/*/@src[tan:satisfies-regexes(., $src-ids-must-match-regex, $src-or-alias-ids-must-not-match-regex)]"/>
+    
     <xsl:variable name="alias-based-group-and-sort-pattern" as="element()">
         <source-pattern xmlns="tag:textalign.net,2015:ns">
             <xsl:apply-templates select="$head/tan:vocabulary-key"
@@ -76,9 +102,6 @@
             </xsl:apply-templates>
         </source-pattern>
     </xsl:variable>
-
-    <xsl:variable name="valid-src-ids"
-        select="$src-ids[tan:satisfies-regexes(., $src-ids-must-match-regex, $src-or-alias-ids-must-not-match-regex)]"/>
 
     <xsl:variable name="source-group-and-sort-pattern" as="element()">
         <!-- This variable creates a master pattern that will be used to group and sort table columns -->
@@ -143,8 +166,8 @@
             </xsl:choose>
         </xsl:for-each>
     </xsl:template>
-    <!-- Deeply skip groups that have no idrefs -->
-    <xsl:template match="tan:group[not(descendant::tan:idref)]"
+    <!-- Deeply skip groups that have no valid idrefs -->
+    <xsl:template match="tan:group[not(descendant::tan:idref[. = $valid-src-ids])]"
         priority="1"
         mode="build-source-group-and-sort-pattern"/>
     <!-- Add a standard alias id, and perhaps color value, to assist later processing -->
@@ -287,11 +310,11 @@
     <xsl:template match="/" mode="input-pass-1">
         <xsl:variable name="this-src-id" select="*/@src"/>
         <xsl:variable name="this-lang" select="*/tan:body/@xml:lang"/>
-        <xsl:variable name="src-is-ok"
-            select="tan:satisfies-regexes($this-src-id, $src-ids-must-match-regex, $src-or-alias-ids-must-not-match-regex)"/>
+        <xsl:variable name="src-is-ok" select="$this-src-id = $valid-src-ids"/>
         <xsl:variable name="lang-is-ok"
             select="tan:satisfies-regexes($this-lang, $main-langs-must-match-regex, $main-langs-must-not-match-regex)"/>
         <xsl:variable name="this-class" select="tan:class-number(.)"/>
+        
         <xsl:variable name="diagnostics-on" select="false()"/>
         <xsl:if test="$diagnostics-on">
             <xsl:message select="'src id: ', $this-src-id"/>
@@ -299,6 +322,7 @@
             <xsl:message select="'src is ok: ', $src-is-ok"/>
             <xsl:message select="'lang is ok: ', $lang-is-ok"/>
         </xsl:if>
+        
         <xsl:if test="$src-is-ok and $lang-is-ok and ($this-class = 1)">
             <xsl:document>
                 <xsl:apply-templates mode="#current"/>
@@ -438,6 +462,7 @@
         <xsl:variable name="tei-marker" select="descendant::tei:*"/>
         <xsl:variable name="text-marker" select="matches(., '\S')"/>
         <xsl:variable name="is-or-has-leaf-div" select="exists($tei-marker) or exists($text-marker)"/>
+        
         <xsl:variable name="diagnostics-on" select="false()"/>
         <xsl:if test="$diagnostics-on">
             <xsl:message select="'processing: ', tan:shallow-copy(.)"/>
@@ -445,6 +470,7 @@
             <xsl:message select="'tei marker: ', $tei-marker"/>
             <xsl:message select="'text marker: ', $text-marker"/>
         </xsl:if>
+        
         <xsl:if test="$is-or-has-leaf-div">
             <xsl:copy>
                 <xsl:copy-of select="@*"/>
@@ -477,7 +503,6 @@
 
     <!-- PASS 2: Merge the sources -->
 
-    <!--<xsl:param name="input-pass-2" select="tan:merge-expanded-docs($input-pass-1b)"/>-->
     <xsl:param name="input-pass-2" select="tan:merge-expanded-docs($input-pass-1b)"/>
     
     
@@ -488,8 +513,8 @@
         labels. -->
     <!-- The heads are constructed hierarchically, because they will form the control that allows the 
         user to hide/show or re-sort sources or groups of sources. But the leafmost texts (versions) in the 
-        body are arranged like a table row (even if we're using <div>s, not <tr>s). We do not want them 
-        in a hierarchy. If a user chooses to  hide a source, we do not want to see if there are no more 
+        body are rearranged like a table row (even if we're using <div>s, not <tr>s). We do not want them 
+        in a hierarchy. If a user chooses to hide a source, we do not want to see if there are no more 
         shown blocks in a group before deciding whether to turn off the whole group. 
     -->
 
@@ -508,19 +533,21 @@
     </xsl:template>
 
     <xsl:template match="tan:div[tan:div[@type = '#version']]" mode="input-pass-3">
-        <!-- This template finds a parent of a version, then groups and re-sorts the descendant versions according to the master $source-group-and-sort-pattern -->
+        <!-- This template finds a parent of a version, then groups and re-sorts the descendant versions 
+            according to the master $source-group-and-sort-pattern -->
         <!-- Such a version wrapper will wind up being table-like or table-row-like, whether that is executed as 
             an html <table> or through CSS. That decision cannot be made at this point. -->
         <!-- This element wraps one or more versions, which are sorted and grouped in the predefined order. -->
+        <!-- In addition, descendant class-2 anchors are pulled up and moved to the end. -->
         <xsl:variable name="children-divs" select="tan:div"/>
-        <xsl:variable name="sources-to-process" select="distinct-values($children-divs/tan:src)"/>
+        <xsl:variable name="sources-to-process" select="distinct-values(tan:src)"/>
         <xsl:variable name="skip-this-div"
             select="
                 exists($leaf-div-must-have-at-least-how-many-versions)
                 and (count($sources-to-process) lt $leaf-div-must-have-at-least-how-many-versions)"/>
         
-        <xsl:variable name="diagnostics" select="false()"/>
-        <xsl:if test="$diagnostics">
+        <xsl:variable name="diagnostics-on" select="false()"/>
+        <xsl:if test="$diagnostics-on">
             <xsl:message select="'This div: ', tan:shallow-copy(.)"/>
             <xsl:message select="'Sources to process: ', $sources-to-process"/>
             <xsl:message select="'Div should be skipped: ', $skip-this-div"/>
@@ -554,9 +581,18 @@
                 <xsl:copy-of select="$distinct-integer-ns[position() gt 1]"/>
             </xsl:variable>
             <xsl:variable name="pre-div-elements-except-n" select="* except (tan:n, tan:div)"/>
-            <xsl:if test="$diagnostics">
+            <xsl:variable name="class-2-ref-anchors" select="$children-divs/tan:ref[@q][not(text())]"/>
+            <xsl:variable name="class-2-ref-anchors-to-move-here" as="element()*">
+                <!-- We do not worry at this point whether the anchor pertains to a work in general or only a specific source. That gets handled later. -->
+                <xsl:for-each-group select="$class-2-ref-anchors" group-by="@q">
+                    <xsl:sequence select="current-group()[1]"/>
+                </xsl:for-each-group> 
+            </xsl:variable>
+            
+            <xsl:if test="$diagnostics-on">
                 <xsl:message select="'n pattern: ', $n-pattern"/>
             </xsl:if>
+            
             <xsl:copy>
                 <xsl:copy-of select="@*"/>
                 <xsl:attribute name="class" select="$version-wrapper-class-name"/>
@@ -578,35 +614,27 @@
                     <xsl:with-param name="items-to-group-and-sort" tunnel="yes"
                         select="$children-divs"/>
                     <xsl:with-param name="n-pattern" tunnel="yes" select="$n-pattern"/>
+                    <xsl:with-param name="qs-to-anchors-to-drop" tunnel="yes"
+                        select="$class-2-ref-anchors-to-move-here/@q"/>
                 </xsl:apply-templates>
+                
+                <!-- Class 2 anchors correspond to annotations. Because annotations generally
+                fall beside or after the main text (i.e., the main text comes first), we move 
+                the ref anchors to the end, here. -->
+                <xsl:copy-of select="$class-2-ref-anchors-to-move-here"/>
             </xsl:copy>
         </xsl:if>
     </xsl:template>
-    <xsl:template match="tan:div" mode="input-pass-3">
-        <xsl:param name="extra-divs-of-interest" as="element()*"/>
-        <!-- If there are other divs of interest, they should be consolidated into a single wrapper. -->
-        <xsl:copy>
-            <xsl:copy-of select="@*"/>
-            <xsl:choose>
-                <xsl:when test="exists($extra-divs-of-interest)">
-                    <xsl:attribute name="class" select="'consolidated'"/>
-                    <xsl:apply-templates select="tan:*" mode="#current"/>
-                    <xsl:for-each select="self::*, $extra-divs-of-interest">
-                        <!-- In this method, we make sure to drop <n> and other metadata that could be misleading in the next step -->
-                        <xsl:copy>
-                            <xsl:copy-of select="@*"/>
-                            <xsl:apply-templates select="(tan:div, text(), tei:*)" mode="#current"/>
-                        </xsl:copy>
-                    </xsl:for-each>
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:apply-templates mode="#current"/>
-                </xsl:otherwise>
-            </xsl:choose>
-        </xsl:copy>
-    </xsl:template>
 
-    <xsl:template match="tan:ref | tan:orig-ref" mode="input-pass-3">
+    <xsl:template match="tan:ref[not(tan:n)][@q]" mode="input-pass-3 place-sorted-div">
+        <!-- between the version wrapper <div> and this template, we calculate @qs for anchors that
+        pertain to works, not merely, versions, and we drop them from here, their version location. -->
+        <xsl:param name="qs-to-anchors-to-drop" tunnel="yes" as="xs:string*"/>
+        <xsl:if test="not(@q = $qs-to-anchors-to-drop)">
+            <xsl:copy-of select="."/>
+        </xsl:if>
+    </xsl:template>
+    <xsl:template match="tan:ref[tan:n] | tan:orig-ref" mode="input-pass-3 place-sorted-div">
         <xsl:if test="not($suppress-refs)">
             <xsl:copy>
                 <xsl:copy-of select="@*"/>
@@ -614,7 +642,7 @@
             </xsl:copy>
         </xsl:if>
     </xsl:template>
-    <xsl:template match="tan:n" mode="input-pass-3">
+    <xsl:template match="tan:n" mode="input-pass-3 place-sorted-div">
         <xsl:if test="not(exists(preceding-sibling::tan:n)) and $add-display-n">
             <display-n xmlns="tag:textalign.net,2015:ns">
                 <xsl:value-of select="../(@orig-n, @n)[1]"/>
@@ -623,11 +651,11 @@
         <xsl:copy-of select="."/>
     </xsl:template>
 
-    <xsl:template match="tan:body/text() | tan:div/text()" mode="input-pass-3">
+    <xsl:template match="tan:body/text() | tan:div/text()" mode="input-pass-3 place-sorted-div">
         <xsl:value-of select="normalize-space(.)"/>
     </xsl:template>
 
-    <xsl:template match="tan:ref/text()" mode="input-pass-3">
+    <xsl:template match="tan:ref/text()" mode="input-pass-3 place-sorted-div">
         <xsl:variable name="constituent-ns" select="../tan:n"/>
         <xsl:variable name="new-ns" as="xs:string*">
             <xsl:for-each select="$constituent-ns">
@@ -716,7 +744,7 @@
                 <xsl:text> </xsl:text>
             </div>
         </xsl:variable>
-        <xsl:variable name="items-to-group-and-sort"
+        <xsl:variable name="items-to-place"
             select="
                 if (exists($those-divs)) then
                     $those-divs
@@ -726,50 +754,69 @@
         <xsl:variable name="these-alias-ids" select="ancestor::*[@alias-id]/@alias-id"/>
         
         <xsl:if test="exists($those-divs) or $fill-defective-merges">
-            <!-- Within a version-wrapper, a given source could easily have many <div>s, so we wrap them up (even singletons) as an <item> -->
-            <!-- Each item is given a class value not just for the source id, but for all alias ids, to facilitate toggling divs. -->
+            <!-- Within a version-wrapper, a given source could easily have many <div>s, so we wrap them 
+                up (even singletons) as an <item> -->
+            <!-- Each item is given a class value not just for the source id, but for all alias ids, to 
+                facilitate toggling divs. -->
             <item xmlns="tag:textalign.net,2015:ns">
                 <xsl:attribute name="class" select="string-join(($this-idref, $these-alias-ids), ' ')"/>
                 <src>
                     <xsl:value-of select="$this-idref"/>
                 </src>
                 <xsl:apply-templates select="$n-pattern" mode="#current">
-                    <xsl:with-param name="items-to-group-and-sort" as="element()*"
-                        select="$items-to-group-and-sort"/>
+                    <xsl:with-param name="items-to-place" as="element()*" select="$items-to-place"/>
                     <xsl:with-param name="filler-element" as="element()?" select="$filler-element"/>
+                    <xsl:with-param name="current-src-id" tunnel="yes" select="$this-idref"/>
                 </xsl:apply-templates>
             </item>
         </xsl:if>
         
     </xsl:template>
     <xsl:template match="tan:primary-ns | tan:n" mode="regroup-and-re-sort-divs">
-        <xsl:param name="items-to-group-and-sort" as="element()*"/>
+        <xsl:param name="items-to-place" as="element()*"/>
         <xsl:param name="filler-element" as="element()?"/>
-        <xsl:variable name="diagnostics" select="false()"/>
-        <xsl:variable name="this-src" select="$filler-element/tan:src/text()"/>
+        <xsl:param name="current-src-id" tunnel="yes" as="xs:string"/>
         <xsl:variable name="these-ns" select="descendant-or-self::tan:n"/>
-        <xsl:variable name="those-divs" select="$items-to-group-and-sort[tan:n = $these-ns]"/>
-        <xsl:variable name="divs-of-interest" select="$those-divs[tan:n[1] = $these-ns]"/>
+        <xsl:variable name="deeper-divs" select="$items-to-place[not(@type)][descendant::tan:div[@type = '#version'][(tan:src | @src) = $current-src-id]]"/>
+        <xsl:variable name="deeper-divs-wrapped" as="element()?">
+            <xsl:if test="exists($deeper-divs)">
+                <div xmlns="tag:textalign.net,2015:ns" class="version">
+                    <xsl:copy-of select="$these-ns"/>
+                    <xsl:copy-of select="$deeper-divs"/>
+                </div>
+            </xsl:if>
+        </xsl:variable>
+        <!--<xsl:variable name="immediate-relevant-version-divs" select="$items-to-place[@type = '#version'][tan:n = $these-ns]"/>-->
+        <xsl:variable name="immediate-relevant-divs" select="$items-to-place[tan:n = $these-ns]"/>
+        <!--<xsl:variable name="deeper-relevant-version-divs"
+            select="$items-to-place[not(@type)]/descendant::tan:div[@type = '#version'][(tan:src | @src) = $src-id]"
+        />-->
+        
+        <!--<xsl:variable name="those-divs" select="$items-to-place[tan:n = $these-ns]"/>-->
+        <!--<xsl:variable name="divs-of-interest" select="$immediate-relevant-version-divs[tan:n[1] = $these-ns], $deeper-relevant-version-divs"/>-->
+        <xsl:variable name="divs-of-interest" select="$immediate-relevant-divs[tan:n[1] = $these-ns], $deeper-divs-wrapped"/>
         <xsl:variable name="first-div-of-interest" select="$divs-of-interest[1]"/>
-        <xsl:variable name="divs-not-of-interest" select="$those-divs except $divs-of-interest"/>
-        <xsl:variable name="divs-of-interest-consolidated"/>
-        <xsl:if test="$diagnostics">
-            <xsl:message select="'This src: ', $this-src"/>
+        <xsl:variable name="divs-not-of-interest" select="$immediate-relevant-divs except $divs-of-interest"/>
+
+        <xsl:variable name="diagnostics-on" select="false()"/>
+        <xsl:if test="$diagnostics-on">
+            <xsl:message select="'This src: ', $current-src-id"/>
             <xsl:message select="'These ns: ', $these-ns"/>
-            <xsl:message select="'Those divs: ', $those-divs"/>
+            <!--<xsl:message select="'Those divs: ', $those-divs"/>-->
             <xsl:message select="'Divs of interest: ', $divs-of-interest"/>
             <xsl:message
                 select="'Extra divs of interest: ', ($divs-of-interest except $first-div-of-interest)"
             />
         </xsl:if>
-        <xsl:apply-templates select="$divs-of-interest[1]" mode="input-pass-3">
+        
+        <xsl:apply-templates select="$first-div-of-interest" mode="place-sorted-div">
             <xsl:with-param name="extra-divs-of-interest"
                 select="$divs-of-interest except $first-div-of-interest"/>
         </xsl:apply-templates>
         <xsl:apply-templates select="$divs-not-of-interest" mode="#current">
             <xsl:with-param name="context-ns" select="$these-ns"/>
         </xsl:apply-templates>
-        <xsl:if test="not(exists($those-divs)) and $fill-defective-merges">
+        <xsl:if test="not(exists($divs-of-interest)) and $fill-defective-merges">
             <div xmlns="tag:textalign.net,2015:ns">
                 <xsl:copy-of select="$filler-element/@*"/>
                 <xsl:copy-of select="$filler-element/*"/>
@@ -788,6 +835,41 @@
             <xsl:copy-of select="$context-ns"/>
         </xsl:copy>
     </xsl:template>
+    
+    <xsl:template match="tan:div" mode="place-sorted-div">
+        <xsl:param name="extra-divs-of-interest" as="element()*"/>
+        <xsl:param name="current-src-id" tunnel="yes" as="xs:string?"/>
+        <xsl:variable name="these-src-identifiers" select="@src | tan:src"/>
+        <xsl:variable name="deep-skip-this-div" select="(string-length($current-src-id) gt 0) 
+            and exists($these-src-identifiers)
+            and not($current-src-id = $these-src-identifiers)"/>
+        <!-- If there are other divs of interest, they should be consolidated into a single wrapper. -->
+        <xsl:choose>
+            <xsl:when test="$deep-skip-this-div"/>
+            <xsl:otherwise>
+                <xsl:copy>
+                    <xsl:copy-of select="@*"/>
+                    <xsl:choose>
+                        <xsl:when test="exists($extra-divs-of-interest)">
+                            <xsl:attribute name="class" select="'consolidated'"/>
+                            <xsl:apply-templates select="tan:*" mode="#current"/>
+                            <xsl:for-each select="self::*, $extra-divs-of-interest">
+                                <!-- In this method, we make sure to drop <n> and other metadata that could be misleading in the next step -->
+                                <xsl:copy>
+                                    <xsl:copy-of select="@*"/>
+                                    <xsl:apply-templates select="(tan:div, text(), tei:*)" mode="#current"/>
+                                </xsl:copy>
+                            </xsl:for-each>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:apply-templates mode="#current"/>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:copy>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+    
     
     
 
@@ -1110,7 +1192,7 @@
     <xsl:template match="text()" mode="tan-to-html-pass-2-html-tables tan-to-html-pass-2-css-tables">
         <xsl:value-of select="replace(., '_', ' ')"/>
     </xsl:template>
-    <xsl:template match="tan:n | tan:src | tan:ref" mode="tan-to-html-pass-2-html-tables tan-to-html-pass-2-css-tables">
+    <xsl:template match="tan:n | tan:src | tan:ref[tan:n]" mode="tan-to-html-pass-2-html-tables tan-to-html-pass-2-css-tables">
         <xsl:variable name="this-name" select="name(.)"/>
         <xsl:variable name="preceding-siblings" select="preceding-sibling::*[name(.) = $this-name]"/>
         <xsl:if test="not(. = $preceding-siblings)">
@@ -1120,18 +1202,212 @@
             </xsl:copy>
         </xsl:if>
     </xsl:template>
+    <xsl:template match="tan:div/tan:ref[not(tan:n)][@q or @id]" mode="tan-to-html-pass-2-html-tables-post-table">
+        <!-- This <ref> is an anchor to a class-2 annotation -->
+        <xsl:variable name="this-corresponding-annotation-ref" as="element()*"
+            select="key('q-ref', (@q, @id), $self-expanded/tan:TAN-A)"/>
+        <xsl:variable name="this-claim" select="$this-corresponding-annotation-ref/ancestor::tan:claim"/>
+        <xsl:variable name="this-claim-component-context"
+            select="$this-corresponding-annotation-ref/ancestor::*[parent::tan:claim][1]"/>
+        <xsl:variable name="this-claim-component-name" select="name($this-claim-component-context)"/>
+        <xsl:variable name="this-claim-component-position"
+            select="count($this-claim-component-context/preceding-sibling::*[name() eq $this-claim-component-name]) + 1"
+        />
+        <xsl:choose>
+            <xsl:when test="exists($this-corresponding-annotation-ref)">
+                <xsl:apply-templates select="$this-claim" mode="annotation-to-html">
+                    <xsl:with-param name="originating-qs" select="@q | @id"/>
+                </xsl:apply-templates>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:copy>
+                    <xsl:copy-of select="@*"/>
+                    <xsl:apply-templates mode="#current"/>
+                </xsl:copy>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
     
+    <xsl:template match="tan:claim" mode="annotation-to-html">
+        <xsl:param name="originating-qs" as="xs:string*"/>
+        <xsl:variable name="this-claim" select="."/>
+        <!-- subject, adverb, verb, object, everything else : all the preceding except items where the context is known -->
+        <xsl:variable name="annotation-sequence" select="('subject', 'adverb', 'verb', 'object', 'where', 'when', 'claimant')"/>
+        <xsl:variable name="originating-claim-component" select="*[descendant-or-self::*[@q = $originating-qs]][1]"/>
+        <xsl:variable name="originating-claim-component-name" select="name($originating-claim-component)"/>
+        <xsl:variable name="comparable-claim-components"
+            select="*[name(.) = $originating-claim-component-name] except $originating-claim-component"
+        />
+        <xsl:variable name="applicable-to-only-some-versions" select="exists($originating-claim-component/@src)"/>
+        <xsl:variable name="this-claim-resolved" as="element()">
+            <xsl:copy>
+                <xsl:copy-of select="@*"/>
+                <xsl:if test="$applicable-to-only-some-versions">
+                    <div class="{$originating-claim-component-name}">
+                        <xsl:value-of select="$originating-claim-component/@src || ': '"/>
+                    </div>
+                </xsl:if>
+                <xsl:for-each-group
+                    select="* except ($originating-claim-component, $comparable-claim-components)"
+                    group-by="name(.)">
+                    <xsl:sort
+                        select="(index-of($annotation-sequence, current-grouping-key()), 99)[1]"/>
+                    <xsl:variable name="this-component-name" select="current-grouping-key()"/>
+                    <xsl:variable name="matching-claim-attribute" select="$this-claim/@*[name(.) = $this-component-name]"/>
+                    <xsl:variable name="label-strings" as="xs:string*">
+                        <xsl:for-each select="current-group()">
+                            <xsl:value-of select="string-join(((@work, @src, @scriptum)[1], @ref), ' ')"/>
+                        </xsl:for-each>
+                    </xsl:variable>
+                    <xsl:variable name="this-label" as="xs:string?">
+                        <xsl:choose>
+                            <xsl:when test="exists($matching-claim-attribute)">
+                                <xsl:value-of select="replace($matching-claim-attribute, '[_-]', ' ')"/>
+                            </xsl:when>
+                            <xsl:when test="exists(current-group()[@*]) and not(exists(current-group()/@attr))">
+                                <xsl:value-of select="tan:commas-and-ands($label-strings)"/>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:value-of select="$this-component-name"/>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:variable>
+                    <xsl:variable name="there-are-multiple-refs" select="count(current-group()//tan:ref) gt 1"/>
+                    <xsl:variable name="these-refs" select="current-group()/tan:ref[@q]"/>
+                    
+                    <div class="{$this-component-name}">
+                        <div class="label">
+                            <xsl:value-of select="$this-label"/>
+                        </div>
+                        <xsl:if test="exists($these-refs)">
+                            <xsl:for-each select="$self-expanded/tan:TAN-T">
+                                <xsl:sort select="(index-of($src-ids, @src), 999999)[1]"/>
+                                <xsl:variable name="these-anchors" select="key('q-ref', $these-refs/@q, tan:body)"/>
+                                <xsl:variable name="these-divs-prepped-for-html" as="element()*">
+                                    <xsl:apply-templates select="$these-anchors/ancestor::tan:div[1]" mode="tan-to-html-pass-1"/>
+                                </xsl:variable>
+                                <xsl:variable name="this-src" select="@src"/>
+                                <xsl:if test="exists($these-anchors)">
+                                    <div>
+                                        <div class="label">
+                                            <xsl:value-of select="$this-src"/>
+                                        </div>
+                                        <div class="content">
+                                            <xsl:apply-templates
+                                                select="$these-divs-prepped-for-html"
+                                                mode="#current"/>
+                                        </div>
+                                    </div>
+                                </xsl:if>
+                            </xsl:for-each>
+                        </xsl:if>
+                        <xsl:apply-templates select="current-group()/* except $these-refs" mode="#current">
+                            <xsl:with-param name="retain-ref-label" tunnel="yes" select="$there-are-multiple-refs"/>
+                        </xsl:apply-templates>
+                    </div>
+                </xsl:for-each-group>
+                <xsl:if test="exists(@cert)">
+                    <xsl:variable name="this-cert" select="number(@cert)"/>
+                    <div class="certainty">
+                        <xsl:choose>
+                            <xsl:when test="$this-cert lt 0.25">
+                                <xsl:text>(??)</xsl:text>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:text>(?)</xsl:text>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </div>
+                </xsl:if>
+                <xsl:if test="exists($comparable-claim-components)">
+                    <div class="{$originating-claim-component-name} see-also">
+                        <xsl:apply-templates select="$comparable-claim-components" mode="#current"/>
+                    </div>
+                </xsl:if>
+            </xsl:copy>
+        </xsl:variable>
+         
+        <xsl:apply-templates select="$this-claim-resolved" mode="tan-to-html-pass-1"/>
+    </xsl:template>
+    
+    <!-- These are items we've already set up in a label, and don't need to be processed further -->
+    <xsl:template
+        match="tan:object/tan:work | tan:object/tan:scriptum | tan:object/tan:src | tan:subject/tan:work | tan:subject/tan:scriptum | tan:subject/tan:src"
+        mode="annotation-to-html"/>
+    
+    <!-- Drop class 2 anchor <ref>s in class 1 sources -->
+    <xsl:template match="tan:div/tan:ref[not(tan:n)]" priority="1" mode="annotation-to-html"/>
+    
+    <!-- Other <ref>s occur in the context of a <claim> and need to have texts fetched. -->
+    <!--<xsl:template match="tan:ref[@q]" mode="annotation-to-html">
+        <xsl:variable name="this-q" select="@q"/>
+        <xsl:variable name="these-texts"
+            select="
+                for $i in $self-expanded/tan:TAN-T
+                return
+                    key('q-ref', $this-q, $i)"
+        />
+        <xsl:choose>
+            <xsl:when test="exists($these-texts)">
+                <xsl:apply-templates select="$these-texts/ancestor::tan:div[1]"
+                    mode="annotation-to-html-div-prep"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:copy>
+                    <xsl:copy-of select="@*"/>
+                    <xsl:apply-templates mode="#current"/>
+                </xsl:copy>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>-->
+    <!--<xsl:template match="tan:div" mode="annotation-to-html-div-prep">
+        <!-\- At this point we have fetched another class-1 source snippet that must be inserted into
+        the html output, but because we are in the middle of pass 2 of prepping our 
+        material for html, this new snippet must first be put through pass 1. At this
+        stage we look for any new material that should be inserted. -\->
+        <xsl:param name="retain-ref-label" tunnel="yes" as="xs:boolean" select="false()"/>
+        <xsl:variable name="these-src-and-work-ids" select="root(.)/tan:TAN-T/(@src | @work)"/>
+        <xsl:variable name="this-ref-label" select="if ($retain-ref-label) then tan:ref[1]/text() else ()"/>
+        <xsl:variable name="this-div-prepped-for-html" as="element()?">
+            <xsl:apply-templates select="." mode="tan-to-html-pass-1"/>
+        </xsl:variable>
+        <xsl:apply-templates select="$this-div-prepped-for-html" mode="annotation-to-html">
+            <xsl:with-param name="label-to-insert" select="string-join(($these-src-and-work-ids[1], $this-ref-label), ' ')"/>
+        </xsl:apply-templates>
+    </xsl:template>-->
+    
+    <xsl:template match="tan:div" mode="annotation-to-html">
+        <xsl:param name="label-to-insert" as="xs:string?"/>
+        <xsl:copy>
+            <xsl:copy-of select="@*"/>
+            <xsl:if test="string-length($label-to-insert) gt 0">
+                <div class="label">
+                    <xsl:value-of select="$label-to-insert"/>
+                </div>
+            </xsl:if>
+            <xsl:apply-templates mode="#current"/>
+        </xsl:copy>
+    </xsl:template>
+    <!-- We have provided for the reference system in the claim's <subject> or <object>'s label. -->
+    <xsl:template match="tan:div/tan:ref | tan:div/tan:n | tan:div/tan:type" mode="annotation-to-html"/>
+    
+    <xsl:template match="tan:div/text()[matches(., '\S')]" mode="annotation-to-html">
+        <div>
+            <xsl:value-of select="."/>
+        </div>
+    </xsl:template>
+
     <xsl:template match="tan:div[tokenize(@class, ' ') = $version-wrapper-class-name]"
         mode="tan-to-html-pass-2-html-tables">
         <xsl:variable name="n-pattern" as="element()*"
             select="(tan:primary-ns, tan:n[not(contains(@class, 'rebuilt'))])"/>
-        <xsl:variable name="these-div-versions"
-            select=".//tan:div[tokenize(@class, ' ') = 'version']"/>
+        <!--<xsl:variable name="these-div-versions"
+            select=".//tan:div[tokenize(@class, ' ') = 'version']"/>-->
+        <xsl:variable name="these-div-versions" select="tan:item/tan:div"/>
         <div>
             <xsl:copy-of select="@*"/>
             <div class="meta">
-                <!-- doing this allows us to set paratextual material to the side, above, wherever -->
-                <xsl:apply-templates select="* except tan:group" mode="tan-to-html-pass-2-html-tables-meta"/>
+                <xsl:apply-templates select="* except tan:group" mode="tan-to-html-pass-2-html-tables-pre-table"/>
             </div>
             <table>
                 <xsl:if test="$table-layout-fixed">
@@ -1145,6 +1421,9 @@
                     </xsl:apply-templates>
                 </tbody>
             </table>
+            <div class="meta">
+                <xsl:apply-templates select="* except tan:group" mode="tan-to-html-pass-2-html-tables-post-table"/>
+            </div>
         </div>
     </xsl:template>
     <xsl:template match="tan:primary-ns | tan:n" mode="tan-to-html-pass-2-html-tables-tr">
@@ -1235,7 +1514,8 @@
         </xsl:if>
     </xsl:template>
     
-    <xsl:template match="* | text()" mode="build-td-divs tan-to-html-pass-2-html-tables-meta">
+    <xsl:template match="* | text()"
+        mode="build-td-divs tan-to-html-pass-2-html-tables-pre-table tan-to-html-pass-2-html-tables-post-table">
         <xsl:apply-templates mode="#current"/>
     </xsl:template>
     
@@ -1389,6 +1669,8 @@
                     select="concat('width: ', format-number(($this-string-length div $containing-text-string-length), '0.0%'))"
                 />
             </xsl:if>
+            <!-- Sept. 2020: the impetus for the following comment has been revised, but the nested div
+            structure has not been touched. -->
             <!-- When we use tables, we can achieve overlays of two background colors simply
             by assigning one background color to <colgroup> and then another to a <td> 
             inside that column. But to achieve this with <div> and css tables, the two overlays 
@@ -1470,31 +1752,48 @@
     </xsl:template>
     
     
-
+    <xsl:template match="/" priority="1" use-when="not($output-diagnostics-on)">
+        <xsl:copy-of select="$final-output"/>
+    </xsl:template>
     <xsl:template match="/" priority="1" use-when="$output-diagnostics-on">
         <xsl:message select="'Diagnostics on for ' || static-base-uri()"/>
         <diagnostics>
-            <template-url-resolved><xsl:value-of select="$template-url-resolved"/></template-url-resolved>
-            <out-dir-rel-cat-input><xsl:value-of select="$output-directory-relative-to-catalyzing-input"/></out-dir-rel-cat-input>
-            <out-dir-rel-actual-input><xsl:value-of select="$output-directory-relative-to-actual-input"/></out-dir-rel-actual-input>
-            <out-dir-rel-template><xsl:value-of select="$output-directory-relative-to-template"/></out-dir-rel-template>
-            <out-dir-default><xsl:value-of select="$default-output-directory-resolved"/></out-dir-default>
-            <output-dir-resolved><xsl:value-of select="$output-directory-resolved"/></output-dir-resolved>
-            <output-url-resolved><xsl:value-of select="$output-url-resolved"/></output-url-resolved>
-            <!--<standard-colgroup><xsl:copy-of select="$standard-colgroup"/></standard-colgroup>-->
-            <!--<alias-based-group-and-sort-pattern><xsl:copy-of select="$alias-based-group-and-sort-pattern"/></alias-based-group-and-sort-pattern>-->
-            <!--<src-id-sequence><xsl:value-of select="$src-id-sequence"/></src-id-sequence>-->
-            <!--<sort-and-group-by-what-alias><xsl:value-of select="$sort-and-group-by-what-alias-idrefs"/></sort-and-group-by-what-alias>-->
+            <!--<template-url-resolved><xsl:value-of select="$template-url-resolved"/></template-url-resolved>-->
+            <!--<out-dir-rel-cat-input><xsl:value-of select="$output-directory-relative-to-catalyzing-input"/></out-dir-rel-cat-input>-->
+            <!--<out-dir-rel-actual-input><xsl:value-of select="$output-directory-relative-to-actual-input"/></out-dir-rel-actual-input>-->
+            <!--<out-dir-rel-template><xsl:value-of select="$output-directory-relative-to-template"/></out-dir-rel-template>-->
+            <!--<out-dir-default><xsl:value-of select="$default-output-directory-resolved"/></out-dir-default>-->
+            <!--<output-dir-resolved><xsl:value-of select="$output-directory-resolved"/></output-dir-resolved>-->
+            <!--<output-url-resolved><xsl:value-of select="$output-url-resolved"/></output-url-resolved>-->
+            <!--<work-lists><xsl:copy-of select="$valid-src-work-vocab"/></work-lists>-->
+            <work-groups><xsl:copy-of select="$valid-srcs-by-work"/></work-groups>
+            <standard-colgroup><xsl:copy-of select="$standard-colgroup"/></standard-colgroup>
+            <alias-based-group-and-sort-pattern><xsl:copy-of select="$alias-based-group-and-sort-pattern"/></alias-based-group-and-sort-pattern>
+            <src-id-sequence><xsl:value-of select="$src-id-sequence"/></src-id-sequence>
+            <sort-and-group-by-what-alias><xsl:value-of select="$sort-and-group-by-what-alias-idrefs"/></sort-and-group-by-what-alias>
             <source-group-and-sort-pattern><xsl:copy-of select="$source-group-and-sort-pattern"/></source-group-and-sort-pattern>
+            <!--<self-resolved><xsl:copy-of select="$self-resolved"/></self-resolved>-->
+            <!--<sources-resolved><xsl:copy-of select="$sources-resolved"/></sources-resolved>-->
+            <TAN-A-self-expanded><xsl:copy-of select="$self-expanded[tan:TAN-A]"/></TAN-A-self-expanded>
+            <src-ids><xsl:value-of select="$src-ids"/></src-ids>
+            <src-ids-from-sources><xsl:for-each select="$self-expanded/tan:TAN-T/@src">
+                <xsl:value-of select=". || ' '"/>
+            </xsl:for-each></src-ids-from-sources>
+            <!--<self-head-expanded><xsl:copy-of select="$head"/></self-head-expanded>-->
             <!--<input-items><xsl:copy-of select="$input-items"/></input-items>-->
             <!--<input-pass-1><xsl:copy-of select="$input-pass-1"/></input-pass-1>-->
             <!--<input-pass-1b><xsl:copy-of select="$input-pass-1b"/></input-pass-1b>-->
+            <!--<input-pass-1b-shallow><xsl:copy-of select="tan:shallow-copy($input-pass-1b, 3)"/></input-pass-1b-shallow>-->
+            <!--<input-pass-1b-heads><xsl:copy-of select="$input-pass-1b/*/tan:head"/></input-pass-1b-heads>-->
             <!--<input-pass-2><xsl:copy-of select="$input-pass-2"/></input-pass-2>-->
             <input-pass-3><xsl:copy-of select="$input-pass-3"/></input-pass-3>
             <!--<source-bibliography><xsl:copy-of select="$source-bibliography"/></source-bibliography>-->
-            <input-pass-4><xsl:copy-of select="$input-pass-4"/></input-pass-4>
-            <template-infused><xsl:copy-of select="$template-infused-with-revised-input"/></template-infused>
+            <!--<input-pass-4><xsl:copy-of select="$input-pass-4"/></input-pass-4>-->
+            <!--<template-url-resolved><xsl:value-of select="$template-url-resolved"/></template-url-resolved>-->
+            <!--<template-doc><xsl:copy-of select="$template-doc"/></template-doc>-->
+            <!--<template-infused><xsl:copy-of select="$template-infused-with-revised-input"/></template-infused>-->
             <!--<infused-template-revised><xsl:copy-of select="$infused-template-revised"/></infused-template-revised>-->
+            <!--<final-output><xsl:copy-of select="$final-output"/></final-output>-->
         </diagnostics>
     </xsl:template>
 

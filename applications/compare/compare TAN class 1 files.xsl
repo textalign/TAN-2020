@@ -5,6 +5,8 @@
     xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tei="http://www.tei-c.org/ns/1.0"
     xmlns:tan="tag:textalign.net,2015:ns" exclude-result-prefixes="#all" version="3.0">
     
+    <xsl:param name="output-diagnostics-on" static="yes" as="xs:boolean" select="false()"/>
+    
     <!--<xsl:import href="../get%20inclusions/convert.xsl"/>-->
     <xsl:include href="../get%20inclusions/core-for-TAN-output.xsl"/>
     <xsl:include href="../../functions/TAN-A-functions.xsl"/>
@@ -39,8 +41,9 @@
     <xsl:variable name="relative-uri-1" select="'../../../library-arithmeticus/aristotle'"/>
     <xsl:variable name="relative-uri-2" select="'../../../library-arithmeticus/evagrius'"/>
     <xsl:variable name="relative-uri-3" select="'../../../library-arithmeticus/bible'"/>
+    <xsl:variable name="relative-uri-4" select="'file:/e:/joel/google%20drive/clio%20commons/TAN%20library/clio'"/>
     
-    <xsl:param name="main-input-relative-uri-directories" as="xs:string*" select="$relative-uri-to-examples"/>
+    <xsl:param name="main-input-relative-uri-directories" as="xs:string*" select="$relative-uri-4"/>
     
     <!-- In what directory are the class-1 files to be compared? Unless $main-input-resolved-uris has been given values directly, this parameter will be used to get a collection of all files in the directories chosen. -->
     <xsl:param name="main-input-resolved-uri-directories" as="xs:string*"
@@ -62,7 +65,7 @@
     </xsl:param>
     
     <!-- For a main input resolved URI to be used, what pattern (regular expression) must be matched? Any item in $main-input-resolved-uris not matching this pattern will be excluded. A null or empty string results in this parameter being ignored. -->
-    <xsl:param name="mirus-must-match-regex" as="xs:string?" select="'psalms.lat.+xml$'"/>
+    <xsl:param name="mirus-must-match-regex" as="xs:string?" select="'griffolini'"/>
 
     <!-- For a main input resolved URI to be used, what pattern (regular expression) must NOT be matched? Any item in $main-input-resolved-uris matching this pattern will be excluded. A null or empty string results in this parameter being ignored. -->
     <xsl:param name="mirus-must-not-match-regex" as="xs:string?" select="'14616'"/>
@@ -90,6 +93,16 @@
     <!-- What text differences should be ignored when compiling difference statistics? Example, [\r\n] ignores any deleted or inserted line endings. Such differences will still be visible, but they will be ignored for the purposes of statistics. -->
     <xsl:variable name="unimportant-change-regex" as="xs:string" select="'[\r\n]'"/>
     
+    <!-- Should <div> @ns be injected into the text? -->
+    <xsl:param name="inject-attr-n" as="xs:boolean" select="false()"/>
+    
+    <!-- In a given group of collations/diffs, should the TAN-T file be restricted to only top-level divs whose @ns match? -->
+    <xsl:param name="restrict-to-matching-top-level-div-attr-ns" as="xs:boolean" select="true()"/>
+    
+    <!-- What top-level divs, if any, should be excluded (regular expression)? If empty, this parameter will be ignored. -->
+    <xsl:param name="exclude-top-level-divs-with-attr-n-matching-what" as="xs:string?"/>
+    <xsl:variable name="check-top-level-div-ns" select="string-length($exclude-top-level-divs-with-attr-n-matching-what) gt 0"/>
+    
     
     
     
@@ -112,7 +125,7 @@
         select="
             for $i in $main-input-class-1-files
             return
-                tan:resolve-doc($i, false(), ())"
+                tan:resolve-doc($i, true(), ())"
     />
     
     <xsl:variable name="main-input-files-expanded" as="document-node()*"
@@ -137,6 +150,24 @@
         </xsl:copy>
     </xsl:template>
     
+    <xsl:template
+        match="
+            tan:body/tan:div[if ($check-top-level-div-ns) then
+                matches(@n, $exclude-top-level-divs-with-attr-n-matching-what)
+            else
+                true()]"
+        mode="core-expansion-ad-hoc-pre-pass"/>
+    
+    <xsl:template match="tan:div" mode="core-expansion-ad-hoc-pre-pass">
+        <xsl:copy>
+            <xsl:copy-of select="@*"/>
+            <xsl:if test="$inject-attr-n">
+                <xsl:value-of select="@n || ' '"/>
+            </xsl:if>
+            <xsl:apply-templates mode="#current"/>
+        </xsl:copy>
+    </xsl:template>
+    
     <!-- by default, nothing goes into keys or a label unless specified -->
     <xsl:template match="* | text() | comment() | processing-instruction()" mode="build-keys-and-label">
         <xsl:apply-templates mode="#current"/>
@@ -150,7 +181,7 @@
     <xsl:template match="/*" mode="build-keys-and-label">
         <xsl:variable name="this-filename" select="tan:cfn(@xml:base)"/>
         <sort-key><xsl:value-of select="$this-filename"/></sort-key>
-        <label><xsl:value-of select="$this-filename"/></label>
+        <label><xsl:value-of select="replace($this-filename, '%20', ' ')"/></label>
         <xsl:apply-templates mode="#current"/>
     </xsl:template>
     
@@ -166,11 +197,22 @@
                 </xsl:for-each>
             </xsl:variable>
             
+            <xsl:variable name="duplicate-top-level-div-attr-ns"
+                select="
+                    if ($restrict-to-matching-top-level-div-attr-ns) then
+                        tan:duplicate-values($this-group/*/tan:body/tan:div/@n)
+                    else
+                        ()"
+            />
+            
             <xsl:variable name="these-texts"
                 select="
                     for $i in $this-group
                     return
-                        tan:text-join($i/*/tan:body)"
+                        if (exists($duplicate-top-level-div-attr-ns)) then
+                            tan:text-join($i/*/tan:body/tan:div[@n = $duplicate-top-level-div-attr-ns])
+                        else
+                            tan:text-join($i/*/tan:body)"
             />
             <xsl:variable name="these-texts-normalized"
                 select="
@@ -384,7 +426,8 @@
     </xsl:template>
     
     <xsl:template match="tan:diff" mode="add-diff-stats">
-        <xsl:copy-of select="tan:analyze-leaf-div-string-length(.)"/>
+        <!--<xsl:copy-of select="tan:analyze-leaf-div-string-length(.)"/>-->
+        <xsl:copy-of select="tan:stamp-diff-with-text-data(.)"/>
     </xsl:template>
     
     <xsl:template match="tan:group[tan:collation]" mode="add-diff-stats">
@@ -756,95 +799,217 @@
             mode="infuse-class-1-with-diff-or-collation"/>
     </xsl:variable>
     
-    <xsl:template match="tan:group/tan:diff" mode="infuse-class-1-with-diff-or-collation">
+    <xsl:template match="tan:group/tan:diff | tan:group/tan:collation" mode="infuse-class-1-with-diff-or-collation">
         <xsl:variable name="first-class-1-base-uri" select="../tan:stats/tan:witness[1]/tan:uri"/>
+        <xsl:variable name="first-class-1-idref" select="../tan:stats/tan:witness[1]/@ref"/>
         <xsl:variable name="first-class-1-doc" select="$main-input-files-expanded[*/@xml:base = $first-class-1-base-uri]"/>
-        <xsl:variable name="first-class-1-doc-analyzed" select="tan:analyze-leaf-div-string-length($first-class-1-doc)"/>
-        <xsl:variable name="split-collation-where" select="key('elements-with-attrs-named', 'string-pos', $first-class-1-doc-analyzed/*/tan:body)"/>
+        <xsl:variable name="first-class-1-doc-analyzed" select="tan:stamp-tree-with-text-data($first-class-1-doc, true())"/>
+        <xsl:variable name="split-collation-where" select="key('elements-with-attrs-named', '_pos', $first-class-1-doc-analyzed/*/tan:body)//tan:div[not(tan:div)]"/>
         <xsl:variable name="split-count" select="count($split-collation-where)"/>
-        <xsl:variable name="this-diff" select="."/>
-        <xsl:variable name="diff-split" as="element()">
-            <diff>
-                <xsl:iterate select="$split-collation-where">
-                    <xsl:param name="diff-so-far" as="element()" select="$this-diff"/>
-                    <xsl:variable name="this-string-last-pos" select="xs:integer(@string-pos) + xs:integer(@string-length) - 1"/>
-                    <xsl:variable name="first-diff-element-not-of-interest" select="$diff-so-far/(tan:a | tan:common)[xs:integer(@string-pos) gt $this-string-last-pos][1]"/>
-                    <xsl:variable name="diff-elements-not-of-interest" select="$first-diff-element-not-of-interest | $first-diff-element-not-of-interest/following-sibling::*"/>
-                    <xsl:variable name="diff-elements-of-interest" select="$diff-so-far/(* except $diff-elements-not-of-interest)"/>
-                    <xsl:variable name="last-diff-element-of-interest-with-this-witness" select="$diff-elements-of-interest[self::tan:a or self::tan:common][last()]"/>
-                    <xsl:variable name="last-deoiwtw-pos" select="xs:integer($last-diff-element-of-interest-with-this-witness/@string-pos)"/>
-                    <xsl:variable name="last-deoiwtw-length" select="xs:integer($last-diff-element-of-interest-with-this-witness/@string-length)"/>
-                    <xsl:variable name="amount-needed" select="$this-string-last-pos - $last-deoiwtw-pos + 1"/>
-                    <xsl:variable name="fragment-to-keep" as="element()?">
-                        <xsl:if test="exists($last-diff-element-of-interest-with-this-witness)">
-                            <xsl:element
-                                name="{name($last-diff-element-of-interest-with-this-witness)}">
-                                <!--<xsl:attribute name="string-length" select="$amount-needed"/>-->
-                                <!--<xsl:copy-of
-                                    select="$last-diff-element-of-interest-with-this-witness/@string-pos"/>-->
-                                <xsl:value-of
-                                    select="substring($last-diff-element-of-interest-with-this-witness, 1, $amount-needed)"
-                                />
-                            </xsl:element>
+        <xsl:variable name="this-diff-or-collation" select="."/>
+        <xsl:variable name="leaf-divs-infused" as="element()*">
+            <xsl:choose>
+                <xsl:when test="self::tan:diff">
+                    <xsl:iterate select="$split-collation-where">
+                        <xsl:param name="diff-so-far" as="element()" select="$this-diff-or-collation"/>
+                        <xsl:variable name="this-string-last-pos"
+                            select="xs:integer((@_pos)[1]) + xs:integer(@_len) - 1"/>
+                        <xsl:variable name="first-diff-element-not-of-interest"
+                            select="$diff-so-far/(tan:a | tan:common)[xs:integer(@_pos) gt $this-string-last-pos][1]"/>
+                        <xsl:variable name="diff-elements-not-of-interest"
+                            select="$first-diff-element-not-of-interest | $first-diff-element-not-of-interest/following-sibling::*"/>
+                        <xsl:variable name="diff-elements-of-interest"
+                            select="$diff-so-far/(* except $diff-elements-not-of-interest)"/>
+                        <xsl:variable name="last-diff-element-of-interest-with-this-witness"
+                            select="$diff-elements-of-interest[self::tan:a or self::tan:common][last()]"/>
+                        <xsl:variable name="last-deoiwtw-pos"
+                            select="xs:integer($last-diff-element-of-interest-with-this-witness/@_pos)"/>
+                        <xsl:variable name="last-deoiwtw-length"
+                            select="xs:integer($last-diff-element-of-interest-with-this-witness/@_len)"/>
+                        <xsl:variable name="amount-needed"
+                            select="$this-string-last-pos - $last-deoiwtw-pos + 1"/>
+                        <xsl:variable name="fragment-to-keep" as="element()?">
+                            <xsl:if test="exists($last-diff-element-of-interest-with-this-witness)">
+                                <xsl:element name="{name($last-diff-element-of-interest-with-this-witness)}">
+                                    <xsl:value-of
+                                        select="substring($last-diff-element-of-interest-with-this-witness, 1, $amount-needed)"
+                                    />
+                                </xsl:element>
+                            </xsl:if>
+                        </xsl:variable>
+                        <xsl:variable name="fragment-to-push-to-next-iteration" as="element()?">
+                            <xsl:if
+                                test="($last-deoiwtw-length gt $amount-needed) and exists($last-diff-element-of-interest-with-this-witness)">
+                                <xsl:element name="{name($last-diff-element-of-interest-with-this-witness)}">
+                                    <xsl:attribute name="_length"
+                                        select="$last-deoiwtw-length - $amount-needed"/>
+                                    <xsl:attribute name="_pos" select="$last-deoiwtw-pos + $amount-needed"/>
+                                    
+                                    <xsl:value-of
+                                        select="substring($last-diff-element-of-interest-with-this-witness, $amount-needed + 1)"
+                                    />
+                                </xsl:element>
+                            </xsl:if>
+                        </xsl:variable>
+                        <xsl:variable name="next-diff" as="element()">
+                            <diff>
+                                <xsl:copy-of select="$fragment-to-push-to-next-iteration"/>
+                                <xsl:copy-of select="$diff-elements-not-of-interest"/>
+                            </diff>
+                        </xsl:variable>
+                        
+                        <xsl:variable name="diagnostics-on" select="false()"/>
+                        <xsl:if test="$diagnostics-on">
+                            <xsl:message select="'This string, last pos:', $this-string-last-pos"/>
+                            <xsl:message select="'First diff element not of interest: ', $first-diff-element-not-of-interest"/>
+                            <xsl:message select="'Last diff element of interest with this witness: ', $last-diff-element-of-interest-with-this-witness"/>
+                            <xsl:message select="'Amount needed:', $amount-needed"/>
                         </xsl:if>
-                    </xsl:variable>
-                    <xsl:variable name="fragment-to-push-to-next-iteration" as="element()?">
-                        <xsl:if test="($last-deoiwtw-length gt $amount-needed) and exists($last-diff-element-of-interest-with-this-witness)">
-                            <xsl:element
-                                name="{name($last-diff-element-of-interest-with-this-witness)}">
-                                <xsl:attribute name="string-length"
-                                    select="$last-deoiwtw-length - $amount-needed"/>
-                                <xsl:attribute name="string-pos"
-                                    select="$last-deoiwtw-pos + $amount-needed"/>
-
-                                <xsl:value-of
-                                    select="substring($last-diff-element-of-interest-with-this-witness, $amount-needed + 1)"/>
-                            </xsl:element>
-                        </xsl:if>
-                    </xsl:variable>
-                    <xsl:variable name="next-diff" as="element()">
-                        <diff>
-                            <xsl:copy-of select="$fragment-to-push-to-next-iteration"/>
-                            <xsl:copy-of select="$diff-elements-not-of-interest"/>
-                        </diff>
-                    </xsl:variable>
-                    
-                    <xsl:copy>
-                        <xsl:copy-of select="@*"/>
-                        <xsl:copy-of select="node() except (text() | tei:*)"/>
-                        <xsl:if test="not(exists($last-diff-element-of-interest-with-this-witness))">
-                            <xsl:for-each select="$diff-elements-of-interest">
+                        
+                        <xsl:copy>
+                            <xsl:copy-of select="@*"/>
+                            <xsl:copy-of select="node() except (text() | tei:*)"/>
+                            <xsl:if test="not(exists($last-diff-element-of-interest-with-this-witness))">
+                                <xsl:for-each select="$diff-elements-of-interest">
+                                    <xsl:copy>
+                                        <xsl:value-of select="."/>
+                                    </xsl:copy>
+                                </xsl:for-each>
+                            </xsl:if>
+                            <xsl:for-each
+                                select="
+                                $last-diff-element-of-interest-with-this-witness/preceding-sibling::*, $fragment-to-keep,
+                                $last-diff-element-of-interest-with-this-witness/(following-sibling::* except $diff-elements-not-of-interest)">
                                 <xsl:copy>
                                     <xsl:value-of select="."/>
                                 </xsl:copy>
                             </xsl:for-each>
-                        </xsl:if>
-                        <xsl:for-each select="$last-diff-element-of-interest-with-this-witness/preceding-sibling::*, $fragment-to-keep, 
-                            $last-diff-element-of-interest-with-this-witness/(following-sibling::* except $diff-elements-not-of-interest)">
-                            <xsl:copy>
-                                <xsl:value-of select="."/>
-                            </xsl:copy>
-                        </xsl:for-each>
-                    </xsl:copy>
-                    
-                    <xsl:next-iteration>
-                        <xsl:with-param name="diff-so-far" select="$next-diff"/>
-                    </xsl:next-iteration>
-                    
-                </xsl:iterate>
-            </diff>
+                        </xsl:copy>
+                        
+                        <xsl:choose>
+                            <xsl:when test="not(exists($next-diff))">
+                                <xsl:break/>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:next-iteration>
+                                    <xsl:with-param name="diff-so-far" select="$next-diff"/>
+                                </xsl:next-iteration>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                        
+                        
+                    </xsl:iterate>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:iterate select="$split-collation-where">
+                        <xsl:param name="collation-so-far" as="element()" select="$this-diff-or-collation"/>
+                        <xsl:variable name="this-string-last-pos" select="xs:integer(@_pos) + xs:integer(@_len) - 1"/>
+                        <xsl:variable name="first-collation-element-not-of-interest" select="$collation-so-far/*[tan:wit[@ref = $first-class-1-idref][xs:integer(@pos) gt $this-string-last-pos]][1]"/>
+                        <xsl:variable name="collation-elements-not-of-interest" select="$first-collation-element-not-of-interest | $first-collation-element-not-of-interest/following-sibling::*"/>
+                        <xsl:variable name="collation-elements-of-interest" select="$collation-so-far/(* except $collation-elements-not-of-interest)"/>
+                        <xsl:variable name="last-collation-element-of-interest-with-this-witness" select="$collation-elements-of-interest[tan:wit[@ref = $first-class-1-idref]][last()]"/>
+                        <xsl:variable name="last-ceoiwtw-pos" select="xs:integer($last-collation-element-of-interest-with-this-witness/tan:wit[@ref = $first-class-1-idref]/@pos)"/>
+                        <xsl:variable name="last-ceoiwtw-length" select="string-length($last-collation-element-of-interest-with-this-witness/tan:txt)"/>
+                        <xsl:variable name="amount-needed" select="$this-string-last-pos - $last-ceoiwtw-pos + 1"/>
+                        <xsl:variable name="fragment-to-keep" as="element()?">
+                            <xsl:element name="{name($last-collation-element-of-interest-with-this-witness)}">
+                                <txt>
+                                    <xsl:value-of select="substring($last-collation-element-of-interest-with-this-witness, 1, $amount-needed)"/>
+                                </txt>
+                                <xsl:copy-of select="$last-collation-element-of-interest-with-this-witness/tan:wit"/>
+                            </xsl:element>
+                        </xsl:variable>
+                        <xsl:variable name="fragment-to-push-to-next-iteration" as="element()?">
+                            <xsl:if test="$last-ceoiwtw-length gt $amount-needed">
+                                <xsl:element name="{name($last-collation-element-of-interest-with-this-witness)}">
+                                    <txt>
+                                        <xsl:value-of select="substring($last-collation-element-of-interest-with-this-witness, $amount-needed + 1)"/>
+                                    </txt>
+                                    <xsl:for-each select="$last-collation-element-of-interest-with-this-witness/tan:wit">
+                                        <xsl:copy>
+                                            <xsl:copy-of select="@ref"/>
+                                            <xsl:attribute name="pos"
+                                                select="xs:integer(@pos) + $amount-needed"/>
+                                        </xsl:copy>
+                                    </xsl:for-each>
+                                </xsl:element>
+                            </xsl:if>
+                        </xsl:variable>
+                        <xsl:variable name="next-collation" as="element()">
+                            <collation>
+                                <xsl:copy-of select="$fragment-to-push-to-next-iteration"/>
+                                <xsl:copy-of select="$collation-elements-not-of-interest"/>
+                            </collation>
+                        </xsl:variable>
+                        
+                        <xsl:copy>
+                            <xsl:copy-of select="@*"/>
+                            <xsl:copy-of select="node() except (text() | tei:*)"/>
+                            <xsl:copy-of select="$last-collation-element-of-interest-with-this-witness/preceding-sibling::*[not(self::tan:witness)]"/>
+                            <xsl:copy-of select="$fragment-to-keep"/>
+                            <xsl:copy-of select="$last-collation-element-of-interest-with-this-witness/(following-sibling::* except $collation-elements-not-of-interest)"/>
+                        </xsl:copy>
+                        
+                        <xsl:choose>
+                            <xsl:when test="not(exists($next-collation))">
+                                <xsl:break/>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:next-iteration>
+                                    <xsl:with-param name="collation-so-far" select="$next-collation"/>
+                                </xsl:next-iteration>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                        
+                        
+                    </xsl:iterate>
+                </xsl:otherwise>
+            </xsl:choose>
+            
         </xsl:variable>
         
-        <xsl:copy-of select="$diff-split"/>
+        <xsl:variable name="diagnostics-on" select="false()"/>
+        <xsl:if test="$diagnostics-on">
+            <xsl:message select="'Diagnostics on, template mode infuse-class-1-with-diff-or-collation'"/>
+            <xsl:message select="'First class 1 base uri: ' || $first-class-1-base-uri"/>
+            <xsl:message select="'Split diff or collation where? ' || string-join($split-collation-where/@_pos, ', ')"/>
+            <xsl:message select="'First infused leaf div: ', $leaf-divs-infused[1]"/>
+        </xsl:if>
+        
+        <xsl:copy>
+            <xsl:copy-of select="tan:witness"/>
+            <xsl:apply-templates select="$first-class-1-doc/*/tan:body/tan:div"
+                mode="infuse-class-1-with-diff-or-collation">
+                <xsl:with-param name="element-replacements" tunnel="yes" select="$leaf-divs-infused"/>
+            </xsl:apply-templates>
+        </xsl:copy>
         
     </xsl:template>
     
-    <xsl:template match="tan:group/tan:collation" mode="infuse-class-1-with-diff-or-collation">
+    <xsl:template match="tan:div" mode="infuse-class-1-with-diff-or-collation">
+        <xsl:param name="element-replacements" tunnel="yes" as="element()*"/>
+        <xsl:variable name="this-q" select="@q"/>
+        <xsl:variable name="this-substitute" select="$element-replacements[@q = $this-q]"/>
+        <xsl:choose>
+            <xsl:when test="exists($this-substitute)">
+                <xsl:copy-of select="$this-substitute"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:copy>
+                    <xsl:copy-of select="@* except @q"/>
+                    <xsl:apply-templates mode="#current"/>
+                </xsl:copy>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+    
+    <xsl:template match="tan:group/tan:collation" mode="infuse-class-1-with-diff-or-collation-being-replaced">
         <xsl:variable name="first-class-1-base-uri" select="../tan:stats/tan:witness[1]/tan:uri"/>
         <xsl:variable name="first-class-1-idref" select="../tan:stats/tan:witness[1]/@ref"/>
         <xsl:variable name="first-class-1-doc" select="$main-input-files-expanded[*/@xml:base = $first-class-1-base-uri]"/>
-        <xsl:variable name="first-class-1-doc-analyzed" select="tan:analyze-leaf-div-string-length($first-class-1-doc)"/>
-        <xsl:variable name="split-collation-where" select="key('elements-with-attrs-named', 'string-pos', $first-class-1-doc-analyzed/*/tan:body)"/>
+        <!--<xsl:variable name="first-class-1-doc-analyzed" select="tan:analyze-leaf-div-string-length($first-class-1-doc)"/>-->
+        <xsl:variable name="first-class-1-doc-analyzed" select="tan:stamp-tree-with-text-data($first-class-1-doc, true())"/>
+        <xsl:variable name="split-collation-where" select="key('elements-with-attrs-named', '_pos', $first-class-1-doc-analyzed/*/tan:body)"/>
         <xsl:variable name="split-count" select="count($split-collation-where)"/>
         <xsl:variable name="this-collation" select="."/>
         <xsl:variable name="collation-split" as="element()">
@@ -852,7 +1017,7 @@
                 <xsl:copy-of select="$this-collation/tan:witness"/>
                 <xsl:iterate select="$split-collation-where">
                     <xsl:param name="collation-so-far" as="element()" select="$this-collation"/>
-                    <xsl:variable name="this-string-last-pos" select="xs:integer(@string-pos) + xs:integer(@string-length) - 1"/>
+                    <xsl:variable name="this-string-last-pos" select="xs:integer(@_pos) + xs:integer(@_len) - 1"/>
                     <xsl:variable name="first-collation-element-not-of-interest" select="$collation-so-far/*[tan:wit[@ref = $first-class-1-idref][xs:integer(@pos) gt $this-string-last-pos]][1]"/>
                     <xsl:variable name="collation-elements-not-of-interest" select="$first-collation-element-not-of-interest | $first-collation-element-not-of-interest/following-sibling::*"/>
                     <xsl:variable name="collation-elements-of-interest" select="$collation-so-far/(* except $collation-elements-not-of-interest)"/>
@@ -899,9 +1064,17 @@
                         <xsl:copy-of select="$last-collation-element-of-interest-with-this-witness/(following-sibling::* except $collation-elements-not-of-interest)"/>
                     </xsl:copy>
                     
-                    <xsl:next-iteration>
-                        <xsl:with-param name="collation-so-far" select="$next-collation"/>
-                    </xsl:next-iteration>
+                    <xsl:choose>
+                        <xsl:when test="not(exists($next-collation))">
+                            <xsl:break/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:next-iteration>
+                                <xsl:with-param name="collation-so-far" select="$next-collation"/>
+                            </xsl:next-iteration>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                    
                     
                 </xsl:iterate>
             </collation>
@@ -1508,24 +1681,27 @@ div.selectAll(".venn-circle path").style("fill-opacity", .6);
     
     
 
-
-    <xsl:template match="/" priority="5">
-        <xsl:for-each select="$file-groups-with-stats, $output-as-html">
-            <xsl:call-template name="save-file">
-                <xsl:with-param name="document-to-save" select="."/>
-            </xsl:call-template>
-        </xsl:for-each>
+    <xsl:template match="/" priority="1" use-when="$output-diagnostics-on">
+        <xsl:message select="'Output diagnostics on for ' || static-base-uri()"/>
         <diagnostics>
             <main-input-resolved-uris count="{count($main-input-resolved-uris)}"><xsl:value-of select="$main-input-resolved-uris"/></main-input-resolved-uris>
             <MIRUs-chosen count="{count($mirus-chosen)}"><xsl:value-of select="$mirus-chosen"/></MIRUs-chosen>
             <!--<input-class-1-files count="{count($main-input-class-1-files)}"/>-->
             <!--<input-expanded-with-grouping-keys><xsl:copy-of select="tan:shallow-copy($main-input-files-expanded, 2)"/></input-expanded-with-grouping-keys>-->
             <output-dir><xsl:value-of select="$target-output-directory-resolved"/></output-dir>
-            <!--<file-groups-diffed-and-collated><xsl:copy-of select="$file-groups-diffed-and-collated"/></file-groups-diffed-and-collated>-->
-            <!--<file-groups-with-stats><xsl:copy-of select="$file-groups-with-stats"/></file-groups-with-stats>-->
-            <!--<output-containers-prepped><xsl:copy-of select="$output-containers-prepped"/></output-containers-prepped>-->
-            <!--<html-output><xsl:copy-of select="$output-as-html"/></html-output>-->
+            <!--<main-input-files-expanded><xsl:copy-of select="$main-input-files-expanded"/></main-input-files-expanded>-->
+            <file-groups-diffed-and-collated><xsl:copy-of select="$file-groups-diffed-and-collated"/></file-groups-diffed-and-collated>
+            <file-groups-with-stats><xsl:copy-of select="$file-groups-with-stats"/></file-groups-with-stats>
+            <output-containers-prepped><xsl:copy-of select="$output-containers-prepped"/></output-containers-prepped>
+            <html-output><xsl:copy-of select="$output-as-html"/></html-output>
         </diagnostics>
+    </xsl:template>
+    <xsl:template match="/">
+        <xsl:for-each select="$file-groups-with-stats, $output-as-html">
+            <xsl:call-template name="save-file">
+                <xsl:with-param name="document-to-save" select="."/>
+            </xsl:call-template>
+        </xsl:for-each>
     </xsl:template>
 
 
