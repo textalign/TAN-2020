@@ -1326,7 +1326,6 @@
                 </xsl:if>
             </xsl:copy>
         </xsl:variable>
-         
         <xsl:apply-templates select="$this-claim-resolved" mode="tan-to-html-pass-1"/>
     </xsl:template>
     
@@ -1337,44 +1336,6 @@
     
     <!-- Drop class 2 anchor <ref>s in class 1 sources -->
     <xsl:template match="tan:div/tan:ref[not(tan:n)]" priority="1" mode="annotation-to-html"/>
-    
-    <!-- Other <ref>s occur in the context of a <claim> and need to have texts fetched. -->
-    <!--<xsl:template match="tan:ref[@q]" mode="annotation-to-html">
-        <xsl:variable name="this-q" select="@q"/>
-        <xsl:variable name="these-texts"
-            select="
-                for $i in $self-expanded/tan:TAN-T
-                return
-                    key('q-ref', $this-q, $i)"
-        />
-        <xsl:choose>
-            <xsl:when test="exists($these-texts)">
-                <xsl:apply-templates select="$these-texts/ancestor::tan:div[1]"
-                    mode="annotation-to-html-div-prep"/>
-            </xsl:when>
-            <xsl:otherwise>
-                <xsl:copy>
-                    <xsl:copy-of select="@*"/>
-                    <xsl:apply-templates mode="#current"/>
-                </xsl:copy>
-            </xsl:otherwise>
-        </xsl:choose>
-    </xsl:template>-->
-    <!--<xsl:template match="tan:div" mode="annotation-to-html-div-prep">
-        <!-\- At this point we have fetched another class-1 source snippet that must be inserted into
-        the html output, but because we are in the middle of pass 2 of prepping our 
-        material for html, this new snippet must first be put through pass 1. At this
-        stage we look for any new material that should be inserted. -\->
-        <xsl:param name="retain-ref-label" tunnel="yes" as="xs:boolean" select="false()"/>
-        <xsl:variable name="these-src-and-work-ids" select="root(.)/tan:TAN-T/(@src | @work)"/>
-        <xsl:variable name="this-ref-label" select="if ($retain-ref-label) then tan:ref[1]/text() else ()"/>
-        <xsl:variable name="this-div-prepped-for-html" as="element()?">
-            <xsl:apply-templates select="." mode="tan-to-html-pass-1"/>
-        </xsl:variable>
-        <xsl:apply-templates select="$this-div-prepped-for-html" mode="annotation-to-html">
-            <xsl:with-param name="label-to-insert" select="string-join(($these-src-and-work-ids[1], $this-ref-label), ' ')"/>
-        </xsl:apply-templates>
-    </xsl:template>-->
     
     <xsl:template match="tan:div" mode="annotation-to-html">
         <xsl:param name="label-to-insert" as="xs:string?"/>
@@ -1568,59 +1529,7 @@
         </div>
     </xsl:template>
     
-
-    <!--<xsl:template match="tan:div[tokenize(@class, ' ') = ($version-wrapper-class-name, 'group-items')]"
-        mode="tan-to-html-pass-2-css-tables">
-        <xsl:variable name="these-version-text-nodes"
-            select="
-                if ($calculate-width-at-td-or-leaf-div-level) then
-                    descendant::tan:div[tokenize(@class, ' ') = 'version']/(text(), tei:*)
-                else
-                    ()"/>
-        <xsl:variable name="all-text-norm"
-            select="normalize-space(string-join($these-version-text-nodes))"/>
-        <xsl:variable name="version-string-length" select="string-length($all-text-norm)"/>
-        <xsl:copy>
-            <xsl:copy-of select="@*"/>
-            <xsl:apply-templates mode="#current">
-                <xsl:with-param name="containing-text-string-length" tunnel="yes"
-                    select="$version-string-length"/>
-            </xsl:apply-templates>
-        </xsl:copy>
-    </xsl:template>-->
-    <!--<xsl:template
-        match="tan:group | tan:item | tan:div[tokenize(@class, ' ') = ($version-wrapper-class-name)]"
-        mode="tan-to-html-pass-2-css-tables">
-        <xsl:param name="containing-text-string-length" tunnel="yes" as="xs:integer?"/>
-        <xsl:variable name="descendant-table-cells" select="self::tan:div/tan:group, self::tan:group/*:div/(tan:group, tan:item)"/>
-        <xsl:variable name="width-needs-to-be-allocated" select="count($descendant-table-cells) gt 1"/>
-        <xsl:variable name="these-text-nodes"
-            select="
-                if ($calculate-width-at-td-or-leaf-div-level) then
-                    descendant-or-self::tan:div[tokenize(@class, ' ') = 'version']/(text(), tei:*)
-                else
-                    ()"
-        />
-        <xsl:variable name="all-text-norm" select="normalize-space(string-join($these-text-nodes))"/>
-        <xsl:variable name="this-string-length" select="string-length($all-text-norm)"/>
-        <xsl:copy>
-            <xsl:copy-of select="@*"/>
-            <xsl:if test="$calculate-width-at-td-or-leaf-div-level and $containing-text-string-length gt 0">
-                <xsl:attribute name="style"
-                    select="concat('width: ', format-number(($this-string-length div $containing-text-string-length), '0.0%'))"
-                />
-            </xsl:if>
-            <xsl:apply-templates mode="#current">
-                <xsl:with-param name="containing-text-string-length" tunnel="yes"
-                    select="
-                        if ($width-needs-to-be-allocated) then
-                            $this-string-length
-                        else
-                            ()"
-                />
-            </xsl:apply-templates>
-        </xsl:copy>
-    </xsl:template>-->
+    
     <xsl:template
         match="tan:div[tokenize(@class, ' ') = ($version-wrapper-class-name)]"
         mode="tan-to-html-pass-2-css-tables">
@@ -1685,19 +1594,6 @@
             </div>
         </xsl:copy>
     </xsl:template>
-    <!--<xsl:template match="tan:item" mode="tan-to-html-pass-2-css-tables">
-        <xsl:variable name="this-group-item-class"
-            select="tan:class-val-for-group-item-number(tan:src)"/>
-        <xsl:copy>
-            <xsl:copy-of select="@*"/>
-            <div class="{$this-group-item-class}">
-                <xsl:apply-templates mode="#current"/>
-            </div>
-
-        </xsl:copy>
-    </xsl:template>-->
-
-
 
 
 
@@ -1775,10 +1671,10 @@
             <!--<self-resolved><xsl:copy-of select="$self-resolved"/></self-resolved>-->
             <!--<sources-resolved><xsl:copy-of select="$sources-resolved"/></sources-resolved>-->
             <TAN-A-self-expanded><xsl:copy-of select="$self-expanded[tan:TAN-A]"/></TAN-A-self-expanded>
-            <src-ids><xsl:value-of select="$src-ids"/></src-ids>
-            <src-ids-from-sources><xsl:for-each select="$self-expanded/tan:TAN-T/@src">
+            <!--<src-ids><xsl:value-of select="$src-ids"/></src-ids>-->
+            <!--<src-ids-from-sources><xsl:for-each select="$self-expanded/tan:TAN-T/@src">
                 <xsl:value-of select=". || ' '"/>
-            </xsl:for-each></src-ids-from-sources>
+            </xsl:for-each></src-ids-from-sources>-->
             <!--<self-head-expanded><xsl:copy-of select="$head"/></self-head-expanded>-->
             <!--<input-items><xsl:copy-of select="$input-items"/></input-items>-->
             <!--<input-pass-1><xsl:copy-of select="$input-pass-1"/></input-pass-1>-->
@@ -1786,7 +1682,7 @@
             <!--<input-pass-1b-shallow><xsl:copy-of select="tan:shallow-copy($input-pass-1b, 3)"/></input-pass-1b-shallow>-->
             <!--<input-pass-1b-heads><xsl:copy-of select="$input-pass-1b/*/tan:head"/></input-pass-1b-heads>-->
             <!--<input-pass-2><xsl:copy-of select="$input-pass-2"/></input-pass-2>-->
-            <input-pass-3><xsl:copy-of select="$input-pass-3"/></input-pass-3>
+            <!--<input-pass-3><xsl:copy-of select="$input-pass-3"/></input-pass-3>-->
             <!--<source-bibliography><xsl:copy-of select="$source-bibliography"/></source-bibliography>-->
             <!--<input-pass-4><xsl:copy-of select="$input-pass-4"/></input-pass-4>-->
             <!--<template-url-resolved><xsl:value-of select="$template-url-resolved"/></template-url-resolved>-->
