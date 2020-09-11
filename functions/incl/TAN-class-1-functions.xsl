@@ -425,7 +425,7 @@
       <xsl:variable name="new-refs" as="element()*">
          <xsl:for-each select="$parent-new-refs">
             <xsl:variable name="this-ref" select="."/>
-            <xsl:for-each select="$this-n-analyzed/*">
+            <xsl:for-each select="$this-n-analyzed/*[not(self::tan:error)]">
                <ref>
                   <xsl:value-of select="string-join(($this-ref/text(), .), $separator-hierarchy)"/>
                   <xsl:copy-of select="$this-ref/*"/>
@@ -2305,46 +2305,28 @@
    <!-- NORMAL EXPANSION -->
 
    <xsl:template match="tan:body | tan:div" mode="core-expansion-normal">
-      <xsl:param name="fragmented-siblings" as="element()*"/>
+      <xsl:param name="duplicate-ns" as="xs:string*"/>
+      <xsl:param name="mixed-ns" as="xs:string*"/>
+
       <xsl:variable name="these-ns" select="tan:n"/>
-      <xsl:variable name="this-q" select="@q"/>
-      <xsl:variable name="is-leaf-div" select="exists(self::tan:div[not(tan:div)])"/>
-      <xsl:variable name="relevant-fragments" select="$fragmented-siblings[tan:n = $these-ns]"/>
-      <xsl:variable name="this-fragment" select="$relevant-fragments[@q = $this-q]"/>
-      <xsl:variable name="corresponding-fragments"
-         select="$relevant-fragments except $this-fragment"/>
-      <xsl:variable name="children-grouped"
-         select="tan:group-elements-by-shared-node-values((tan:div, $corresponding-fragments/tan:div), '^n$')"
-         as="element()*"/>
-      <xsl:variable name="fragmented-children" as="element()*"
-         select="$children-grouped[count(tan:div) gt 1]/tan:div"/>
-      <xsl:variable name="diagnostics-on" select="false()"/>
-      <xsl:if test="$diagnostics-on">
-         <xsl:message select="'diagnostics on, template mode core-expansion-normal, for: ', ."/>
-         <xsl:message select="'fragmented siblings: ', $fragmented-siblings"/>
-         <xsl:message select="'children grouped: ', $children-grouped"/>
-         <xsl:message select="'fragmented children: ', $fragmented-children"/>
-      </xsl:if>
+      <xsl:variable name="is-leaf-div" select="not(tan:div)"/>
+      
+      <xsl:variable name="duplicate-nonleaf-ns" select="tan:div[tan:div]/tan:n"/>
+      <xsl:variable name="duplicate-leaf-ns" select="tan:div[not(tan:div)]/tan:n"/>
+      <xsl:variable name="mixed-ns" select="$duplicate-nonleaf-ns[. = $duplicate-leaf-ns]"/>
+      <xsl:variable name="duplicate-children-ns" select="tan:duplicate-values(($duplicate-nonleaf-ns, $duplicate-leaf-ns))"/>
+      
+      <xsl:variable name="ns-matching-sibling-ns" select="$these-ns[. = $duplicate-ns]"/>
+      <xsl:variable name="this-is-fragmented" select="exists($ns-matching-sibling-ns)"/>
+      <xsl:variable name="this-is-mixed" select="$these-ns = $mixed-ns"/>
+      
       <xsl:copy>
          <xsl:copy-of select="@*"/>
-         <xsl:if test="exists($corresponding-fragments)">
-            <xsl:copy-of select="tan:error('cl109')"/>
-            <xsl:choose>
-               <xsl:when test="$is-leaf-div">
-                  <xsl:variable name="corresponding-fragment-is-not-leaf-div"
-                     select="exists($corresponding-fragments/tan:div)"/>
-                  <xsl:if test="$corresponding-fragment-is-not-leaf-div">
-                     <xsl:copy-of select="tan:error('cl118')"/>
-                  </xsl:if>
-               </xsl:when>
-               <xsl:otherwise>
-                  <xsl:variable name="corresponding-fragment-is-leaf-div"
-                     select="exists($corresponding-fragments[not(tan:div)])"/>
-                  <xsl:if test="$corresponding-fragment-is-leaf-div">
-                     <xsl:copy-of select="tan:error('cl118')"/>
-                  </xsl:if>
-               </xsl:otherwise>
-            </xsl:choose>
+         <xsl:if test="$this-is-fragmented">
+            <xsl:copy-of select="tan:error('cl109', concat('Duplicate sibling @n values: ', string-join($ns-matching-sibling-ns, ', ')))"/>
+         </xsl:if>
+         <xsl:if test="$this-is-mixed">
+            <xsl:copy-of select="tan:error('cl118')"/>
          </xsl:if>
          <xsl:if
             test="
@@ -2354,7 +2336,8 @@
             <xsl:copy-of select="tan:error('cl110')"/>
          </xsl:if>
          <xsl:apply-templates mode="#current">
-            <xsl:with-param name="fragmented-siblings" select="$fragmented-children"/>
+            <xsl:with-param name="duplicate-ns" select="$duplicate-children-ns"/>
+            <xsl:with-param name="mixed-ns" select="$mixed-ns"/>
          </xsl:apply-templates>
       </xsl:copy>
    </xsl:template>
@@ -3359,7 +3342,7 @@
    </xsl:function>
    <xsl:function name="tan:div-to-div-transfer" as="item()*">
       <!-- Input: (1) any set of divs with content to be transferred into the structure of (2) another set of divs; and (3) a snap marker. -->
-      <!-- Output: The div structure of (2), infused with the content of (1). The content is allocated  proportionately, with preference given to punctuation, within a certain range, and then word breaks. -->
+      <!-- Output: The div structure of (2), infused with the content of (1). The content is allocated proportionately, with preference given to punctuation, within a certain range, and then word breaks. -->
       <!-- This function is useful for converting class-1 documents from one reference system to another. Normally the conversion is flawed, because two versions of the same work rarely synchronize, but this function provides a good estimate, or a starting point for manual correction. -->
       <!-- The raw text will be tokenized based on the third parameter, so that, if you so wish, words, clauses, or sentences are not broken up. -->
       <xsl:param name="items-with-div-content-to-be-transferred" as="item()*"/>
@@ -3440,6 +3423,7 @@
             <xsl:with-param name="bad-ks" select="$ks-to-ditch" tunnel="yes"/>
          </xsl:apply-templates>
       </xsl:variable>
+      
       <xsl:variable name="diagnostics-on" select="false()"/>
       <xsl:if test="$diagnostics-on">
          <xsl:message select="'Diagnostics on tan:infuse-div()'"/>
@@ -3447,6 +3431,7 @@
          <xsl:message select="'Ks to ditch: ', $ks-to-ditch"/>
          <xsl:message select="'Mold with unique ks: ', $mold-with-unique-ks"/>
       </xsl:if>
+      
       <xsl:apply-templates select="$mold-with-unique-ks" mode="infuse-tokenized-div-end-check">
          <xsl:with-param name="bad-ks" select="$ks-to-ditch" tunnel="yes"/>
       </xsl:apply-templates>
