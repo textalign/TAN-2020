@@ -16,6 +16,7 @@
    <xsl:include href="extra/TAN-search-functions.xsl"/>
    <xsl:include href="extra/TAN-language-functions.xsl"/>
    <xsl:include href="extra/TAN-A-lm-extra-functions.xsl"/>
+   <xsl:include href="extra/TAN-output-functions.xsl"/>
    <xsl:include href="../parameters/extra-parameters.xsl"/>
 
    <!-- Functions that are not central to validating TAN files, but could be helpful in creating, editing, or reusing them -->
@@ -973,6 +974,7 @@
    <xsl:function name="tan:tree-to-sequence" as="item()*">
       <!-- Input: any XML fragment -->
       <!-- Output: a flattened sequence of XML nodes representing the original fragment. Each element is given a new @level specifying the level of hierarchy the element had in the original. -->
+      <!-- You may wish to run the results of this output through the function tan:consolidate-identical-adjacent-divs() -->
       <xsl:param name="xml-fragment" as="item()*"/>
       <xsl:apply-templates select="$xml-fragment" mode="tree-to-sequence">
          <xsl:with-param name="current-level" select="1"/>
@@ -1088,6 +1090,36 @@
          </xsl:for-each-group>
       </xsl:copy>
    </xsl:template>
+   
+   <xsl:function name="tan:consolidate-identical-adjacent-divs" as="item()*">
+      <!-- Input: various items -->
+      <!-- Output: the items, but with any adjacent divs with exactly the same values of @type and @n consolidated -->
+      <!-- This function was developed to clean up the results of tan:sequence-to-tree() -->
+      <xsl:param name="items-with-divs-to-consolidate" as="item()*"/>
+      <xsl:apply-templates select="$items-with-divs-to-consolidate"
+         mode="consolidate-identical-adjacent-divs"/>
+   </xsl:function>
+   <xsl:template match="*[*:div]" mode="consolidate-identical-adjacent-divs">
+      <xsl:variable name="these-divs" select="*:div"/>
+      <xsl:variable name="this-div-namespace" select="fn:namespace-uri(*:div[1])"/>
+      <xsl:copy>
+         <xsl:copy-of select="@*"/>
+         <xsl:copy-of select="node() except ($these-divs | $these-divs/preceding-sibling::node()[1]/self::text())"/>
+         <xsl:for-each-group select="$these-divs"
+            group-adjacent="string-join((@type, @n), '#')">
+            <xsl:variable name="new-group" as="element()">
+               <xsl:element name="div" namespace="{$this-div-namespace}">
+                  <xsl:copy-of select="current-group()[1]/@*"/>
+                  <xsl:copy-of select="current-group()/node()"/>
+               </xsl:element>
+            </xsl:variable>
+            <xsl:copy-of select="fn:current-group()[1]/preceding-sibling::node()[1]/text()"/>
+            <xsl:apply-templates select="$new-group" mode="#current"/>
+         </xsl:for-each-group>
+      </xsl:copy>
+   </xsl:template>
+   
+   
    
    <xsl:function name="tan:remove-duplicate-siblings" as="item()*">
       <xsl:param name="items-to-process" as="item()*"/>
