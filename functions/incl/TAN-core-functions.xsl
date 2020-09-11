@@ -1597,28 +1597,48 @@
                string-length($i)"
       />
    </xsl:function>
+   
    <xsl:function name="tan:copy-indentation" as="item()*">
-      <!-- Input: items that should be indented; an element whose indentation should be imitated -->
-      <!-- Output: the items, indented according to the pattern -->
+      <!-- 2-parameter version of fuller one below -->
       <xsl:param name="items-to-indent" as="item()*"/>
       <xsl:param name="model-element" as="element()"/>
+      <xsl:sequence select="tan:copy-indentation($items-to-indent, $model-element, 'short')"/>
+   </xsl:function>
+   <xsl:function name="tan:copy-indentation" as="item()*">
+      <!-- Input: items that should be indented; an element whose indentation should be imitated; a string: 'full', 'short', or 'none' -->
+      <!-- Output: the items, indented according to the pattern -->
+      <!-- If the third parameter is 'full', the last indentation after the series will be like the first; if it is 'short', it will
+      be one indentation less than full (appropriate for the last child of a wrapping element); if it is 'none' no final indentation
+      will be supplied. This parameter affects only the topmost sequence, not the children, which are formatted as demanded. -->
+      <xsl:param name="items-to-indent" as="item()*"/>
+      <xsl:param name="model-element" as="element()"/>
+      <xsl:param name="tail-indentation-type" as="xs:string?"/>
+      <!-- short tail indentation is the default -->
+      <xsl:variable name="tail-type-norm" select="($tail-indentation-type[. = ('full', 'none')], 'short')[1]"/>
       <xsl:variable name="model-ancestors" select="$model-element/ancestor-or-self::*"/>
       <xsl:variable name="inherited-indentation-quantities" select="tan:indent-value($model-ancestors)"/>
       <xsl:variable name="this-default-indentation"
          select="
             if (count($model-ancestors) gt 1) then
-               ceiling($inherited-indentation-quantities[last()] div (count($model-ancestors) - 1))
+               ceiling($inherited-indentation-quantities[last()] idiv (count($model-ancestors) - 1))
             else
                $indent-value"
       />
-      <xsl:apply-templates select="$items-to-indent" mode="indent-items">
+      <xsl:apply-templates select="$items-to-indent[not(position() eq last())]" mode="indent-items">
          <xsl:with-param name="current-context-average-indentation" select="$inherited-indentation-quantities[last()]"/>
          <xsl:with-param name="default-indentation-increase" select="$this-default-indentation" tunnel="yes"/>
+         <xsl:with-param name="tail-indentation-type" select="'none'"/>
+      </xsl:apply-templates>
+      <xsl:apply-templates select="$items-to-indent[last()]" mode="indent-items">
+         <xsl:with-param name="current-context-average-indentation" select="$inherited-indentation-quantities[last()]"/>
+         <xsl:with-param name="default-indentation-increase" select="$this-default-indentation" tunnel="yes"/>
+         <xsl:with-param name="tail-indentation-type" select="$tail-type-norm"/>
       </xsl:apply-templates>
    </xsl:function>
    <xsl:template match="*" mode="indent-items">
       <xsl:param name="current-context-average-indentation" as="xs:integer"/>
       <xsl:param name="default-indentation-increase" as="xs:integer" tunnel="yes"/>
+      <xsl:param name="tail-indentation-type" as="xs:string" select="'short'"/>
       <xsl:value-of select="concat('&#xa;', tan:fill(' ', $current-context-average-indentation))"/>
       <xsl:copy>
          <xsl:copy-of select="@*"/>
@@ -1628,7 +1648,15 @@
          </xsl:apply-templates>
       </xsl:copy>
       <xsl:if test="not(exists(following-sibling::*))">
-         <xsl:value-of select="concat('&#xa;', tan:fill(' ', ($current-context-average-indentation - $default-indentation-increase)))"/>
+         <xsl:choose>
+            <xsl:when test="$tail-indentation-type eq 'none'"/>
+            <xsl:when test="$tail-indentation-type eq 'full'">
+               <xsl:value-of select="concat('&#xa;', tan:fill(' ', ($current-context-average-indentation)))"/>
+            </xsl:when>
+            <xsl:otherwise>
+               <xsl:value-of select="concat('&#xa;', tan:fill(' ', ($current-context-average-indentation - $default-indentation-increase)))"/>
+            </xsl:otherwise>
+         </xsl:choose>
       </xsl:if>
    </xsl:template>
    <xsl:template match="text()" mode="indent-items">
