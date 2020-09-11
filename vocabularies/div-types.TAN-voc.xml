@@ -61,9 +61,11 @@
                 <desc>division used particularly by Thomas Aquinas</desc>
             </item>
             <item>
+                <!-- Following the lead of Wikipedia, we associate addendum and appendix -->
                 <IRI>tag:textalign.net,2015:div-type:addendum</IRI>
                 <IRI>http://dbpedia.org/resource/Addendum</IRI>
                 <name>addendum</name>
+                <name>appendix</name>
             </item>
             <item>
                 <IRI>tag:textalign.net,2015:div-type:address_(postal)</IRI>
@@ -78,8 +80,29 @@
                 <name>afterword</name>
             </item>
             <item>
+                <IRI>tag:textalign.net,2015:div-type:alphabetic-section</IRI>
+                <name>alphabetic entry</name>
+                <name>alphabetic section</name>
+                <desc>Applied to works that have alphabetical divisions.</desc>
+            </item>
+            <item>
                 <IRI>tag:textalign.net,2015:div-type:amendment</IRI>
                 <name>amendment</name>
+            </item>
+            <item>
+                <IRI>tag:textalign.net,2015:div-type:apologia</IRI>
+                <IRI>http://dbpedia.org/resource/Apologia</IRI>
+                <name>apologia</name>
+                <name>apology</name>
+            </item>
+            <item>
+                <IRI>tag:textalign.net,2015:div-type:apophthegm</IRI>
+                <name>apophthegm</name>
+                <name>saying</name>
+                <name>sententia</name>
+                <desc>Found in saying collections, e.g., the Apophthegmata patrum. This category
+                    encompasses a number of different terms that are sometimes differentiated, but
+                    are difficult for most people to distinguish.</desc>
             </item>
             <item group="annotation">
                 <IRI>tag:textalign.net,2015:div-type:apparatus_criticus</IRI>
@@ -134,7 +157,7 @@
                 <IRI>tag:textalign.net,2015:div-type:book</IRI>
                 <IRI>http://dbpedia.org/resource/Book</IRI>
                 <name>book</name>
-                <desc>Conceptual book, not a physical one.</desc>
+                <desc>Conceptual book, not a physical one. For the physical one, see codex.</desc>
             </item>
             <item>
                 <IRI>tag:textalign.net,2015:div-type:canon:law</IRI>
@@ -153,33 +176,46 @@
                 <name>tei figdesc</name>
                 <name>xhtml caption</name>
             </item>
-            <item>
+            <item group="line-start line-end leading-start leading-end">
                 <IRI>tag:textalign.net,2015:div-type:castlist</IRI>
+                <IRI>tag:textalign.net,2015:div-type:dramatis-personae</IRI>
+                <IRI>tag:textalign.net,2015:div-type:equiv:tei:castList</IRI>
+                <IRI>http://dbpedia.org/resource/Dramatis_personae</IRI>
                 <name>castlist</name>
+                <name>dramatis personae</name>
+                <name>tei castlist</name>
                 <desc>A list of cast members</desc>
                 <desc>= tei:castList</desc>
             </item>
             <item>
                 <IRI>tag:textalign.net,2015:div-type:castlist-item</IRI>
+                <IRI>tag:textalign.net,2015:div-type:equiv:tei:castItem</IRI>
                 <name>castlist item</name>
+                <name>tei castitem</name>
                 <desc>An entry within a castlist</desc>
                 <desc>= tei:castItem</desc>
             </item>
             <item>
                 <IRI>tag:textalign.net,2015:div-type:castlist-item-actor</IRI>
+                <IRI>tag:textalign.net,2015:div-type:equiv:tei:actor</IRI>
                 <name>castlist item actor</name>
+                <name>tei actor</name>
                 <desc>An actor mentioned in a castlist item</desc>
                 <desc>= tei:actor</desc>
             </item>
             <item>
                 <IRI>tag:textalign.net,2015:div-type:castlist-item-role</IRI>
+                <IRI>tag:textalign.net,2015:div-type:equiv:tei:role</IRI>
                 <name>castlist item role</name>
+                <name>tei role</name>
                 <desc>A role within a castlist item</desc>
                 <desc>= tei:role</desc>
             </item>
             <item>
                 <IRI>tag:textalign.net,2015:div-type:castlist-item-role-description</IRI>
+                <IRI>tag:textalign.net,2015:div-type:equiv:tei:roleDesc</IRI>
                 <name>castlist item role description</name>
+                <name>tei roledesc</name>
                 <desc>A role description within a castlist item</desc>
                 <desc>= tei:roleDesc</desc>
             </item>
@@ -187,6 +223,11 @@
                 <IRI>tag:textalign.net,2015:div-type:causa</IRI>
                 <name>causa</name>
                 <desc>Division in medieval western literature</desc>
+            </item>
+            <item>
+                <IRI>tag:textalign.net,2015:div-type:cento</IRI>
+                <IRI>http://dbpedia.org/resource/Cento_(poetry)</IRI>
+                <name>cento</name>
             </item>
             <item>
                 <IRI>tag:textalign.net,2015:div-type:century</IRI>
@@ -243,10 +284,32 @@
                 <name>couplet</name>
             </item>
             <item>
+                <IRI>tag:textalign.net,2015:div-type:declamation</IRI>
+                <IRI>http://dbpedia.org/resource/Declamation</IRI>
+                <name>declamation</name>
+            </item>
+            <item>
+                <IRI>tag:textalign.net,2015:div-type:dedication</IRI>
+                <IRI>http://dbpedia.org/resource/Dedication_(publishing)</IRI>
+                <name>dedication</name>
+            </item>
+            <item>
                 <IRI>tag:textalign.net,2015:div-type:definition_list</IRI>
                 <IRI>tag:textalign.net,2015:div-type:equiv:xhtml:dl</IRI>
                 <name>definition list</name>
                 <name>xhtml dl</name>
+            </item>
+            <item>
+                <IRI>tag:textalign.net,2015:div-type:demonstratio</IRI>
+                <name>demonstratio</name>
+            </item>
+            <item>
+                <IRI>tag:textalign.net,2015:div-type:dialexis</IRI>
+                <name>dialexis</name>
+            </item>
+            <item>
+                <IRI>tag:textalign.net,2015:div-type:dialogue</IRI>
+                <name>dialogue</name>
             </item>
             <item>
                 <IRI>tag:textalign.net,2015:div-type:dictionary_entry</IRI>
@@ -267,20 +330,47 @@
                 <desc>Terminology used of medieval works, e.g., Gratian.</desc>
             </item>
             <item>
+                <IRI>tag:textalign.net,2015:div-type:discourse</IRI>
+                <name>discourse</name>
+            </item>
+            <item>
                 <IRI>tag:textalign.net,2015:div-type:distinctio</IRI>
                 <name>distinctio</name>
                 <desc>Terminology used of medieval works, e.g., Gratian.</desc>
+            </item>
+            <item>
+                <IRI>tag:textalign.net,2015:div-type:dithyramb</IRI>
+                <IRI>http://dbpedia.org/resource/Dithyramb</IRI>
+                <name>dithyramb</name>
             </item>
             <item group="line-start line-end annotation">
                 <IRI>tag:textalign.net,2015:div-type:endnote</IRI>
                 <name>endnote</name>
             </item>
+            <item>
+                <IRI>tag:textalign.net,2015:div-type:ennead</IRI>
+                <IRI>http://dbpedia.org/resource/The_Enneads</IRI>
+                <name>ennead</name>
+                <desc>A set of nine treatises, applied to the extant writings of Plotinus,
+                or to imitative corpora.</desc>
+            </item>
+            <item>
+                <IRI>tag:textalign.net,2015:div-type:entry</IRI>
+                <name>entry</name>
+                <desc>A section in a larger work customarily called entries, e.g., an encyclopedia,
+                a dictionary.</desc>
+            </item>
+            <item group="line-start line-end leading-start leading-end">
+                <IRI>tag:textalign.net,2015:div-type:epigram</IRI>
+                <IRI>http://dbpedia.org/resource/Epigram</IRI>
+                <name>epigram</name>
+            </item>
             <item group="line-start line-end leading-start leading-end">
                 <IRI>tag:textalign.net,2015:div-type:epigraph</IRI>
                 <IRI>tag:textalign.net,2015:div-type:equiv:tei:epigraph</IRI>
                 <IRI>http://dbpedia.org/resource/Epigraph_(literature)</IRI>
-                <name>tei epigraph</name>
                 <name>epigraph</name>
+                <name>tei epigraph</name>
             </item>
             <item>
                 <IRI>tag:textalign.net,2015:div-type:epilogue</IRI>
@@ -289,8 +379,21 @@
                 <desc>Some may equate this with postscript.</desc>
             </item>
             <item>
+                <IRI>tag:textalign.net,2015:div-type:excerpt</IRI>
+                <name>excerpt</name>
+            </item>
+            <item>
+                <IRI>tag:textalign.net,2015:div-type:exordium</IRI>
+                <name>exordium</name>
+            </item>
+            <item>
                 <IRI>tag:textalign.net,2015:div-type:explicit</IRI>
                 <name>explicit</name>
+            </item>
+            <item>
+                <IRI>tag:textalign.net,2015:div-type:fable</IRI>
+                <IRI>http://dbpedia.org/resource/Fable</IRI>
+                <name>fable</name>
             </item>
             <item group="line-start line-end annotation">
                 <IRI>tag:textalign.net,2015:div-type:footnote</IRI>
@@ -300,6 +403,14 @@
                 <IRI>tag:textalign.net,2015:div-type:footer</IRI>
                 <name>footer</name>
                 <name>running footer</name>
+            </item>
+            <item>
+                <IRI>tag:textalign.net,2015:div-type:fragment</IRI>
+                <IRI>http://dbpedia.org/resource/Literary_fragment</IRI>
+                <name>fragment</name>
+                <desc>A collection of fragments may be defined rather generally, to mean only direct
+                    quotations of a writing otherwise lost, or it may refer to paraphrases or
+                    summaries. If a distinction is made, use testimony for the latter.</desc>
             </item>
             <item group="annotation">
                 <IRI>tag:textalign.net,2015:div-type:gloss</IRI>
@@ -365,9 +476,30 @@
                 <name>xhtml h6</name>
             </item>
             <item>
+                <IRI>tag:textalign.net,2015:div-type:history</IRI>
+                <name>history</name>
+                <desc>Some literary works are composed of items called histories,
+                e.g., pseudo-Nonnus, Scholia mythologica.</desc>
+            </item>
+            <item>
                 <IRI>tag:textalign.net,2015:div-type:homily</IRI>
                 <IRI>http://dbpedia.org/resource/Homily</IRI>
                 <name>homily</name>
+            </item>
+            <item>
+                <IRI>tag:textalign.net,2015:div-type:hymn</IRI>
+                <IRI>http://dbpedia.org/resource/Hymn</IRI>
+                <name>hymn</name>
+            </item>
+            <item>
+                <IRI>tag:textalign.net,2015:div-type:hypothesis</IRI>
+                <IRI>http://dbpedia.org/resource/Hypothesis_(drama)</IRI>
+                <name>hypothesis</name>
+            </item>
+            <item>
+                <IRI>tag:textalign.net,2015:div-type:idyll</IRI>
+                <IRI>http://dbpedia.org/resource/Idyll</IRI>
+                <name>idyll</name>
             </item>
             <item>
                 <IRI>tag:textalign.net,2015:div-type:incipit</IRI>
@@ -395,6 +527,23 @@
                 <IRI>http://dbpedia.org/resource/Introduction_(book)</IRI>
                 <name>introduction</name>
                 <desc>Some may equate this type with prologue.</desc>
+            </item>
+            <item>
+                <IRI>tag:textalign.net,2015:div-type:lecture</IRI>
+                <IRI>http://dbpedia.org/resource/Lecture</IRI>
+                <name>lecture</name>
+            </item>
+            <item>
+                <IRI>tag:textalign.net,2015:div-type:lemma:dictionary</IRI>
+                <IRI>http://dbpedia.org/resource/Headword</IRI>
+                <name>lemma (dictionary)</name>
+                <name>headword</name>
+            </item>
+            <item>
+                <IRI>tag:textalign.net,2015:div-type:lemma:scholion</IRI>
+                <name>lemma (scholion)</name>
+                <desc>A word or phrase quoted from a text that is being annotated by
+                a scholium.</desc>
             </item>
             <item group="line-start line-end">
                 <IRI>tag:textalign.net,2015:div-type:letter</IRI>
@@ -452,6 +601,19 @@
                 <name>octet</name>
             </item>
             <item>
+                <IRI>tag:textalign.net,2015:div-type:ode</IRI>
+                <IRI>http://dbpedia.org/resource/Ode</IRI>
+                <name>ode</name>
+            </item>
+            <item>
+                <IRI>tag:textalign.net,2015:div-type:opusculum</IRI>
+                <name>opusculum</name>
+            </item>
+            <item>
+                <IRI>tag:textalign.net,2015:div-type:oracle</IRI>
+                <name>oracle</name>
+            </item>
+            <item>
                 <IRI>tag:textalign.net,2015:div-type:oration</IRI>
                 <name>oration</name>
             </item>
@@ -460,6 +622,11 @@
                 <IRI>tag:textalign.net,2015:div-type:equiv:xhtml:ol</IRI>
                 <name>ordered list</name>
                 <name>xhtml ol</name>
+            </item>
+            <item>
+                <IRI>tag:textalign.net,2015:div-type:paean</IRI>
+                <IRI>http://dbpedia.org/resource/Paean</IRI>
+                <name>paean</name>
             </item>
             <item group="line-start line-end">
                 <IRI>tag:textalign.net,2015:div-type:paragraph</IRI>
@@ -485,6 +652,11 @@
                 <name>tei phr</name>
             </item>
             <item group="line-start line-end">
+                <IRI>tag:textalign.net,2015:div-type:play</IRI>
+                <IRI>http://dbpedia.org/resource/Play_(theatre)</IRI>
+                <name>play</name>
+            </item>
+            <item group="line-start line-end">
                 <IRI>tag:textalign.net,2015:div-type:poem</IRI>
                 <IRI>http://dbpedia.org/resource/Poetry</IRI>
                 <name>poem</name>
@@ -501,10 +673,20 @@
                 <desc>Some may equate this with epilogue.</desc>
             </item>
             <item>
+                <IRI>tag:textalign.net,2015:div-type:prayer</IRI>
+                <IRI>http://dbpedia.org/resource/Prayer</IRI>
+                <name>prayer</name>
+            </item>
+            <item>
                 <IRI>tag:textalign.net,2015:div-type:preface</IRI>
                 <IRI>http://dbpedia.org/resource/Preface</IRI>
                 <name>preface</name>
                 <desc>Some may equate this with prologue.</desc>
+            </item>
+            <item>
+                <IRI>tag:textalign.net,2015:div-type:progymnasma</IRI>
+                <IRI>http://dbpedia.org/resource/Progymnasmata</IRI>
+                <name>progymnasma</name>
             </item>
             <item>
                 <IRI>tag:textalign.net,2015:div-type:prologue</IRI>
@@ -513,6 +695,11 @@
                 <name>prolegomenon</name>
                 <desc>Some may equate this with introduction.</desc>
                 <desc>Some may equate this with preface.</desc>
+            </item>
+            <item>
+                <IRI>tag:textalign.net,2015:div-type:proverb</IRI>
+                <IRI>http://dbpedia.org/resource/Proverb</IRI>
+                <name>proverb</name>
             </item>
             <item group="line-start line-end">
                 <IRI>tag:textalign.net,2015:div-type:psalm</IRI>
@@ -608,9 +795,18 @@
                 <desc>Similar to TEI &lt;lg type="stanza"&gt;</desc>
             </item>
             <item>
+                <IRI>tag:textalign.net,2015:div-type:strophe</IRI>
+                <IRI>http://dbpedia.org/resource/Strophe</IRI>
+                <name>strophe</name>
+            </item>
+            <item>
                 <IRI>tag:textalign.net,2015:div-type:subchapter</IRI>
                 <name>subchapter</name>
                 <desc>Divisions of a chapter, perhaps without name or label.</desc>
+            </item>
+            <item>
+                <IRI>tag:textalign.net,2015:div-type:subfragment</IRI>
+                <name>subfragment</name>
             </item>
             <item>
                 <IRI>tag:textalign.net,2015:div-type:subsection</IRI>
@@ -704,6 +900,18 @@
                 <name>term to be defined</name>
                 <name>xhtml dt</name>
             </item>
+            <item>
+                <IRI>tag:textalign.net,2015:div-type:testimony</IRI>
+                <name>testimony</name>
+                <name>testamentum</name>
+                <desc>A literary fragment where the author is only loosely quoted or
+                    paraphrased.</desc>
+            </item>
+            <item>
+                <IRI>tag:textalign.net,2015:div-type:tetralogy</IRI>
+                <IRI>http://dbpedia.org/resource/Tetralogy</IRI>
+                <name>tetralogy</name>
+            </item>
             <item group="line-start line-end leading-start leading-end">
                 <IRI>tag:textalign.net,2015:div-type:title</IRI>
                 <IRI>tag:textalign.net,2015:div-type:equiv:tei:title</IRI>
@@ -714,6 +922,11 @@
             <item>
                 <IRI>tag:textalign.net,2015:div-type:tristich</IRI>
                 <IRI>http://dbpedia.org/resource/Tristich</IRI>
+                <name>treatise</name>
+            </item>
+            <item>
+                <IRI>tag:textalign.net,2015:div-type:treatise</IRI>
+                <IRI>http://dbpedia.org/resource/Treatise</IRI>
                 <name>tristich</name>
             </item>
             <item group="line-start line-end">
@@ -737,6 +950,14 @@
                 <IRI>tag:textalign.net,2015:div-type:verse_(scripture)</IRI>
                 <name>verse (scripture)</name>
             </item>
+            <item group="line-start line-end">
+                <IRI>tag:textalign.net,2015:div-type:vita</IRI>
+                <IRI>http://dbpedia.org/resource/Hagiography</IRI>
+                <name>vita</name>
+                <name>life</name>
+                <desc>A biography of a historical person; although frequently used of medieval 
+                saints, the term may apply broadly (e.g., the vita of Aeschylus that begins the scholia)</desc>
+            </item>
             <item group="inline-start inline-end">
                 <IRI>tag:textalign.net,2015:div-type:word</IRI>
                 <IRI>tag:textalign.net,2015:div-type:equiv:tei:w</IRI>
@@ -746,12 +967,24 @@
             </item>
         </group>
         <group type="scriptum">
+            <item group="page-start page-end">
+                <IRI>tag:textalign.net,2015:div-type:codex</IRI>
+                <IRI>http://dbpedia.org/resource/Codex</IRI>
+                <name>book (physical)</name>
+                <name>codex</name>
+            </item>
             <item group="column-start column-end">
                 <IRI>tag:textalign.net,2015:div-type:column_(page)</IRI>
                 <IRI>http://dbpedia.org/resource/Column_(typography)</IRI>
                 <IRI>tag:textalign.net,2015:div-type:equiv:tei:cb</IRI>
                 <name>column (page)</name>
                 <name>tei cb</name>
+            </item>
+            <item group="page-start page-end">
+                <IRI>tag:textalign.net,2015:div-type:fascicle</IRI>
+                <IRI>http://dbpedia.org/resource/Serial_(literature)</IRI>
+                <name>fascicle</name>
+                <desc>One of several installments of a book or volume.</desc>
             </item>
             <item group="page-start page-end">
                 <IRI>tag:textalign.net,2015:div-type:folio</IRI>
@@ -783,11 +1016,16 @@
                 <name>tei pb</name>
             </item>
             <item group="page-start page-end">
+                <IRI>tag:textalign.net,2015:div-type:papyrus</IRI>
+                <IRI>http://dbpedia.org/resource/Papyrus</IRI>
+                <name>papyrus</name>
+            </item>
+            <item group="page-start page-end">
                 <IRI>tag:textalign.net,2015:div-type:side</IRI>
                 <name>side</name>
                 <desc>A side of a scriptum, such for a folio.</desc>
             </item>
-            <item>
+            <item group="line-start line-end">
                 <IRI>tag:textalign.net,2015:div-type:subcolumn</IRI>
                 <name>subcolumn</name>
                 <desc>Divisions of a column. Many early large books with two columns per page were
@@ -795,8 +1033,15 @@
                     referencing easier. This is seen, for example, in the Patrologia Latina and
                     Patrologia Graeca.</desc>
             </item>
-            <item>
+            <item group="page-start page-end">
+                <IRI>tag:textalign.net,2015:div-type:tome</IRI>
+                <IRI>http://dbpedia.org/resource/Tome</IRI>
+                <name>tome</name>
+                <desc>A large codex or book. It may be divided into volumes.</desc>
+            </item>
+            <item group="page-start page-end">
                 <IRI>tag:textalign.net,2015:div-type:volume</IRI>
+                <IRI>http://dbpedia.org/resource/Volume_(bibliography)</IRI>
                 <name>volume</name>
                 <desc>A scriptum, normally a printed book, that is a (usually numbered or labeled)
                     member of a set of scripta, e.g., the volumes in an encyclopedia.</desc>

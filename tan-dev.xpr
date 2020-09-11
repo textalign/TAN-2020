@@ -32,11 +32,11 @@
                         <scenarioAssociation-array>
                             <scenarioAssociation>
                                 <field name="url">
-                                    <String>../library-arithmeticus/evagrius/private-cpg2432.eng.stang-from-grc.xml</String>
+                                    <String>../../epubs/TLG/xml/origenes/selecta_in_psalmos__dub.__(fragmenta_e_catenis).xml</String>
                                 </field>
                                 <field name="scenarioIds">
                                     <list>
-                                        <String>private Evagrius docx to TAN-T</String>
+                                        <String>Test TAN-T(EI)</String>
                                     </list>
                                 </field>
                                 <field name="scenarioTypes">
@@ -62,6 +62,86 @@
                                 <field name="scenarioTypes">
                                     <list>
                                         <String>XML</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioStorageLocations">
+                                    <list>
+                                        <Byte>2</Byte>
+                                    </list>
+                                </field>
+                            </scenarioAssociation>
+                            <scenarioAssociation>
+                                <field name="url">
+                                    <String>../library-arithmeticus/chrysostom/cpg%204425%20grc%201862%20PG%20ref%20logical%20after%20lat%201173-remodeled.xml</String>
+                                </field>
+                                <field name="scenarioIds">
+                                    <list>
+                                        <String>Remodel via TAN-T revised</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioTypes">
+                                    <list>
+                                        <String>XSL</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioStorageLocations">
+                                    <list>
+                                        <Byte>2</Byte>
+                                    </list>
+                                </field>
+                            </scenarioAssociation>
+                            <scenarioAssociation>
+                                <field name="url">
+                                    <String>../library-arithmeticus/chrysostom/cpg%204425%20grc%201862%20PG%20ref%20logical%20after%20lat%201173%20-%20Copy.xml</String>
+                                </field>
+                                <field name="scenarioIds">
+                                    <list>
+                                        <String>Remodel via TAN-T revised</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioTypes">
+                                    <list>
+                                        <String>XSL</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioStorageLocations">
+                                    <list>
+                                        <Byte>2</Byte>
+                                    </list>
+                                </field>
+                            </scenarioAssociation>
+                            <scenarioAssociation>
+                                <field name="url">
+                                    <String>examples/sermon-on-the-mount.eng.kjv.1760%20-%20Copy.xml</String>
+                                </field>
+                                <field name="scenarioIds">
+                                    <list>
+                                        <String>Remodel via TAN-T revised</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioTypes">
+                                    <list>
+                                        <String>XSL</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioStorageLocations">
+                                    <list>
+                                        <Byte>2</Byte>
+                                    </list>
+                                </field>
+                            </scenarioAssociation>
+                            <scenarioAssociation>
+                                <field name="url">
+                                    <String>../library-arithmeticus/evagrius/private-cpg2432.eng.stang-from-grc.xml</String>
+                                </field>
+                                <field name="scenarioIds">
+                                    <list>
+                                        <String>private Evagrius docx to TAN-T</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioTypes">
+                                    <list>
+                                        <String>XSL</String>
                                     </list>
                                 </field>
                                 <field name="scenarioStorageLocations">
@@ -1556,7 +1636,7 @@
                                     <Boolean>false</Boolean>
                                 </field>
                                 <field name="outputResource">
-                                    <String>${pd}/output/${cfn}-${date(yyyy-MM-dd)}.xml</String>
+                                    <String>${pdu}/output/${cfn}-${date(yyyy-MM-dd)}.xml</String>
                                 </field>
                                 <field name="openOtherLocationInBrowser">
                                     <Boolean>false</Boolean>
@@ -1719,7 +1799,7 @@
                                                 </paramDescriptor>
                                             </field>
                                             <field name="value">
-                                                <String>${ask('Use what file as a model/template?', relative_url, '${xpath_eval(//*:see-also[1]/*:location[1]/@href[1])}')}</String>
+                                                <String>${ask('Use what file as a model/template?', relative_url, '${xpath_eval(/*/*:head/*:model[1]/*:location[1]/@href)}')}</String>
                                             </field>
                                             <field name="hasXPathValue">
                                                 <Boolean>false</Boolean>
@@ -1729,6 +1809,89 @@
                                             </field>
                                         </transformationParameter>
                                     </list>
+                                </field>
+                                <field name="cascadingStylesheets">
+                                    <String-array/>
+                                </field>
+                                <field name="xslTransformer">
+                                    <String>Saxon-PE</String>
+                                </field>
+                                <field name="extensionURLs">
+                                    <String-array/>
+                                </field>
+                            </scenario>
+                            <scenario>
+                                <field name="advancedOptionsMap">
+                                    <null/>
+                                </field>
+                                <field name="name">
+                                    <String>Remodel via TAN-T revised</String>
+                                </field>
+                                <field name="baseURL">
+                                    <String></String>
+                                </field>
+                                <field name="footerURL">
+                                    <String></String>
+                                </field>
+                                <field name="fOPMethod">
+                                    <String>pdf</String>
+                                </field>
+                                <field name="fOProcessorName">
+                                    <String>Apache FOP</String>
+                                </field>
+                                <field name="headerURL">
+                                    <String></String>
+                                </field>
+                                <field name="inputXSLURL">
+                                    <String>${pdu}/applications/remodel/remodel%20via%20TAN-T.xsl</String>
+                                </field>
+                                <field name="inputXMLURL">
+                                    <String>${currentFileURL}</String>
+                                </field>
+                                <field name="defaultScenario">
+                                    <Boolean>false</Boolean>
+                                </field>
+                                <field name="isFOPPerforming">
+                                    <Boolean>false</Boolean>
+                                </field>
+                                <field name="type">
+                                    <String>XSL</String>
+                                </field>
+                                <field name="saveAs">
+                                    <Boolean>true</Boolean>
+                                </field>
+                                <field name="openInBrowser">
+                                    <Boolean>false</Boolean>
+                                </field>
+                                <field name="outputResource">
+                                    <String>${cfd}/${cfn}-remodeled.xml</String>
+                                </field>
+                                <field name="openOtherLocationInBrowser">
+                                    <Boolean>false</Boolean>
+                                </field>
+                                <field name="locationToOpenInBrowserURL">
+                                    <null/>
+                                </field>
+                                <field name="openInEditor">
+                                    <Boolean>true</Boolean>
+                                </field>
+                                <field name="showInHTMLPane">
+                                    <Boolean>false</Boolean>
+                                </field>
+                                <field name="showInXMLPane">
+                                    <Boolean>false</Boolean>
+                                </field>
+                                <field name="showInSVGPane">
+                                    <Boolean>false</Boolean>
+                                </field>
+                                <field name="showInResultSetPane">
+                                    <Boolean>false</Boolean>
+                                </field>
+                                <field name="useXSLTInput">
+                                    <Boolean>true</Boolean>
+                                </field>
+                                <field name="xsltParams">
+                                    <list/>
                                 </field>
                                 <field name="cascadingStylesheets">
                                     <String-array/>
@@ -2365,6 +2528,7 @@
             <file name="applications/update/update%20TAN-T%20text%20via%20redivided%20copy.xsl"/>
             <file name="applications/update/update%20TAN-voc%20via%20TEI%20collection.xsl"/>
         </folder>
+        <folder path="../../epubs/TLG/"/>
         <folder path="../"/>
         <folder path="../library-arithmeticus/"/>
         <folder path="../library-clio/"/>
