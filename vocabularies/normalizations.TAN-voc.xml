@@ -137,5 +137,10 @@
             <desc>All numbers, letters, or other labels inserted by the author or editor to indicate
                 references (the value ordinarily placed in @n in &lt;div&gt;) removed.</desc>
         </item>
+        <item>
+            <IRI>tag:textalign.net,2015:normalization:accents-normalized</IRI>
+            <name>accents normalized</name>
+            <desc>Accents have been normalized. If missing, they have been supplied. If incorrect, they have been corrected.</desc>
+        </item>
     </body>
 </TAN-voc>
