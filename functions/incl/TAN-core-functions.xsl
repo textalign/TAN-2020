@@ -1639,13 +1639,22 @@
       <xsl:param name="current-context-average-indentation" as="xs:integer"/>
       <xsl:param name="default-indentation-increase" as="xs:integer" tunnel="yes"/>
       <xsl:param name="tail-indentation-type" as="xs:string" select="'short'"/>
+      <xsl:variable name="has-mixed-content" select="exists(*) and exists(text()[matches(., '\S')])"/>
+      
       <xsl:value-of select="concat('&#xa;', tan:fill(' ', $current-context-average-indentation))"/>
       <xsl:copy>
          <xsl:copy-of select="@*"/>
-         <xsl:apply-templates mode="#current">
-            <xsl:with-param name="current-context-average-indentation"
-               select="$current-context-average-indentation + $default-indentation-increase"/>
-         </xsl:apply-templates>
+         <xsl:choose>
+            <xsl:when test="$has-mixed-content">
+               <xsl:copy-of select="node()"/>
+            </xsl:when>
+            <xsl:otherwise>
+               <xsl:apply-templates mode="#current">
+                  <xsl:with-param name="current-context-average-indentation"
+                     select="$current-context-average-indentation + $default-indentation-increase"/>
+               </xsl:apply-templates>
+            </xsl:otherwise>
+         </xsl:choose>
       </xsl:copy>
       <xsl:if test="not(exists(following-sibling::*))">
          <xsl:choose>
