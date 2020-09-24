@@ -321,6 +321,8 @@
                <xsl:apply-templates select="$doc-with-critical-dependencies-resolved" mode="apply-inclusions-and-adjust-vocabulary">
                   <xsl:with-param name="imprinted-inclusions" select="$imprinted-inclusions" tunnel="yes"/>
                   <xsl:with-param name="element-filters" tunnel="yes" select="$element-filters-for-inclusions"/>
+                  <xsl:with-param name="vocabulary-element-filters" tunnel="yes"
+                     select="$element-filters-for-vocabularies-pass-2"/>
                </xsl:apply-templates>
             </xsl:variable>
             
@@ -374,6 +376,7 @@
                         </attrs-that-take-vocab>
                         <element-filters-vocab-1><xsl:copy-of select="$element-filters-for-vocabularies-pass-1"/></element-filters-vocab-1>
                         <element-filters-vocab-2><xsl:copy-of select="$element-filters-for-vocabularies-pass-2"/></element-filters-vocab-2>
+                        <element-filters-for-inclusions><xsl:copy-of select="$element-filters-for-inclusions"/></element-filters-for-inclusions>
                         <doc-and-crit-dep-resolved><xsl:copy-of select="$doc-with-critical-dependencies-resolved"/></doc-and-crit-dep-resolved>
                         <doc-and-inclusions-applied-and-vocabulary-adjusted><xsl:copy-of select="$doc-with-inclusions-applied-and-vocabulary-adjusted"/></doc-and-inclusions-applied-and-vocabulary-adjusted>
                         <doc-with-n-and-ref-converted><xsl:copy-of select="$doc-with-n-and-ref-converted"/></doc-with-n-and-ref-converted>
@@ -1008,8 +1011,29 @@
    
    <xsl:template match="tan:vocabulary/tan:TAN-voc" mode="apply-inclusions-and-adjust-vocabulary">
       <!-- We already know that <vocabulary> targets a TAN-voc file, so we can skip the root element, 
-      and even the <head type="vocabulary">, and merely report back the <item>s and <verb>s -->
-      <xsl:copy-of select="tan:item, tan:verb"/>
+      and even the <head type="vocabulary">, and merely report back the <item>s and <verb>s, provided
+      the match the types of vocabulary originally requested. Because of inclusion, there may be an
+      excess of vocabulary items. -->
+      <xsl:apply-templates select="tan:item | tan:verb" mode="#current"/>
+   </xsl:template>
+   <xsl:template match="tan:vocabulary/tan:TAN-voc/tan:item | tan:vocabulary/tan:TAN-voc/tan:verb" priority="1"
+      mode="apply-inclusions-and-adjust-vocabulary">
+      <xsl:param name="vocabulary-element-filters" tunnel="yes" as="element()*"/>
+      <xsl:variable name="these-names" select="name(.), tan:affects-element"/>
+      <xsl:variable name="filter-matches" select="$vocabulary-element-filters[tan:element-name = $these-names]"/>
+      <xsl:choose>
+         <!--<xsl:when test="true()">
+            <xsl:copy-of select="."/>
+         </xsl:when>-->
+         <xsl:when test="exists($filter-matches) and $is-validation">
+            <!-- If validating, we want all options for a given category, to supply help for errors -->
+            <xsl:copy-of select="."/>
+         </xsl:when>
+         <xsl:when test="exists($filter-matches) and ((tan:name | tan:id | tan:alias) = $filter-matches/(tan:name | tan:idref | tan:alias))">
+            <!-- If we're not validating, we want only relevant vocabulary items -->
+            <xsl:copy-of select="."/>
+         </xsl:when>
+      </xsl:choose>
    </xsl:template>
    
    <xsl:template match="tan:head/tan:TAN-voc" mode="apply-inclusions-and-adjust-vocabulary">
