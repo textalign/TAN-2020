@@ -469,6 +469,7 @@
             <xsl:message select="'Replacing the output of tan:expand-doc() with diagnostic feedback'"/>
             <xsl:document>
                <expand-diagnostics>
+                  <core-expansion-ad-hoc-pre-pass><xsl:copy-of select="$core-expansion-ad-hoc-pre-pass"/></core-expansion-ad-hoc-pre-pass>
                   <core-terse-pass-1><xsl:copy-of select="$core-terse-expansion-pass-1"/></core-terse-pass-1>
                   <!--<core-terse-pass-2><xsl:copy-of select="$core-terse-expansion-pass-2"/></core-terse-pass-2>-->
                   <xsl:if test="$this-is-class-2">

@@ -90,6 +90,10 @@
    <!-- discretionary hyphens and soft hyphens are synonymous. -->
    <xsl:variable name="dhy" as="xs:string">&#xad;</xsl:variable>
    <xsl:variable name="shy" select="$dhy"/>
+   <xsl:variable name="special-end-div-chars" select="($zwj, $dhy, $zwsp)" as="xs:string+"/>
+   <xsl:variable name="special-end-div-chars-regex"
+      select="concat('\s*[', string-join($special-end-div-chars, ''), ']\s*$')" as="xs:string"/>
+   
    <xsl:variable name="empty-doc" as="document-node()">
       <xsl:document/>
    </xsl:variable>

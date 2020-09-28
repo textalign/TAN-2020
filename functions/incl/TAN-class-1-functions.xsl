@@ -33,9 +33,6 @@
 
    <!-- CLASS 1 FUNCTIONS: TEXT -->
 
-   <xsl:variable name="special-end-div-chars" select="($zwj, $dhy, $zwsp)" as="xs:string+"/>
-   <xsl:variable name="special-end-div-chars-regex"
-      select="concat('\s*[', string-join($special-end-div-chars, ''), ']\s*$')" as="xs:string"/>
    <!-- regular expression to detect parts of a transcription that specify a line, column, or page break; these should be excluded from transcriptions and be rendered with markup -->
    <xsl:param name="break-marker-regex">[\|‖  ⁣￺]</xsl:param>
 
@@ -406,7 +403,7 @@
    <!-- remove space-only nodes -->
    <xsl:template match="*:body/text() | *:div[*:div]/text()" mode="dependency-adjustments-pass-1">
       <xsl:if test="matches(., '\S')">
-         <xsl:message select="root(.)/*/@id, 'has illegal text at', tan:path(.)"/>
+         <xsl:message select="string(root(.)/*/@id), ' has illegal text at', tan:path(.)"/>
       </xsl:if>
    </xsl:template>
    
@@ -2304,7 +2301,7 @@
 
    <!-- NORMAL EXPANSION -->
 
-   <xsl:template match="tan:body | tan:div" mode="core-expansion-normal">
+   <xsl:template match="tan:TAN-T/tan:body | tan:div" mode="core-expansion-normal">
       <xsl:param name="duplicate-ns" as="xs:string*"/>
       <xsl:param name="mixed-ns" as="xs:string*"/>
 
