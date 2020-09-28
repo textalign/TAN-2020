@@ -6188,6 +6188,12 @@ tag:bbrb@example.org,1995-04-01:pos-grc</programlisting>
                         way to construct the previous example.</para>
                   </listitem>
                </itemizedlist></para>
+            <para>Some TAN applications use filenames as a sort order. If you wish your class-1
+               files to be read in chronological order according to source, then it is a good
+               practice to put the date in ISO standard form <code>(YYYY(-MM(-DD)?)?)</code> before
+               any alphabetizable elements that are less important. A good rule of thumb for the
+               order of abbreviations comprised by a filename: collection, work, language/version,
+               date, editor/author, reference system.</para>
             <para>Class-2 files are tougher. They together multiple files and concepts, so filenames
                could become very long or unpredictably structured, especially if trying to express
                which class-1 sources they use. At this time, the best recommendation is to make sure
