@@ -18,4 +18,20 @@
          </xsl:map-entry>
       </xsl:map>
    </xsl:param>
+   
+   <!-- regular expressions to detect the end of sentences, clauses, and words -->
+   <!-- What regular expression defines the end of a sentence? -->
+   <xsl:param name="sentence-end-regex" select="'[\.\?!]+\p{P}*[\s.]*'"/>
+   <!-- What regular expression defines the end of a clause? The default regular expression seeks to avoid words terminated by a simple apostrophe, and anticipates ellipses. -->
+   <xsl:param name="clause-end-regex" as="xs:string">\w[\p{P}-[&apos;]]\p{P}*[\s.]*</xsl:param>
+   <!-- What regular expression defines the end of a word? -->
+   <xsl:param name="word-end-regex" select="'\s+'"/>
+   
+   <xsl:param name="batch-replace-punctuation" as="element()*">
+      <replace pattern="\p{{P}}+" replacement="" message="Removing punctuation"/>
+   </xsl:param>
+   <xsl:param name="batch-replace-combining-marks" as="element()*">
+      <replace pattern="\p{{Mc}}+" replacement="" message="Removing combining marks"/>
+   </xsl:param>
+   
 </xsl:stylesheet>
