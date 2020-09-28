@@ -45,6 +45,12 @@ TAN-voc > body *:before(8)*/{
 div:before(8){
     content: attr(type) '.' attr(n) ' ';
 }
+ref:before(8){
+    content: attr(rend);
+}
+milestone:before(8){
+    content: attr(unit) ' ' attr(n);
+}
 tok:before(8){
     content: attr(rgx) ' ' attr(val) ' ' attr(pos) ' ' attr(chars) ' ' attr(cert);
 }
@@ -64,11 +70,14 @@ m:before(8){
 comment{
     display: list-item;
 }
+milestone,
+ref{
+    display: inline;
+}
 /* FONTS */
 *:lang(syr){
     font-family: noto, 'Serto Urhoy', 'Estrangelo Nisibin';
     text-align: right;
-    font-size: 24px;
 }
 *:lang(cop){
     font-family: antinoou;
@@ -83,6 +92,10 @@ IRI{
 /* MARGINS */
 * {
     margin-left: 8px;
+}
+div milestone,
+div ref{
+    margin-left: 0px;
 }
 item {
     margin-top: 8px;
