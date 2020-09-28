@@ -17,12 +17,12 @@ $(".other-picker").click(function () {
    $(".e-u." + thisWitId).addClass("a-other");
    $("div.e-diff div." + thisWitId).addClass("a-other");
 });
-$(".switch").click(function () {
-   /* This function turns witnesses on and off */
+$("table.e-stats .switch").click(function () {
+   /* This function turns witnesses/readings on and off */
    $(this).children().toggle();
    $(this).parents("tr").toggleClass('suppressed');
    var arOn =[];
-   $("table.e-stats > tbody > tr:not(.suppressed):not(.a-diff):not(.a-collation)").each(function () {
+   $("table.e-stats > tbody > tr:not(.suppressed):not(.averages):not(.a-diff):not(.a-collation)").each(function () {
       thisAttrClass = $(this).attr("class").match(/a-w-\S+|e-[ab]/g)[0];
       console.log("this attr class:", thisAttrClass);
       arOn.push(thisAttrClass);
@@ -42,6 +42,6 @@ $(".switch").click(function () {
       
    });
 });
-$(".label").click(function() {
+/*$(".label").click(function() {
    $(this).nextAll("div, table").toggle("fast");
-});
+});*/

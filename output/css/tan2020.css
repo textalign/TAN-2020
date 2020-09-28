@@ -292,6 +292,7 @@ div.lb:before{
 .div .tok-ref > .pos,
 div.version > div.ref,
 div.tei .hidden,
+div.tei > .anchor,
 .display-n ~ .n,
 td .n,
 td.ref > div:first-child ~ *,
@@ -482,7 +483,9 @@ body > * > .name,
 td.n,
 .option-item,
 td .label,
-td.label{
+td.label,
+.tei .ref .rend,
+.tei .milestone .rend{
     font-size: smaller;
 }
 .name,
@@ -579,7 +582,15 @@ td,
 td div{
     padding: 2px;
 }
-div.lb{
+td div.tei > div,
+.tei .ref *,
+.tei .milestone *{
+    padding: 0px;
+}
+div.lb,
+div.a,
+div.b,
+div.common{
     padding: 0px;
 }
 td.version.filler{

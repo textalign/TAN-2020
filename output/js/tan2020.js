@@ -204,7 +204,7 @@ $(function () {
             $(tdSort).appendTo(this);
         });
     };
-    $(".switch").click(function () {
+    $("div > .switch").click(function () {
         /* This function turns sources on and off */
         /*thisLabelRaw = $(this).parent().children('.label').text();*/
         thisLabelRaw = $(this).parent().children('.label').text();
@@ -233,7 +233,7 @@ $(function () {
         /* and show that the item has been suppressed */
         $(this).parent().toggleClass('suppressed');
     });
-    $(".classSwitch").click(function () {
+    $("div > .classSwitch").click(function () {
         /* This function turns classes on and off */
         thisElementName = $(this).children('.elementName').text();
         thisClassName = $(this).children('.className').text();
@@ -265,7 +265,7 @@ jQuery.fn.justtext = function () {
     return $(this).clone().children().remove().end().text();
 };
 $(".label").click(function () {
-    $(this).nextAll().toggle("fast");
+    $(this).nextAll("div, table").toggle("fast");
 });
 prepareDocument = function () {
     repositionTokClaims();

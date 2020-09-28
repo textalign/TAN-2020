@@ -29,10 +29,6 @@ div.e-u:hover {
 {
    background-color: aliceblue;
 }
-.e-u.a-other,
-.e-a.a-other,
-.e-b.a-other,
-.other-picker.a-other,
 .fragment
 {
    background-color: lightgray;
@@ -45,6 +41,12 @@ thead > tr:first-of-type > th[colspan] {
 }
 .e-u {
    border: solid black 1px;
+}
+.e-u.a-other,
+.e-a.a-other,
+.e-b.a-other,
+.other-picker.a-other{
+    border: solid green 1px;
 }
 
 /* COLOR */
@@ -65,7 +67,8 @@ thead > tr:first-of-type > th[colspan] {
    text-decoration: underline;
 }
 .e-div > .e-ref,
-.e-div > .a-n{
+.e-div > .a-n,
+.title{
     color: blue
 }
 
@@ -88,7 +91,7 @@ div.e-collation > *,
 .e-txt,
 .e-u,
 .e-c,
-td *,
+.e-stats td *,
 .label > *,
 .venn-a,
 .venn-b,
@@ -105,7 +108,7 @@ div.e-witness,
 .hide,
 div.e-a.hide,
 div.e-b.hide,
-.label ~ *,
+div.label ~ *,
 script,
 /*.e-div > .a-n,*/
 .e-div > .e-n,
@@ -118,17 +121,19 @@ script,
 .e-div > .e-ref > .e-n,
 .e-div > .a-type,
 .e-div > .e-type,
+.a-ed-who,
+.a-ed-when,
+.e-ed-who,
 .a-part,
 .a-org,
 .a-sample,
 .a-q{
    display: none
 }
-/*.venns > .venn:nth-of-type(6) > .label ~ *,
-.venns > .label ~ div
+td div.label ~ *
 {
    display: inherit;
-}*/
+}
 
 /* FONTS */
 .last-picker,
@@ -136,12 +141,14 @@ script,
    font-weight: initial;
 }
 .label,
-.bottomline {
+.bottomline,
+.title{
    font-weight: 900;
 }
 .explanation {
    font-style: italic;
 }
+.title,
 body > div > div.label{
    font-size:larger;
 }
