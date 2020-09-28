@@ -10,7 +10,7 @@
 
     <xsl:param name="default-div-type-sequence" select="('hom', 'sec', 'sub')"/>
     <xsl:param name="default-div-type-for-centered-p" select="'title'"/>
-    <!-- The next parameter provides an advanced way to replace text with empty <div>s with @level @n and @type, using tan:batch-replace-advanced() -->
+    <!-- The next parameter provides an advanced way to replace text with empty <div>s with @_level @n and @type, using tan:batch-replace-advanced() -->
     <xsl:param name="text-to-div-replacements" as="element()*"/>
     <xsl:param name="default-ref-regex" select="'\s*(\d+)\W+(\d+)\W*(\d*)\W*'"/>
     <xsl:param name="docx-is-first-level-hierarchy" as="xs:boolean" select="false()"/>
@@ -36,7 +36,7 @@
             select="$input-items[w:comments/@xml:base = $this-base-uri]"/>
         <xsl:element name="body" namespace="{$template-namespace}">
             <xsl:if test="$docx-is-first-level-hierarchy">
-                <div level="1" type="{$default-div-type-sequence[1]}" n="{$this-docx-number}"/>
+                <div _level="1" type="{$default-div-type-sequence[1]}" n="{$this-docx-number}"/>
             </xsl:if>
             <xsl:apply-templates mode="#current">
                 <xsl:with-param name="comments" select="$these-comments" tunnel="yes"/>
@@ -57,7 +57,7 @@
         <xsl:choose>
             <xsl:when test="exists($this-p-type)">
                 <xsl:element name="div" namespace="{$template-namespace}">
-                    <xsl:attribute name="level"
+                    <xsl:attribute name="_level"
                         select="
                             if ($docx-is-first-level-hierarchy) then
                                 2
@@ -115,7 +115,7 @@
         </xsl:copy>
     </xsl:template>
     <xsl:template match="text()" mode="input-pass-2">
-        <xsl:variable name="ancestor-level" select="xs:integer((ancestor::*/@level)[last()])"/>
+        <xsl:variable name="ancestor-level" select="xs:integer((ancestor::*/@_level)[last()])"/>
         <xsl:variable name="this-level"
             select="
                 if (exists($ancestor-level)) then
@@ -134,7 +134,7 @@
                             <xsl:variable name="this-n" select="regex-group($this-pos)"/>
                             <xsl:if test="string-length($this-n) gt 0">
                                 <xsl:element name="div" namespace="{$template-namespace}">
-                                    <xsl:attribute name="level" select="$this-pos"/>
+                                    <xsl:attribute name="_level" select="$this-pos"/>
                                     <xsl:choose>
                                         <xsl:when test="$this-n = ('T', 'Τ')">
                                             <xsl:attribute name="type" select="'title'"/>
@@ -160,7 +160,7 @@
 
     <!-- PASS 3 -->
     <!-- Goal: convert the flat hierarchy to a regular one -->
-    <xsl:template match="*[*:div[@level]]" mode="input-pass-3">
+    <xsl:template match="*[*:div[@_level]]" mode="input-pass-3">
         <xsl:copy>
             <xsl:copy-of select="@*"/>
             <xsl:copy-of select="tan:sequence-to-tree(node())"/>
@@ -174,11 +174,11 @@
     <xsl:template match="*[*:div]" mode="input-pass-4">
         <xsl:variable name="this-div" select="."/>
         <xsl:copy>
-            <xsl:copy-of select="@*"/>
+            <xsl:copy-of select="@*[not(starts-with(name(.), '_'))]"/>
             <xsl:for-each-group select="*" group-adjacent="@n">
                 <xsl:variable name="new-group" as="element()">
                     <xsl:element name="div" namespace="{$template-namespace}">
-                        <xsl:copy-of select="current-group()[1]/@*"/>
+                        <xsl:copy-of select="current-group()[1]/@*[not(starts-with(name(.), '_'))]"/>
                         <xsl:copy-of select="current-group()/node()"/>
                     </xsl:element>
                 </xsl:variable>

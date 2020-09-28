@@ -328,6 +328,7 @@
       <xsl:copy>
          <xsl:copy-of select="@*"/>
          <xsl:copy-of select="$new-content"/>
+         <xsl:apply-templates mode="#current"/>
       </xsl:copy>
    </xsl:template>
 

@@ -9,7 +9,7 @@
 
     <xsl:param name="attribute-values-to-add-to-class-attribute" as="xs:string*" select="('type')"/>
     <xsl:param name="attributes-to-convert-to-elements" as="xs:string*"
-        select="('href', 'accessed-when', 'type', 'resp', 'wit')"/>
+        select="('href', 'accessed-when', 'type', 'resp', 'wit', 'rend')"/>
     <xsl:param name="attributes-to-retain" as="xs:string*" select="('xml:lang')"/>
     <xsl:param name="children-element-values-to-add-to-class-attribute" as="xs:string*"
         select="('type')"/>
