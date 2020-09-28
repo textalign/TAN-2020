@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns="tag:textalign.net,2015:ns" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
    xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tan="tag:textalign.net,2015:ns"
-   xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:saxon="http://saxon.sf.net/"
+   xmlns:saxon="http://saxon.sf.net/"
    xmlns:html="http://www.w3.org/1999/xhtml" xmlns:tei="http://www.tei-c.org/ns/1.0"
    xmlns:file="http://expath.org/ns/file" xmlns:bin="http://expath.org/ns/binary"
+   xmlns:map="http://www.w3.org/2005/xpath-functions/map"
    xmlns:math="http://www.w3.org/2005/xpath-functions/math" exclude-result-prefixes="#all"
    version="3.0">
 
@@ -28,7 +29,7 @@
    <xsl:variable name="doc-history" select="tan:get-doc-history($orig-self)"/>
    <!--<xsl:variable name="doc-filename" select="replace($doc-uri, '.*/([^/]+)$', '$1')"/>-->
    <xsl:variable name="doc-filename" select="tan:cfne(/)"/>
-   <xsl:param name="saxon-extension-functions-available" static="yes" as="xs:boolean" select="fn:function-available('saxon:evaluate', 3)"/>
+   <xsl:param name="saxon-extension-functions-available" static="yes" as="xs:boolean" select="function-available('saxon:evaluate', 3)"/>
    
    <!-- sources -->
    <!--<xsl:variable name="sources-1st-da" select="tan:get-1st-doc($head/tan:source)"/>
@@ -126,11 +127,6 @@
             'i'"
       as="xs:string?"/>
    <xsl:param name="searches-suppress-what-text" as="xs:string?" select="'[\p{M}]'"/>
-
-   <!-- regular expressions to detect the end of sentences, clauses, and words -->
-   <xsl:param name="sentence-end-regex" select="'[\.\?!]+\p{P}*\s*'"/>
-   <xsl:param name="clause-end-regex" select="'\w\p{P}+\s*'"/>
-   <xsl:param name="word-end-regex" select="'\s+'"/>
 
    <!--<xsl:variable name="local-TAN-collection" as="document-node()*"
       select="tan:collection($local-catalog, (), (), ())"/>-->
@@ -973,34 +969,46 @@
 
    <xsl:function name="tan:tree-to-sequence" as="item()*">
       <!-- Input: any XML fragment -->
-      <!-- Output: a flattened sequence of XML nodes representing the original fragment. Each element is given a new @level specifying the level of hierarchy the element had in the original. -->
-      <!-- You may wish to run the results of this output through the function tan:consolidate-identical-adjacent-divs() -->
+      <!-- Output: a flattened sequence of XML nodes representing the original fragment. Each element is given a new @_level 
+         specifying the level of hierarchy the element had in the original. Closing tags are specified by <_close-at id=""/>
+         with a corresponding @_close-at in the opening tag. Empty elements are retained as-is. -->
       <xsl:param name="xml-fragment" as="item()*"/>
       <xsl:apply-templates select="$xml-fragment" mode="tree-to-sequence">
          <xsl:with-param name="current-level" select="1"/>
       </xsl:apply-templates>
    </xsl:function>
-   <xsl:template match="*" mode="tree-to-sequence">
+   <xsl:template match="*[node()]" mode="tree-to-sequence">
       <xsl:param name="current-level"/>
-      <xsl:variable name="next-text-sibling" select="following-sibling::node()[1]/self::text()"/>
+      <xsl:variable name="this-id" select="generate-id(.)"/>
       <xsl:copy>
          <xsl:copy-of select="@*"/>
-         <xsl:attribute name="level" select="$current-level"/>
-         <xsl:attribute name="next-sibling-text-length" select="string-length($next-text-sibling)"/>
+         <xsl:attribute name="_level" select="$current-level"/>
+         <xsl:attribute name="_close-at" select="$this-id"/>
       </xsl:copy>
       <xsl:apply-templates mode="#current">
          <xsl:with-param name="current-level" select="$current-level + 1"/>
       </xsl:apply-templates>
+      <_close-at id="{$this-id}"/>
    </xsl:template>
 
    <xsl:function name="tan:sequence-to-tree" as="item()*">
       <!-- One-parameter version of the more complete one below -->
       <xsl:param name="sequence-to-reconstruct" as="item()*"/>
-      <xsl:sequence select="tan:sequence-to-tree($sequence-to-reconstruct, true())"/>
+      <xsl:sequence select="tan:sequence-to-tree($sequence-to-reconstruct, false())"/>
    </xsl:function>
    <xsl:function name="tan:sequence-to-tree" as="item()*">
       <!-- Input: a result of tan:tree-to-sequence(); a boolean -->
-      <!-- Output: the original tree; if the boolean is true, then any first children that are text nodes will be wrapped in a shallow copy of the first child element -->
+      <!-- Output: the original tree; if the boolean is true, then any first children that precede the next level 
+         will be wrapped in an element like the first child element. -->
+      <!-- If a given opening tag has a corresponding <_close-at> then what is between will become the children
+         of the element, and what comes after its following siblings. -->
+      <!-- This is the inverse of the function tan:tree-to-sequence(). That is, tan:sequence-to-tree($i) => 
+         tan:tree-to-sequence() should result in a copy of $i. -->
+      <!-- This function is especially helpful for a raw text transcription that needs to be converted to a
+         class-1 body via the inline numerical references. The technique is to replace the numerical references 
+         with empty <div>s, each one with @n and @type correctly assessed based on the match, and a @_level to 
+         specify where in the hierarchy it should sit. -->
+      <!-- You may wish to run the results of this output through tan:consolidate-identical-adjacent-divs() -->
       <xsl:param name="sequence-to-reconstruct" as="item()*"/>
       <xsl:param name="fix-orphan-text" as="xs:boolean"/>
       <xsl:variable name="sequence-prepped" as="element()">
@@ -1016,7 +1024,7 @@
       </xsl:variable>
       <xsl:copy-of select="$results/node()"/>
    </xsl:function>
-   <xsl:template match="*" mode="sequence-to-tree">
+   <xsl:template match="*[*[@_level]]" mode="sequence-to-tree">
       <xsl:param name="level-so-far" as="xs:integer"/>
       <xsl:param name="fix-orphan-text" as="xs:boolean" tunnel="yes"/>
       <xsl:variable name="this-element" select="."/>
@@ -1024,61 +1032,37 @@
       <xsl:variable name="level-to-process" select="$level-so-far + 1"/>
       <xsl:copy>
          <xsl:copy-of select="@*"/>
-         <xsl:for-each-group select="node()" group-starting-with="*[@level = $level-to-process]">
+         <xsl:for-each-group select="node()" group-starting-with="*[@_level = $level-to-process]">
             <xsl:variable name="this-head" select="current-group()[1]"/>
-            <xsl:variable name="this-tail-text"
-               select="
-                  if (count(current-group()) gt 1) then
-                     current-group()[last()]/self::text()
-                  else
-                     ()"/>
-            <xsl:variable name="this-next-sibling-text-memo"
-               select="$this-head/@next-sibling-text-length"/>
-            <xsl:variable name="this-sibling-length"
-               select="(xs:integer($this-head/@next-sibling-text-length), 0)[1]"/>
-            <xsl:variable name="this-tail-length"
-               select="
-                  if ($this-tail-text instance of text()) then
-                     string-length($this-tail-text)
-                  else
-                     ()"/>
-            <xsl:variable name="this-tail-section-to-be-child"
-               select="
-                  if ($this-tail-text instance of text()) then
-                     substring($this-tail-text, 1, ($this-tail-length - $this-sibling-length))
-                  else
-                     ()"/>
-            <xsl:variable name="this-tail-section-to-be-sibling"
-               select="
-                  if ($this-tail-text instance of text()) then
-                     substring($this-tail-text, ($this-tail-length - $this-sibling-length) + 1)
-                  else
-                     ()"/>
-            <xsl:variable name="the-rest"
-               select="current-group() except ($this-head, $this-tail-text)"/>
+            <xsl:variable name="this-is-new-group" as="xs:boolean" select="($this-head/@_level = $level-to-process, false())[1]"/>
+            <xsl:variable name="this-close-at-id" select="$this-head/@_close-at"/>
             <xsl:variable name="new-group" as="item()*">
-               <xsl:if test="$this-head/@level = $level-to-process">
-                  <xsl:element name="{name($this-head)}" namespace="{namespace-uri($this-head)}">
-                     <xsl:copy-of
-                        select="$this-head/(@* except (@level, @next-sibling-text-length))"/>
-                     <xsl:copy-of select="$the-rest"/>
-                     <xsl:copy-of select="$this-tail-section-to-be-child"/>
-                  </xsl:element>
-                  <xsl:value-of select="$this-tail-section-to-be-sibling"/>
+               <xsl:if test="$this-is-new-group">
+                  <xsl:for-each-group select="current-group()" group-starting-with="tan:_close-at[@id = $this-close-at-id]">
+                     <xsl:choose>
+                        <xsl:when test="current-group()[1][@id = $this-close-at-id]">
+                           <xsl:copy-of select="tail(current-group())"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                           <xsl:element name="{name($this-head)}" namespace="{namespace-uri($this-head)}">
+                              <xsl:copy-of select="$this-head/(@* except (@level | @_close-at))"/>
+                              <xsl:copy-of select="tail(current-group())"/>
+                           </xsl:element>
+                        </xsl:otherwise>
+                     </xsl:choose>
+                  </xsl:for-each-group> 
                </xsl:if>
             </xsl:variable>
             <xsl:choose>
-               <xsl:when
-                  test="
-                     $this-head instance of text() and $fix-orphan-text
-                     and exists($first-child-element) and matches($this-head, '\S')">
+               <xsl:when test="not($this-is-new-group) and $fix-orphan-text">
                   <xsl:element name="{name($first-child-element)}"
                      namespace="{namespace-uri($first-child-element)}">
-                     <xsl:copy-of select="$first-child-element/(@* except @level)"/>
-                     <xsl:value-of select="current-group()"/>
+                     <xsl:copy-of select="$first-child-element/(@* except (@_level | @_close-at))"/>
+                     <xsl:copy-of select="current-group()"/>
                   </xsl:element>
+
                </xsl:when>
-               <xsl:when test="not(exists($new-group))">
+               <xsl:when test="not($this-is-new-group) or not(exists($new-group))">
                   <xsl:copy-of select="current-group()"/>
                </xsl:when>
                <xsl:otherwise>
@@ -1101,7 +1085,7 @@
    </xsl:function>
    <xsl:template match="*[*:div]" mode="consolidate-identical-adjacent-divs">
       <xsl:variable name="these-divs" select="*:div"/>
-      <xsl:variable name="this-div-namespace" select="fn:namespace-uri(*:div[1])"/>
+      <xsl:variable name="this-div-namespace" select="namespace-uri(*:div[1])"/>
       <xsl:copy>
          <xsl:copy-of select="@*"/>
          <xsl:copy-of select="node() except ($these-divs | $these-divs/preceding-sibling::node()[1]/self::text())"/>
@@ -1113,7 +1097,7 @@
                   <xsl:copy-of select="current-group()/node()"/>
                </xsl:element>
             </xsl:variable>
-            <xsl:copy-of select="fn:current-group()[1]/preceding-sibling::node()[1]/text()"/>
+            <xsl:copy-of select="current-group()[1]/preceding-sibling::node()[1]/text()"/>
             <xsl:apply-templates select="$new-group" mode="#current"/>
          </xsl:for-each-group>
       </xsl:copy>
@@ -1180,10 +1164,892 @@
       </xsl:choose>
    </xsl:template>
    
+   
+   <!-- Processing diff and collate output -->
+   
+   <xsl:function name="tan:infuse-diff-and-collate-stats" as="element()?">
+      <!-- Input: output from tan:diff() or tan:collate(); perhaps elements defining unimportant changes (see below) -->
+      <!-- Output: the output wrapped in a <group>, whose first child is <stats>, supplying statistics for the difference
+      or collation. A collation will also include a <venns> with statistical analysis of sources as statistics suitable for 
+      3-way Venn diagrams. The diff output will be imprinted with @_pos and @_len, to put it on par with the output of 
+      tan:collate(), where the position of each string can be calculated -->
+      <!-- Unimportant changes (2nd parameter) are elements of any name, grouping <c>s. Each group of <c>s will be treated
+      as equivalent. For example, to treat the ' and " as statistically irrelevant, supply <alias><c>'</c><c>"</c></alias> -->
+      
+      <xsl:param name="diff-or-collate-input" as="element()?"/>
+      <xsl:param name="unimportant-change-character-aliases" as="element()*"/>
+      <xsl:variable name="input-prepped" as="element()">
+         <group>
+            <xsl:copy-of select="$diff-or-collate-input"/>
+         </group>
+      </xsl:variable>
+      <xsl:apply-templates select="$input-prepped" mode="infuse-diff-and-collate-stats">
+         <xsl:with-param name="unimportant-change-character-aliases"
+            select="$unimportant-change-character-aliases" tunnel="yes"/>
+      </xsl:apply-templates>
+   </xsl:function>
+   
+   <!-- To use the following template mode, wrap the results of tan:diff() or tan:collate() in some element (doesn't matter what
+   its name is). The output will be the same node, but with an infusion of statistics. -->
+   
+   <xsl:template match="*[tan:diff]" mode="infuse-diff-and-collate-stats">
+      <xsl:param name="unimportant-change-character-aliases" as="element()*" tunnel="yes"/>
+      <xsl:variable name="these-as" select="tan:diff/tan:a"/>
+      <xsl:variable name="these-bs" select="tan:diff/tan:b"/>
+      <xsl:variable name="these-commons" select="tan:diff/tan:common"/>
+      <xsl:variable name="these-a-lengths"
+         select="
+            for $i in $these-as
+            return
+               string-length($i)"/>
+      <xsl:variable name="these-b-lengths"
+         select="
+            for $i in $these-bs
+            return
+               string-length($i)"/>
+      
+      <xsl:variable name="unique-a-length" select="sum($these-a-lengths)"/>
+      <xsl:variable name="unique-b-length" select="sum($these-b-lengths)"/>
+      <xsl:variable name="this-common-length" select="string-length(string-join($these-commons))"/>
+      <xsl:variable name="orig-a-length" select="$unique-a-length + $this-common-length"/>
+      <xsl:variable name="orig-b-length" select="$unique-b-length + $this-common-length"/>
+      
+      <xsl:variable name="these-character-alias-exceptions" as="element()">
+         <exceptions>
+            <xsl:for-each-group select="tan:diff/*" group-ending-with="tan:common">
+               <xsl:variable name="this-a" select="current-group()/self::tan:a"/>
+               <xsl:variable name="this-b" select="current-group()/self::tan:b"/>
+               <xsl:variable name="this-char-alias"
+                  select="$unimportant-change-character-aliases[tan:c = $this-a][tan:c = $this-b]"/>
+               <group>
+                  <xsl:if test="exists($this-char-alias)">
+                     <xsl:copy-of select="$this-a"/>
+                     <xsl:copy-of select="$this-b"/>
+                  </xsl:if>
+               </group>
+            </xsl:for-each-group>
+         </exceptions>
+      </xsl:variable>
+      <!--<xsl:variable name="this-exception-length" select="count($these-character-alias-exceptions)"/>-->
+      <xsl:variable name="exception-a-length"
+         select="string-length(string-join($these-character-alias-exceptions/*/tan:a))"/>
+      <xsl:variable name="exception-b-length"
+         select="string-length(string-join($these-character-alias-exceptions/*/tan:b))"/>
+      
+      <xsl:variable name="unique-a-length-adjusted" select="$unique-a-length - $exception-a-length"/>
+      <xsl:variable name="unique-b-length-adjusted" select="$unique-b-length - $exception-b-length"/>
+      
+      <xsl:variable name="this-full-length" select="string-length(tan:diff)"/>
+
+      <!--<xsl:variable name="this-a-length" select="$orig-a-length - $this-exception-length"/>
+      <xsl:variable name="this-b-length" select="$orig-b-length - $this-exception-length"/>-->
+      <xsl:variable name="unique-a-portion" select="$unique-a-length-adjusted div $orig-a-length"/>
+      <xsl:variable name="unique-b-portion" select="$unique-b-length-adjusted div $orig-b-length"/>
+      <xsl:variable name="unique-both-portion" select="($unique-a-length-adjusted + $unique-b-length-adjusted) div $this-full-length"/>
+      
+
+      <xsl:copy>
+         <xsl:copy-of select="@*"/>
+         <stats>
+            <witness id="a" class="e-a">
+               <xsl:copy-of select="tan:file[1]/@ref"/>
+               <uri>
+                  <xsl:value-of select="tan:file[1]/@uri"/>
+               </uri>
+               <length>
+                  <xsl:value-of select="$orig-a-length"/>
+               </length>
+               <diff-count>
+                  <xsl:value-of select="count($these-as) - count($these-character-alias-exceptions/*/tan:a)"/>
+               </diff-count>
+               <diff-length>
+                  <xsl:value-of select="$unique-a-length-adjusted"/>
+               </diff-length>
+               <diff-portion>
+                  <xsl:value-of select="format-number($unique-a-portion, '0.0%')"/>
+               </diff-portion>
+            </witness>
+            <witness id="b" class="e-b">
+               <xsl:copy-of select="tan:file[2]/@ref"/>
+               <uri>
+                  <xsl:value-of select="tan:file[2]/@uri"/>
+               </uri>
+               <length>
+                  <xsl:value-of select="$orig-b-length"/>
+               </length>
+               <diff-count>
+                  <xsl:value-of select="count($these-bs) - count($these-character-alias-exceptions/*/tan:b)"/>
+               </diff-count>
+               <diff-length>
+                  <xsl:value-of select="$unique-b-length-adjusted"/>
+               </diff-length>
+               <diff-portion>
+                  <xsl:value-of select="format-number($unique-b-portion, '0.0%')"/>
+               </diff-portion>
+            </witness>
+            <diff id="diff" class="a-diff">
+               <uri>
+                  <xsl:value-of select="@_target-uri"/>
+               </uri>
+               <length>
+                  <xsl:value-of select="$this-full-length"/>
+               </length>
+               <diff-count>
+                  <xsl:value-of select="count($these-character-alias-exceptions/*[not(*)])"/>
+               </diff-count>
+               <diff-length>
+                  <xsl:value-of select="$unique-a-length-adjusted + $unique-b-length-adjusted"/>
+               </diff-length>
+               <diff-portion>
+                  <xsl:value-of select="format-number($unique-both-portion, '0.0%')"/>
+               </diff-portion>
+            </diff>
+            <xsl:if test="exists($these-character-alias-exceptions/*/*)">
+               <note>
+                  <xsl:text>The statistics above exclude differences of </xsl:text>
+                  <xsl:value-of
+                     select="
+                        string-join(for $i in tan:distinct-items($these-character-alias-exceptions/*)
+                        return
+                           string-join($i/tan:c, ' and '), '; ')"/>
+                  <xsl:text>.</xsl:text>
+               </note>
+            </xsl:if>
+         </stats>
+         <xsl:apply-templates mode="#current"/>
+      </xsl:copy>
+
+   </xsl:template>
+    
+   <xsl:template match="tan:diff" mode="infuse-diff-and-collate-stats">
+      <xsl:copy-of select="tan:stamp-diff-with-text-data(.)"/>
+   </xsl:template>
+    
+   <xsl:template match="*[tan:collation]" mode="infuse-diff-and-collate-stats">
+      <xsl:param name="unimportant-change-character-aliases" as="element()*" tunnel="yes"/>
+      <xsl:variable name="this-group" select="."/>
+      <xsl:variable name="all-us" select="tan:collation/tan:u"/>
+      <xsl:variable name="all-u-groups" as="element()">
+         <u-groups>
+            <!--  group-by="tokenize(@w, ' ')" -->
+            <xsl:for-each-group select="$all-us" group-by="tan:wit/@ref">
+               <xsl:sort
+                  select="
+                     if (current-grouping-key() castable as xs:integer) then
+                        xs:integer(current-grouping-key())
+                     else
+                        0"/>
+               <xsl:sort select="current-grouping-key()"/>
+               <group n="{current-grouping-key()}">
+                  <xsl:copy-of select="current-group()"/>
+               </group>
+            </xsl:for-each-group>
+         </u-groups>
+      </xsl:variable>
+      <xsl:variable name="this-target-uri" select="@_target-uri"/>
+      <!--<xsl:variable name="this-full-length" select="string-length(string-join(tan:collation/(* except tan:witness)))"/>-->
+      <xsl:variable name="this-full-length"
+         select="string-length(string-join(tan:collation/*/tan:txt))"/>
+
+      <xsl:variable name="us-excepted-by-character-alias-exceptions" as="element()*">
+         <xsl:for-each-group select="tan:collation/tan:u"
+            group-adjacent="
+               for $i in tan:txt
+               return
+                  ($unimportant-change-character-aliases[tan:c = $i]/@n, '')[1]">
+            <xsl:variable name="these-us" select="current-group()"/>
+
+            <xsl:variable name="is-for-every-ref"
+               select="
+                  every $i in $this-group/tan:file/@ref
+                     satisfies exists($these-us/tan:wit[@ref = $i])"/>
+
+            <xsl:if test="(string-length(current-grouping-key()) gt 0) and $is-for-every-ref">
+               <xsl:sequence select="current-group()"/>
+            </xsl:if>
+         </xsl:for-each-group>
+      </xsl:variable>
+      <xsl:variable name="this-exception-length"
+         select="count($us-excepted-by-character-alias-exceptions)"/>
+
+      <xsl:variable name="this-common-length"
+         select="string-length(string-join(tan:collation/tan:c/tan:txt))"/>
+
+      <xsl:variable name="this-collation-diff-length"
+         select="string-length(string-join($all-us/tan:txt))"/>
+      <xsl:variable name="these-files" select="tan:file"/>
+      <xsl:variable name="this-file-count" select="count($these-files)"/>
+      <xsl:variable name="these-witnesses" select="tan:collation/tan:witness"/>
+      <xsl:variable name="basic-stats" as="element()">
+         <stats>
+            <xsl:for-each select="$these-files">
+               <xsl:variable name="this-pos" select="position()"/>
+               <xsl:variable name="this-label"
+                  select="string(($these-witnesses[$this-pos]/@id, $this-pos)[1])"/>
+               <xsl:variable name="this-diff-group" select="$all-u-groups/tan:group[$this-pos]"/>
+               <xsl:variable name="these-diffs" select="$this-diff-group/tan:u"/>
+               <xsl:variable name="these-diff-exceptions"
+                  select="$us-excepted-by-character-alias-exceptions[tan:wit/@ref = $this-label]"/>
+               <xsl:variable name="this-exception-length" select="count($these-diff-exceptions)"/>
+               <xsl:variable name="this-diff-length"
+                  select="string-length(string-join($these-diffs)) - $this-exception-length"/>
+               <xsl:variable name="this-diff-portion"
+                  select="$this-diff-length div ($this-common-length + $this-diff-length + $this-exception-length)"/>
+               <witness class="{'a-w-' || @ref}">
+                  <xsl:copy-of select="@ref"/>
+                  <uri>
+                     <xsl:value-of select="@uri"/>
+                  </uri>
+                  <length>
+                     <xsl:value-of select="@length"/>
+                  </length>
+                  <diff-count>
+                     <xsl:value-of
+                        select="count($these-diffs[tan:txt]) - count($these-diff-exceptions)"/>
+                  </diff-count>
+                  <diff-length>
+                     <xsl:value-of select="$this-diff-length"/>
+                  </diff-length>
+                  <diff-portion>
+                     <xsl:value-of select="format-number($this-diff-portion, '0.0%')"/>
+                  </diff-portion>
+               </witness>
+            </xsl:for-each>
+         </stats>
+      </xsl:variable>
+
+      <!-- 3-way venns, to calculate distance of any version between any two others -->
+      <xsl:variable name="three-way-venns" as="element()">
+         <venns>
+            <xsl:if test="$this-file-count ge 3">
+               <xsl:for-each select="1 to ($this-file-count - 2)">
+                  <xsl:variable name="this-a-pos" select="."/>
+                  <xsl:variable name="this-a-label" select="$this-group/tan:file[$this-a-pos]/@ref"/>
+                  <xsl:for-each select="($this-a-pos + 1) to ($this-file-count - 1)">
+                     <xsl:variable name="this-b-pos" select="."/>
+                     <xsl:variable name="this-b-label"
+                        select="$this-group/tan:file[$this-b-pos]/@ref"/>
+                     <xsl:for-each select="($this-b-pos + 1) to $this-file-count">
+                        <xsl:variable name="this-c-pos" select="."/>
+                        <xsl:variable name="this-c-label"
+                           select="$this-group/tan:file[$this-c-pos]/@ref"/>
+                        <xsl:variable name="all-relevant-nodes"
+                           select="$this-group/tan:collation/*[tan:wit[@ref = ($this-a-label, $this-b-label, $this-c-label)]]"/>
+
+                        <xsl:variable name="these-excepted-us" as="element()*">
+                           <xsl:for-each-group select="$all-relevant-nodes/self::tan:u"
+                              group-adjacent="
+                                 for $i in tan:txt
+                                 return
+                                    ($unimportant-change-character-aliases[c = $i]/@n, '')[1]">
+                              <xsl:variable name="is-for-every-ref"
+                                 select="
+                                    (current-group()/tan:wit/@ref = $this-a-label) and (current-group()/tan:wit/@ref = $this-b-label)
+                                    and (current-group()/tan:wit/@ref = $this-c-label)"/>
+                              <xsl:if
+                                 test="(string-length(current-grouping-key()) gt 0) and $is-for-every-ref">
+                                 <xsl:sequence select="current-group()"/>
+                              </xsl:if>
+                           </xsl:for-each-group>
+                        </xsl:variable>
+                        <xsl:variable name="this-exception-length"
+                           select="count($these-excepted-us)"/>
+
+                        <xsl:variable name="this-full-length"
+                           select="string-length(string-join($all-relevant-nodes))"/>
+                        <xsl:variable name="these-a-nodes"
+                           select="$all-relevant-nodes[tan:wit/@ref = $this-a-label]"/>
+                        <xsl:variable name="these-b-nodes"
+                           select="$all-relevant-nodes[tan:wit/@ref = $this-b-label]"/>
+                        <xsl:variable name="these-c-nodes"
+                           select="$all-relevant-nodes[tan:wit/@ref = $this-c-label]"/>
+                        <!-- The seven parts of a 3-way venn diagram -->
+                        <xsl:variable name="these-a-only-nodes"
+                           select="$these-a-nodes except ($these-b-nodes, $these-c-nodes, $these-excepted-us)"/>
+                        <xsl:variable name="these-b-only-nodes"
+                           select="$these-b-nodes except ($these-a-nodes, $these-c-nodes, $these-excepted-us)"/>
+                        <xsl:variable name="these-c-only-nodes"
+                           select="$these-c-nodes except ($these-a-nodes, $these-b-nodes, $these-excepted-us)"/>
+                        <xsl:variable name="these-a-b-only-nodes"
+                           select="($these-a-nodes intersect $these-b-nodes) except ($these-c-nodes, $these-excepted-us)"/>
+                        <xsl:variable name="these-a-c-only-nodes"
+                           select="($these-a-nodes intersect $these-c-nodes) except ($these-b-nodes, $these-excepted-us)"/>
+                        <xsl:variable name="these-b-c-only-nodes"
+                           select="($these-b-nodes intersect $these-c-nodes) except ($these-a-nodes, $these-excepted-us)"/>
+                        <xsl:variable name="these-a-b-and-c-nodes"
+                           select="$all-relevant-nodes[tan:wit/@ref = $this-a-label][tan:wit/@ref = $this-b-label][tan:wit/@ref = $this-c-label], $these-excepted-us"/>
+                        <xsl:variable name="length-a-only"
+                           select="string-length(string-join($these-a-only-nodes))"/>
+                        <xsl:variable name="length-b-only"
+                           select="string-length(string-join($these-b-only-nodes))"/>
+                        <xsl:variable name="length-c-only"
+                           select="string-length(string-join($these-c-only-nodes))"/>
+                        <xsl:variable name="length-a-b-only"
+                           select="string-length(string-join($these-a-b-only-nodes))"/>
+                        <xsl:variable name="length-a-c-only"
+                           select="string-length(string-join($these-a-c-only-nodes))"/>
+                        <xsl:variable name="length-b-c-only"
+                           select="string-length(string-join($these-b-c-only-nodes))"/>
+                        <xsl:variable name="length-a-b-and-c"
+                           select="string-length(string-join($these-a-b-and-c-nodes))"/>
+                        <venn>
+                           <a>
+                              <xsl:value-of select="$this-a-label"/>
+                           </a>
+                           <b>
+                              <xsl:value-of select="$this-b-label"/>
+                           </b>
+                           <c>
+                              <xsl:value-of select="$this-c-label"/>
+                           </c>
+                           <node-count>
+                              <xsl:value-of select="count($all-relevant-nodes)"/>
+                           </node-count>
+                           <length>
+                              <xsl:value-of select="$this-full-length"/>
+                           </length>
+                           <part>
+                              <a/>
+                              <node-count>
+                                 <xsl:value-of select="count($these-a-only-nodes)"/>
+                              </node-count>
+                              <length>
+                                 <xsl:value-of select="$length-a-only"/>
+                              </length>
+                              <portion>
+                                 <xsl:value-of select="$length-a-only div $this-full-length"/>
+                              </portion>
+                           </part>
+                           <part>
+                              <b/>
+                              <node-count>
+                                 <xsl:value-of select="count($these-b-only-nodes)"/>
+                              </node-count>
+                              <length>
+                                 <xsl:value-of select="$length-b-only"/>
+                              </length>
+                              <portion>
+                                 <xsl:value-of select="$length-b-only div $this-full-length"/>
+                              </portion>
+                              <texts>
+                                 <xsl:for-each select="$these-b-only-nodes">
+                                    <xsl:copy>
+                                       <xsl:copy-of select="tan:txt"/>
+                                       <xsl:copy-of select="tan:wit[@ref = $this-b-label]"/>
+                                    </xsl:copy>
+                                 </xsl:for-each>
+                              </texts>
+                           </part>
+                           <part>
+                              <c/>
+                              <node-count>
+                                 <xsl:value-of select="count($these-c-only-nodes)"/>
+                              </node-count>
+                              <length>
+                                 <xsl:value-of select="$length-c-only"/>
+                              </length>
+                              <portion>
+                                 <xsl:value-of select="$length-c-only div $this-full-length"/>
+                              </portion>
+                           </part>
+                           <part>
+                              <a/>
+                              <b/>
+                              <node-count>
+                                 <xsl:value-of select="count($these-a-b-only-nodes)"/>
+                              </node-count>
+                              <length>
+                                 <xsl:value-of select="$length-a-b-only"/>
+                              </length>
+                              <portion>
+                                 <xsl:value-of select="$length-a-b-only div $this-full-length"/>
+                              </portion>
+                           </part>
+                           <part>
+                              <a/>
+                              <c/>
+                              <node-count>
+                                 <xsl:value-of select="count($these-a-c-only-nodes)"/>
+                              </node-count>
+                              <length>
+                                 <xsl:value-of select="$length-a-c-only"/>
+                              </length>
+                              <portion>
+                                 <xsl:value-of select="$length-a-c-only div $this-full-length"/>
+                              </portion>
+                              <texts>
+                                 <xsl:for-each select="$these-a-c-only-nodes">
+                                    <xsl:copy>
+                                       <xsl:copy-of select="tan:txt"/>
+                                       <xsl:copy-of select="tan:wit[@ref = $this-a-label]"/>
+                                       <xsl:copy-of select="tan:wit[@ref = $this-c-label]"/>
+                                    </xsl:copy>
+                                 </xsl:for-each>
+                              </texts>
+                           </part>
+                           <part>
+                              <b/>
+                              <c/>
+                              <node-count>
+                                 <xsl:value-of select="count($these-b-c-only-nodes)"/>
+                              </node-count>
+                              <length>
+                                 <xsl:value-of select="$length-b-c-only"/>
+                              </length>
+                              <portion>
+                                 <xsl:value-of select="$length-b-c-only div $this-full-length"/>
+                              </portion>
+                           </part>
+                           <part>
+                              <a/>
+                              <b/>
+                              <c/>
+                              <node-count>
+                                 <xsl:value-of select="count($these-a-b-and-c-nodes)"/>
+                              </node-count>
+                              <length>
+                                 <xsl:value-of select="$length-a-b-and-c"/>
+                              </length>
+                              <portion>
+                                 <xsl:value-of select="$length-a-b-and-c div $this-full-length"/>
+                              </portion>
+                           </part>
+                           <xsl:if test="$this-exception-length gt 0">
+                              <note>
+                                 <xsl:text>The statistics above exclude differences consisting exclusively of </xsl:text>
+                                 <xsl:value-of
+                                    select="
+                                       string-join(for $i in tan:distinct-items($unimportant-change-character-aliases)
+                                       return
+                                          string-join($i/c, ' versus '), '; ')"/>
+                                 <xsl:text>.</xsl:text>
+                              </note>
+                           </xsl:if>
+                        </venn>
+                     </xsl:for-each>
+                  </xsl:for-each>
+               </xsl:for-each>
+            </xsl:if>
+         </venns>
+      </xsl:variable>
+
+
+      <xsl:copy>
+         <xsl:copy-of select="@*"/>
+         <stats>
+            <xsl:copy-of select="$basic-stats/*"/>
+            <collation id="collation" class="a-collation">
+               <uri>
+                  <xsl:value-of select="$this-target-uri"/>
+               </uri>
+               <length>
+                  <xsl:value-of select="$this-full-length"/>
+               </length>
+               <diff-count>
+                  <xsl:value-of select="count($all-us[tan:txt])"/>
+               </diff-count>
+               <diff-length>
+                  <xsl:value-of select="$this-collation-diff-length"/>
+               </diff-length>
+               <diff-portion>
+                  <xsl:value-of
+                     select="format-number(($this-collation-diff-length div $this-full-length), '0.0%')"
+                  />
+               </diff-portion>
+            </collation>
+            <xsl:if test="$this-exception-length gt 0">
+               <note>
+                  <xsl:text>The statistics above exclude differences consisting exclusively of </xsl:text>
+                  <xsl:value-of
+                     select="
+                        string-join(for $i in tan:distinct-items($unimportant-change-character-aliases)
+                        return
+                           string-join($i/c, ' versus '), '; ')"/>
+                  <xsl:text>.</xsl:text>
+               </note>
+            </xsl:if>
+            <xsl:copy-of select="$three-way-venns"/>
+         </stats>
+         <xsl:apply-templates mode="#current"/>
+      </xsl:copy>
+
+   </xsl:template>
+   
+   
+   <xsl:function name="tan:diff-a-map" as="map(xs:integer, item()*)?">
+      <!-- Input: the result of tan:diff() -->
+      <!-- Output: a map with integer entries representing the position of each a character, corresponding to the string value 
+         of its b counterpart. Characters that are added, and not just replaced, are wrapped in <add> -->
+      <!-- This function is used to make swaps from one text to another, where the replacement must take place 
+         character-by-character, such as in the dependent function tan:replace-diff() -->
+      <xsl:param name="diff-to-map" as="element(tan:diff)?"/>
+      <xsl:variable name="diff-stamped" select="tan:stamp-diff-with-text-data($diff-to-map)"/>
+      <xsl:apply-templates select="$diff-stamped" mode="diff-a-map"/>
+   </xsl:function>
+   
+   <xsl:template match="tan:diff" mode="diff-a-map">
+      <xsl:map>
+         <xsl:apply-templates mode="#current"/>
+      </xsl:map>
+   </xsl:template>
+   <xsl:template match="tan:b" mode="diff-a-map"/>
+   <xsl:template match="tan:common[@_pos = '1']" priority="1" mode="diff-a-map">
+      <xsl:variable name="prev-b" select="preceding-sibling::tan:b"/>
+      <!--<xsl:variable name="use-prev-b" select="not(exists(preceding-sibling::tan:a))"/>-->
+      <!-- Yes the next sibling might be an a, but in that case, we shouldn't grab the b, because that a will get it. -->
+      <xsl:variable name="this-corresponding-b" select="following-sibling::*[1]/self::tan:b[text()]"/>
+      <xsl:variable name="these-chars" select="string-to-codepoints(.)"/>
+      <xsl:variable name="char-count" select="count($these-chars)"/>
+      <xsl:for-each select="$these-chars">
+         <xsl:map-entry key="position()">
+            <xsl:choose>
+               <xsl:when test="position() eq 1 and position() eq $char-count">
+                  <xsl:if test="exists($prev-b)">
+                     <add><xsl:value-of select="$prev-b"/></add>
+                  </xsl:if>
+                  <xsl:value-of select="codepoints-to-string(.)"/>
+                  <xsl:if test="exists($this-corresponding-b)">
+                     <add><xsl:value-of select="$this-corresponding-b"/></add>
+                  </xsl:if>
+               </xsl:when>
+               <xsl:when test="position() eq 1">
+                  <xsl:if test="exists($prev-b)">
+                     <add><xsl:value-of select="$prev-b"/></add>
+                  </xsl:if>
+                  <xsl:value-of select="codepoints-to-string(.)"/>
+               </xsl:when>
+               <xsl:when test="position() eq $char-count">
+                  <xsl:value-of select="codepoints-to-string(.)"/>
+                  <xsl:if test="exists($this-corresponding-b)">
+                     <add><xsl:value-of select="$this-corresponding-b"/></add>
+                  </xsl:if>
+               </xsl:when>
+               <xsl:otherwise>
+                  <xsl:value-of select="codepoints-to-string(.)"/>
+               </xsl:otherwise>
+            </xsl:choose>
+            
+         </xsl:map-entry>
+      </xsl:for-each>
+      
+   </xsl:template>
+   <xsl:template match="tan:common" mode="diff-a-map">
+      <xsl:variable name="last-end" select="xs:integer(@_pos) - 1"/>
+      <xsl:variable name="this-corresponding-b" select="following-sibling::*[1]/self::tan:b[text()]"/>
+      <xsl:variable name="these-chars" select="string-to-codepoints(.)"/>
+      <xsl:variable name="char-count" select="count($these-chars)"/>
+      <xsl:for-each select="$these-chars">
+         <xsl:map-entry key="position() + $last-end">
+            <xsl:choose>
+               <xsl:when test="position() eq $char-count">
+                  <xsl:value-of select="codepoints-to-string(.)"/>
+                  <xsl:if test="exists($this-corresponding-b)">
+                     <add><xsl:value-of select="$this-corresponding-b"/></add>
+                  </xsl:if>
+               </xsl:when>
+               <xsl:otherwise>
+                  <xsl:value-of select="codepoints-to-string(.)"/>
+               </xsl:otherwise>
+            </xsl:choose>
+         </xsl:map-entry>
+      </xsl:for-each>
+   </xsl:template>
+   <xsl:template match="tan:a" mode="diff-a-map">
+      <xsl:variable name="last-end" select="xs:integer(@_pos) - 1"/>
+      <xsl:variable name="this-corresponding-b" select="following-sibling::*[1]/self::tan:b"/>
+      <xsl:variable name="char-count" select="xs:integer(@_len)"/>
+      <xsl:variable name="this-remnant" select="substring($this-corresponding-b, $char-count + 1)"/>
+      <xsl:for-each select="1 to $char-count">
+         <xsl:map-entry key=". + $last-end">
+            <xsl:if test=". = 1">
+               <xsl:value-of select="substring($this-corresponding-b, 1, $char-count)"/>
+               <xsl:if test="string-length($this-remnant) gt 0">
+                  <add><xsl:value-of select="$this-remnant"/></add>
+               </xsl:if>
+            </xsl:if>
+         </xsl:map-entry>
+      </xsl:for-each>
+   </xsl:template>
+   
+   
+   
+   <xsl:function name="tan:replace-diff" as="element()?">
+      <!-- Input: the results of tan:diff(); the original a and b strings -->
+      <!-- Output: the output, but with each <a>, and <b> replaced by the original strings. <common> follows the a string, not b. -->
+      <!-- This function was made to support a more relaxed approach to tan:diff(), one that avoids changes that should be ignored.
+      For example, if you are comparing "Gray" (=$a) and "greys" (=$b) and for your purposes, alternate spellings and case should be 
+      ignored, then make appropriate changes to the strings (=$a2, $b2) then tan:reconcile-diff($a, $b, tan:diff($a2, $b2)) will result 
+      in <diff><common>Gray</common><b>s</b></diff> -->
+      <xsl:param name="original-string-a" as="xs:string?"/>
+      <xsl:param name="original-string-b" as="xs:string?"/>
+      <xsl:param name="diff-to-replace" as="element()?"/>
+      
+      <xsl:variable name="diff-a" select="string-join($diff-to-replace/(tan:common | tan:a))"/>
+      <xsl:variable name="diff-b" select="string-join($diff-to-replace/(tan:common | tan:b))"/>
+      
+      <xsl:variable name="a2-to-a-diff" select="tan:diff($diff-a, $original-string-a, false())"/>
+      <xsl:variable name="b2-to-b-diff" select="tan:diff($diff-b, $original-string-b, false())"/>
+      
+      <xsl:variable name="a2-to-a-diff-map" as="map(xs:integer, item()*)?"
+         select="tan:diff-a-map($a2-to-a-diff)"/>
+      <xsl:variable name="b2-to-b-diff-map" as="map(xs:integer, item()*)?"
+         select="tan:diff-a-map($b2-to-b-diff)"/>
+      
+      <xsl:variable name="diff-to-replace-stamped" select="tan:stamp-diff-with-text-data($diff-to-replace)"/>
+      
+      <xsl:variable name="output-pass-1" as="element()">
+         <xsl:apply-templates select="$diff-to-replace-stamped" mode="replace-diff">
+            <xsl:with-param name="a2-to-a-diff-map" tunnel="yes" select="$a2-to-a-diff-map"/>
+            <xsl:with-param name="b2-to-b-diff-map" tunnel="yes" select="$b2-to-b-diff-map"/>
+         </xsl:apply-templates>
+      </xsl:variable>
+      
+      <xsl:variable name="output-pass-2" as="element()">
+         <!-- If there are tail-end additions shared by an a or commond with the next b, then normally they should be delayed -->
+         <diff>
+            <xsl:for-each-group select="$output-pass-1/*" group-adjacent="exists(tan:add[not(following-sibling::node())])">
+               <xsl:choose>
+                  <xsl:when test="(current-grouping-key() = true())">
+                     <xsl:for-each-group select="current-group()" group-ending-with="tan:b">
+                        <xsl:variable name="group-count" select="count(current-group())"/>
+                        <xsl:choose>
+                           <xsl:when test="exists(current-group()[last()]/self::tan:b)">
+                              <xsl:variable name="penultimate-item" select="current-group()[position() eq ($group-count - 1)]"/>
+                              <xsl:variable name="last-item" select="current-group()[last()]"/>
+                              <xsl:variable name="first-add"
+                                 select="$penultimate-item/tan:add[not(following-sibling::node())]"/>
+                              <xsl:variable name="second-add"
+                                 select="$last-item/tan:add[not(following-sibling::node())]"/>
+                              <xsl:copy-of select="current-group() except ($penultimate-item, $last-item)"/>
+                              <xsl:for-each select="$penultimate-item, $last-item">
+                                 <xsl:copy>
+                                    <xsl:apply-templates select="node() except tan:add[not(following-sibling::node())]" mode="shallow-skip-diff-add"/>
+                                 </xsl:copy>
+                              </xsl:for-each>
+                              <xsl:copy-of select="tan:diff($first-add, $second-add, false())/*"/>
+                           </xsl:when>
+                           <xsl:otherwise>
+                              <xsl:apply-templates select="current-group()" mode="shallow-skip-diff-add"/>
+                           </xsl:otherwise>
+                        </xsl:choose>
+                     </xsl:for-each-group> 
+                     
+                  </xsl:when>
+                  <xsl:otherwise>
+                     <xsl:apply-templates select="current-group()" mode="shallow-skip-diff-add"/>
+                  </xsl:otherwise>
+               </xsl:choose>
+            </xsl:for-each-group> 
+         </diff>
+         
+      </xsl:variable>
+      
+      
+      <xsl:variable name="diagnostics-on" select="false()"/>
+      <xsl:if test="$diagnostics-on">
+         <xsl:message select="'Diagnostics on, tan:adjust-diff()'"/>
+         <xsl:message select="'Orig string a: ' || $original-string-a"/>
+         <xsl:message select="'Orig string b: ' || $original-string-b"/>
+         <xsl:message select="'Diff to adjust: ', $diff-to-replace"/>
+      </xsl:if>
+      
+      <xsl:variable name="output-diagnostics-on" select="false()"/>
+      <xsl:choose>
+         <xsl:when test="$output-diagnostics-on">
+            <xsl:message select="'Replacing output of tan:replace-diff() with diagnostic output'"/>
+            <testing>
+               <a2-to-a-diff><xsl:copy-of select="$a2-to-a-diff"/></a2-to-a-diff>
+               <b2-to-b-diff><xsl:copy-of select="$b2-to-b-diff"/></b2-to-b-diff>
+               <a2-to-a-map><xsl:value-of select="map:for-each($a2-to-a-diff-map, function($k, $v){string($k) || ' ' || serialize($v) || ' (' || string(count($v)) || '); '})"/></a2-to-a-map>
+               <b2-to-b-map><xsl:value-of select="map:for-each($b2-to-b-diff-map, function($k, $v){string($k) || ' ' || serialize($v) || ' (' || string(count($v)) || '); '})"/></b2-to-b-map>
+               <diff-to-replace-stamped><xsl:copy-of select="$diff-to-replace-stamped"/></diff-to-replace-stamped>
+               <out-pass1><xsl:copy-of select="$output-pass-1"/></out-pass1>
+               <out-pass2><xsl:copy-of select="$output-pass-2"/></out-pass2>
+            </testing>
+         </xsl:when>
+         <xsl:otherwise>
+            <xsl:sequence select="tan:adjust-diff($output-pass-2)"/>
+         </xsl:otherwise>
+      </xsl:choose>
+      
+   </xsl:function>
+   
+   <xsl:template match="tan:common | tan:a" mode="replace-diff">
+      <xsl:param name="a2-to-a-diff-map" tunnel="yes" as="map(xs:integer, item()*)"/>
+      <xsl:variable name="this-start" select="xs:integer(@_pos)"/>
+      <xsl:variable name="this-end" select="$this-start + xs:integer(@_len) - 1"/>
+      <xsl:copy>
+         <xsl:sequence
+            select="
+               for $i in ($this-start to $this-end)
+               return
+                  map:get($a2-to-a-diff-map, $i)"
+         />
+      </xsl:copy>
+   </xsl:template>
+   <xsl:template match="tan:b" mode="replace-diff">
+      <xsl:param name="b2-to-b-diff-map" tunnel="yes" as="map(xs:integer, item()*)"/>
+      <xsl:variable name="this-start" select="xs:integer(@_pos)"/>
+      <xsl:variable name="this-end" select="$this-start + xs:integer(@_len) - 1"/>
+      <xsl:copy>
+         <xsl:sequence
+            select="
+               for $i in ($this-start to $this-end)
+               return
+                  map:get($b2-to-b-diff-map, $i)"
+         />
+      </xsl:copy>
+   </xsl:template>
+   
+   <xsl:template match="tan:add" mode="shallow-skip-diff-add">
+      <xsl:apply-templates mode="#current"/>
+   </xsl:template>
+   
+   
+   <xsl:function name="tan:replace-collation" as="element()?">
+      <!-- Input: two strings; the output of tan:collate() (2020 version only, for XSLT 3.0) -->
+      <!-- Output: the output, but an attempt is made to change every <c> and every <u> with the chosen witness 
+         id (param 2) into the original string form (param 1). -->
+      <!-- This is a companion function to tan:replace-diff(), but it has some inherent limitations. Diffs of 3 or
+      more sources can be messy, and any attempt to replace every <u> with a particular version proves to be confusing 
+      to interpret. Furthermore, tan:replace-diff() adjusts the output so that newly inserted characters
+      are not repeated if they are applied equally to coordinate <a>s and <b>s. That is not possible for collate because
+      of how chaotic the results can be. So the fallback method is to focus on getting the first witness right, and not
+      worrying about the others. -->
+      <!-- If the 2nd parameter is empty or doesn't match a particular witness id, then the first witness will be chosen.
+      Intentionally supplying a bad 2nd parameter can be a good idea, if you are interested in only the dominant source, 
+      since tan:collate() by default places at the top the witness with the least amount of divergence. -->
+      <!-- Because only one witness is being recalibrated, it is possible to update the position values. But the other
+      witness values will not be updated, so that the results can be correlated with the other witness texts if needed.
+      Further, if a replacement involves that witness no longer attesting to that fragment, then it is changed to a <u>
+      (or the <u> is retained) and the <wit> is dropped. -->
+      <xsl:param name="original-witness-string" as="xs:string?"/>
+      <xsl:param name="original-witness-id" as="xs:string?"/>
+      <xsl:param name="collate-output-to-replace" as="element()?"/>
+      
+      <xsl:variable name="picked-id-fixed"
+         select="
+            if ($original-witness-id = $collate-output-to-replace/tan:witness/@id) then
+               $original-witness-id
+            else
+               $collate-output-to-replace/tan:witness[1]/@id"
+      />
+      <xsl:variable name="picked-witness-text"
+         select="string-join($collate-output-to-replace/*[tan:wit/@ref = $picked-id-fixed]/tan:txt)"
+      />
+      <xsl:variable name="wit2-to-wit-diff" select="tan:diff($picked-witness-text, $original-witness-string, false())"/>
+      
+      <xsl:variable name="wit2-to-wit-diff-map" as="map(xs:integer, item()*)?"
+         select="tan:diff-a-map($wit2-to-wit-diff)"/>
+      
+      <xsl:variable name="output-pass-1" as="element()?">
+         <xsl:apply-templates select="$collate-output-to-replace" mode="replace-collation">
+            <xsl:with-param name="wit-id" tunnel="yes" select="$picked-id-fixed"/>
+            <xsl:with-param name="wit-diff-map" tunnel="yes" select="$wit2-to-wit-diff-map"/>
+         </xsl:apply-templates>
+      </xsl:variable>
+      
+      <xsl:variable name="output-diagnostics-on" select="false()"/>
+      <xsl:choose>
+         <xsl:when test="$output-diagnostics-on">
+            <xsl:message select="'Replacing output of tan:replace-collate() with diagnostic output'"/>
+            <testing>
+               <picked-id-fixed><xsl:value-of select="$picked-id-fixed"/></picked-id-fixed>
+               <orig-witness-text><xsl:value-of select="$original-witness-string"/></orig-witness-text>
+               <collate-witness-text><xsl:value-of select="$picked-witness-text"/></collate-witness-text>
+               <wit2-to-wit-diff><xsl:copy-of select="$wit2-to-wit-diff"/></wit2-to-wit-diff>
+               <wit2-to-wit-map><xsl:value-of select="map:for-each($wit2-to-wit-diff-map, function($k, $v){string($k) || ' ' || serialize($v) || ' (' || string(count($v)) || '); '})"/></wit2-to-wit-map>
+               <output-pass-1><xsl:copy-of select="$output-pass-1"/></output-pass-1>
+            </testing>
+         </xsl:when>
+         <xsl:otherwise>
+            <xsl:copy-of select="$output-pass-1"/>
+         </xsl:otherwise>
+      </xsl:choose>
+      
+      
+   </xsl:function>
+   
+   <xsl:template match="tan:collation" mode="replace-collation">
+      <xsl:param name="wit-id" tunnel="yes" as="xs:string?"/>
+      <xsl:param name="wit-diff-map" tunnel="yes" as="map(xs:integer, item()*)?"/>
+      <xsl:copy>
+         <xsl:copy-of select="@*"/>
+         <xsl:copy-of select="* except (tan:u | tan:c)"/>
+         <xsl:iterate select="tan:u | tan:c">
+            <xsl:param name="orig-last-pos" as="xs:integer" select="0"/>
+            <xsl:param name="new-last-pos" as="xs:integer" select="0"/>
+            
+            <xsl:variable name="this-is-relevant" select="tan:wit/@ref = $wit-id"/>
+            <xsl:variable name="these-txt-charpoints" select="string-to-codepoints(tan:txt)"/>
+            <xsl:variable name="these-text-replacements" as="xs:string*">
+               <xsl:for-each select="$these-txt-charpoints">
+                  <xsl:variable name="this-pos" select="position()"/>
+                  <xsl:variable name="this-map-value" as="item()*" select="map:get($wit-diff-map, $orig-last-pos + $this-pos)"/>
+                  <xsl:value-of select="string-join($this-map-value)"/>
+               </xsl:for-each>
+            </xsl:variable>
+            <xsl:variable name="this-text-replacement" select="string-join($these-text-replacements)"/>
+            <xsl:variable name="text-repl-len" select="string-length($this-text-replacement)"/>
+            <xsl:variable name="this-is-empty" select="$text-repl-len lt 1"/>
+            <xsl:variable name="ending-orig-pos"
+               select="
+                  if ($this-is-relevant) then
+                     $orig-last-pos + count($these-txt-charpoints)
+                  else
+                     $orig-last-pos"
+            />
+            <xsl:variable name="ending-new-pos"
+               select="
+                  if ($this-is-relevant) then
+                     $new-last-pos + $text-repl-len
+                  else
+                     $new-last-pos"
+            />
+            
+            <xsl:choose>
+               <!-- If the replacement is altogether empty, and this is the only witness, well, drop it. -->
+               <xsl:when test="$this-is-relevant and $this-is-empty and count(tan:wit) eq 1"/>
+               <xsl:when test="$this-is-relevant and $this-is-empty">
+                  <!-- If it is being emptied out of this witness, demote the <c> to <u> (or keep it), and drop the <wit> -->
+                  <u>
+                     <xsl:copy-of select="tan:txt"/>
+                     <xsl:copy-of select="tan:wit[not(@ref = $wit-id)]"/>
+                  </u>
+               </xsl:when>
+               <xsl:when test="$this-is-relevant">
+                  <xsl:copy>
+                     <xsl:copy-of select="@*"/>
+                     <txt>
+                        <xsl:value-of select="$this-text-replacement"/>
+                     </txt>
+                     <wit ref="{$wit-id}" pos="{$new-last-pos + 1}"/>
+                     <xsl:copy-of select="tan:wit[not(@ref = $wit-id)]"/>
+                  </xsl:copy>
+                  
+               </xsl:when>
+               <xsl:otherwise>
+                  <xsl:copy-of select="."/>
+               </xsl:otherwise>
+            </xsl:choose>
+            
+            <xsl:next-iteration>
+               <xsl:with-param name="orig-last-pos" select="$ending-orig-pos"/>
+               <xsl:with-param name="new-last-pos" select="$ending-new-pos"/>
+            </xsl:next-iteration>
+         </xsl:iterate>
+      </xsl:copy>
+   </xsl:template>
+   
+   
+   
+   <!-- calculating the string position and length of each element in a tree -->
+   
    <xsl:function name="tan:stamp-diff-with-text-data" as="item()*">
       <!-- 1-parameter version of tan:stamp-tree-with-text-data() -->
       <xsl:param name="diff-result" as="element(tan:diff)?"/>
-      <xsl:variable name="out-pass-1" select="tan:stamp-tree-with-text-data($diff-result, false(), '^b$', (), 1)"/>
+      <xsl:variable name="out-pass-1"
+         select="tan:stamp-tree-with-text-data($diff-result, false(), '^b$', (), 1)"/>
       <diff>
          <xsl:iterate select="$out-pass-1/*">
             <xsl:param name="next-pos" as="xs:integer" select="1"/>
@@ -1193,9 +2059,8 @@
                   if (self::tan:common or self::tan:b) then
                      ($next-pos + $this-length)
                   else
-                     $next-pos"
-            />
-            
+                     $next-pos"/>
+
             <xsl:choose>
                <xsl:when test="not(self::tan:b)">
                   <xsl:copy-of select="."/>
@@ -1214,7 +2079,6 @@
             </xsl:next-iteration>
          </xsl:iterate>
       </diff>
-      <!--<xsl:apply-templates select="$out-pass-1" mode="stamp-b-with-text-data"/>-->
    </xsl:function>
    <xsl:template match="tan:b" mode="stamp-b-with-text-data">
       <xsl:variable name="prev-element" select="preceding-sibling::tan:common[1]"/>
@@ -1234,11 +2098,24 @@
       </xsl:copy>
    </xsl:template>
    
+   <!--<xsl:function name="tan:stamp-collation-with-text-data" as="item()*">
+      <!-\- Input: output from tan:collate(), a string -\->
+      <!-\- Output: the collation results stamped with @_pos and @_len -\->
+   </xsl:function>-->
+   
+   <xsl:function name="tan:stamp-class-1-tree-with-text-data" as="item()*">
+      <!-- 2-parameter version for the main one below -->
+      <!-- This version anticipates class 1 TAN-T(EI) files in their raw, resolved, or expanded state. It also includes 
+      captures where the text has been replaced by tan:diff() output, but ignores <b>. -->
+      <xsl:param name="tree-fragment" as="item()*"/>
+      <xsl:sequence select="tan:stamp-tree-with-text-data($tree-fragment, true(), (), '^(TAN-.+|TEI|text|body|div|common|a|(non-)?tok)$', 1)"/>
+   </xsl:function>
+   
    <xsl:function name="tan:stamp-tree-with-text-data" as="item()*">
       <!-- 2-parameter version for the main one below -->
       <xsl:param name="tree-fragment" as="item()*"/>
       <xsl:param name="ignore-white-space" as="xs:boolean"/>
-      <xsl:sequence select="tan:stamp-tree-with-text-data($tree-fragment, $ignore-white-space, (), '^(TAN-.+|body|div|common|a)$', 1)"/>
+      <xsl:sequence select="tan:stamp-tree-with-text-data($tree-fragment, $ignore-white-space, (), (), 1)"/>
    </xsl:function>
    
    <xsl:function name="tan:stamp-tree-with-text-data" as="item()*">
@@ -1340,6 +2217,130 @@
          </xsl:otherwise>
       </xsl:choose>
    </xsl:template>
+   
+   <!-- TEI-specific -->
+   
+   <xsl:function name="tan:normalize-tan-tei-divs" as="item()*">
+      <!-- Input: tei tree(s); boolean -->
+      <!-- Output: the same, but with leaf tei:divs space-normalized. If the 2nd parameter is true, any special 
+            end-div characters will be removed -->
+      <xsl:param name="input-tan-tei" as="item()*"/>
+      <xsl:param name="remove-special-end-div-chars" as="xs:boolean"/>
+      <xsl:apply-templates select="$input-tan-tei" mode="normalize-tan-tei-divs">
+         <xsl:with-param name="remove-special-end-div-chars" select="$remove-special-end-div-chars" tunnel="yes"/>
+      </xsl:apply-templates>
+   </xsl:function>
+   
+   <xsl:template match="tei:div[not(tei:div)]" mode="normalize-tan-tei-divs">
+      <xsl:param name="remove-special-end-div-chars" tunnel="yes" as="xs:boolean"/>
+      <xsl:variable name="this-tree-as-sequence" as="element()">
+         <sequence>
+            <xsl:copy-of select="tan:tree-to-sequence(.)"/>
+         </sequence>
+      </xsl:variable>
+      <xsl:variable name="output-pass-1" as="element()">
+         <output>
+            <xsl:iterate select="$this-tree-as-sequence/node()">
+               <xsl:choose>
+                  <xsl:when test=". instance of text()">
+                     <!-- If it is a blank text node, put only one space marker, for the end. -->
+                     <xsl:if test="matches(., '^\s+\S')">
+                        <_space/>
+                     </xsl:if>
+                     <xsl:value-of select="normalize-space(.)"/>
+                     <xsl:if test="matches(., '\s$')">
+                        <_space/>
+                     </xsl:if>
+                  </xsl:when>
+                  <xsl:otherwise>
+                     <xsl:copy-of select="."/>
+                  </xsl:otherwise>
+               </xsl:choose>
+               <xsl:next-iteration/>
+            </xsl:iterate>
+         </output>
+      </xsl:variable>
+      <xsl:variable name="last-text-node" select="$output-pass-1/text()[last()]"/>
+      <xsl:variable name="output-pass-2" as="element()">
+         <output>
+            <xsl:iterate select="$output-pass-1/node()">
+               <xsl:param name="last-text-ended-in-space" as="xs:boolean" select="true()"/>
+
+               <xsl:variable name="this-is-last-text-node" as="xs:boolean"
+                  select=". is $last-text-node"/>
+               <xsl:variable name="this-ends-with-special-char"
+                  select="matches(., $special-end-div-chars-regex)"/>
+               <xsl:variable name="current-text-ends-in-space" as="xs:boolean">
+                  <xsl:choose>
+                     <xsl:when test="self::tan:_space">
+                        <xsl:sequence select="true()"/>
+                     </xsl:when>
+                     <xsl:when test="$this-is-last-text-node and not($this-ends-with-special-char)">
+                        <xsl:sequence select="true()"/>
+                     </xsl:when>
+                     <xsl:when test="self::text()">
+                        <xsl:sequence select="false()"/>
+                     </xsl:when>
+                     <xsl:otherwise>
+                        <xsl:sequence select="$last-text-ended-in-space"/>
+                     </xsl:otherwise>
+                  </xsl:choose>
+               </xsl:variable>
+               
+               <xsl:variable name="diagnostics-on" select="false()"/>
+               <xsl:if test="$diagnostics-on">
+                  <xsl:message select="'This item: ' || serialize(.)"/>
+                  <xsl:message select="'Last text ended in space? ', $last-text-ended-in-space"/>
+                  <xsl:message select="'This is last text node? ', $this-is-last-text-node"/>
+                  <xsl:message select="'Supplied last text node: ' || $last-text-node"/>
+                  <xsl:message select="'This ends in special char? ', $this-ends-with-special-char"/>
+                  <xsl:message select="'Current text ends in space? ', $current-text-ends-in-space"/>
+               </xsl:if>
+
+               <!-- output -->
+               <xsl:choose>
+                  <xsl:when test="self::tan:_space and $last-text-ended-in-space"/>
+                  <xsl:when test="self::tan:_space and not($last-text-ended-in-space)">
+                     <xsl:value-of select="' '"/>
+                  </xsl:when>
+                  <xsl:when
+                     test="
+                        $this-is-last-text-node and $this-ends-with-special-char
+                        and $remove-special-end-div-chars">
+                     <xsl:value-of select="replace(., $special-end-div-chars-regex || '$', '')"/>
+                  </xsl:when>
+                  <xsl:when test="$this-is-last-text-node and $this-ends-with-special-char">
+                     <xsl:value-of select="."/>
+                  </xsl:when>
+                  <xsl:when test="$this-is-last-text-node">
+                     <xsl:value-of select=". || ' '"/>
+                  </xsl:when>
+                  <xsl:when test="self::text()">
+                     <xsl:value-of select="."/>
+                  </xsl:when>
+                  <xsl:otherwise>
+                     <xsl:copy-of select="."/>
+                  </xsl:otherwise>
+               </xsl:choose>
+
+               <xsl:next-iteration>
+                  <xsl:with-param name="last-text-ended-in-space" select="$current-text-ends-in-space"/>
+               </xsl:next-iteration>
+            </xsl:iterate>
+         </output>
+      </xsl:variable>
+      <xsl:variable name="output-pass-3" select="tan:sequence-to-tree($output-pass-2/node())"/>
+
+      <!--<xsl:copy>
+            <xsl:copy-of select="@*"/>
+            <test-tree-as-seq><xsl:copy-of select="$this-tree-as-sequence"/></test-tree-as-seq>
+            <test-out-1><xsl:copy-of select="$output-pass-1"/></test-out-1>
+            <test-out-2><xsl:copy-of select="$output-pass-2"/></test-out-2>
+            <test-out-3><xsl:copy-of select="$output-pass-3"/></test-out-3>
+        </xsl:copy>-->
+      <xsl:copy-of select="$output-pass-3"/>
+   </xsl:template>
+   
 
 
    <!-- Functions: sequences-->
@@ -1869,6 +2870,73 @@
       </xsl:choose>
 
    </xsl:function>
+   
+   <xsl:function name="tan:replace-expanded-class-1-body" as="document-node()?">
+      <!-- Input: An expanded class-1 file; a string -->
+      <!-- Output: the class-1 file, but with the body text replaced with the string, allocated according to tan:diff() -->
+      <xsl:param name="expanded-class-1-file" as="document-node()?"/>
+      <xsl:param name="new-body-text" as="xs:string?"/>
+      <xsl:variable name="current-text"
+         select="string-join($expanded-class-1-file/tan:TAN-T/tan:body//tan:div[not(tan:div)]/(text() | tan:tok | tan:non-tok))"
+      />
+      <xsl:variable name="text-diff" select="tan:diff($current-text, $new-body-text, false())"/>
+      <xsl:variable name="text-diff-map" select="tan:diff-a-map($text-diff)"/>
+      
+      <xsl:variable name="input-file-marked" select="tan:stamp-class-1-tree-with-text-data($expanded-class-1-file)" as="document-node()?"/>
+      
+      <xsl:variable name="output-pass-1" as="document-node()?">
+         <xsl:apply-templates select="$input-file-marked" mode="replace-expanded-class-1">
+            <xsl:with-param name="div-diff-map" tunnel="yes" select="$text-diff-map"/>
+         </xsl:apply-templates>
+      </xsl:variable>
+      
+      
+      <xsl:variable name="output-diagnostics-on" select="false()"/>
+      <xsl:choose>
+         <xsl:when test="$output-diagnostics-on">
+            <xsl:message select="'Output for tan:replace-expanded-class-1-body() being replaced by diagnostic output.'"/>
+            <xsl:document>
+               <diagnostics>
+                  <current-text><xsl:value-of select="$current-text"/></current-text>
+                  <new-body-text><xsl:value-of select="$new-body-text"/></new-body-text>
+                  <text-diff><xsl:copy-of select="$text-diff"/></text-diff>
+                  <wit2-to-wit-map><xsl:value-of select="map:for-each($text-diff-map, function($k, $v){string($k) || ' ' || serialize($v) || ' (' || string(count($v)) || '); '})"/></wit2-to-wit-map>
+                  <input-file-marked><xsl:copy-of select="$input-file-marked"/></input-file-marked>
+                  <output-pass-1><xsl:copy-of select="$output-pass-1"/></output-pass-1>
+               </diagnostics>
+            </xsl:document>
+         </xsl:when>
+         <xsl:otherwise>
+            <xsl:copy-of select="$output-pass-1"/>
+         </xsl:otherwise>
+      </xsl:choose>
+      
+   </xsl:function>
+   
+   <xsl:template match="*[@_pos]" mode="replace-expanded-class-1">
+      <xsl:copy>
+         <xsl:copy-of select="@* except (@_pos | @_len)"/>
+         <xsl:apply-templates mode="#current"/>
+      </xsl:copy>
+   </xsl:template>
+   <xsl:template match="tan:div[not(tan:div)]" priority="1" mode="replace-expanded-class-1">
+      <xsl:param name="div-diff-map" tunnel="yes" as="map(xs:integer, item()*)"/>
+      <xsl:variable name="this-start" select="xs:integer(@_pos)"/>
+      <xsl:variable name="this-end" select="$this-start + xs:integer(@_len) - 1"/>
+      <xsl:variable name="this-map-value" as="item()*"
+         select="
+            for $i in ($this-start to $this-end)
+            return
+               map:get($div-diff-map, $i)"
+      />
+      <xsl:copy>
+         <xsl:copy-of select="@* except (@_pos | @_len)"/>
+         <xsl:copy-of select="node() except (text() | tan:tok | tan:non-tok)"/>
+         <xsl:value-of select="string-join($this-map-value)"/>
+      </xsl:copy>
+      
+   </xsl:template>
+   
 
    <!-- BIBLIOGRAPHIES -->
    <xsl:param name="bibliography-words-to-ignore" as="xs:string*"
