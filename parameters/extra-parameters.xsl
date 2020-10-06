@@ -23,13 +23,22 @@
    <!-- What regular expression defines the end of a sentence? -->
    <xsl:param name="sentence-end-regex" select="'[\.\?!]+\p{P}*[\s.]*'"/>
    <!-- What regular expression defines the end of a clause? The default regular expression seeks to avoid words terminated by a simple apostrophe, and anticipates ellipses. -->
-   <xsl:param name="clause-end-regex" as="xs:string">\w[\p{P}-[&apos;]]\p{P}*[\s.]*</xsl:param>
+   <xsl:param name="clause-end-regex" as="xs:string">[\w\s][\p{P}-[&apos;’«\[\(-]]\p{P}*[\s.]*</xsl:param>
    <!-- What regular expression defines the end of a word? -->
    <xsl:param name="word-end-regex" select="'\s+'"/>
    
+   
+   <!-- Batch replacements, applicable across many languages. For language-specific
+   batch replacements, see extra/TAN-language-functions.xsl. Batch replacements are
+   sequences of elements with attributes corresponding to fn:replace(): @pattern,
+   @replacement, @flags. There is also a @message option, to report back on 
+   changes taking place. -->
+   
+   <!-- What batch replacements should be applied to punctuation? -->
    <xsl:param name="batch-replace-punctuation" as="element()*">
       <replace pattern="\p{{P}}+" replacement="" message="Removing punctuation"/>
    </xsl:param>
+   <!-- What batch replacements should be applied to combining marks? -->
    <xsl:param name="batch-replace-combining-marks" as="element()*">
       <replace pattern="\p{{Mc}}+" replacement="" message="Removing combining marks"/>
    </xsl:param>
