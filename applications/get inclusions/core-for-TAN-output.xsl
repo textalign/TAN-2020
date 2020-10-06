@@ -5,7 +5,7 @@
    xmlns:tei="http://www.tei-c.org/ns/1.0" exclude-result-prefixes="#all" version="3.0">
    <!-- template for outputting a TAN file. The primary purpose is to credit/blame the master stylesheet by means of <agent>, add a <role> if one doesn't exist, and log the change in <change> -->
 
-   <xsl:import href="../../parameters/output-parameters.xsl"/>
+   <xsl:import href="../../parameters/application-parameters.xsl"/>
 
    <!-- we apply templates to attributes, to allow @xml:base or other attributes to be deleted -->
    <xsl:template match="node() | @*" mode="credit-stylesheet">

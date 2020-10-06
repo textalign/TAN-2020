@@ -18,7 +18,7 @@
    <xsl:include href="extra/TAN-language-functions.xsl"/>
    <xsl:include href="extra/TAN-A-lm-extra-functions.xsl"/>
    <xsl:include href="extra/TAN-output-functions.xsl"/>
-   <xsl:include href="../parameters/extra-parameters.xsl"/>
+   <xsl:include href="../parameters/extra-function-parameters.xsl"/>
 
    <!-- Functions that are not central to validating TAN files, but could be helpful in creating, editing, or reusing them -->
 
@@ -1045,7 +1045,7 @@
                         </xsl:when>
                         <xsl:otherwise>
                            <xsl:element name="{name($this-head)}" namespace="{namespace-uri($this-head)}">
-                              <xsl:copy-of select="$this-head/(@* except (@level | @_close-at))"/>
+                              <xsl:copy-of select="$this-head/(@* except (@_level | @_close-at))"/>
                               <xsl:copy-of select="tail(current-group())"/>
                            </xsl:element>
                         </xsl:otherwise>
@@ -1168,6 +1168,18 @@
    <!-- Processing diff and collate output -->
    
    <xsl:function name="tan:infuse-diff-and-collate-stats" as="element()?">
+      <!-- One-param version of the full one, below -->
+      <xsl:param name="diff-or-collate-input" as="element()?"/>
+      <xsl:sequence select="tan:infuse-diff-and-collate-stats($diff-or-collate-input, (), true())"/>
+   </xsl:function>
+   <xsl:function name="tan:infuse-diff-and-collate-stats" as="element()?">
+      <!-- Two-param version of the full one, below -->
+      <xsl:param name="diff-or-collate-input" as="element()?"/>
+      <xsl:param name="unimportant-change-character-aliases" as="element()*"/>
+      <xsl:sequence select="tan:infuse-diff-and-collate-stats($diff-or-collate-input, $unimportant-change-character-aliases, true())"/>
+   </xsl:function>
+   
+   <xsl:function name="tan:infuse-diff-and-collate-stats" as="element()?">
       <!-- Input: output from tan:diff() or tan:collate(); perhaps elements defining unimportant changes (see below) -->
       <!-- Output: the output wrapped in a <group>, whose first child is <stats>, supplying statistics for the difference
       or collation. A collation will also include a <venns> with statistical analysis of sources as statistics suitable for 
@@ -1178,6 +1190,7 @@
       
       <xsl:param name="diff-or-collate-input" as="element()?"/>
       <xsl:param name="unimportant-change-character-aliases" as="element()*"/>
+      <xsl:param name="include-venns" as="xs:boolean"/>
       <xsl:variable name="input-prepped" as="element()">
          <group>
             <xsl:copy-of select="$diff-or-collate-input"/>
@@ -1186,11 +1199,32 @@
       <xsl:apply-templates select="$input-prepped" mode="infuse-diff-and-collate-stats">
          <xsl:with-param name="unimportant-change-character-aliases"
             select="$unimportant-change-character-aliases" tunnel="yes"/>
+         <xsl:with-param name="include-venns" tunnel="yes" select="$include-venns"/>
       </xsl:apply-templates>
    </xsl:function>
    
    <!-- To use the following template mode, wrap the results of tan:diff() or tan:collate() in some element (doesn't matter what
    its name is). The output will be the same node, but with an infusion of statistics. -->
+   
+   <xsl:template match="*[tan:diff[not(*)]] | *[tan:collation[not(*/tan:txt)]]" priority="1" mode="infuse-diff-and-collate-stats">
+      <xsl:message select="'Diff/collation is empty, and cannot be analyzed for statistics.'"/>
+      <xsl:copy>
+         <xsl:copy-of select="@*"/>
+         <stats/>
+         <xsl:copy-of select="node()"/>
+      </xsl:copy>
+   </xsl:template>
+   <xsl:template
+      match="*[tan:diff[tan:a][not(tan:b) and not(tan:common)]] | *[tan:diff[tan:b][not(tan:a) and not(tan:common)]]"
+      priority="1" mode="infuse-diff-and-collate-stats">
+      <xsl:message
+         select="'Diff is against one string only, and cannot be analyzed for statistics.'"/>
+      <xsl:copy>
+         <xsl:copy-of select="@*"/>
+         <stats/>
+         <xsl:copy-of select="node()"/>
+      </xsl:copy>
+   </xsl:template>
    
    <xsl:template match="*[tan:diff]" mode="infuse-diff-and-collate-stats">
       <xsl:param name="unimportant-change-character-aliases" as="element()*" tunnel="yes"/>
@@ -1327,7 +1361,8 @@
     
    <xsl:template match="*[tan:collation]" mode="infuse-diff-and-collate-stats">
       <xsl:param name="unimportant-change-character-aliases" as="element()*" tunnel="yes"/>
-      <xsl:variable name="this-group" select="."/>
+      <xsl:param name="include-venns" as="xs:boolean" tunnel="yes" select="true()"/>
+      <xsl:variable name="this-collation-wrapper" select="."/>
       <xsl:variable name="all-us" select="tan:collation/tan:u"/>
       <xsl:variable name="all-u-groups" as="element()">
          <u-groups>
@@ -1361,7 +1396,7 @@
 
             <xsl:variable name="is-for-every-ref"
                select="
-                  every $i in $this-group/tan:file/@ref
+                  every $i in $this-collation-wrapper/tan:file/@ref
                      satisfies exists($these-us/tan:wit[@ref = $i])"/>
 
             <xsl:if test="(string-length(current-grouping-key()) gt 0) and $is-for-every-ref">
@@ -1378,37 +1413,51 @@
       <xsl:variable name="this-collation-diff-length"
          select="string-length(string-join($all-us/tan:txt))"/>
       <xsl:variable name="these-files" select="tan:file"/>
-      <xsl:variable name="this-file-count" select="count($these-files)"/>
       <xsl:variable name="these-witnesses" select="tan:collation/tan:witness"/>
+      <xsl:variable name="this-witness-count" select="count($these-witnesses)"/>
       <xsl:variable name="basic-stats" as="element()">
          <stats>
-            <xsl:for-each select="$these-files">
+            <xsl:for-each
+               select="
+                  if (exists($these-files)) then
+                     $these-files
+                  else
+                     $these-witnesses">
                <xsl:variable name="this-pos" select="position()"/>
                <xsl:variable name="this-label"
                   select="string(($these-witnesses[$this-pos]/@id, $this-pos)[1])"/>
                <xsl:variable name="this-diff-group" select="$all-u-groups/tan:group[$this-pos]"/>
                <xsl:variable name="these-diffs" select="$this-diff-group/tan:u"/>
+               <xsl:variable name="this-orig-diff-length" select="string-length(string-join($these-diffs))"/>
                <xsl:variable name="these-diff-exceptions"
                   select="$us-excepted-by-character-alias-exceptions[tan:wit/@ref = $this-label]"/>
                <xsl:variable name="this-exception-length" select="count($these-diff-exceptions)"/>
-               <xsl:variable name="this-diff-length"
-                  select="string-length(string-join($these-diffs)) - $this-exception-length"/>
+               <xsl:variable name="this-adjusted-diff-length"
+                  select="$this-orig-diff-length - $this-exception-length"/>
                <xsl:variable name="this-diff-portion"
-                  select="$this-diff-length div ($this-common-length + $this-diff-length + $this-exception-length)"/>
-               <witness class="{'a-w-' || @ref}">
-                  <xsl:copy-of select="@ref"/>
+                  select="$this-adjusted-diff-length div ($this-common-length + $this-adjusted-diff-length + $this-exception-length)"/>
+               <xsl:variable name="this-ref" select="(@ref, $this-label)[1]"/>
+               <xsl:variable name="this-length" as="xs:integer"
+                  select="
+                     if (exists(@length)) then
+                        xs:integer(@length)
+                     else
+                        $this-common-length + $this-orig-diff-length"
+               />
+               <witness class="{'a-w-' || $this-ref}">
+                  <xsl:attribute name="ref" select="$this-ref"/>
                   <uri>
                      <xsl:value-of select="@uri"/>
                   </uri>
                   <length>
-                     <xsl:value-of select="@length"/>
+                     <xsl:value-of select="$this-length"/>
                   </length>
                   <diff-count>
                      <xsl:value-of
                         select="count($these-diffs[tan:txt]) - count($these-diff-exceptions)"/>
                   </diff-count>
                   <diff-length>
-                     <xsl:value-of select="$this-diff-length"/>
+                     <xsl:value-of select="$this-adjusted-diff-length"/>
                   </diff-length>
                   <diff-portion>
                      <xsl:value-of select="format-number($this-diff-portion, '0.0%')"/>
@@ -1421,20 +1470,36 @@
       <!-- 3-way venns, to calculate distance of any version between any two others -->
       <xsl:variable name="three-way-venns" as="element()">
          <venns>
-            <xsl:if test="$this-file-count ge 3">
-               <xsl:for-each select="1 to ($this-file-count - 2)">
+            <xsl:if test="$this-witness-count ge 3 and $include-venns">
+               <xsl:for-each select="1 to ($this-witness-count - 2)">
                   <xsl:variable name="this-a-pos" select="."/>
-                  <xsl:variable name="this-a-label" select="$this-group/tan:file[$this-a-pos]/@ref"/>
-                  <xsl:for-each select="($this-a-pos + 1) to ($this-file-count - 1)">
+                  <xsl:variable name="this-a-label"
+                     select="
+                        if (exists($these-files)) then
+                           $these-files[$this-a-pos]/@ref
+                        else
+                           $these-witnesses[$this-a-pos]/@id"
+                  />
+                  <xsl:for-each select="($this-a-pos + 1) to ($this-witness-count - 1)">
                      <xsl:variable name="this-b-pos" select="."/>
                      <xsl:variable name="this-b-label"
-                        select="$this-group/tan:file[$this-b-pos]/@ref"/>
-                     <xsl:for-each select="($this-b-pos + 1) to $this-file-count">
+                        select="
+                           if (exists($these-files)) then
+                              $these-files[$this-b-pos]/@ref
+                           else
+                              $these-witnesses[$this-b-pos]/@id"
+                     />
+                     <xsl:for-each select="($this-b-pos + 1) to $this-witness-count">
                         <xsl:variable name="this-c-pos" select="."/>
                         <xsl:variable name="this-c-label"
-                           select="$this-group/tan:file[$this-c-pos]/@ref"/>
+                           select="
+                              if (exists($these-files)) then
+                                 $these-files[$this-c-pos]/@ref
+                              else
+                                 $these-witnesses[$this-c-pos]/@id"
+                        />
                         <xsl:variable name="all-relevant-nodes"
-                           select="$this-group/tan:collation/*[tan:wit[@ref = ($this-a-label, $this-b-label, $this-c-label)]]"/>
+                           select="$this-collation-wrapper/tan:collation/*[tan:wit[@ref = ($this-a-label, $this-b-label, $this-c-label)]]"/>
 
                         <xsl:variable name="these-excepted-us" as="element()*">
                            <xsl:for-each-group select="$all-relevant-nodes/self::tan:u"
@@ -1668,7 +1733,9 @@
                   <xsl:text>.</xsl:text>
                </note>
             </xsl:if>
-            <xsl:copy-of select="$three-way-venns"/>
+            <xsl:if test="$include-venns">
+               <xsl:copy-of select="$three-way-venns"/>
+            </xsl:if>
          </stats>
          <xsl:apply-templates mode="#current"/>
       </xsl:copy>
@@ -2131,9 +2198,12 @@
       <xsl:param name="exclude-from-count-elements-whose-names-match" as="xs:string?"/>
       <xsl:param name="exclude-from-count-elements-whose-names-do-not-match" as="xs:string?"/>
       <xsl:param name="next-char-number" as="xs:integer"/>
+      
       <xsl:iterate select="$tree-fragment">
          <xsl:param name="next-char-pos" as="xs:integer" select="$next-char-number"/>
          <xsl:variable name="this-fragment" select="."/>
+         <xsl:variable name="ignore-length"
+            select=". instance of comment() or . instance of processing-instruction()"/>
          <xsl:variable name="this-exception-fragment" as="element()*">
             <xsl:apply-templates select="$this-fragment" mode="filter-elements">
                <xsl:with-param name="keep-elements-whose-names-match" as="xs:string?" tunnel="yes" select="$exclude-from-count-elements-whose-names-match"/>
@@ -2141,14 +2211,14 @@
             </xsl:apply-templates>
          </xsl:variable>
          <xsl:variable name="this-fragment-text"
-            select="
+            select="if ($ignore-length) then () else
                if ($ignore-white-space) then
                   string-join($this-fragment/descendant-or-self::text()[matches(., '\S')])
                else
                   string($this-fragment)"
          />
          <xsl:variable name="this-exception-text"
-            select="
+            select="if ($ignore-length) then () else
                (if ($ignore-white-space) then
                   string-join($this-exception-fragment/descendant-or-self::text()[matches(., '\S')])
                else
@@ -2233,11 +2303,15 @@
    
    <xsl:template match="tei:div[not(tei:div)]" mode="normalize-tan-tei-divs">
       <xsl:param name="remove-special-end-div-chars" tunnel="yes" as="xs:boolean"/>
+      <xsl:variable name="this-div" select="."/>
+      <!-- Convert the tree to a sequence of nodes -->
       <xsl:variable name="this-tree-as-sequence" as="element()">
          <sequence>
             <xsl:copy-of select="tan:tree-to-sequence(.)"/>
          </sequence>
       </xsl:variable>
+      
+      <!-- Replace every normalize text node spaces, but mark where there was initial and terminal space. -->
       <xsl:variable name="output-pass-1" as="element()">
          <output>
             <xsl:iterate select="$this-tree-as-sequence/node()">
@@ -2260,7 +2334,10 @@
             </xsl:iterate>
          </output>
       </xsl:variable>
+      
       <xsl:variable name="last-text-node" select="$output-pass-1/text()[last()]"/>
+      
+      
       <xsl:variable name="output-pass-2" as="element()">
          <output>
             <xsl:iterate select="$output-pass-1/node()">
@@ -2329,7 +2406,52 @@
             </xsl:iterate>
          </output>
       </xsl:variable>
-      <xsl:variable name="output-pass-3" select="tan:sequence-to-tree($output-pass-2/node())"/>
+      
+      <!-- Turn the sequence back into a tree -->
+      <xsl:variable name="output-pass-3" select="tan:sequence-to-tree($output-pass-2/node())" as="element()"/>
+      
+      <!-- If any space-only nodes are (intentionally) children of the <div> they need to be tucked into
+      the preceding element as a single space. -->
+      <xsl:variable name="output-pass-4" as="item()*">
+         <xsl:iterate select="reverse($output-pass-3/node())">
+            <xsl:param name="text-to-tuck" as="text()?"/>
+            <xsl:on-completion>
+               <xsl:if test="exists($text-to-tuck)">
+                  <xsl:message select="'Text node orphaned at ', $this-div"/>
+               </xsl:if>
+            </xsl:on-completion>
+            <xsl:variable name="next-text-to-tuck" as="text()?">
+               <xsl:choose>
+                  <xsl:when test=". instance of text()">
+                     <xsl:sequence select="."/>
+                  </xsl:when>
+                  <xsl:when test=". instance of element() and exists($text-to-tuck)"/>
+                  <xsl:otherwise>
+                     <xsl:sequence select="$text-to-tuck"/>
+                  </xsl:otherwise>
+               </xsl:choose>
+            </xsl:variable>
+
+            <xsl:choose>
+               <xsl:when test=". instance of text()"/>
+               <xsl:when test=". instance of element() and exists($text-to-tuck)">
+                  <xsl:copy>
+                     <xsl:copy-of select="@*"/>
+                     <xsl:copy-of select="node()"/>
+                     <xsl:value-of select="$text-to-tuck"/>
+                  </xsl:copy>
+               </xsl:when>
+               <xsl:otherwise>
+                  <xsl:copy-of select="."/>
+               </xsl:otherwise>
+            </xsl:choose>
+
+            <xsl:next-iteration>
+               <xsl:with-param name="text-to-tuck" select="$next-text-to-tuck"/>
+            </xsl:next-iteration>
+         </xsl:iterate>
+
+      </xsl:variable>
 
       <!--<xsl:copy>
             <xsl:copy-of select="@*"/>
@@ -2338,6 +2460,10 @@
             <test-out-2><xsl:copy-of select="$output-pass-2"/></test-out-2>
             <test-out-3><xsl:copy-of select="$output-pass-3"/></test-out-3>
         </xsl:copy>-->
+      <!--<xsl:copy>
+         <xsl:copy-of select="@*"/>
+         <xsl:copy-of select="reverse($output-pass-4)"/>
+      </xsl:copy>-->
       <xsl:copy-of select="$output-pass-3"/>
    </xsl:template>
    
