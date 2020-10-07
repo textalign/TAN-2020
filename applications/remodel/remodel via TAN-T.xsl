@@ -77,23 +77,17 @@
     <!-- PARAMETERS YOU WILL WANT TO CHANGE MOST OFTEN -->
 
     <!-- What top-level divs should be excluded (kept intact) from the input? Expected: a regular expression matching @n. If blank, this has no effect. -->
-    <xsl:param name="exclude-from-input-top-level-divs-with-attr-n-matching-what" as="xs:string?" select="''"/>
+    <xsl:param name="exclude-from-input-top-level-divs-with-attr-n-matching-what" as="xs:string?" select="'epilogue'"/>
     
     <!-- What div types should be excluded from the remodel? Expected: a regular expression matching @type. If blank, this has no effect. -->
     <xsl:param name="exclude-from-input-divs-with-attr-type-matching-what" as="xs:string?" select="''"/>
 
     <!-- At what level should remodeling begin? Suppose you have a file that preserves only the topmost hierarchy of its model, and you want to subdivide further. By setting this value to 1 or greater, you can try to preserve matching structures, and focus the remodeling on individual instances. If any <div> in the input does not match at that level, it will be exempt from the remodelling. -->
-    <xsl:param name="preserve-matching-ref-structures-up-to-what-level" as="xs:integer?" select="1"/>
+    <xsl:param name="preserve-matching-ref-structures-up-to-what-level" as="xs:integer?" select="0"/>
     
     <!-- Does the model have a scriptum-oriented reference system or a logical one? -->
     <xsl:param name="model-has-scriptum-oriented-reference-system" as="xs:boolean" select="false()"/>
 
-    <!-- What regular expression should be used to define the end of a sentence? -->
-    <xsl:param name="sentence-end-regex" select="'[\.;\?!ا·*]+[\p{P}\s]*'"/>
-    
-    <!-- What regular expression should be used to define the end of a clause? -->
-    <xsl:param name="clause-end-regex" select="'\w\p{P}+\s*'"/>
-    
     <!-- What regular expression should be used to decide where breaks are allowed if the model has a scriptum-based structure? -->
     <xsl:param name="break-at-regex-for-scriptum-oriented-divs" as="xs:string"
         select="$word-end-regex"/>
@@ -120,10 +114,10 @@
         select="/*/tan:head/tan:model[1]/tan:location[1]/@href"/>
 
     <!-- What top-level divs should be excluded (kept intact) from the input? Expected: a regular expression matching @n. If blank, this has no effect. -->
-    <xsl:param name="exclude-from-model-top-level-divs-with-attr-n-matching-what" as="xs:string?"/>
+    <xsl:param name="exclude-from-model-top-level-divs-with-attr-n-matching-what" as="xs:string?" select="''"/>
     
     <!-- What div types should be excluded from the remodel? Expected: a regular expression matching @type. If blank, this has no effect. -->
-    <xsl:param name="exclude-from-model-divs-with-attr-type-matching-what" as="xs:string?" select="'title'"/>
+    <xsl:param name="exclude-from-model-divs-with-attr-type-matching-what" as="xs:string?" select="''"/>
     
     
 
@@ -424,6 +418,7 @@
         </xsl:apply-templates>
     </xsl:variable>
     
+    
     <xsl:template match="*:div" mode="reinject-remodeled-sections">
         <xsl:param name="is-tei" tunnel="yes" as="xs:boolean" select="false()"/>
         
@@ -563,21 +558,31 @@
     
     <!-- Step 4b for TEI files: try to reinject empty (anchor) elements into the new results. The strategy:
     1. get a TEI <body> with <div>s space-normalized;
-    2. calculate the string position of each child element;
+    2. calculate the string position of each leaf div's children elements;
     3. calculate the string position of the new results;
     4. infuse #2 into #3 -->
     
     <xsl:variable name="input-tei-body-normalized" as="element()?" select="tan:normalize-tan-tei-divs(/tei:TEI/tei:text/tei:body, false())"/>
     
+    <!-- There may be cases where the space between two adjacent leaf div children is really important. So we should exclude from
+    the count any space-only children hanging from the body or non-leaf divs. -->
+    <xsl:variable name="input-tei-body-with-space-adjusted" as="element()?">
+        <xsl:apply-templates select="$input-tei-body-normalized" mode="adjust-tei-body-space"/>
+    </xsl:variable>
+    <!-- We strip any (presumably space-only) text nodes from tei:body and non-leaf tei:divs, so that the stamp is accurate. -->
+    <xsl:template match="*[tei:div]/text()" mode="adjust-tei-body-space"/>
+    
+    <!-- Note, we take into account space-only text nodes, because preliminary refinement has ensured that we have retained only
+    the important space-only text nodes. -->
     <xsl:variable name="input-tei-body-normalized-and-marked" as="element()?"
-        select="tan:stamp-tree-with-text-data($input-tei-body-normalized, true(), (), (), 1)"
+        select="tan:stamp-tree-with-text-data($input-tei-body-with-space-adjusted, false(), (), (), 1)"
     />
     
     <xsl:variable name="replaced-tei-body-marked" as="element()?"
         select="tan:stamp-tree-with-text-data($input-with-replacements/tei:TEI/tei:text/tei:body, true(), (), (), 1)"
     />
     
-    <!-- for testing, diagnostics -->
+    <!-- for testing, diagnostics; the two texts should be identical -->
     <xsl:variable name="two-tei-texts-compared" select="tan:diff(string-join($input-tei-body-normalized-and-marked//tei:div[not(tei:div)]), string-join($replaced-tei-body-marked//tei:ab))"/>
     
     
@@ -600,7 +605,9 @@
         <xsl:variable name="this-start" select="xs:integer(@_pos)"/>
         <xsl:variable name="this-length" select="xs:integer(@_len)"/>
         <xsl:variable name="this-end" select="$this-start + $this-length - 1"/>
-        <xsl:variable name="relevant-new-children" select="$marked-tei-leaf-div-children[xs:integer(@_pos) le $this-end][(xs:integer(@_pos) + xs:integer(@_len)) gt $this-start]"/>
+        <xsl:variable name="relevant-new-children"
+            select="$marked-tei-leaf-div-children[xs:integer(@_pos) le $this-end][(xs:integer(@_pos) + xs:integer(@_len)) gt $this-start]"
+        />
         
         <xsl:variable name="diagnostics-on" select="false()"/>
         <xsl:if test="$diagnostics-on">
@@ -613,7 +620,8 @@
         <xsl:copy>
             <xsl:copy-of select="@* except (@_pos | @_len | @_level)"/>
             <xsl:apply-templates select="$relevant-new-children" mode="infuse-new-tei-mold">
-                <xsl:with-param name="text-to-infuse" tunnel="yes" select="string(.)"/>
+                <xsl:with-param name="text-to-infuse" tunnel="yes" select="string-join(*)"/>
+                <!--<xsl:with-param name="text-to-infuse" tunnel="yes" select="string(.)"/>-->
                 <xsl:with-param name="text-starting-pos" as="xs:integer" tunnel="yes" select="$this-start"/>
             </xsl:apply-templates>
         </xsl:copy>
@@ -782,6 +790,7 @@
         />
         <diagnostics>
             <!--<tei-divs-normalized><xsl:copy-of select="tan:normalize-tan-tei-divs(/, false())"/></tei-divs-normalized>-->
+            <!--<input-expanded><xsl:copy-of select="$self-expanded"/></input-expanded>-->
             <!--<input-marked><xsl:copy-of select="$input-marked"/></input-marked>-->
             <!--<remodel-maps><xsl:copy-of select="tan:map-to-xml($remodel-maps)"/></remodel-maps>-->
             <!--<model-infused><xsl:copy-of select="$model-infused-pass-1"/></model-infused>-->
