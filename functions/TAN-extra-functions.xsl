@@ -153,6 +153,7 @@
    </xsl:variable>
 
    <xsl:variable name="today-iso" select="format-date(current-date(), '[Y0001]-[M01]-[D01]')"/>
+   <xsl:variable name="today-MDY" select="format-date(current-date(), '[MNn] [D], [Y0001]')"/>
 
    <!-- FUNCTIONS -->
 
@@ -690,6 +691,41 @@
       </xsl:for-each>
    </xsl:function>
    
+   <xsl:function name="tan:batch-replacement-messages" as="xs:string?">
+      <!-- Input: any batch replacement element -->
+      <!-- Output: a string explaining what it does -->
+      <!-- This function is useful for reporting back to users in a readable format what changes are rendered -->
+      <xsl:param name="batch-replace-element" as="element()?"/>
+      <xsl:variable name="message-components" as="xs:string*">
+         <xsl:if
+            test="exists($batch-replace-element/@message) or exists($batch-replace-element/@flags)">
+            <xsl:if test="exists($batch-replace-element/@message)">
+               <xsl:value-of select="$batch-replace-element/@message"/>
+            </xsl:if>
+            <xsl:if test="contains($batch-replace-element/@flags, 's')">
+               <xsl:value-of select="' (dot-all mode)'"/>
+            </xsl:if>
+            <xsl:if test="contains($batch-replace-element/@flags, 'm')">
+               <xsl:value-of select="' (multi-line mode)'"/>
+            </xsl:if>
+            <xsl:if test="contains($batch-replace-element/@flags, 'i')">
+               <xsl:value-of select="' (case insensitive)'"/>
+            </xsl:if>
+            <xsl:if test="contains($batch-replace-element/@flags, 'x')">
+               <xsl:value-of select="' (ignore regex whitespaces)'"/>
+            </xsl:if>
+            <xsl:if test="contains($batch-replace-element/@flags, 'q')">
+               <xsl:value-of select="' (ignore special characters)'"/>
+            </xsl:if>
+            <xsl:value-of select="': '"/>
+         </xsl:if>
+         <xsl:value-of
+            select="'PATTERN: ' || $batch-replace-element/@pattern || '  REPLACEMENT: ' || $batch-replace-element/@replacement"/>
+
+      </xsl:variable>
+      <xsl:value-of select="string-join($message-components)"/>
+   </xsl:function>
+   
    <xsl:function name="tan:batch-replace-advanced" as="item()*">
       <!-- Input: a string; a sequence of elements <[ANY NAME] pattern="" [flags=""]>[ANY CONTENT]</[ANY NAME]> -->
       <!-- Output: a sequence of items, with instances of @pattern replaced by the content of the elements -->
@@ -863,6 +899,82 @@
       </xsl:variable>
       <xsl:value-of select="string-join($results)"/>
    </xsl:function>
+   
+   <xsl:function name="tan:satisfies-regex" as="xs:boolean">
+      <!-- 2-param version of fuller one, below -->
+      <xsl:param name="string-to-test" as="xs:string?"/>
+      <xsl:param name="string-must-match-regex" as="xs:string?"/>
+      <xsl:sequence
+         select="tan:satisfies-regexes($string-to-test, $string-must-match-regex, (), ())"
+      />
+   </xsl:function>
+   <xsl:function name="tan:filename-satisfies-regex" as="xs:boolean">
+      <!-- 2-param version of fuller one, below -->
+      <xsl:param name="string-to-test" as="xs:string?"/>
+      <xsl:param name="string-must-match-regex" as="xs:string?"/>
+      <xsl:sequence
+         select="tan:satisfies-regexes($string-to-test, $string-must-match-regex, (), 'i')"
+      />
+   </xsl:function>
+   <xsl:function name="tan:satisfies-regexes" as="xs:boolean">
+      <!-- 3-param version of fuller one, below -->
+      <xsl:param name="string-to-test" as="xs:string?"/>
+      <xsl:param name="string-must-match-regex" as="xs:string?"/>
+      <xsl:param name="string-must-not-match-regex" as="xs:string?"/>
+      <xsl:sequence
+         select="tan:satisfies-regexes($string-to-test, $string-must-match-regex, $string-must-not-match-regex, ())"
+      />
+   </xsl:function>
+   <xsl:function name="tan:filename-satisfies-regexes" as="xs:boolean">
+      <!-- 3-param version of fuller one, below -->
+      <xsl:param name="string-to-test" as="xs:string?"/>
+      <xsl:param name="string-must-match-regex" as="xs:string?"/>
+      <xsl:param name="string-must-not-match-regex" as="xs:string?"/>
+      <xsl:sequence
+         select="tan:satisfies-regexes($string-to-test, $string-must-match-regex, $string-must-not-match-regex, 'i')"
+      />
+   </xsl:function>
+   <xsl:function name="tan:satisfies-regexes" as="xs:boolean">
+      <!-- Input: a string value; an optional regex the string must match; an optional regex the string must not match -->
+      <!-- Output: whether the string satisfies the two regex conditions; if either regex is empty, true will be returned -->
+      <!-- If the input string is less than zero length, the function returns false -->
+      <xsl:param name="string-to-test" as="xs:string?"/>
+      <xsl:param name="string-must-match-regex" as="xs:string?"/>
+      <xsl:param name="string-must-not-match-regex" as="xs:string?"/>
+      <xsl:param name="flags" as="xs:string?"/>
+      <xsl:variable name="test-1" as="xs:boolean">
+         <xsl:choose>
+            <xsl:when test="string-length($string-to-test) lt 1">
+               <xsl:value-of select="false()"/>
+            </xsl:when>
+            <xsl:when
+               test="not(exists($string-must-match-regex)) or string-length($string-must-match-regex) lt 1">
+               <xsl:value-of select="true()"/>
+            </xsl:when>
+            <xsl:otherwise>
+               <xsl:value-of select="matches($string-to-test, $string-must-match-regex, $flags)"/>
+            </xsl:otherwise>
+         </xsl:choose>
+      </xsl:variable>
+      <xsl:variable name="test-2" as="xs:boolean">
+         <xsl:choose>
+            <xsl:when test="string-length($string-to-test) lt 1">
+               <xsl:value-of select="false()"/>
+            </xsl:when>
+            <xsl:when
+               test="not(exists($string-must-not-match-regex)) or string-length($string-must-not-match-regex) lt 1">
+               <xsl:value-of select="true()"/>
+            </xsl:when>
+            <xsl:otherwise>
+               <xsl:value-of
+                  select="not(matches($string-to-test, $string-must-not-match-regex, $flags))"/>
+            </xsl:otherwise>
+         </xsl:choose>
+      </xsl:variable>
+      <xsl:value-of select="$test-1 and $test-2"/>
+   </xsl:function>
+   
+   
 
 
    <!-- Functions: booleans -->

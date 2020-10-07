@@ -4,9 +4,11 @@
    xmlns:map="http://www.w3.org/2005/xpath-functions/map"
    xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tei="http://www.tei-c.org/ns/1.0"
    exclude-result-prefixes="#all" version="3.0">
-   <!-- Core global parameters, primarily for ../get inclusions/core-for-TAN-output.xsl -->
-   <!-- This stylesheet is meant to be imported (not included) by other stylesheets, so that the
-      parameter values can be changed. -->
+   <!-- Core global parameters for general applications, imported by ../get inclusions/core-for-TAN-output.xsl 
+   among others. This stylesheet is meant to be imported (not included) by other stylesheets, so that the
+   parameter values can be changed. -->
+   
+   <!-- STYLESHEET PARAMETERS -->
 
    <!-- If the output is a TAN file, the stylesheet should be credited/blamed. That is done primarily through an IRI assigned to the stylesheet -->
    <xsl:param name="stylesheet-iri" as="xs:string" required="yes"/>
@@ -29,6 +31,9 @@
    <!-- What remains to be done to the stylesheet? -->
    <xsl:param name="stylesheet-to-do-list" as="element(tan:to-do)?" required="no"/>
    
+   
+   
+   <!-- MID-PROCESS PARAMETERS -->
 
    <!-- Saving and retrieving intermediate steps -->
 
