@@ -19,6 +19,7 @@
     <xsl:param name="output-diagnostics-on" as="xs:boolean" static="yes" select="false()"/>
     
     <xsl:include href="../get%20inclusions/diff-and-collate-to-html.xsl"/>
+    <xsl:import href="../../parameters/application-diff-parameters.xsl"/>
     <xsl:import href="display%20TAN%20as%20HTML.xsl"/>
     <xsl:import href="../get%20inclusions/html-colors.xsl"/>
     
@@ -26,6 +27,9 @@
     <xsl:output method="xml" indent="yes" use-when="$output-diagnostics-on"/>
     
     
+    <!-- PARAMETERS -->
+    <!-- Other important parameters are to be found at /parameters/application-parameters.xsl. -->
+
     <!-- THIS STYLESHEET -->
     <xsl:param name="stylesheet-iri"
         select="'tag:textalign.net,2015:stylesheet:display-merged-sources-as-html'"/>
@@ -38,7 +42,6 @@
             <comment who="kalvesmaki" when="2020-09-23">Integrate diff/collate into cells, on both the global and local level.</comment>
             <comment who="kalvesmaki" when="2020-09-23">Support in the css bar clicking source id labels on and off.</comment>
             <comment who="kalvesmaki" when="2020-09-23">Add labels for divs higher than version wrappers.</comment>
-            <comment who="kalvesmaki" when="2020-09-23">Add label for CSS toggler.</comment>
         </to-do>
     </xsl:param>
     
@@ -46,15 +49,12 @@
     
     
     <xsl:param name="validation-phase" select="'terse'"/>
-    <!--<xsl:param name="input-items" select="tan:merge-expanded-docs($self-expanded[position() gt 1])"/>-->
-    <!--<xsl:param name="input-items" select="$sources-resolved"/>-->
-    <xsl:param name="input-items" select="$self-expanded"/>
 
     <!-- Parameters for input pass 1 -->
     <!-- What regular expression must source ids match (e.g., grc|eng-\d+)? If blank, all sources will be fetched. -->
     <xsl:param name="src-ids-must-match-regex" as="xs:string?"/>
     <!-- What regular expression should be used to exclude sources or aliases? -->
-    <xsl:param name="src-or-alias-ids-must-not-match-regex" as="xs:string?"/>
+    <xsl:param name="src-ids-must-not-match-regex" as="xs:string?"/>
     <xsl:param name="main-langs-must-match-regex" as="xs:string?"/>
     <xsl:param name="main-langs-must-not-match-regex" as="xs:string?"/>
     <!-- For the following parameters, you may find the process more efficient if you code them at <adjustments> in the class 2 file -->
@@ -68,10 +68,14 @@
         ><!--^3 ([1-36-9]|4[01]|5[89])--></xsl:param>
     <xsl:param name="leaf-div-must-have-at-least-how-many-versions" as="xs:integer?" select="()"/>
 
-    <xsl:param name="suppress-adjustment-actions" select="true()"/>
+    <xsl:param name="suppress-display-of-adjustment-actions" select="false()"/>
+    <!-- Do you wish to convert leaf-div TEI items to plain text? If false, the display will be populated with TEI elements, but this may hamper browser-based text searches, which cannot search across element boundaries. -->
     <xsl:param name="tei-should-be-plain-text" as="xs:boolean" select="false()"/>
+    <!-- What replacement character should mark a TEI <app> that has no lemma? -->
     <xsl:param name="marker-for-tei-app-without-lem" as="xs:string?">+</xsl:param>
+    <!-- What replacement character should mark a TEI <note>? -->
     <xsl:param name="tei-note-signal-default" as="xs:string?">n</xsl:param>
+    <!-- What replacement character should mark a TEI <add>? -->
     <xsl:param name="tei-add-signal-default" as="xs:string?">+</xsl:param>
 
     <!-- Parameters for input pass 3 (i.e., after merging) -->
@@ -81,20 +85,42 @@
     <xsl:param name="fill-defective-merges" select="true()"/>
     <xsl:param name="version-wrapper-class-name" select="'version-wrapper'"/>
     
-    <!-- The following parameter is very important, allowing you to pick one or more alias @xml:id/@id that should lead to the master source list. Each alias id will be resolved into constituent versions arranged in a tree, with sources nested according to alias group. The default looks at the top <alias> and takes the tokenized @idref values as the starting points -->
+    <!-- The following parameter is very important, allowing you to pick one or more alias @xml:id/@id that should lead to the master source 
+        list. Each alias id will be resolved into constituent versions grouped and sorted in a tree, with sources nested according to alias 
+        group. The default looks at the top <alias> and takes the tokenized @idref values as the starting points. -->
+    <!-- What sequence of alias idrefs should be used to group and sort sources? -->
     <xsl:param name="sort-and-group-by-what-alias-idrefs" as="xs:string*" select="tokenize(/*/tan:head/tan:vocabulary-key/tan:alias[1]/@idrefs, '\s+')"/>
+    <!-- If, when grouping and sorting by aliases, every source encountered be treated as belonging to the primary work, regardless of its declaration? This is useful for including things like commentaries, which may follow the reference system but be defined as a different work. -->
+    <xsl:param name="let-alias-groups-equate-works" as="xs:boolean" select="true()"/>
 
-
-    <!-- What threshhold if any should be used to convert a terminal alias group into n-way string difference? Anything other than a number between 0 and 1 will be ignored. If the aggregate difference is less than the decimal provided, no diff/collate will be substituted. -->
-    <xsl:param name="terminal-alias-to-n-way-diff-threshhold" as="xs:decimal?" select="0.6"/>
+    <!-- Differences: tan:diff() and tan:collate(). By turning it on, you can collapse into 
+        a single cell a leaf group of witnesses (grouped by alias). This is a very powerful 
+        extra feature for comparative reading, because it lets you see in a more compact 
+        reading environment exactly where versions differ from each other. But if you do
+        a text search in the browser, you will not find any text that crosses html element
+        boundaries, thereby eliminating one of the more important utilities of browser-based
+        research. So if you prioritize text searches over reading, do not use the diff/collate
+        feature. In fact, you probably also want to turn off TEI element rendering, because many
+        leafmost TEI elements split text that you want to have rejoined. 
+    -->
+    <!-- At what level of similarity should a group of versions in a div be rendered as a difference or collation? Anything other than a number between 0 and 1 will be ignored. If the aggregate difference of a group of versions is less than the decimal provided, no diff/collate will be substituted. -->
+    <xsl:param name="render-as-diff-threshhold" as="xs:decimal?" select="0.6"/>
     <!-- What text differences should be ignored when compiling difference statistics? These are built into a series of elements that group <c>s, e.g. <alias><c>'</c><c>"</c></alias> would, for statistical purposes, ignore differences merely of a single apostrophe and quotation mark. This affects only statistics. The difference would still be visible in the diff/collation. -->
     <xsl:param name="unimportant-change-character-aliases" as="element()*"/>
-    <!-- Should diffs be word-for-word (true) or character-for-character (false)? -->
-    <xsl:param name="diffs-at-word-level" select="false()"/>
+    <!-- Should diffs be rendered word-for-word (true) or character-for-character? -->
+    <xsl:param name="snap-to-word" as="xs:boolean" select="true()"/>
+    <!-- Is a diff or collation, is the first version of the greatest interest? If false, then the last version will be styled by the CSS as the focus. -->
+    <xsl:param name="first-version-is-of-primary-interest" as="xs:boolean" select="true()"/>
+    <!-- Should Venn diagrams be inserted for collations of 3 or more versions? If true, processing will take longer, and the HTML file will be larger. -->
+    <xsl:param name="include-venns" as="xs:boolean" select="false()"/>
     
     
+    
+    <!-- START OF THE PROCESS -->
 
-    <!-- Put the TAN-A sources into groups by work. Currently only the first work group will be processed -->
+    <!-- Put the TAN-A sources into groups by work. Currently only the first work group will be processed. We do not use TAN-A/head/vocabulary-key/work 
+    because the latter is build upon a generous view of allowing aliases to determine several different works in one fell swoop, but that might be
+    more than the current user wants, namely, choosing to group works according to selective alias(es). -->
     <xsl:variable name="valid-src-work-vocab" as="element()*">
         <xsl:for-each select="$sources-resolved/*">
             <xsl:sort select="index-of($src-ids, @src)"/>
@@ -110,9 +136,10 @@
     <xsl:variable name="valid-srcs-by-work" select="tan:group-elements-by-IRI($valid-src-work-vocab)"/>
     
     <!-- We accept as valid source ids for the primary merge only candidates from the first work group. -->
-    <xsl:variable name="valid-src-ids"
-        select="$valid-srcs-by-work[1]/*/@src[tan:satisfies-regexes(., $src-ids-must-match-regex, $src-or-alias-ids-must-not-match-regex)]"/>
+    <xsl:variable name="valid-first-work-src-ids"
+        select="$valid-srcs-by-work[1]/*/@src[tan:filename-satisfies-regexes(., $src-ids-must-match-regex, $src-ids-must-not-match-regex)]"/>
     
+    <!-- First, go through any <alias>es and build a grouping pattern for the chosen work. -->
     <xsl:variable name="alias-based-group-and-sort-pattern" as="element()">
         <source-pattern xmlns="tag:textalign.net,2015:ns">
             <xsl:apply-templates select="$head/tan:vocabulary-key"
@@ -122,13 +149,15 @@
         </source-pattern>
     </xsl:variable>
 
+    <!-- Now add the alias-based grouping pattern to any sources for the chosen work that already aren't
+    covered by alias groups. -->
     <xsl:variable name="source-group-and-sort-pattern" as="element()">
         <!-- This variable creates a master pattern that will be used to group and sort table columns -->
         <source-pattern xmlns="tag:textalign.net,2015:ns">
             <xsl:apply-templates select="$alias-based-group-and-sort-pattern/*"
                 mode="build-source-group-and-sort-pattern"/>
             <xsl:for-each
-                select="$valid-src-ids[not(. = $alias-based-group-and-sort-pattern//tan:idref)]">
+                select="$valid-first-work-src-ids[not(. = $alias-based-group-and-sort-pattern//tan:idref)]">
                 <xsl:variable name="this-pos" select="position()"/>
                 <idref>
                     <xsl:if test="$imprint-color-css">
@@ -164,7 +193,8 @@
             <xsl:variable name="next-idrefs"
                 select="tokenize(normalize-space($next-alias/@idrefs), ' ')"/>
             <xsl:choose>
-                <xsl:when test="not(exists($next-alias)) and $this-idref = $valid-src-ids">
+                <xsl:when test="not(exists($next-alias)) and 
+                    ($this-idref = $valid-first-work-src-ids or $let-alias-groups-equate-works)">
                     <idref xmlns="tag:textalign.net,2015:ns">
                         <xsl:value-of select="."/>
                     </idref>
@@ -186,7 +216,8 @@
         </xsl:for-each>
     </xsl:template>
     <!-- Deeply skip groups that have no valid idrefs -->
-    <xsl:template match="tan:group[not(descendant::tan:idref[. = $valid-src-ids])]"
+    <xsl:template match="tan:group[not($let-alias-groups-equate-works) 
+        and not(descendant::tan:idref[. = $valid-first-work-src-ids])]"
         priority="1"
         mode="build-source-group-and-sort-pattern"/>
     <!-- Add a standard alias id, and perhaps color value, to assist later processing -->
@@ -278,49 +309,6 @@
     <xsl:variable name="color-blend-midpoint" select="0.4"/>
 
 
-    <!-- SPECIAL FUNCTIONS -->
-
-    <xsl:function name="tan:satisfies-regexes" as="xs:boolean">
-        <!-- Input: a string value; an optional regex the string must match; an optional regex the string must not match -->
-        <!-- Output: whether the string satisfies the two regex conditions; if either regex is empty, true will be returned -->
-        <!-- If the input string is less than zero length, the function returns false -->
-        <xsl:param name="string-to-test" as="xs:string?"/>
-        <xsl:param name="string-must-match-regex" as="xs:string?"/>
-        <xsl:param name="string-must-not-match-regex" as="xs:string?"/>
-        <xsl:variable name="test-1" as="xs:boolean">
-            <xsl:choose>
-                <xsl:when test="string-length($string-to-test) lt 1">
-                    <xsl:value-of select="false()"/>
-                </xsl:when>
-                <xsl:when
-                    test="not(exists($string-must-match-regex)) or string-length($string-must-match-regex) lt 1">
-                    <xsl:value-of select="true()"/>
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:value-of select="matches($string-to-test, $string-must-match-regex)"/>
-                </xsl:otherwise>
-            </xsl:choose>
-        </xsl:variable>
-        <xsl:variable name="test-2" as="xs:boolean">
-            <xsl:choose>
-                <xsl:when test="string-length($string-to-test) lt 1">
-                    <xsl:value-of select="false()"/>
-                </xsl:when>
-                <xsl:when
-                    test="not(exists($string-must-not-match-regex)) or string-length($string-must-not-match-regex) lt 1">
-                    <xsl:value-of select="true()"/>
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:value-of
-                        select="not(matches($string-to-test, $string-must-not-match-regex))"/>
-                </xsl:otherwise>
-            </xsl:choose>
-        </xsl:variable>
-        <xsl:value-of select="$test-1 and $test-2"/>
-    </xsl:function>
-    
-    
-
     <!-- PASS 1 -->
     <!-- This pass is devoted to anything that needs to be dealt with before merging: filtering out 
         content; dealing with TEI; making the sources look like the original. If you have to filter stuff
@@ -331,7 +319,7 @@
     <xsl:template match="/" mode="input-pass-1">
         <xsl:variable name="this-src-id" select="*/@src"/>
         <xsl:variable name="this-lang" select="*/tan:body/@xml:lang"/>
-        <xsl:variable name="src-is-ok" select="$this-src-id = $valid-src-ids"/>
+        <xsl:variable name="src-is-ok" select="$this-src-id = $source-group-and-sort-pattern//tan:idref"/>
         <xsl:variable name="lang-is-ok"
             select="tan:satisfies-regexes($this-lang, $main-langs-must-match-regex, $main-langs-must-not-match-regex)"/>
         <xsl:variable name="this-class" select="tan:class-number(.)"/>
@@ -365,7 +353,7 @@
         <xsl:copy-of select="tan:shallow-copy(.)"/>
     </xsl:template>
     <xsl:template match="tan:skip | tan:rename | tan:equate | tan:reassign" mode="input-pass-1">
-        <xsl:if test="not($suppress-adjustment-actions = true())">
+        <xsl:if test="not($suppress-display-of-adjustment-actions = true())">
             <xsl:copy>
                 <xsl:copy-of select="@*"/>
                 <xsl:apply-templates mode="#current"/>
@@ -509,55 +497,6 @@
 
     <xsl:param name="input-pass-2" select="tan:merge-expanded-docs($input-pass-1b)"/>
     
-    <xsl:variable name="relevant-diffs-and-collates" as="element()*">
-        <xsl:if test="$terminal-alias-to-n-way-diff-threshhold ge 0 and $terminal-alias-to-n-way-diff-threshhold le 1">
-            <xsl:for-each select="$source-group-and-sort-pattern//tan:group[not(tan:group)][count(tan:idref) gt 1]">
-                <xsl:variable name="these-idrefs" select="tan:idref"/>
-                <xsl:variable name="these-sources" select="$input-pass-1b[*/@src = $these-idrefs]"/>
-                <xsl:variable name="these-texts"
-                    select="
-                        for $i in $these-sources
-                        return
-                            tan:text-join($i/*/tan:body)"
-                />
-                <xsl:variable name="average-text-length"
-                    select="
-                        avg((for $i in $these-texts
-                        return
-                            string-length($i)))"
-                />
-                <xsl:variable name="this-diff-or-collation" as="element()?">
-                    <xsl:choose>
-                        <xsl:when test="count($these-texts) eq 2">
-                            <xsl:copy-of
-                                select="tan:adjust-diff(tan:diff($these-texts[1], $these-texts[2], $diffs-at-word-level))"
-                            />
-                        </xsl:when>
-                        <xsl:otherwise>
-                            <xsl:copy-of
-                                select="tan:collate($these-texts, $these-idrefs)"/>
-                        </xsl:otherwise>
-                    </xsl:choose>
-                </xsl:variable>
-                <xsl:variable name="this-difference-quotient" as="xs:decimal?"
-                    select="(string-length(string-join($this-diff-or-collation/(tan:common | tan:c))) div $average-text-length)"
-                />
-                <xsl:if test="$this-difference-quotient ge $terminal-alias-to-n-way-diff-threshhold">
-                    <xsl:variable name="this-diff-or-collation-with-stats" select="tan:infuse-diff-and-collate-stats($this-diff-or-collation, $unimportant-change-character-aliases)"/>
-                    <group>
-                        <label>
-                            <xsl:value-of select="'Analysis of string differences among ' || string-join($these-idrefs, ', ')"/>
-                        </label>
-                        <xsl:copy-of select="$these-idrefs"/>
-                        <xsl:copy-of select="$this-diff-or-collation-with-stats/(* except (tan:diff, tan:collation))"/>
-                    </group>
-                </xsl:if>
-
-            </xsl:for-each> 
-        </xsl:if>
-    </xsl:variable>
-    
-    
     
     
 
@@ -680,7 +619,7 @@
         </xsl:if>
     </xsl:template>
 
-    <xsl:template match="tan:ref[not(tan:n)][@q]" mode="input-pass-3 place-sorted-div">
+    <xsl:template match="tan:ref[not(tan:n)][@q]" mode="input-pass-3">
         <!-- between the version wrapper <div> and this template, we calculate @qs for anchors that
         pertain to works, not merely, versions, and we drop them from here, their version location. -->
         <xsl:param name="qs-to-anchors-to-drop" tunnel="yes" as="xs:string*"/>
@@ -688,7 +627,7 @@
             <xsl:copy-of select="."/>
         </xsl:if>
     </xsl:template>
-    <xsl:template match="tan:ref[tan:n] | tan:orig-ref" mode="input-pass-3 place-sorted-div">
+    <xsl:template match="tan:ref[tan:n] | tan:orig-ref" mode="input-pass-3">
         <xsl:if test="not($suppress-refs)">
             <xsl:copy>
                 <xsl:copy-of select="@*"/>
@@ -696,7 +635,7 @@
             </xsl:copy>
         </xsl:if>
     </xsl:template>
-    <xsl:template match="tan:n" mode="input-pass-3 place-sorted-div">
+    <xsl:template match="tan:n" mode="input-pass-3">
         <xsl:if test="not(exists(preceding-sibling::tan:n)) and $add-display-n">
             <display-n xmlns="tag:textalign.net,2015:ns">
                 <xsl:value-of select="../(@orig-n, @n)[1]"/>
@@ -705,11 +644,11 @@
         <xsl:copy-of select="."/>
     </xsl:template>
 
-    <xsl:template match="tan:body/text() | tan:div/text()" mode="input-pass-3 place-sorted-div">
+    <xsl:template match="tan:body/text() | tan:div/text()" mode="input-pass-3">
         <xsl:value-of select="normalize-space(.)"/>
     </xsl:template>
 
-    <xsl:template match="tan:ref/text()" mode="input-pass-3 place-sorted-div">
+    <xsl:template match="tan:ref/text()" mode="input-pass-3">
         <xsl:variable name="constituent-ns" select="../tan:n"/>
         <xsl:variable name="new-ns" as="xs:string*">
             <xsl:for-each select="$constituent-ns">
@@ -741,19 +680,11 @@
         <xsl:param name="items-to-group-and-sort" tunnel="yes" as="element()*"/>
         
         <xsl:variable name="these-idrefs" select="tan:idref"/>
-        <xsl:variable name="these-diff-or-collates" select="$relevant-diffs-and-collates[tan:idref = $these-idrefs]"/>
-        <xsl:variable name="diff-class-item"
-            select="
-                if (exists($these-diff-or-collates)) then
-                    string-join($these-idrefs, '+')
-                else
-                    ()"
-        />
         
         <xsl:variable name="descendant-idrefs" select=".//tan:idref"/>
         <xsl:variable name="items-yet-to-place"
             select="$items-to-group-and-sort[(tan:src, @src) = $descendant-idrefs]"/>
-        <xsl:variable name="these-class-values" select="string-join((@alias-id, $diff-class-item), ' ')"/>
+        <xsl:variable name="these-class-values" select="string-join((@alias-id), ' ')"/>
         
         <xsl:if test="exists($items-yet-to-place) or $fill-defective-merges">
             <xsl:copy>
@@ -761,8 +692,6 @@
                     <xsl:attribute name="class" select="$these-class-values"/>
                 </xsl:if>
                 <xsl:copy-of select="tan:alias"/>
-                <xsl:apply-templates select="$these-diff-or-collates"
-                    mode="diff-and-collate-to-html"/>
                 <div class="group-items">
                     <xsl:apply-templates select="* except tan:alias" mode="#current">
                         <xsl:with-param name="items-to-group-and-sort" tunnel="yes"
@@ -776,18 +705,7 @@
     </xsl:template>
     
     <xsl:template match="tan:group" mode="regroup-and-re-sort-divs">
-        <xsl:variable name="these-idrefs" select="tan:idref"/>
-        <xsl:variable name="these-diff-or-collates" select="$relevant-diffs-and-collates[tan:idref = $these-idrefs]"/>
-        <xsl:choose>
-            <xsl:when test="exists($these-diff-or-collates)">
-                <xsl:apply-templates select="tan:idref[1]" mode="#current">
-                    <xsl:with-param name="idrefs-to-collate" tunnel="yes" select="$these-idrefs"/>
-                </xsl:apply-templates>
-            </xsl:when>
-            <xsl:otherwise>
-                <xsl:apply-templates mode="#current"/>
-            </xsl:otherwise>
-        </xsl:choose>
+        <xsl:apply-templates mode="#current"/>
     </xsl:template>
     
     <xsl:template match="tan:alias" mode="regroup-and-re-sort-heads">
@@ -816,94 +734,70 @@
     <xsl:template match="tan:idref" mode="regroup-and-re-sort-divs">
         <xsl:param name="items-to-group-and-sort" as="element()*" tunnel="yes"/>
         <xsl:param name="n-pattern" as="element()*" tunnel="yes"/>
-        <xsl:param name="idrefs-to-collate" tunnel="yes" as="xs:string*"/>
-        
         <xsl:variable name="this-idref" select="."/>
-        <xsl:variable name="those-divs" select="$items-to-group-and-sort[(tan:src, @src) = ($this-idref, $idrefs-to-collate)]"/>
-        <xsl:variable name="this-idref-revised" select="string-join(($this-idref, $idrefs-to-collate[not(. = $this-idref)]), '+')"/>
+        <xsl:variable name="those-divs" select="$items-to-group-and-sort[(tan:src, @src) = $this-idref]"/>
         <xsl:variable name="filler-element" as="element()">
             <div type="#version" class="filler" xmlns="tag:textalign.net,2015:ns">
                 <src>
-                    <xsl:value-of select="$this-idref-revised"/>
+                    <xsl:value-of select="$this-idref"/>
                 </src>
                 <xsl:text> </xsl:text>
             </div>
         </xsl:variable>
-        <xsl:variable name="items-to-place"
+        <xsl:variable name="items-to-group-and-sort"
             select="
-                if (exists($those-divs)) then
-                    $those-divs
-                else
-                    $filler-element"
+            if (exists($those-divs)) then
+            $those-divs
+            else
+            $filler-element"
         />
         <xsl:variable name="these-alias-ids" select="ancestor::*[@alias-id]/@alias-id"/>
         
         <xsl:if test="exists($those-divs) or $fill-defective-merges">
-            <!-- Within a version-wrapper, a given source could easily have many <div>s, so we wrap them 
-                up (even singletons) as an <item> -->
-            <!-- Each item is given a class value not just for the source id, but for all alias ids, to 
-                facilitate toggling divs. -->
+            <!-- Within a version-wrapper, a given source could easily have many <div>s, so we wrap them up (even singletons) as an <item> -->
+            <!-- Each item is given a class value not just for the source id, but for all alias ids, to facilitate toggling divs. -->
             <item xmlns="tag:textalign.net,2015:ns">
-                <xsl:attribute name="class" select="string-join(($this-idref-revised, $these-alias-ids), ' ')"/>
+                <xsl:attribute name="class" select="string-join(($this-idref, $these-alias-ids), ' ')"/>
                 <src>
-                    <xsl:value-of select="$this-idref-revised"/>
+                    <xsl:value-of select="$this-idref"/>
                 </src>
                 <xsl:apply-templates select="$n-pattern" mode="#current">
-                    <xsl:with-param name="items-to-place" as="element()*" select="$items-to-place"/>
+                    <xsl:with-param name="items-to-group-and-sort" as="element()*"
+                        select="$items-to-group-and-sort"/>
                     <xsl:with-param name="filler-element" as="element()?" select="$filler-element"/>
-                    <xsl:with-param name="current-src-id" tunnel="yes" select="$this-idref"/>
                 </xsl:apply-templates>
             </item>
         </xsl:if>
         
     </xsl:template>
     <xsl:template match="tan:primary-ns | tan:n" mode="regroup-and-re-sort-divs">
-        <xsl:param name="items-to-place" as="element()*"/>
+        <xsl:param name="items-to-group-and-sort" as="element()*"/>
         <xsl:param name="filler-element" as="element()?"/>
-        <xsl:param name="current-src-id" tunnel="yes" as="xs:string"/>
-        <xsl:param name="idrefs-to-collate" tunnel="yes" as="xs:string*"/>
-        
+        <xsl:variable name="diagnostics" select="false()"/>
+        <xsl:variable name="this-src" select="$filler-element/tan:src/text()"/>
         <xsl:variable name="these-ns" select="descendant-or-self::tan:n"/>
-        <xsl:variable name="deeper-divs" select="$items-to-place[not(@type)][descendant::tan:div[@type = '#version'][(tan:src | @src) = ($current-src-id, $idrefs-to-collate)]]"/>
-        <xsl:variable name="deeper-divs-wrapped" as="element()?">
-            <xsl:if test="exists($deeper-divs)">
-                <div xmlns="tag:textalign.net,2015:ns" class="version">
-                    <xsl:copy-of select="$these-ns"/>
-                    <xsl:copy-of select="$deeper-divs"/>
-                </div>
-            </xsl:if>
-        </xsl:variable>
-        <!--<xsl:variable name="immediate-relevant-version-divs" select="$items-to-place[@type = '#version'][tan:n = $these-ns]"/>-->
-        <xsl:variable name="immediate-relevant-divs" select="$items-to-place[tan:n = $these-ns]"/>
-        <!--<xsl:variable name="deeper-relevant-version-divs"
-            select="$items-to-place[not(@type)]/descendant::tan:div[@type = '#version'][(tan:src | @src) = $src-id]"
-        />-->
-        
-        <!--<xsl:variable name="those-divs" select="$items-to-place[tan:n = $these-ns]"/>-->
-        <!--<xsl:variable name="divs-of-interest" select="$immediate-relevant-version-divs[tan:n[1] = $these-ns], $deeper-relevant-version-divs"/>-->
-        <xsl:variable name="divs-of-interest" select="$immediate-relevant-divs[tan:n[1] = $these-ns], $deeper-divs-wrapped"/>
+        <xsl:variable name="those-divs" select="$items-to-group-and-sort[tan:n = $these-ns]"/>
+        <xsl:variable name="divs-of-interest" select="$those-divs[tan:n[1] = $these-ns]"/>
         <xsl:variable name="first-div-of-interest" select="$divs-of-interest[1]"/>
-        <xsl:variable name="divs-not-of-interest" select="$immediate-relevant-divs except $divs-of-interest"/>
-
-        <xsl:variable name="diagnostics-on" select="false()"/>
-        <xsl:if test="$diagnostics-on">
-            <xsl:message select="'This src: ', $current-src-id"/>
+        <xsl:variable name="divs-not-of-interest" select="$those-divs except $divs-of-interest"/>
+        <xsl:variable name="divs-of-interest-consolidated"/>
+        <xsl:if test="$diagnostics">
+            <xsl:message select="'This src: ', $this-src"/>
             <xsl:message select="'These ns: ', $these-ns"/>
-            <!--<xsl:message select="'Those divs: ', $those-divs"/>-->
+            <xsl:message select="'Those divs: ', $those-divs"/>
             <xsl:message select="'Divs of interest: ', $divs-of-interest"/>
             <xsl:message
                 select="'Extra divs of interest: ', ($divs-of-interest except $first-div-of-interest)"
             />
         </xsl:if>
-        
-        <xsl:apply-templates select="$first-div-of-interest" mode="place-sorted-div">
+        <xsl:apply-templates select="$divs-of-interest[1]" mode="input-pass-3">
             <xsl:with-param name="extra-divs-of-interest"
                 select="$divs-of-interest except $first-div-of-interest"/>
         </xsl:apply-templates>
         <xsl:apply-templates select="$divs-not-of-interest" mode="#current">
             <xsl:with-param name="context-ns" select="$these-ns"/>
         </xsl:apply-templates>
-        <xsl:if test="not(exists($divs-of-interest)) and $fill-defective-merges">
+        <xsl:if test="not(exists($those-divs)) and $fill-defective-merges">
             <div xmlns="tag:textalign.net,2015:ns">
                 <xsl:copy-of select="$filler-element/@*"/>
                 <xsl:copy-of select="$filler-element/*"/>
@@ -922,70 +816,6 @@
             <xsl:copy-of select="$context-ns"/>
         </xsl:copy>
     </xsl:template>
-    
-    <xsl:template match="tan:div" mode="place-sorted-div">
-        <xsl:param name="extra-divs-of-interest" as="element()*"/>
-        <xsl:param name="current-src-id" tunnel="yes" as="xs:string?"/>
-        <xsl:param name="idrefs-to-collate" tunnel="yes" as="xs:string*"/>
-        
-        <xsl:variable name="these-src-identifiers" select="@src | tan:src"/>
-        <xsl:variable name="deep-skip-this-div" select="(string-length($current-src-id) gt 0) 
-            and exists($these-src-identifiers)
-            and not($current-src-id = $these-src-identifiers)"/>
-        <!-- If there are other divs of interest, they should be consolidated into a single wrapper. -->
-        <xsl:choose>
-            <xsl:when test="$deep-skip-this-div"/>
-            <xsl:when test="exists($idrefs-to-collate)">
-                <xsl:variable name="these-texts"
-                    select="
-                        for $i in $idrefs-to-collate
-                        return
-                            tan:text-join((., $extra-divs-of-interest)[(@src | tan:src) = $i])"
-                />
-                <xsl:copy>
-                    <xsl:copy-of select="@*"/>
-                    <xsl:attribute name="class"
-                        select="
-                            if (count($these-texts) eq 2) then
-                                'diff'
-                            else
-                                'collation'"
-                    />
-                    <xsl:apply-templates select="tan:*" mode="#current"/>
-                    <xsl:choose>
-                        <xsl:when test="count($these-texts) eq 2">
-                            <xsl:copy-of select="tan:adjust-diff(tan:diff($these-texts[1], $these-texts[2], $diffs-at-word-level))"/>
-                        </xsl:when>
-                        <xsl:otherwise>
-                            <xsl:copy-of select="tan:collate($these-texts, $idrefs-to-collate)"/>
-                        </xsl:otherwise>
-                    </xsl:choose>
-                </xsl:copy>
-            </xsl:when>
-            <xsl:otherwise>
-                <xsl:copy>
-                    <xsl:copy-of select="@*"/>
-                    <xsl:choose>
-                        <xsl:when test="exists($extra-divs-of-interest)">
-                            <xsl:attribute name="class" select="'consolidated'"/>
-                            <xsl:apply-templates select="tan:*" mode="#current"/>
-                            <xsl:for-each select="self::*, $extra-divs-of-interest">
-                                <!-- In this method, we make sure to drop <n> and other metadata that could be misleading in the next step -->
-                                <xsl:copy>
-                                    <xsl:copy-of select="@*"/>
-                                    <xsl:apply-templates select="(tan:div, text(), tei:*)" mode="#current"/>
-                                </xsl:copy>
-                            </xsl:for-each>
-                        </xsl:when>
-                        <xsl:otherwise>
-                            <xsl:apply-templates mode="#current"/>
-                        </xsl:otherwise>
-                    </xsl:choose>
-                </xsl:copy>
-            </xsl:otherwise>
-        </xsl:choose>
-    </xsl:template>
-    
     
     
 
@@ -1072,6 +902,7 @@
     </xsl:template>
     <xsl:template match="tan:head/tan:name" mode="tan-to-html-pass-2-title">
         <h1>
+            <xsl:copy-of select="@xml:lang"/>
             <xsl:value-of select="."/>
         </h1>
     </xsl:template>
@@ -1128,31 +959,66 @@
         <xsl:copy>
             <xsl:attribute name="class" select="'control-wrapper'"/>
             <xsl:if test="$add-controller-label">
-                <h2 class="label">Source controller</h2>
-                <div>Drag to reorder sources; click the checkbox to turn sources on and off; click
-                    the label to learn more about the source.</div>
+                <h2 class="label">Sources</h2>
             </xsl:if>
             <xsl:copy>
                 <xsl:copy-of select="@*"/>
                 <xsl:attribute name="class" select="string-join((@class, 'sortable'), ' ')"/>
                 <xsl:apply-templates mode="#current"/>
             </xsl:copy>
+            <div class="help">
+                <div class="label">Help</div>
+                <div>Above are the sources, or groups of sources, that have been aligned. Click a
+                    box to expand it and see what other groups or sources are included. To put
+                    sources in a different order, drag the appropriate box. Click any checkbox to
+                    turn a group of sources, or an individual source, on and off; click on any
+                    source id to learn more about it.</div>
+                <xsl:if test="$add-controller-options">
+                    <div>Click other options, below, to adjust your reading experience.</div>
+                </xsl:if>
+                <xsl:if test="$render-as-diff-threshhold gt 0 and $render-as-diff-threshhold lt 1">
+                    <div>If at any point in the transcription, a group of sources have text that is
+                            <xsl:value-of select="format-number($render-as-diff-threshhold, '0%')"/>
+                        in common, they are collapsed into a single presentation format, with
+                        differences shown, if any. These are distinguished by the source names
+                        joined by a +. If you click the ... in the cell, you will get a table of
+                        statistics and a source controller. Click a box to turn a source off or on
+                        within the div. Click the formatted Tt to apply a format to a different
+                        version. When you hover your mouse over a highlighted change, a tooltip will
+                        appear showing you which sources attest to that reading.</div>
+                </xsl:if>
+                <div>This HTML page was generated on <xsl:value-of select="$today-MDY"/> at
+                        <xsl:value-of select="$now"/> by <a href="{$stylesheet-url}">
+                        <xsl:value-of select="$stylesheet-name"/></a>, an application of the <a
+                        href="http://textalign.net">Text Alignment Network</a>. If the page does not
+                    have exactly the sources or features you want, re-run the application, changing
+                    the parameters to suit what you want. Because its main input is a <a
+                        href="{$doc-uri}">TAN-A file</a>, you may find that making changes to
+                    &lt;source>s, &lt;adjustments>, and &lt;alias> is sufficient.</div>
+                
+            </div>
             <xsl:if test="$add-controller-options">
                 <div class="options">
                     <div class="label">Other options</div>
-                    <xsl:copy-of
-                        select="tan:add-class-switch('table', 'layout-fixed', 'Table layout fixed', $table-layout-fixed)"/>
-                    <div class="option-item">
-                        <div>Table width <input id="tableWidth" type="number" min="50" max="10000"
-                                value="100"/>%</div>
+                    <div class="option-group">
+                        <xsl:copy-of
+                            select="tan:add-class-switch('table', 'layout-fixed', 'Table layout fixed', $table-layout-fixed)"/>
+                        <div class="option-item">
+                            <div>Table width <input id="tableWidth" type="number" min="50" max="10000"
+                                    value="100"/>%</div>
+                        </div>
+                        <xsl:copy-of
+                            select="tan:add-class-switch('.add', 'hidden', 'Hide additions', true())"/>
+                        <xsl:copy-of
+                            select="tan:add-class-switch('.milestone', 'hidden', 'Hide milestones', true())"/>
+                        <xsl:copy-of
+                            select="tan:add-class-switch('.note', 'hidden', 'Hide annotations', true())"/>
+                        <xsl:copy-of
+                            select="tan:add-class-switch('.ref', 'hidden', 'Hide references', true())"/>
+                        <xsl:copy-of
+                            select="tan:add-class-switch('.rdg', 'hidden', 'Hide variant readings', true())"
+                        />
                     </div>
-                    <xsl:copy-of
-                        select="tan:add-class-switch('.add', 'hidden', 'Hide additions', true())"/>
-                    <xsl:copy-of
-                        select="tan:add-class-switch('.note', 'hidden', 'Hide annotations', true())"/>
-                    <xsl:copy-of
-                        select="tan:add-class-switch('.rdg', 'hidden', 'Hide variant readings', true())"
-                    />
                 </div>
             </xsl:if>
         </xsl:copy>
@@ -1203,61 +1069,6 @@
             <xsl:value-of select="replace(., '_', ' ')"/>
         </div>
     </xsl:template>
-
-    <!-- The <colgroup> that will be put inside every <table>, so that sources can be grouped by leaf <group> -->
-    <!-- Except for the 1st instance, each <col> should have a class with at least two items: the source 
-    class and the alias group class, e.g., class="src-/-grc-xyz alias-/-1-/-2" (double-hyphens separated
-    by a / to keep this comment valid). The first value makes sure that
-    the <col> changes when the user changes the sequence of the sources. The second value provides the 
-    background color to the column. A <td> will then apply a background color that simply changes the opacity
-    based on group number. -->
-    <!-- July 2020: we might not need colgroups at all now, given that the display is more effective with
-    each <td> nesting the <div> structure of the source's alias groups. -->
-    <xsl:variable name="standard-colgroup" as="element()">
-        <colgroup>
-            <col/>
-            <xsl:for-each select="$src-id-sequence">
-                <xsl:variable name="this-src-id" select="."/>
-                <xsl:variable name="these-class-values"
-                    select="tan:class-val-for-source(.), tan:class-val-for-alias-group(.)"
-                    as="xs:string*"/>
-                <col class="{string-join($these-class-values, ' ')}"/>
-            </xsl:for-each>
-            <!--<xsl:apply-templates select="$source-group-and-sort-pattern" mode="build-colgroup"/>-->
-        </colgroup>
-    </xsl:variable>
-    <!--<xsl:template match="tan:group" mode="build-colgroup">
-        <xsl:variable name="this-alias" select="tan:alias"/>
-        <xsl:for-each select="tan:idref">
-        </xsl:for-each>
-        <!-\-<xsl:for-each-group select="* except tan:alias" group-adjacent="name()">
-            <xsl:choose>
-                <xsl:when test="current-grouping-key() = 'idref'">
-                    <xsl:variable name="these-class-values" as="xs:string*">
-                        <xsl:for-each select="current-group()">
-                            <xsl:value-of select="concat('src-\\-', .)"/>
-                        </xsl:for-each>
-                        <xsl:if test="exists($this-alias)">
-                            <xsl:variable name="idref-alias-pos"
-                                select="index-of($alias-ids, $this-alias)"/>
-                            <xsl:value-of
-                                select="concat('alias-\\-', string($idref-alias-pos), ' alias-\\-', $this-alias)"
-                            />
-                        </xsl:if>
-                    </xsl:variable>
-                    <col span="{count(current-group())}">
-                        <xsl:if test="exists($this-alias)">
-                            <xsl:attribute name="class"
-                                select="string-join($these-class-values, ' ')"/>
-                        </xsl:if>
-                    </col>
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:apply-templates select="current-group()" mode="#current"/>
-                </xsl:otherwise>
-            </xsl:choose>
-        </xsl:for-each-group>-\->
-    </xsl:template>-->
 
     <xsl:template match="tan:desc" mode="tan-to-html-pass-2">
         <div class="desc"><xsl:value-of select="."/></div>
@@ -1474,6 +1285,11 @@
         </div>
     </xsl:template>
 
+    <!-- Build a version wrapper -->
+    <!-- For table-based comparison of versions, here begins the creation of the table. The rows are shaped
+    by the n patterns, because there may be defective or combined @n values for a set of versions, in which 
+    case we need to calculate @rowspan values. Once that grid is formed, the versions are brought together at
+    the <td> level, further into the template mode. -->
     <xsl:template match="tan:div[tokenize(@class, ' ') = $version-wrapper-class-name]"
         mode="tan-to-html-pass-2-html-tables">
         <xsl:variable name="n-pattern" as="element()*"
@@ -1481,11 +1297,138 @@
         <!--<xsl:variable name="these-div-versions"
             select=".//tan:div[tokenize(@class, ' ') = 'version']"/>-->
         <xsl:variable name="these-div-versions" select="tan:item/tan:div"/>
+        <xsl:variable name="these-divs-diffed" as="element()*">
+            <xsl:choose>
+                <xsl:when test="$render-as-diff-threshhold gt 0 and $render-as-diff-threshhold lt 1">
+                    <xsl:for-each-group select="$these-div-versions"
+                        group-by="
+                            for $i in ancestor-or-self::*[tan:src][1]/tan:src[1]
+                            return
+                                $source-group-and-sort-pattern//tan:group[tan:idref = $i]/tan:alias">
+                        <xsl:variable name="is-diff" select="count(current-group()) eq 2"/>
+                        <xsl:variable name="these-raw-texts" as="xs:string*"
+                            select="
+                                for $i in current-group()
+                                return
+                                    string-join($i/descendant-or-self::tan:div/text())"/>
+                        <xsl:variable name="these-texts-normalized-1"
+                            select="
+                                if (count(($diff-and-collate-input-batch-replacements)) gt 0) then
+                                    (for $i in $these-raw-texts
+                                    return
+                                        tan:batch-replace($i, ($diff-and-collate-input-batch-replacements)))
+                                else
+                                    $these-raw-texts"/>
+
+                        <xsl:variable name="finalized-texts-to-compare" as="xs:string*"
+                            select="
+                                if ($ignore-case-differences) then
+                                    (for $i in $these-texts-normalized-1
+                                    return
+                                        lower-case($i))
+                                else
+                                    $these-texts-normalized-1"/>
+
+                        <xsl:variable name="these-idrefs"
+                            select="current-group()/ancestor-or-self::*[tan:src][1]/tan:src[1]"/>
+                        <xsl:variable name="this-diff-or-collation" as="element()?">
+                            <xsl:choose>
+                                <xsl:when
+                                    test="
+                                        some $i in $finalized-texts-to-compare
+                                            satisfies not(matches($i, '\S'))"/>
+                                <xsl:when test="$is-diff">
+                                    <xsl:sequence
+                                        select="tan:adjust-diff(tan:diff($finalized-texts-to-compare[1], $finalized-texts-to-compare[2], $snap-to-word))"
+                                    />
+                                </xsl:when>
+                                <xsl:when test="count(current-group()) gt 2">
+                                    <xsl:sequence
+                                        select="tan:collate($finalized-texts-to-compare, $these-idrefs, true(), true(), true(), $snap-to-word)"
+                                    />
+                                </xsl:when>
+                            </xsl:choose>
+                        </xsl:variable>
+                        <xsl:variable name="this-common-text"
+                            select="$this-diff-or-collation/(tan:common | tan:c/tan:txt)"/>
+                        <xsl:variable name="this-full-text"
+                            select="$this-diff-or-collation/(tan:common | tan:a | tan:b | */tan:txt)"/>
+                        <xsl:variable name="common-text-length"
+                            select="string-length(string-join($this-common-text))"/>
+                        <xsl:variable name="full-text-length"
+                            select="string-length(string-join($this-full-text))"/>
+                        <xsl:variable name="this-ratio-of-commonality"
+                            select="
+                                if ($full-text-length gt 0) then
+                                    $common-text-length div $full-text-length
+                                else
+                                    0"/>
+                        <xsl:choose>
+                            <xsl:when
+                                test="$this-ratio-of-commonality gt $render-as-diff-threshhold">
+
+                                <xsl:variable name="this-diff-or-collation-statted"
+                                    select="tan:infuse-diff-and-collate-stats($this-diff-or-collation, (), $include-venns)"/>
+
+                                <xsl:variable name="this-diff-or-collate-as-html" as="element()">
+                                    <xsl:apply-templates select="$this-diff-or-collation-statted"
+                                        mode="diff-and-collate-to-html">
+                                        <xsl:with-param name="last-wit-idref" tunnel="yes"
+                                            select="
+                                                if ($first-version-is-of-primary-interest) then
+                                                    $these-idrefs[1]
+                                                else
+                                                    $these-idrefs[last()]"
+                                        />
+                                        <xsl:with-param name="raw-texts" tunnel="yes"
+                                            select="
+                                                if ($is-diff) then
+                                                    $these-raw-texts
+                                                else
+                                                    if ($first-version-is-of-primary-interest) then
+                                                        $these-raw-texts[1]
+                                                    else
+                                                        $these-raw-texts[last()]"
+                                        />
+                                    </xsl:apply-templates>
+                                </xsl:variable>
+                                
+                                <div n="{position()}"
+                                    class="version {string-join($these-idrefs, ' ')} {string-join($these-idrefs, '+')}"
+                                    colspan="{count(current-group())}">
+                                    <!--<test05e>
+                                        <this-diff-or-collation><xsl:copy-of select="$this-diff-or-collation"/></this-diff-or-collation>
+                                        <ctl><xsl:value-of select="$common-text-length"/></ctl>
+                                        <ftl><xsl:value-of select="$full-text-length"/></ftl>
+                                        <commonality><xsl:copy-of select="$this-ratio-of-commonality"/></commonality>
+                                        <statted><xsl:copy-of select="$this-diff-or-collation-statted"/></statted>
+                                        <as-html><xsl:copy-of select="$this-diff-or-collate-as-html"/></as-html>
+                                    </test05e>-->
+                                    <xsl:copy-of select="$these-idrefs"/>
+                                    <xsl:copy-of select="current-group()[1]/*"/>
+                                    <xsl:apply-templates select="$this-diff-or-collate-as-html"
+                                        mode="adjust-diff-or-collate-for-merged-display"/>
+                                </div>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:sequence select="current-group()"/>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:for-each-group> 
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:sequence select="$these-div-versions"/>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+        
         <div>
             <xsl:copy-of select="@*"/>
             <div class="meta">
                 <xsl:apply-templates select="* except tan:group" mode="tan-to-html-pass-2-html-tables-pre-table"/>
             </div>
+            <!--<div class="test05a"><xsl:copy-of select="$these-div-versions"/></div>-->
+            <!--<div class="test05b"><xsl:copy-of select="$these-divs-diffed"/></div>-->
             <table>
                 <xsl:if test="$table-layout-fixed">
                     <xsl:attribute name="class" select="'layout-fixed'"/>
@@ -1494,7 +1437,8 @@
                 <tbody>
                     <xsl:apply-templates select="$n-pattern"
                         mode="tan-to-html-pass-2-html-tables-tr">
-                        <xsl:with-param name="div-versions" select="$these-div-versions"/>
+                        <!--<xsl:with-param name="div-versions" select="$these-div-versions" tunnel="yes"/>-->
+                        <xsl:with-param name="div-versions" select="$these-divs-diffed" tunnel="yes"/>
                     </xsl:apply-templates>
                 </tbody>
             </table>
@@ -1503,8 +1447,25 @@
             </div>
         </div>
     </xsl:template>
+    
+    <!-- Get rid of the <h2>Comparison header, as well as the 2nd column in the statistics table, with the URI -->
+    <xsl:template match="html:h2 | html:table[@class = 'e-stats']/html:thead/html:tr/html:th[2] | 
+        html:table[@class = 'e-stats']/html:tbody/html:tr/html:td[2]" 
+        mode="adjust-diff-or-collate-for-merged-display"/>
+    <xsl:template match="html:*[html:div[@class = ('collation', 'e-diff')]]" mode="adjust-diff-or-collate-for-merged-display">
+        <xsl:variable name="this-collation" select="html:div[@class = ('collation', 'e-diff')]"/>
+        <xsl:copy>
+            <xsl:copy-of select="@*"/>
+            <div class="collation-head">
+                <div class="label">...</div>
+                <xsl:apply-templates select="$this-collation/preceding-sibling::node()" mode="#current"/>
+            </div>
+            <xsl:apply-templates select="$this-collation/(self::*, following-sibling::node())" mode="#current"/>
+        </xsl:copy>
+    </xsl:template>
+    
     <xsl:template match="tan:primary-ns | tan:n" mode="tan-to-html-pass-2-html-tables-tr">
-        <xsl:param name="div-versions" as="element()*"/>
+        <xsl:param name="div-versions" as="element()*" tunnel="yes"/>
         <xsl:variable name="these-ns" select="descendant-or-self::tan:n"/>
         <xsl:variable name="these-refs" select="../tan:ref"/>
         <!-- It is important that only the first n matches, otherwise you get a primary <div> lumped in with a continuation. -->
@@ -1522,14 +1483,14 @@
     </xsl:template>
     
     <xsl:template
-        match="tan:div[tokenize(@class, ' ') = ('version', 'filler', 'continuation', 'consolidated')]"
+        match="*:div[tokenize(@class, ' ') = ('version', 'filler', 'continuation', 'consolidated')]"
         mode="tan-to-html-pass-2-html-tables">
         <!-- This template is for the leafmost divs -->
         <xsl:variable name="is-continuation" select="tokenize(@class, ' ') = 'continuation'"/>
-        <xsl:variable name="this-src" select="ancestor-or-self::*[tan:src][1]/tan:src"/>
+        <xsl:variable name="these-srcs" select="ancestor-or-self::*[tan:src][1]/tan:src"/>
         <xsl:variable name="this-pattern-marker"
-            select="$source-group-and-sort-pattern//tan:idref[. = $this-src]"/>
-        <xsl:variable name="top-level-pattern" select="$source-group-and-sort-pattern/*[descendant-or-self::tan:idref[. = $this-src]]"/>
+            select="$source-group-and-sort-pattern//tan:idref[. = $these-srcs]"/>
+        <xsl:variable name="top-level-pattern" select="$source-group-and-sort-pattern/*[descendant-or-self::tan:idref[. = $these-srcs]]"/>
         <xsl:variable name="following-siblings" select="following-sibling::tan:div"/>
         <xsl:variable name="first-following-noncontinuation-sibling"
             select="$following-siblings[not(tokenize(@class, ' ') = 'continuation')][1]"/>
@@ -1544,26 +1505,38 @@
         user changes the sequence of the sources. The second makes sure that the right opacity is applied
         to the background color, determined by the corresponding <col> in <colgroup>. The groupitem number
         has to do with what position the source is within its alias group. -->
-        <!--<xsl:variable name="these-class-additions" select="ancestor::*[@class][1]/@class"/>-->
         
-        <xsl:variable name="this-src-class" select="tan:class-val-for-source($this-src)"/>
-        <xsl:variable name="this-group-class" select="tan:class-val-for-group-item-number($this-src)"/>
-        <!--<xsl:variable name="these-class-additions" as="xs:string*" select="$this-src-class, $this-group-class"/>-->
-        <xsl:variable name="these-class-additions" as="xs:string*" select="$this-src-class, $top-level-pattern/@alias-id"/>
-        <xsl:variable name="this-has-text" select="exists(text()[matches(., '\S')]) or exists(tei:*)"/>
+        <xsl:variable name="these-src-classes"
+            select="
+                for $i in $these-srcs
+                return
+                    tan:class-val-for-source($i)"
+        />
+        <!-- We needed this variable at one time, but not now; but there may be a time -->
+        <xsl:variable name="these-group-classes"
+            select="
+                for $i in $these-srcs
+                return
+                    tan:class-val-for-group-item-number($i)"
+        />
+
+        <xsl:variable name="these-class-additions" as="xs:string*" select="$these-src-classes, $top-level-pattern/@alias-id"/>
+        <xsl:variable name="this-has-text"
+            select="exists(text()[matches(., '\S')]) or exists(tei:*) or exists(html:div/html:div[@class = ('collation', 'e-diff')])"
+        />
         
         <xsl:variable name="diagnostics" select="false()"/>
         <xsl:if test="$diagnostics">
             <xsl:message select="'Diagnostics on, template mode tan-to-html-pass-2-html-tables on tan:div'"/>
             <xsl:message select="'This element: ', tan:shallow-copy(., 4)"/>
             <xsl:message select="'This is continuation:', $is-continuation"/>
-            <xsl:message select="'This src: ' || $this-src"/>
+            <xsl:message select="'These srcs: ' || $these-srcs"/>
             <xsl:message select="'This pattern marker:', $this-pattern-marker"/>
             <xsl:message select="'Top-level pattern:', $top-level-pattern"/>
             <xsl:message select="'These alias ids:', $these-alias-ids"/>
             <xsl:message select="'This has text:', $this-has-text"/>
-            <xsl:message select="'This src class:', $this-src-class"/>
-            <xsl:message select="'This group class:', $this-group-class"/>
+            <xsl:message select="'This src class:', $these-src-classes"/>
+            <xsl:message select="'This group class:', $these-group-classes"/>
             <xsl:message select="'Class additions:', $these-class-additions"/>
         </xsl:if>
         
@@ -1575,12 +1548,13 @@
                 <xsl:if test="exists($following-continuations)">
                     <xsl:attribute name="rowspan" select="count($following-continuations) + 1"/>
                 </xsl:if>
+                <!--<test05b><xsl:copy-of select="."/></test05b>-->
                 <xsl:choose>
                     <xsl:when test="$this-has-text and exists($top-level-pattern)">
                         <xsl:apply-templates select="$top-level-pattern" mode="build-td-divs">
-                            <xsl:with-param name="stop-at" tunnel="yes" select="$this-src"/>
+                            <xsl:with-param name="stop-at" tunnel="yes" select="$these-srcs"/>
                             <xsl:with-param name="version-div" tunnel="yes" select="."/>
-                            <xsl:with-param name="src-id" tunnel="yes" select="$this-src"/>
+                            <xsl:with-param name="src-id" tunnel="yes" select="$these-srcs"/>
                         </xsl:apply-templates>
                     </xsl:when>
                     <xsl:otherwise>
@@ -1611,7 +1585,18 @@
     <xsl:template match="tan:idref" mode="build-td-divs">
         <xsl:param name="version-div" tunnel="yes" as="element()?"/>
         <xsl:param name="src-id" tunnel="yes" as="element()*"/>
-        <xsl:variable name="build-this" select=". = $src-id"/>
+        <xsl:variable name="this-is-collate-or-diff" select="count($src-id) gt 1"/>
+        <xsl:variable name="src-id-of-interest"
+            select="
+                if (not($this-is-collate-or-diff)) then
+                    $src-id
+                else
+                    if ($first-version-is-of-primary-interest) then
+                        $src-id[1]
+                    else
+                        $src-id[last()]"
+        />
+        <xsl:variable name="build-this" select=". = $src-id-of-interest"/>
         <xsl:variable name="this-pos" select="count(preceding-sibling::*/(self::tan:idref | self::tan:group)) + 1"/>
         
         <xsl:variable name="diagnostics-on" select="false()"/>
@@ -1619,7 +1604,8 @@
             <xsl:message select="'Diagnostics on, template mode build-td-divs for tan:idref'"/>
             <xsl:message select="'This element:', ."/>
             <xsl:message select="'version div: ', $version-div"/>
-            <xsl:message select="'src id:', $src-id"/>
+            <xsl:message select="'src id(s):', $src-id"/>
+            <xsl:message select="'src id of interest: ', $src-id-of-interest"/>
             <xsl:message select="'Build this element?', $build-this"/>
             <xsl:message select="'This pos:', $this-pos"/>
         </xsl:if>
@@ -1628,12 +1614,23 @@
             <!-- We don't copy the source class identifier because we've done that on the ancestral <td>. But we do copy
             the src id as a label -->
             <div class="groupitem--{$this-pos}">
-                <xsl:if test="exists($version-div/text()[matches(., '\S')]) or exists($version-div/tei:*)">
-                    <div class="label">
-                        <xsl:value-of select="$src-id"/>
-                    </div>
-                </xsl:if>
-                <xsl:apply-templates select="$version-div/(node() except (tan:type | tan:display-n | tan:n))" mode="wrap-leaf-text"/>
+
+                <div class="label">
+                    <xsl:value-of select="string-join($src-id, ' + ')"/>
+                </div>
+                <xsl:choose>
+                    <xsl:when test="$this-is-collate-or-diff">
+                        <!-- There are some preliminary <src>, <type>, <n> elements, but the main meat of the
+                        diff or collation is inside an html <div> -->
+                        <xsl:copy-of select="$version-div/html:div"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:apply-templates
+                            select="$version-div/(node() except (tan:type | tan:display-n | tan:n))"
+                            mode="wrap-leaf-text"/>
+                    </xsl:otherwise>
+                </xsl:choose>
+                
             </div>
         </xsl:if>
         
@@ -1752,6 +1749,8 @@
             </xsl:choose>
         </xsl:copy>
     </xsl:template>
+    <xsl:template match="html:body/html:div[text() = 'new-content']" mode="revise-infused-template"
+    />
     
     <xsl:template match="node()" mode="source-group-and-sort-pattern-to-css-colors">
         <xsl:apply-templates mode="#current"/>
@@ -1777,16 +1776,15 @@
             <!--<out-dir-default><xsl:value-of select="$default-output-directory-resolved"/></out-dir-default>-->
             <!--<output-dir-resolved><xsl:value-of select="$output-directory-resolved"/></output-dir-resolved>-->
             <!--<output-url-resolved><xsl:value-of select="$output-url-resolved"/></output-url-resolved>-->
-            <!--<work-lists><xsl:copy-of select="$valid-src-work-vocab"/></work-lists>-->
-            <!--<work-groups><xsl:copy-of select="$valid-srcs-by-work"/></work-groups>-->
-            <!--<standard-colgroup><xsl:copy-of select="$standard-colgroup"/></standard-colgroup>-->
+            <valid-src-work-vocab><xsl:copy-of select="$valid-src-work-vocab"/></valid-src-work-vocab>
+            <valid-srcs-by-work><xsl:copy-of select="$valid-srcs-by-work"/></valid-srcs-by-work>
             <alias-based-group-and-sort-pattern><xsl:copy-of select="$alias-based-group-and-sort-pattern"/></alias-based-group-and-sort-pattern>
             <src-id-sequence><xsl:value-of select="$src-id-sequence"/></src-id-sequence>
             <sort-and-group-by-what-alias><xsl:value-of select="$sort-and-group-by-what-alias-idrefs"/></sort-and-group-by-what-alias>
             <source-group-and-sort-pattern><xsl:copy-of select="$source-group-and-sort-pattern"/></source-group-and-sort-pattern>
             <!--<self-resolved><xsl:copy-of select="$self-resolved"/></self-resolved>-->
             <!--<sources-resolved><xsl:copy-of select="$sources-resolved"/></sources-resolved>-->
-            <!--<TAN-A-self-expanded><xsl:copy-of select="$self-expanded[tan:TAN-A]"/></TAN-A-self-expanded>-->
+            <TAN-A-self-expanded><xsl:copy-of select="$self-expanded[tan:TAN-A]"/></TAN-A-self-expanded>
             <!--<src-ids><xsl:value-of select="$src-ids"/></src-ids>-->
             <!--<src-ids-from-sources><xsl:for-each select="$self-expanded/tan:TAN-T/@src">
                 <xsl:value-of select=". || ' '"/>
@@ -1797,11 +1795,10 @@
             <!--<input-pass-1b><xsl:copy-of select="$input-pass-1b"/></input-pass-1b>-->
             <!--<input-pass-1b-shallow><xsl:copy-of select="tan:shallow-copy($input-pass-1b, 3)"/></input-pass-1b-shallow>-->
             <!--<input-pass-1b-heads><xsl:copy-of select="$input-pass-1b/*/tan:head"/></input-pass-1b-heads>-->
-            <relevant-diff-and-collates><xsl:copy-of select="$relevant-diffs-and-collates"/></relevant-diff-and-collates>
-            <input-pass-2><xsl:copy-of select="$input-pass-2"/></input-pass-2>
-            <input-pass-3><xsl:copy-of select="$input-pass-3"/></input-pass-3>
+            <!--<input-pass-2><xsl:copy-of select="$input-pass-2"/></input-pass-2>-->
+            <!--<input-pass-3><xsl:copy-of select="$input-pass-3"/></input-pass-3>-->
             <!--<source-bibliography><xsl:copy-of select="$source-bibliography"/></source-bibliography>-->
-            <input-pass-4><xsl:copy-of select="$input-pass-4"/></input-pass-4>
+            <!--<input-pass-4><xsl:copy-of select="$input-pass-4"/></input-pass-4>-->
             <!--<template-url-resolved><xsl:value-of select="$template-url-resolved"/></template-url-resolved>-->
             <!--<template-doc><xsl:copy-of select="$template-doc"/></template-doc>-->
             <!--<template-infused><xsl:copy-of select="$template-infused-with-revised-input"/></template-infused>-->
