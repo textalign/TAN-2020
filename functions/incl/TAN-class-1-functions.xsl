@@ -80,7 +80,10 @@
                <xsl:sequence select="(tan:tok, tan:non-tok)/text()"/>
             </xsl:when>
             <xsl:when test="exists(tei:*)">
-               <xsl:value-of select="normalize-space(string-join(descendant::tei:*/text(), ''))"/>
+               <!-- TEI is ultimately a mixed-content model, so even space-only text nodes hanging
+                  off leaf divs should be treated as a titular space, hence descendant or self, not 
+                  just descendant text nodes. -->
+               <xsl:value-of select="normalize-space(string-join(descendant-or-self::tei:*/text(), ''))"/>
             </xsl:when>
             <xsl:when test="exists($nonspace-text-nodes)">
                <xsl:sequence select="text()"/>
@@ -198,7 +201,7 @@
 
    <!-- TERSE EXPANSION -->
 
-   <xsl:template match="tan:redivision | tan:TAN-T/tan:head/tan:companion-version | tei:TEI/tan:head/tan:companion-version" 
+   <xsl:template match="tan:redivision | /tan:TAN-T/tan:head/tan:companion-version | /tei:TEI/tan:head/tan:companion-version" 
       mode="core-expansion-terse">
       <xsl:variable name="these-iris" select="tan:IRI"/>
       <xsl:variable name="this-doc-work" select="/*/tan:head/tan:work"/>
@@ -236,11 +239,11 @@
       <xsl:copy>
          <xsl:copy-of select="@*"/>
          <xsl:if
-            test="not(($target-doc-source, $target-doc-source-vocab)//tan:IRI = ($this-doc-source, $this-doc-source-vocab)/tan:IRI)">
+            test="not(($target-doc-source, $target-doc-source-vocab)//tan:IRI = ($this-doc-source, $this-doc-source-vocab)//tan:IRI)">
             <xsl:copy-of select="tan:error('cl101')"/>
          </xsl:if>
          <xsl:if
-            test="not(($target-doc-work, $target-doc-work-vocab)//tan:IRI = ($this-doc-work, $this-doc-work-vocab)/tan:IRI)">
+            test="not(($target-doc-work, $target-doc-work-vocab)//tan:IRI = ($this-doc-work, $this-doc-work-vocab)//tan:IRI)">
             <xsl:copy-of select="tan:error('cl102')"/>
          </xsl:if>
          <xsl:if
@@ -455,7 +458,10 @@
          <xsl:if test="$is-leaf-div">
             <xsl:choose>
                <xsl:when test="$is-tei">
-                  <xsl:value-of select="tan:normalize-div-text(.//tei:*/text())"/>
+                  <!-- TEI is ultimately a mix-content model, so even space-only text nodes hanging
+                  off leaf divs should be treated as a titular space, hence descendant or self, not 
+                  just descendant text nodes. -->
+                  <xsl:value-of select="tan:normalize-div-text(descendant-or-self::tei:*/text())"/>
                </xsl:when>
                <xsl:otherwise>
                   <xsl:value-of select="tan:normalize-div-text(text())"/>

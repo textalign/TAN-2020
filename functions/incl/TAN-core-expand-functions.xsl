@@ -690,6 +690,7 @@
       <xsl:variable name="this-element-expanded"
          select="(.[exists(tan:location)], $this-voc-expansion, $empty-element)[1]"/>
       <xsl:variable name="target-1st-da" select="tan:get-1st-doc($this-element-expanded)"/>
+      <xsl:variable name="target-namespace-uri" select="namespace-uri($target-1st-da/*)"/>
       <xsl:variable name="target-version" select="$target-1st-da/*/@TAN-version"/>
       <xsl:variable name="target-resolved" as="document-node()?">
          <xsl:choose>
@@ -709,14 +710,11 @@
       </xsl:variable>
       <xsl:variable name="target-class" select="tan:class-number($target-resolved)"/>
       <xsl:variable name="target-tan-type" select="name($target-resolved/*)"/>
+      <xsl:variable name="target-errors" select="$target-resolved/(tan:error, tan:warning, tan:fatal, tan:help)"/>
       <xsl:variable name="target-is-faulty"
-         select="
-            deep-equal($target-resolved, $empty-doc)
-            or $target-resolved/(tan:error, tan:warning, tan:fatal, tan:help)"/>
-      <xsl:variable name="target-is-self-referential"
-         select="$target-resolved/tan:error/@xml:id = 'tan16'"/>
-      <xsl:variable name="target-is-wrong-version"
-         select="$target-resolved/tan:error/@xml:id = 'inc06'"/>
+         select="deep-equal($target-resolved, $empty-doc) or exists($target-errors)"/>
+      <xsl:variable name="target-is-self-referential" select="$target-errors/@xml:id = 'tan16'"/>
+      <xsl:variable name="target-is-wrong-version" select="$target-errors/@xml:id = 'inc06'"/>
       <xsl:variable name="target-to-do-list" select="$target-resolved/*/tan:head/tan:to-do"/>
       <!--<xsl:variable name="target-new-versions"
          select="$target-1st-da-resolved/*/tan:head/tan:see-also[tan:vocabulary-key-item(tan:relationship) = 'new version']"/>-->
@@ -816,9 +814,9 @@
                   <xsl:copy-of select="tan:error('lnk01', $default-link-error-message)"/>
                </xsl:if>
                <xsl:if test="$target-is-faulty = true()">
-                  <xsl:copy-of select="tan:error('inc04', 'target is faulty')"/>
+                  <xsl:copy-of select="tan:error('inc04', string-join(('Target is faulty.', $target-errors/tan:rule), ' '))"/>
                </xsl:if>
-               <xsl:if test="$target-class = 0">
+               <xsl:if test="not($target-namespace-uri eq $TAN-namespace)">
                   <xsl:copy-of select="tan:error('inc04', 'target is not a TAN file')"/>
                </xsl:if>
                <xsl:if test="$this-doc-id = $target-resolved/*/tan:head/tan:vocabulary/tan:IRI">
@@ -1193,9 +1191,10 @@
                                     <!-- In validation mode we are concerned ultimately with IRIs, which we copy as a way to check to see if
                                     two different idrefs somehow nevertheless point to the same IRI. But that means that any query on the 
                                     new <[name] attr=""> must restrict its query to the single text node inside for the proper value and
-                                    not rely upon the string value of the node (which would attract the IRIs). -->
+                                    not rely upon the string value of the node (which would attract the IRIs). But we exclude IRIs
+                                    for aliases, so as not to trigger the duplicate IRI error code. -->
                                     <xsl:for-each-group
-                                       select="$this-item-vocabulary/descendant::tan:IRI"
+                                       select="$this-item-vocabulary[not(tan:alias = $this-val)]/descendant::tan:IRI"
                                        group-by=".">
                                        <xsl:copy-of select="current-group()[1]"/>
                                     </xsl:for-each-group>
@@ -1384,8 +1383,8 @@
          <xsl:variable name="this-message-parts" as="xs:string*">
             <xsl:for-each select="$these-duplicate-IRIs">
                <xsl:variable name="this-dup-iri" select="."/>
-               <xsl:variable name="these-vals" select="$these-insertions[tan:IRI = $this-dup-iri]/text()"/>
-               <xsl:value-of select="concat(string-join($these-vals, ', '), ' redundantly point(s) to a vocabulary item with IRI ', $this-dup-iri)"/>
+               <xsl:variable name="those-vals" select="$these-insertions[tan:IRI = $this-dup-iri]/text()"/>
+               <xsl:value-of select="concat(string-join($those-vals, ', '), ' redundantly point(s) to a vocabulary item with IRI ', $this-dup-iri)"/>
             </xsl:for-each> 
          </xsl:variable>
          <xsl:copy-of select="tan:error('tan21', string-join($this-message-parts, '; '))"/>
