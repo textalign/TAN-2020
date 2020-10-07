@@ -13,6 +13,7 @@
     <xsl:include href="../get%20inclusions/save-files.xsl"/>
     <xsl:include href="../get%20inclusions/diff-and-collate-to-html.xsl"/>
     
+    <xsl:import href="../../parameters/application-diff-parameters.xsl"/>
     <xsl:import href="../get%20inclusions/convert-TAN-to-HTML.xsl"/>
 
     <!-- This is a MIRU Stylesheet (MIRU = Main Input Resolved URIs) -->
@@ -37,11 +38,14 @@
 
     <xsl:output indent="yes"/>
     
-    <xsl:variable name="relative-uri-to-examples" select="'../../examples'"/>
-    <xsl:variable name="relative-uri-1" select="'../../../library-arithmeticus/aristotle'"/>
-    <xsl:variable name="relative-uri-2" select="'../../../library-arithmeticus/evagrius'"/>
-    <xsl:variable name="relative-uri-3" select="'../../../library-arithmeticus/bible'"/>
-    <xsl:variable name="relative-uri-4" select="'file:/e:/joel/google%20drive/clio%20commons/TAN%20library/clio'"/>
+    <!-- PARAMETERS -->
+    <!-- Other important parameters are to be found at /parameters/application-parameters.xsl. -->
+    
+    <xsl:param name="relative-uri-to-examples" select="'../../examples'"/>
+    <xsl:param name="relative-uri-1" select="'../../../library-arithmeticus/aristotle'"/>
+    <xsl:param name="relative-uri-2" select="'../../../library-arithmeticus/evagrius/cpg2439'"/>
+    <xsl:param name="relative-uri-3" select="'../../../library-arithmeticus/bible'"/>
+    <xsl:param name="relative-uri-4" select="'file:/e:/joel/google%20drive/clio%20commons/TAN%20library/clio'"/>
     
     <xsl:param name="main-input-relative-uri-directories" as="xs:string*" select="$relative-uri-2"/>
     
@@ -65,20 +69,13 @@
     </xsl:param>
     
     <!-- For a main input resolved URI to be used, what pattern (regular expression, case-insensitive) must be matched? Any item in $main-input-resolved-uris not matching this pattern will be excluded. A null or empty string results in this parameter being ignored. -->
-    <xsl:param name="mirus-must-match-regex" as="xs:string?" select="'2431\.syr'"/>
+    <xsl:param name="mirus-must-match-regex" as="xs:string?" select="'grc'"/>
 
     <!-- For a main input resolved URI to be used, what pattern (regular expression, case-insensitive) must NOT be matched? Any item in $main-input-resolved-uris matching this pattern will be excluded. A null or empty string results in this parameter being ignored. -->
     <xsl:param name="mirus-must-not-match-regex" as="xs:string?" select="'14616|1716|Montfaucon'"/>
     
     <xsl:variable name="mirus-chosen"
-        select="
-            $main-input-resolved-uris[if (string-length($mirus-must-match-regex) gt 0) then
-                matches(., $mirus-must-match-regex, 'i')
-            else
-                true()][if (string-length($mirus-must-not-match-regex) gt 0) then
-                not(matches(., $mirus-must-not-match-regex, 'i'))
-            else
-                true()]"
+        select="$main-input-resolved-uris[tan:filename-satisfies-regexes(., $mirus-must-match-regex, $mirus-must-not-match-regex)]"
     />
     
     <!-- Further restrictions on input -->
@@ -92,28 +89,11 @@
     
     
     <!-- Adjustments to diff/collate input strings -->
-    
-    <!-- What alterations, if any, should be made to strings BEFORE tan:diff() or tan:collate() are applied? These take the form of a sequence of elements with attributes named after the parameters in fn:replace() along with an optional @message. Example: <replace pattern="q" replacement="" flags="i" message="Deleting q's."/> -->
-    <xsl:param name="batch-replacements" as="element()*">
-        <xsl:if test="$ignore-punctuation-differences">
-            <xsl:sequence select="$batch-replace-punctuation"/>
-        </xsl:if>
-        <xsl:if test="$ignore-combining-marks">
-            <xsl:sequence select="$batch-replace-combining-marks"/>
-        </xsl:if>
-    </xsl:param>
-    
-    <!-- Should differences in case be ignored? -->
-    <xsl:param name="ignore-case-differences" as="xs:boolean?" select="true()"/>
-    
-    <!-- Should combining marks be ignored? -->
-    <xsl:param name="ignore-combining-marks" as="xs:boolean?" select="true()"/>
+    <!-- See also parameters/application-diff-parameters.xsl, shared with other
+    applications that use tan:diff() and tan:collate(). -->
     
     <!-- Should texts be reduced to their string base when comparing them? E.g., should ö and o be treated as identical? Caution: if applied to Greek or another heavily accented language, any attempt to revert the diff results to the original could produce erratic results. -->
     <xsl:param name="ignore-character-component-differences" as="xs:boolean" select="false()"/>
-    
-    <!-- Should punctuation be ignored? -->
-    <xsl:param name="ignore-punctuation-differences" as="xs:boolean" select="true()"/>
     
     <!-- Should differences between the Greek grave and acute be ignored? -->
     <xsl:param name="ignore-greek-grave-acute-distinction" as="xs:boolean" select="true()"/>
@@ -148,42 +128,6 @@
     <!-- This application has many different parameters, and a slight change in one can radically alter the kind of results achieved. It is difficult
         to keep track of them all, so the following global variable collects the key items and prepares them for messaging.-->
     
-    <xsl:function name="tan:batch-replacement-messages" as="xs:string?">
-        <!-- Input: any batch replacement element -->
-        <!-- Output: a string explaining what it does -->
-        <!-- This function is useful for reporting back to users in a readable format what changes are rendered -->
-        <xsl:param name="batch-replace-element" as="element()?"/>
-        <xsl:variable name="message-components" as="xs:string*">
-            <xsl:if
-                test="exists($batch-replace-element/@message) or exists($batch-replace-element/@flags)">
-                <xsl:if test="exists($batch-replace-element/@message)">
-                    <xsl:value-of select="$batch-replace-element/@message"/>
-                </xsl:if>
-                <xsl:if test="contains($batch-replace-element/@flags, 's')">
-                    <xsl:value-of select="' (dot-all mode)'"/>
-                </xsl:if>
-                <xsl:if test="contains($batch-replace-element/@flags, 'm')">
-                    <xsl:value-of select="' (multi-line mode)'"/>
-                </xsl:if>
-                <xsl:if test="contains($batch-replace-element/@flags, 'i')">
-                    <xsl:value-of select="' (case insensitive)'"/>
-                </xsl:if>
-                <xsl:if test="contains($batch-replace-element/@flags, 'x')">
-                    <xsl:value-of select="' (ignore regex whitespaces)'"/>
-                </xsl:if>
-                <xsl:if test="contains($batch-replace-element/@flags, 'q')">
-                    <xsl:value-of select="' (ignore special characters)'"/>
-                </xsl:if>
-                <xsl:value-of select="': '"/>
-            </xsl:if>
-            <xsl:value-of
-                select="'PATTERN: ' || $batch-replace-element/@pattern || '  REPLACEMENT: ' || $batch-replace-element/@replacement"
-            />
-            
-        </xsl:variable>
-        <xsl:value-of select="string-join($message-components)"/>
-    </xsl:function>
-    
     <xsl:variable name="global-notices" as="element()*">
         <input_selection>
             <message><xsl:value-of select="'Main input directory: ' || $main-input-resolved-uri-directories"/></message>
@@ -200,9 +144,9 @@
             <message><xsl:value-of select="'Exclude orphaned top-level divs? ' || $restrict-to-matching-top-level-div-attr-ns"/></message>
         </input_selection>
         <input_alteration>
-            <xsl:if test="count($batch-replacements) gt 0">
-                <message><xsl:value-of select="string(count($batch-replacements)) || ' batch replacements applied globally, in this order:'"/></message>
-                <xsl:for-each select="$batch-replacements">
+            <xsl:if test="count($diff-and-collate-input-batch-replacements) gt 0">
+                <message><xsl:value-of select="string(count($diff-and-collate-input-batch-replacements)) || ' batch replacements applied globally, in this order:'"/></message>
+                <xsl:for-each select="$diff-and-collate-input-batch-replacements">
                     <message><xsl:value-of select="'Global replacement ' || string(position()) || ': ' || tan:batch-replacement-messages(.)"/></message>
                 </xsl:for-each>
             </xsl:if>
@@ -262,6 +206,11 @@
     <xsl:param name="stylesheet-name" select="'Application to compare class 1 files'"/>
     <xsl:param name="change-message" select="'Compared class 1 files.'"/>
     <xsl:param name="stylesheet-is-core-tan-application" select="true()"/>
+    <xsl:param name="stylesheet-to-do-list">
+        <to-do xmlns="tag:textalign.net,2015:ns">
+            <comment who="kalvesmaki" when="2020-10-06">Revise process that reinfuses a class 1 file with a diff/collate into a standard extra TAN function.</comment>
+        </to-do>
+    </xsl:param>
     
     
     <!-- Beginning of main input -->
@@ -387,10 +336,10 @@
             />
             <xsl:variable name="these-texts-normalized-1"
                 select="
-                    if (count(($batch-replacements, $extra-batch-replacements)) gt 0) then
+                    if (count(($diff-and-collate-input-batch-replacements, $extra-batch-replacements)) gt 0) then
                         (for $i in $these-raw-texts
                         return
-                            tan:batch-replace($i, ($batch-replacements, $extra-batch-replacements)))
+                            tan:batch-replace($i, ($diff-and-collate-input-batch-replacements, $extra-batch-replacements)))
                     else
                         $these-raw-texts"
             />
@@ -897,7 +846,10 @@
     
     <!-- Much of the following template mode has been moved to an inclusion -->
     <xsl:variable name="output-as-html" as="document-node()*">
-        <xsl:apply-templates select="$output-containers-prepped" mode="diff-and-collate-to-html"/>
+        <xsl:apply-templates select="$output-containers-prepped" mode="diff-and-collate-to-html">
+            <xsl:with-param name="include-text-change-warning" tunnel="yes"
+                select="$replace-diff-results-with-pre-alteration-forms"/>
+        </xsl:apply-templates>
     </xsl:variable>
     
     <xsl:template match="/*" mode="diff-and-collate-to-html">
@@ -955,122 +907,6 @@
         </html>
     </xsl:template>
     
-    <xsl:template match="*" mode="diff-and-collate-to-html">
-        <xsl:param name="last-wit-idref" tunnel="yes"/>
-        <xsl:variable name="these-ws" select="tan:wit/@ref"/>
-        <xsl:variable name="this-w-count" select="ancestor::tan:group/@count"/>
-        <xsl:variable name="these-w-class-vals"
-            select="
-                string-join(for $i in $these-ws
-                return
-                    ' a-w-' || $i)"
-        />
-        <!-- For tan:collate() 2.0 results, which supplies @base for a likely base version -->
-        <xsl:variable name="this-base-class-val"
-            select="
-                if (exists(@base)) then
-                    ' a-base'
-                else
-                    ()"
-        />
-        <xsl:variable name="this-special-class-val"
-            select="
-                if (($these-ws = $last-wit-idref) or self::tan:b) then
-                    ' a-last a-other'
-                else
-                    ()"
-        />
-        <xsl:element name="div" namespace="http://www.w3.org/1999/xhtml">
-            <xsl:attribute name="class" select="'e-' || name(.) || $these-w-class-vals || $this-base-class-val || $this-special-class-val"/>
-            
-            <xsl:choose>
-                <xsl:when test="exists(tan:wit)">
-                    <!-- Based on results of tan:collate() 3.0 -->
-                    <div class="wits" xmlns="http://www.w3.org/1999/xhtml">
-                        <xsl:value-of select="string-join(tan:wit/@ref, ' ')"/>
-                    </div>
-                    <xsl:apply-templates select="@* | node()" mode="#current"/>
-                </xsl:when>
-                <xsl:when test="exists(@w)">
-                    <!-- Based on results of tan:collate() 2.0 -->
-                    <div class="wits" xmlns="http://www.w3.org/1999/xhtml">
-                        <xsl:value-of select="@w"/>
-                    </div>
-                    <div class="text" xmlns="http://www.w3.org/1999/xhtml">
-                        <xsl:apply-templates select="@* | node()" mode="#current"/>
-                    </div>
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:apply-templates select="@* | node()" mode="#current"/>
-                </xsl:otherwise>
-            </xsl:choose>
-           
-        </xsl:element>
-    </xsl:template>
-    
-    <!-- We skip <wit> since they've been amalgamated as a new first child of the parent  -->
-    <xsl:template match="tan:wit" mode="diff-and-collate-to-html"/>
-    <xsl:template match="tan:notices/*[not(tan:message)]" priority="1"
-        mode="diff-and-collate-to-html"/>
-    
-    <xsl:template match="tan:notices | tan:notices/*" mode="diff-and-collate-to-html">
-        <xsl:element name="div" namespace="http://www.w3.org/1999/xhtml">
-            <xsl:attribute name="class" select="'a-' || name(.)"/>
-            <xsl:element name="div" namespace="http://www.w3.org/1999/xhtml">
-                <xsl:attribute name="class" select="'label'"/>
-                <xsl:copy-of select="tan:text-to-html-for-compare-app(name(.))"/>
-            </xsl:element>
-            <xsl:apply-templates mode="#current"/>
-        </xsl:element>
-    </xsl:template>
-    
-    
-    <xsl:template match="@*" mode="diff-and-collate-to-html">
-        <xsl:element name="div" namespace="http://www.w3.org/1999/xhtml">
-            <xsl:attribute name="class" select="'a-' || name(.)"/>
-            <xsl:copy-of select="tan:text-to-html-for-compare-app(.)"/>
-        </xsl:element>
-    </xsl:template>
-    <!-- parse the witnesses as individual classes only in the host element -->
-    <xsl:template match="@w | @base | @length" mode="diff-and-collate-to-html"/>
-    
-    
-    <xsl:function name="tan:text-to-html-for-compare-app" as="item()*">
-        <!-- Input: a string -->
-        <!-- Output: the string parsed for html content, for this application -->
-        <xsl:param name="input-string" as="xs:string?"/>
-        <xsl:analyze-string select="$input-string" regex="\r?\n">
-            <xsl:matching-substring>
-                <xsl:text>¶</xsl:text>
-                <xsl:element name="br" namespace="http://www.w3.org/1999/xhtml"/>
-            </xsl:matching-substring>
-            <xsl:non-matching-substring>
-                <xsl:analyze-string select="." regex="(file|https?|ftp)://?\S+">
-                    <xsl:matching-substring>
-                        <!-- Pull back from any characters at the end that aren't part of the URL proper. -->
-                        <xsl:analyze-string select="." regex="(&lt;[^&gt;]+&gt;|[&lt;\)\].;])+$">
-                            <xsl:matching-substring>
-                                <xsl:value-of select="."/>
-                            </xsl:matching-substring>
-                            <xsl:non-matching-substring>
-                                <xsl:variable name="href-norm" select="replace(., '\.$', '')"/>
-                                <a href="{$href-norm}" xmlns="http://www.w3.org/1999/xhtml">
-                                    <xsl:value-of select="."/>
-                                </a>
-                            </xsl:non-matching-substring>
-                        </xsl:analyze-string>
-                    </xsl:matching-substring>
-                    <xsl:non-matching-substring>
-                        <xsl:value-of select="."/>
-                    </xsl:non-matching-substring>
-                </xsl:analyze-string>
-            </xsl:non-matching-substring>
-        </xsl:analyze-string>
-    </xsl:function>
-    
-    <xsl:template match="text()" mode="diff-and-collate-to-html">
-        <xsl:copy-of select="tan:text-to-html-for-compare-app(.)"/>
-    </xsl:template>
     
     <xsl:variable name="resolved-uri-to-diff-css"
         select="($target-output-directory-resolved || 'css/diff.css')"/>

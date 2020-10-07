@@ -5,7 +5,34 @@
     xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tei="http://www.tei-c.org/ns/1.0"
     xmlns:tan="tag:textalign.net,2015:ns" exclude-result-prefixes="#all" version="3.0">
     <!-- Shared templates for turning the output of tan:diff() and tan:collate(), perhaps
-    after being passed through tan:infuse-diff-and-collate-stats(), into HTML -->
+    after being passed through tan:infuse-diff-and-collate-stats(), into HTML. Once statted,
+    you should have something like (basic outlines): -->
+    <!--
+        group(
+            stats,
+            file(@length, @uri, @ref)*,
+            (collation(
+                witness(
+                    commonality(@with, text)*
+                )+,
+                (
+                    u(
+                        txt(text),
+                        wit(@ref)+
+                    )* &
+                    c(
+                        txt(text),
+                        wit(@ref, @pos)+
+                    )*
+                )
+            )) |
+            (diff(
+                a((@_pos, @_len)?, text)* &
+                b((@_pos, @_len)?, text)* &
+                common((@_pos, @_len)?, text)*
+            ))
+        )
+    -->
     
     <!-- Result adjustments -->
     
@@ -19,6 +46,13 @@
 
     <!-- HTML TABLE: for basic stats about each version, and selection -->
     <xsl:template match="tan:stats" mode="diff-and-collate-to-html">
+        <xsl:param name="raw-texts" tunnel="yes" as="xs:string*"/>
+        <xsl:param name="last-wit-idref" tunnel="yes" as="xs:string?"/>
+        <xsl:param name="include-text-change-warning" tunnel="yes" as="xs:boolean" select="false()"/>
+        <xsl:variable name="first-text" select="$raw-texts[1]"/>
+        <xsl:variable name="corresponding-text" select="../tan:diff/(tan:a | tan:common), 
+            ../tan:collation/*[tan:wit/@ref = $last-wit-idref]/tan:txt"/>
+        <xsl:variable name="first-text-differs" select="not($first-text eq string-join($corresponding-text))"/>
         <table xmlns="http://www.w3.org/1999/xhtml">
             <xsl:attribute name="class" select="'e-' || name(.)"/>
             <thead>
@@ -42,27 +76,36 @@
                 <xsl:apply-templates select="* except (tan:venns, tan:note)" mode="#current"/>
             </tbody>
         </table>
-        <xsl:if test="$replace-diff-results-with-pre-alteration-forms">
-            <div class="note warning">There may be discrepancies between the statistics above and the text shown below. The original texts
-            may have been altered before the text comparison was made (see notices above), and for legibility, an attempt has been made to
-            adjust the comparison to reflect the original input text. To see exactly the original difference that forms the basis for the
-            statistical comparison, see the companion (master) XML output file.</div>
+        <xsl:if test="$include-text-change-warning or ($replace-diff-results-with-pre-alteration-forms and $first-text-differs)">
+            <div class="note warning">There may be discrepancies between the statistics and the
+                displayed text. The original texts may have been altered before the text comparison
+                and statistics were generated (see any attached notices), but for legibility the
+                results styled according to the original text form. To see the difference that
+                justifies the statistics, see the original input or any supplementary output.</div>
         </xsl:if>
         <xsl:apply-templates select="tan:note" mode="#current"/>
     </xsl:template>
 
     <!-- one row per witness -->
     <xsl:template match="tan:stats/*" mode="diff-and-collate-to-html">
+        <xsl:param name="last-wit-idref" tunnel="yes" as="xs:string?"/>
+        
+        <xsl:variable name="this-ref" select="(@ref, 'aggregate')[1]"/>
         <xsl:variable name="is-last-witness"
-            select="(following-sibling::*[1]/(self::tan:collation, self::tan:diff))"/>
+            select="
+                if (string-length($last-wit-idref) gt 0) then
+                    ($this-ref = $last-wit-idref)
+                else
+                    (following-sibling::*[1]/(self::tan:collation, self::tan:diff))"
+        />
         <xsl:variable name="is-summary" select="self::tan:collation or self::tan:diff"/>
         <xsl:if test="$is-summary">
             <xsl:variable name="prec-wits" select="preceding-sibling::tan:witness"/>
             <tr class="averages" xmlns="http://www.w3.org/1999/xhtml">
-                <td/>
                 <td>
                     <div>averages</div>
                 </td>
+                <td/>
                 <td class="e-length">
                     <xsl:value-of
                         select="
@@ -102,7 +145,7 @@
             <!-- The name of the witness, and the first column, for selection -->
             <td>
                 <div>
-                    <xsl:value-of select="@ref"/>
+                    <xsl:value-of select="$this-ref"/>
                 </div>
                 <xsl:if test="not(self::tan:collation) and not(self::tan:diff)">
                     <div>
@@ -418,14 +461,69 @@ div.selectAll(".venn-circle path").style("fill-opacity", .6);
         <xsl:text>&#xa;            </xsl:text>
     </xsl:template>
     
+    
+    <!-- MIDDLE SECTION, PERHAPS FILE -->
+    
     <!-- File info has been integrated into the table of sources -->
     <xsl:template match="tan:group/tan:file" mode="diff-and-collate-to-html"/>
 
 
+    <!-- MAIN SECTION, DIFF OR COLLATION -->
+    
+    <xsl:template match="tan:group/tan:diff" mode="diff-and-collate-to-html">
+        <!-- If $raw-texts is populated, it is a tacit request to replace the diff with the original, raw text -->
+        <xsl:param name="raw-texts" tunnel="yes" as="xs:string*"/>
+        
+        <xsl:variable name="diff-replaced" as="element()">
+            <xsl:choose>
+                <xsl:when
+                    test="
+                        count($raw-texts) eq 2 and (every $i in $raw-texts
+                            satisfies matches($i, '\S'))">
+                    <xsl:sequence select="tan:replace-diff($raw-texts[1], $raw-texts[2], .)"/>
+                </xsl:when>
+                <xsl:when
+                    test="
+                        some $i in $raw-texts
+                            satisfies string-length($i) gt 0">
+                    <xsl:message
+                        select="'The following ' || string(count($raw-texts)) || ' raw texts cannot be used to replace the original diff: ' || string-join($raw-texts, ' || ')"
+                    />
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:sequence select="."/>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+        
+        <xsl:element name="div" namespace="http://www.w3.org/1999/xhtml">
+            <xsl:attribute name="class" select="'e-diff'"/>
+            <xsl:apply-templates select="$diff-replaced/@*" mode="#current"/>
+            <xsl:apply-templates select="$diff-replaced/node()" mode="#current"/>
+
+        </xsl:element>
+    </xsl:template>
 
     <!-- HTML TABLE: for comparing commonality between pairs of versions -->
     <xsl:template match="tan:group/tan:collation" mode="diff-and-collate-to-html">
+        <!-- If $raw-texts is populated, it is a tacit request to replace the collation with the original, 
+            raw text for the witness picked. -->
+        <xsl:param name="raw-texts" tunnel="yes" as="xs:string*"/>
+        <xsl:param name="last-wit-idref" tunnel="yes" as="xs:string?"/>
+        
         <xsl:variable name="witness-ids" select="tan:witness/@id"/>
+        <xsl:variable name="collation-replaced" as="element()">
+            <xsl:choose>
+                <xsl:when test="count($raw-texts) eq 1 and string-length($raw-texts) gt 0">
+                    <xsl:sequence select="tan:replace-collation($raw-texts, $last-wit-idref, .)"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:sequence select="."/>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+        
+        
         <xsl:if test="exists(tan:witness/tan:commonality)">
             <div xmlns="http://www.w3.org/1999/xhtml">
                 <div class="label">Pairwise Similarity</div>
@@ -455,11 +553,17 @@ div.selectAll(".venn-circle path").style("fill-opacity", .6);
             </div>
         </xsl:if>
         <!-- venns appeared in the previous sibling, but for visualization, it makes sense to study them
-        only after looking at the two-way tables -->
+        only after looking at the two-way tables, hence the placement of the template invocation here. -->
         <xsl:apply-templates select="../tan:stats/tan:venns" mode="#current"/>
         <!-- The following processes the a, b, u, common elements -->
         <h2 xmlns="http://www.w3.org/1999/xhtml">Comparison</h2>
-        <xsl:apply-templates select="* except tan:witness" mode="#current"/>
+        <!-- The raw output of tan:collate() leaves witnesses and u/c elements as siblings, when they
+        should be considered two separate parts. This wraps the u/c elements in their own container. 
+        (The output for tan:diff() doesn't need this, because a/b/commons are already wrapped, and don't
+        need to be distinguished from non-output.) -->
+        <div xmlns="http://www.w3.org/1999/xhtml" class="collation">
+            <xsl:apply-templates select="$collation-replaced/(* except tan:witness)" mode="#current"/>
+        </div>
     </xsl:template>
 
     <xsl:template match="tan:witness" mode="diff-and-collate-to-html">
@@ -487,7 +591,123 @@ div.selectAll(".venn-circle path").style("fill-opacity", .6);
         </tr>
     </xsl:template>
 
-
+    <xsl:template match="*" mode="diff-and-collate-to-html">
+        <xsl:param name="last-wit-idref" tunnel="yes"/>
+        <xsl:variable name="these-ws" select="tan:wit/@ref"/>
+        <xsl:variable name="this-w-count" select="ancestor::tan:group/@count"/>
+        <xsl:variable name="these-w-class-vals"
+            select="
+            string-join(for $i in $these-ws
+            return
+            ' a-w-' || $i)"
+        />
+        <!-- For tan:collate() 2.0 results, which supplies @base for a likely base version -->
+        <xsl:variable name="this-base-class-val"
+            select="
+                if (exists(@base)) then
+                    ' a-base'
+                else
+                    ()"
+        />
+        <xsl:variable name="this-special-class-val"
+            select="
+                if (($these-ws = $last-wit-idref) or self::tan:b) then
+                    ' a-last a-other'
+                else
+                    ()"
+        />
+        <xsl:element name="div" namespace="http://www.w3.org/1999/xhtml">
+            <xsl:attribute name="class" select="'e-' || name(.) || $these-w-class-vals || $this-base-class-val || $this-special-class-val"/>
+            
+            <xsl:choose>
+                <xsl:when test="exists(tan:wit)">
+                    <!-- Based on results of tan:collate() 3.0 -->
+                    <div class="wits" xmlns="http://www.w3.org/1999/xhtml">
+                        <xsl:value-of select="string-join(tan:wit/@ref, ' ')"/>
+                    </div>
+                    <xsl:apply-templates select="@* | node()" mode="#current"/>
+                </xsl:when>
+                <xsl:when test="exists(@w)">
+                    <!-- Based on results of tan:collate() 2.0 -->
+                    <div class="wits" xmlns="http://www.w3.org/1999/xhtml">
+                        <xsl:value-of select="@w"/>
+                    </div>
+                    <div class="text" xmlns="http://www.w3.org/1999/xhtml">
+                        <xsl:apply-templates select="@* | node()" mode="#current"/>
+                    </div>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:apply-templates select="@* | node()" mode="#current"/>
+                </xsl:otherwise>
+            </xsl:choose>
+            
+        </xsl:element>
+    </xsl:template>
+    
+    <!-- We skip <wit> since they've been amalgamated as a new first child of the parent  -->
+    <xsl:template match="tan:wit" mode="diff-and-collate-to-html"/>
+    <xsl:template match="tan:notices/*[not(tan:message)]" priority="1"
+        mode="diff-and-collate-to-html"/>
+    
+    <xsl:template match="tan:notices | tan:notices/*" mode="diff-and-collate-to-html">
+        <xsl:element name="div" namespace="http://www.w3.org/1999/xhtml">
+            <xsl:attribute name="class" select="'a-' || name(.)"/>
+            <xsl:element name="div" namespace="http://www.w3.org/1999/xhtml">
+                <xsl:attribute name="class" select="'label'"/>
+                <xsl:copy-of select="tan:text-to-html-for-compare-app(name(.))"/>
+            </xsl:element>
+            <xsl:apply-templates mode="#current"/>
+        </xsl:element>
+    </xsl:template>
+    
+    
+    <xsl:template match="@*" mode="diff-and-collate-to-html">
+        <xsl:element name="div" namespace="http://www.w3.org/1999/xhtml">
+            <xsl:attribute name="class" select="'a-' || name(.)"/>
+            <xsl:copy-of select="tan:text-to-html-for-compare-app(.)"/>
+        </xsl:element>
+    </xsl:template>
+    <!-- parse the witnesses as individual classes only in the host element -->
+    <xsl:template match="@w | @base | @length | @_pos | @_len" mode="diff-and-collate-to-html"/>
+    
+    
+    <xsl:function name="tan:text-to-html-for-compare-app" as="item()*">
+        <!-- Input: a string -->
+        <!-- Output: the string parsed for html content, for this application -->
+        <xsl:param name="input-string" as="xs:string?"/>
+        <xsl:analyze-string select="$input-string" regex="\r?\n">
+            <xsl:matching-substring>
+                <xsl:text>¶</xsl:text>
+                <xsl:element name="br" namespace="http://www.w3.org/1999/xhtml"/>
+            </xsl:matching-substring>
+            <xsl:non-matching-substring>
+                <xsl:analyze-string select="." regex="(file|https?|ftp)://?\S+">
+                    <xsl:matching-substring>
+                        <!-- Pull back from any characters at the end that aren't part of the URL proper. -->
+                        <xsl:analyze-string select="." regex="(&lt;[^&gt;]+&gt;|[&lt;\)\].;])+$">
+                            <xsl:matching-substring>
+                                <xsl:value-of select="."/>
+                            </xsl:matching-substring>
+                            <xsl:non-matching-substring>
+                                <xsl:variable name="href-norm" select="replace(., '\.$', '')"/>
+                                <a href="{$href-norm}" xmlns="http://www.w3.org/1999/xhtml">
+                                    <xsl:value-of select="."/>
+                                </a>
+                            </xsl:non-matching-substring>
+                        </xsl:analyze-string>
+                    </xsl:matching-substring>
+                    <xsl:non-matching-substring>
+                        <xsl:value-of select="."/>
+                    </xsl:non-matching-substring>
+                </xsl:analyze-string>
+            </xsl:non-matching-substring>
+        </xsl:analyze-string>
+    </xsl:function>
+    
+    <xsl:template match="text()" mode="diff-and-collate-to-html">
+        <xsl:copy-of select="tan:text-to-html-for-compare-app(.)"/>
+    </xsl:template>
+    
 
 
 </xsl:stylesheet>
