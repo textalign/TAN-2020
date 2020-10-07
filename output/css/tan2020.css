@@ -274,7 +274,7 @@ div.lb:before{
 .rename,
 .type,
 /* TAN-T expansions produce both <ref> and <n>s. Your choice as to which to display */
-/*.TAN-T .ref,*/
+.TAN-T .ref,
 .div > .src,
 /*.ref,  */
 /* one shouldn't hide refs, generally */
@@ -301,6 +301,10 @@ td .display-n,
 .allusion > .type
 {
     display: none
+}
+
+.body > .div > .type:first-of-type{
+   display: block
 }
 
 .tok,
@@ -506,7 +510,8 @@ td.label,
 .match,
 .boldface,
 .stats-diff,
-.tei .lem /*,
+.tei .lem,
+.scholion/*,
 .tei .emph*/
 {
     font-weight: 900;
@@ -524,7 +529,10 @@ td.label,
     margin-top: 60px;
 }
 
-/* margins */
+.scholion{
+   margin-left: 3em;
+}
+
 .control div,
 .classSwitch > *{
     margin: 3px 6px;
@@ -558,6 +566,8 @@ div.group.sortable,
 .version-wrapper{
     margin-bottom: 10px;
 }
+
+
 /* opacity */
 .suppressed
 {
@@ -642,7 +652,9 @@ div.ref
 /* vertical alignment */
 .resp,
 .wit,
-.signal {
+.signal,
+.tei .ref,
+.tei .milestone{
     vertical-align: super;
 }
 

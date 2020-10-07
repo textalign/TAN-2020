@@ -1,3 +1,4 @@
+
 /* BACKGROUND */
 .suppressed {
    background-color: beige;
@@ -109,6 +110,7 @@ div.e-witness,
 div.e-a.hide,
 div.e-b.hide,
 div.label ~ *,
+div.collation-head div.label ~ *,
 script,
 /*.e-div > .a-n,*/
 .e-div > .e-n,
@@ -189,6 +191,12 @@ body > * > .label {
    opacity: 0.5;
 }
 
+/* PADDING */
+div.collation div,
+div.e-diff div{
+   padding: 0px;
+}
+
 /* POSITION */
 
 .e-u {
@@ -196,8 +204,12 @@ body > * > .label {
 }
 
 /* TEXT */
-tr.averages > td:nth-child(2){
+tr.averages > td:nth-child(2),
+table.e-stats > tbody > tr > td{
    text-align:right;
+}
+table.e-stats > thead > tr > th{
+   text-align:center;
 }
 
 /* VISIBILITY */

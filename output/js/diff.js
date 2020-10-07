@@ -2,33 +2,36 @@
 
 $(".last-picker").click(function () {
    /*thisWitId = $(this).parent().children(".label").text();*/
-   thisWitId = $(this).parents("tr").attr("class").match(/a-w-\S+|e-[ab]/g)[0];
-   $(".a-last").removeClass("a-last");
+   thisWitId = $(this).parents("tr").first().attr("class").match(/a-w-\S+|e-[ab]/g)[0];
+   thisLocalRoot = $(this).parents("table.e-stats").parents("td, body").first();
+   thisLocalRoot.find(".a-last").removeClass("a-last");
    console.log("Witness id: ", thisWitId);
    $(this).addClass("a-last");
-   $(".e-u." + thisWitId).addClass("a-last");
-   $("div.e-diff div." + thisWitId).addClass("a-last");
+   thisLocalRoot.find(".e-u." + thisWitId).addClass("a-last");
+   thisLocalRoot.find("div.e-diff div." + thisWitId).addClass("a-last");
 });
 $(".other-picker").click(function () {
-   thisWitId = $(this).parents("tr").attr("class").match(/a-w-\S+|e-[ab]/g)[0];
-   $(".a-other").removeClass("a-other");
+   thisWitId = $(this).parents("tr").first().attr("class").match(/a-w-\S+|e-[ab]/g)[0];
+   thisLocalRoot = $(this).parents("table.e-stats").parents("td, body").first();
+   thisLocalRoot.find(".a-other").removeClass("a-other");
    console.log("Witness id: ", thisWitId);
    $(this).addClass("a-other");
-   $(".e-u." + thisWitId).addClass("a-other");
-   $("div.e-diff div." + thisWitId).addClass("a-other");
+   thisLocalRoot.find(".e-u." + thisWitId).addClass("a-other");
+   thisLocalRoot.find("div.e-diff div." + thisWitId).addClass("a-other");
 });
 $("table.e-stats .switch").click(function () {
    /* This function turns witnesses/readings on and off */
    $(this).children().toggle();
-   $(this).parents("tr").toggleClass('suppressed');
+   $(this).parents("tr").first().toggleClass('suppressed');
    var arOn =[];
-   $("table.e-stats > tbody > tr:not(.suppressed):not(.averages):not(.a-diff):not(.a-collation)").each(function () {
+   $(this).parents("table.e-stats").find("tbody > tr:not(.suppressed):not(.averages):not(.a-diff):not(.a-collation)").each(function () {
       thisAttrClass = $(this).attr("class").match(/a-w-\S+|e-[ab]/g)[0];
       console.log("this attr class:", thisAttrClass);
       arOn.push(thisAttrClass);
    });
    console.log("Witnesses to show: ", arOn, arOn.length);
-   $("div.e-u, div.e-a, div.e-b").each(function () {
+   /* ("div.e-u, div.e-a, div.e-b") */
+   $(this).parents("table.e-stats").parents("td, body").first().find("div.e-u, div.e-a, div.e-b").each(function () {
       thisAttrClass = $(this).attr("class");
       theseClasses = thisAttrClass.match(/a-w-\S+|e-[ab]/g);
       commonWitnesses = arOn.filter(value => theseClasses.includes(value));
