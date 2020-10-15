@@ -30,7 +30,8 @@ element-item =
     element item {
         ed-stamp?,
         (inclusion
-         | (element-scope?,
+         | (element-scope?, 
+            attribute-scope?,
             ptr-attr-group?,
             (element-comment* & (entity-digital-tan-other-content
              | entity-nondigital-content

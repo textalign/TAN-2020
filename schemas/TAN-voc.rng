@@ -67,6 +67,9 @@
         <ref name="inclusion"/>
         <group>
           <optional>
+            <ref name="attribute-scope"/>
+          </optional>
+          <optional>
             <ref name="element-scope"/>
           </optional>
           <optional>
