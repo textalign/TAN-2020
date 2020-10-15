@@ -273,12 +273,12 @@
       on attributes, but it didn't have the extra vocabulary. -->
       <xsl:param name="extra-vocabulary" tunnel="yes" as="element()*"/>
       <xsl:param name="vocabulary-to-integrate" tunnel="yes" as="element()*"/>
-      <xsl:variable name="this-work-id" select="."/>
+      <xsl:variable name="this-work-id" select="text()"/>
       <xsl:variable name="this-vocab"
          select="($extra-vocabulary, $vocabulary-to-integrate)[self::tan:work][(tan:id | tan:name | tan:alias) = $this-work-id]"/>
 
       <xsl:copy-of select="."/>
-      <xsl:for-each select="$this-vocab/tan:id">
+      <xsl:for-each select="$this-vocab/tan:id[not(. = $this-work-id)]">
          <work attr="">
             <xsl:value-of select="."/>
          </work>

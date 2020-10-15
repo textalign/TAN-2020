@@ -4,7 +4,7 @@
    xmlns:saxon="http://saxon.sf.net/"
    xmlns:html="http://www.w3.org/1999/xhtml" xmlns:tei="http://www.tei-c.org/ns/1.0"
    xmlns:file="http://expath.org/ns/file" xmlns:bin="http://expath.org/ns/binary"
-   xmlns:map="http://www.w3.org/2005/xpath-functions/map"
+   xmlns:map="http://www.w3.org/2005/xpath-functions/map" xmlns:array="http://www.w3.org/2005/xpath-functions/array"
    xmlns:math="http://www.w3.org/2005/xpath-functions/math" exclude-result-prefixes="#all"
    version="3.0">
 
@@ -2403,7 +2403,7 @@
    <!-- TEI-specific -->
    
    <xsl:function name="tan:normalize-tan-tei-divs" as="item()*">
-      <!-- Input: tei tree(s); boolean -->
+      <!-- Input: tree(s) with tei:div elements a tan:div element with tei:children; boolean -->
       <!-- Output: the same, but with leaf tei:divs space-normalized. If the 2nd parameter is true, any special 
             end-div characters will be removed -->
       <xsl:param name="input-tan-tei" as="item()*"/>
@@ -2412,6 +2412,23 @@
          <xsl:with-param name="remove-special-end-div-chars" select="$remove-special-end-div-chars" tunnel="yes"/>
       </xsl:apply-templates>
    </xsl:function>
+   
+   <xsl:template match="tan:div[tei:*]" mode="normalize-tan-tei-divs">
+      <xsl:variable name="this-div-tei-prepped" as="element()">
+         <xsl:element name="div" namespace="http://www.tei-c.org/ns/1.0">
+            <xsl:copy-of select="tei:*"/>
+         </xsl:element>
+      </xsl:variable>
+      <xsl:variable name="this-tei-fixed" as="element()">
+         <xsl:apply-templates select="$this-div-tei-prepped" mode="#current"/>
+      </xsl:variable>
+      <xsl:copy>
+         <xsl:copy-of select="@*"/>
+         <xsl:copy-of select="node() except (tei:* | text())"/>
+         <xsl:copy-of select="$this-tei-fixed/*"/>
+         <xsl:copy-of select="text()"/>
+      </xsl:copy>
+   </xsl:template>
    
    <xsl:template match="tei:div[not(tei:div)]" mode="normalize-tan-tei-divs">
       <xsl:param name="remove-special-end-div-chars" tunnel="yes" as="xs:boolean"/>
@@ -2455,7 +2472,7 @@
             <xsl:iterate select="$output-pass-1/node()">
                <xsl:param name="last-text-ended-in-space" as="xs:boolean" select="true()"/>
 
-               <xsl:variable name="this-is-last-text-node" as="xs:boolean"
+               <xsl:variable name="this-is-last-text-node" as="xs:boolean?"
                   select=". is $last-text-node"/>
                <xsl:variable name="this-ends-with-special-char"
                   select="matches(., $special-end-div-chars-regex)"/>
@@ -2886,6 +2903,96 @@
             </xsl:choose>
          </xsl:for-each-group>
       </xsl:if>
+   </xsl:function>
+   
+   
+   <!-- Map functions -->
+   
+   <xsl:function name="tan:map-put" as="map(*)">
+      <!-- 2-parameter function of the supporting one below, but the 2nd parameter is a map of 
+      replacements. -->
+      <xsl:param name="map" as="map(*)"/>
+      <xsl:param name="put-map" as="map(*)"/>
+      
+      <xsl:variable name="put-map-keys" select="map:keys($put-map)"/>
+      <xsl:iterate select="$put-map-keys">
+         <xsl:param name="map-so-far" as="map(*)" select="$map"/>
+         <xsl:on-completion>
+            <xsl:sequence select="$map-so-far"/>
+         </xsl:on-completion>
+         <xsl:variable name="new-map" select="tan:map-put($map-so-far, ., map:get($put-map, .))"/>
+         <xsl:next-iteration>
+            <xsl:with-param name="map-so-far" select="$new-map"/>
+         </xsl:next-iteration>
+      </xsl:iterate>
+   </xsl:function>
+   
+   <xsl:function name="tan:map-put" as="map(*)">
+      <!-- Input: a map, an atomic type representing a key, and any items, representing the value -->
+      <!-- Output: the input map, but with a new map entry. If a key exists already in the map, 
+         the new entry is placed in the first appropriate place, otherwise it is added as a topmost
+         map entry.
+      -->
+      <!-- This function parallels map:put(), but allows for deep placement of entries. This function
+      was written to support changing values in a map for transform(), which has submaps that might need
+      to be altered. -->
+      <xsl:param name="map" as="map(*)"/>
+      <xsl:param name="key" as="xs:anyAtomicType"/>
+      <xsl:param name="value" as="item()*"/>
+      <xsl:variable name="corresponding-entry" as="array(*)" select="map:find($map, $key)"/>
+      <xsl:variable name="has-entry" select="array:size($corresponding-entry) gt 0"/>
+      <xsl:choose>
+         <xsl:when test="$has-entry">
+            <xsl:sequence select="tan:map-put-loop($map, $key, $value)"/>
+         </xsl:when>
+         <xsl:otherwise>
+            <xsl:sequence select="map:put($map, $key, $value)"/>
+         </xsl:otherwise>
+      </xsl:choose>
+   </xsl:function>
+   
+   <xsl:function name="tan:map-put-loop" visibility="private" as="map(*)">
+      <!-- supporting loop function for tan:map-put() -->
+      <!-- The order of map entries is implementation-dependent, so there is no "first" matching
+      entry -->
+      <xsl:param name="source-map" as="map(*)"/>
+      <xsl:param name="target-key" as="xs:anyAtomicType"/>
+      <xsl:param name="replacement-value" as="item()*"/>
+      <xsl:variable name="current-map-keys" select="map:keys($source-map)"/>
+      <xsl:map>
+         <xsl:iterate select="$current-map-keys">
+            <xsl:variable name="is-target-key" select="deep-equal(., $target-key)"/>
+            <xsl:variable name="these-value-items" select="map:get($source-map, .)"/>
+            <xsl:variable name="this-has-target-key"
+               select="array:size(map:find($these-value-items, $target-key)) gt 0"/>
+            <xsl:choose>
+               <xsl:when test="not($is-target-key or $this-has-target-key)">
+                  <xsl:map-entry key="." select="$these-value-items"/>
+               </xsl:when>
+               <xsl:when test="$is-target-key">
+                  <xsl:map-entry key="." select="$replacement-value"/>
+               </xsl:when>
+               <xsl:otherwise>
+                  <xsl:map-entry key=".">
+                     <xsl:iterate select="$these-value-items">
+                        <xsl:variable name="this-search" select="map:find(., $target-key)"/>
+                        <xsl:variable name="this-has-key" select="array:size($this-search) gt 0"/>
+                        <xsl:choose>
+                           <xsl:when test="$this-has-key">
+                              <xsl:sequence select="tan:map-put-loop(., $target-key, $replacement-value)"/>
+                           </xsl:when>
+                           <xsl:otherwise>
+                              <xsl:sequence select="."/>
+                           </xsl:otherwise>
+                        </xsl:choose>
+                        <xsl:next-iteration/>
+                     </xsl:iterate>
+                  </xsl:map-entry>
+               </xsl:otherwise>
+            </xsl:choose>
+            <xsl:next-iteration/>
+         </xsl:iterate>
+      </xsl:map>
    </xsl:function>
 
 
