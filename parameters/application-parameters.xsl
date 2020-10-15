@@ -45,11 +45,18 @@
 
    <!-- Should previously saved intermediate results be fetched, if available? -->
    <xsl:param name="use-saved-intermediate-steps" select="false()" as="xs:boolean"/>
+   
+   
+   
+   <!-- END-OF-PROCESS PARAMETERS -->
 
    <!-- What directory is the default for saving output? -->
    <xsl:param name="default-output-directory-resolved" as="xs:string"
       select="resolve-uri('../output/', static-base-uri())"/>
    
+   <!-- Where is the defaulte HTML template? -->
+   <xsl:param name="default-html-template-uri-resolved" as="xs:string" select="resolve-uri('../templates/template.html', static-base-uri())"/>
+
    <!-- To what directory should output be saved? -->
    <xsl:param name="target-output-directory-resolved" as="xs:string" select="$default-output-directory-resolved"/>
 

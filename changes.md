@@ -21,6 +21,7 @@ Added:
 * `tan:replace-expanded-class-1-body()`. Replaces the text content of an expanded file with another string. It is presumed that the replacement string is similar to the current text content, so `tan:diff()` is used to allocate the replacement.
 * `tan:concat-and-sort-diff-output()`. Takes one or more outputs of `tan:diff()`, puts them together, and makes sure that the content follows the sequence a, b, common, with adjacent elements combined.
 * `tan:filename-satisfies-regex(es)()` and `tan:satisfies-regex(es)()`: 2, 3, 4-param versions to check whether a string matches a given regex and does not match one. Useful for applications that need to filter values based on both matching and non-matching values. 
+* `tan:map-put()`: 2-, 3-param versions of a function that inserts or replaces one or more map entries deep within a map. Useful for developming modules of maps for `fn:transform()`. 
  
 Altered:
 * `tan:text-join()` now has an option to insert a new line at each `<div>` (useful for string differences).
