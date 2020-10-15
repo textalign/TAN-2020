@@ -10,9 +10,9 @@ TAN has submodules, which must be invoked using the `--recurse-submodules` optio
 New to TAN? Start with directories marked with an asterisk.
 
 * `applications/`: mostly XSLT stylesheets for creating, editing, converting, and using with TAN files. 
-* \*`examples/`: A small library of example TAN files. Snippets of these examples appear in the guidelines.
+* \* `examples/`: A small library of example TAN files. Snippets of these examples appear in the guidelines.
 * `functions/`: The TAN function library, the core engine for validation and applications.
-* \* `guidelines/`: the main documentation for TAN. See also http://textalign.net/release/TAN-2018/guidelines/xhtml/index.xhtml.
+* \* `guidelines/`: the main documentation for TAN. See also http://textalign.net/release/TAN-2020/guidelines/xhtml/index.xhtml.
 * `output/`: empty directory for placing sample output
 * `parameters/`: Parameters that can be altered, to adjust both validation and activities.
 * `schemas/`: The principle schemas for validating TAN files.
