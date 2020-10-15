@@ -298,6 +298,23 @@
       <xsl:copy-of select="."/>
    </xsl:template>
 
+   <xsl:template match="/" mode="dependency-adjustments-pass-1">
+      <xsl:document>
+         <xsl:choose>
+            <xsl:when test="$distribute-vocabulary">
+               <xsl:variable name="dependency-with-vocab-expanded" as="document-node()">
+                  <xsl:apply-templates select="." mode="core-expansion-terse-attributes"/>
+               </xsl:variable>
+               <xsl:apply-templates select="$dependency-with-vocab-expanded/node()" mode="#current"
+               />
+            </xsl:when>
+            <xsl:otherwise>
+               <xsl:apply-templates mode="#current"/>
+            </xsl:otherwise>
+         </xsl:choose>
+      </xsl:document>
+   </xsl:template>
+
    <xsl:template match="tan:TAN-T | tei:TEI"
       mode="core-expansion-terse dependency-adjustments-pass-1">
       <!-- Homogenize tei:TEI to tan:TAN-T -->
@@ -312,11 +329,32 @@
          select="$vocabulary/tan:group[tan:work/@src = $this-src-id]"/>
 
       <xsl:variable name="this-last-change-agent" select="tan:last-change-agent(root(.))"/>
+      <xsl:variable name="pass-on-n-aliases" select="$is-validation or exists($class-2-doc)"/>
 
       <xsl:variable name="ambig-is-roman"
          select="not($class-2-doc/*/tan:head/tan:numerals/@priority = 'letters')"/>
-      <xsl:variable name="n-alias-items"
-         select="tan:head/tan:vocabulary/tan:item[tan:affects-attribute = 'n']"/>
+      <!-- If we're simply validating a class-1 source, there's no need to check on @n aliases. -->
+      <xsl:variable name="n-alias"
+         select="
+            if ($pass-on-n-aliases) then
+               tan:head/tan:n-alias/@div-type
+            else
+               ()"
+      />
+      <xsl:variable name="n-alias-filter" as="element()*"
+         select="
+            if ($pass-on-n-aliases) then
+               tan:attribute-vocabulary($n-alias)
+            else
+               ()"
+      />
+      <xsl:variable name="n-alias-items" as="element()*"
+         select="
+            if ($pass-on-n-aliases) then
+               tan:head/tan:vocabulary/tan:item[tan:affects-attribute = 'n']
+            else
+               ()"
+      />
       <xsl:variable name="these-adjustments"
          select="$class-2-doc/*/tan:head/tan:adjustments[(tan:src, tan:where/tan:src) = ($this-src-id, $all-selector)]"/>
       
@@ -337,6 +375,9 @@
          <xsl:if test="exists($this-work-group)">
             <xsl:attribute name="work" select="$this-work-group/@n"/>
          </xsl:if>
+         <!--<test14a><xsl:copy-of select="$n-alias"/></test14a>
+         <test14b><xsl:copy-of select="$n-alias-filter"/></test14b>
+         <test14c><xsl:copy-of select="$n-alias-items"/></test14c>-->
          <xsl:if test="exists($this-last-change-agent/self::tan:algorithm)">
             <xsl:copy-of select="tan:error('wrn07', 'The last change was made by an algorithm.')"/>
          </xsl:if>
@@ -366,29 +407,11 @@
                <!-- because div filters are reference trees, we push ahead the first level of <div>s -->
                <xsl:with-param name="div-filters" tunnel="yes" select="$div-filters-for-this-source/tan:div"/>
                <xsl:with-param name="drop-divs" tunnel="yes" select="exists($div-filters-for-this-source)"/>
+               <xsl:with-param name="n-alias-filter" tunnel="yes" select="$n-alias-filter"/>
+               <xsl:with-param name="n-alias-items" tunnel="yes" select="$n-alias-items"/>
             </xsl:apply-templates>
          </xsl:if>
       </TAN-T>
-   </xsl:template>
-   
-   <xsl:template match="tan:head" mode="dependency-adjustments-pass-1">
-      <xsl:copy>
-         <xsl:copy-of select="@*"/>
-         <xsl:choose>
-            <xsl:when test="$distribute-vocabulary">
-               <xsl:variable name="this-head-expanded" as="element()">
-                  <xsl:apply-templates select="." mode="core-expansion-terse-attributes">
-                     <!-- The head should already be resolved, so should be good for expansion -->
-                     <xsl:with-param name="vocabulary-nodes" tunnel="yes" select="."/>
-                  </xsl:apply-templates>
-               </xsl:variable>
-               <xsl:apply-templates select="$this-head-expanded/*" mode="#current"/>
-            </xsl:when>
-            <xsl:otherwise>
-                  <xsl:apply-templates mode="#current"/>
-            </xsl:otherwise>
-         </xsl:choose>
-      </xsl:copy>
    </xsl:template>
    
    <xsl:template match="tei:body" mode="core-expansion-terse dependency-adjustments-pass-1">
@@ -411,8 +434,11 @@
    </xsl:template>
    
    <xsl:template match="tan:div | tei:div" mode="core-expansion-terse">
-      <!-- streamlined expansion of <div>s; applied to dependencies of class-2 files only when there are no more adjustment items to process -->
+      <xsl:param name="n-alias-filter" tunnel="yes" as="element()*"/>
+      <xsl:param name="n-alias-items" tunnel="yes" as="element()*"/>
       <xsl:param name="parent-new-refs" as="element()*" select="$empty-element"/>
+      
+      <xsl:variable name="this-n-normalized" select="tan:normalize-sequence(@n, 'n')"/>
       <xsl:variable name="is-tei" select="namespace-uri() = 'http://www.tei-c.org/ns/1.0'"
          as="xs:boolean"/>
       <xsl:variable name="expand-n" select="not(exists(ancestor::tan:claim))"/>
@@ -422,10 +448,35 @@
                tan:analyze-sequence(@n, 'n', $expand-n)
             else
                ()"/>
+
+      <xsl:variable name="this-is-n-alias-candidate"
+         select="not($is-validation) and 
+         (not(exists($n-alias-filter)) or tan:type/text() = $n-alias-filter/tan:item/(tan:name | tan:id))"
+      />
+
+      <xsl:variable name="this-n-analyzed-pass-2" as="element()">
+         <xsl:choose>
+            <xsl:when test="$this-is-n-alias-candidate">
+               <analysis>
+                  <xsl:for-each select="$this-n-analyzed/*">
+                     <xsl:variable name="this-n-val" select="."/>
+                     <xsl:variable name="these-aliases" select="$n-alias-items[(tan:name | tan:id) = $this-n-val]"/>
+                     <xsl:copy-of select="."/>
+                     <xsl:for-each select="$these-aliases/(tan:name | tan:id)[text()][not(. eq $this-n-val)]">
+                        <n attr=""><xsl:value-of select="."/></n>
+                     </xsl:for-each>
+                  </xsl:for-each>
+               </analysis>
+            </xsl:when>
+            <xsl:otherwise>
+               <xsl:sequence select="$this-n-analyzed"/>
+            </xsl:otherwise>
+         </xsl:choose>
+      </xsl:variable>
       <xsl:variable name="new-refs" as="element()*">
          <xsl:for-each select="$parent-new-refs">
             <xsl:variable name="this-ref" select="."/>
-            <xsl:for-each select="$this-n-analyzed/*[not(self::tan:error)]">
+            <xsl:for-each select="$this-n-analyzed-pass-2/*[not(self::tan:error)]">
                <ref>
                   <xsl:value-of select="string-join(($this-ref/text(), .), $separator-hierarchy)"/>
                   <xsl:copy-of select="$this-ref/*"/>
@@ -437,18 +488,21 @@
          </xsl:for-each>
       </xsl:variable>
       <xsl:variable name="is-leaf-div" select="not(exists(*:div))"/>
+      
       <xsl:variable name="diagnostics-on" select="false()" as="xs:boolean"/>
       <xsl:if test="$diagnostics-on">
          <xsl:message select="'diagnostics on, template mode core-expansion-terse, for: ', ."/>
-         <xsl:message select="$this-n-analyzed"/>
+         <xsl:message select="'This @n analyzed: ', $this-n-analyzed-pass-2"/>
       </xsl:if>
+      
       <div>
          <xsl:copy-of select="@*"/>
-         <xsl:copy-of select="$this-n-analyzed/*"/>
+         <!--<test14d><xsl:copy-of select="$this-n-analyzed"/></test14d>-->
+         <xsl:copy-of select="$this-n-analyzed-pass-2/*"/>
          <xsl:copy-of select="$new-refs"/>
          <xsl:if
             test="
-               some $i in $this-n-analyzed
+               some $i in $this-n-analyzed-pass-2/*
                   satisfies matches(., '^0\d')">
             <xsl:copy-of select="tan:error('cl117')"/>
          </xsl:if>
@@ -541,13 +595,42 @@
       <xsl:param name="div-filters" as="element()*" tunnel="yes"/>
       <xsl:param name="drop-divs" as="xs:boolean?" tunnel="yes"/>
       <xsl:param name="use-validation-mode" as="xs:boolean?" tunnel="yes" select="$is-validation"/>
+      <xsl:param name="n-alias-filter" tunnel="yes" as="element()*"/>
+      <xsl:param name="n-alias-items" tunnel="yes" as="element()*"/>
+      
 
       <xsl:variable name="these-div-types" select="tokenize(normalize-space(@type), ' ')"/>
+
+      <xsl:variable name="this-is-n-alias-candidate"
+         select="(not(exists($n-alias-filter)) or $these-div-types = $n-alias-filter/tan:item/(tan:name | tan:id))"
+      />
+      
       <xsl:variable name="these-ns-analyzed" select="tan:analyze-sequence(@n, 'n', true())"/>
+      
+      <xsl:variable name="these-ns-analyzed-pass-2" as="element()">
+         <xsl:choose>
+            <xsl:when test="$this-is-n-alias-candidate">
+               <analysis>
+                  <xsl:for-each select="$these-ns-analyzed/*">
+                     <xsl:variable name="this-n-val" select="."/>
+                     <xsl:variable name="these-aliases" select="$n-alias-items[(tan:name | tan:id) = $this-n-val]"/>
+                     <xsl:copy-of select="."/>
+                     <xsl:for-each select="$these-aliases/(tan:name | tan:id)[text()][not(. eq $this-n-val)]">
+                        <n attr=""><xsl:value-of select="."/></n>
+                     </xsl:for-each>
+                  </xsl:for-each>
+               </analysis>
+            </xsl:when>
+            <xsl:otherwise>
+               <xsl:sequence select="$these-ns-analyzed"/>
+            </xsl:otherwise>
+         </xsl:choose>
+      </xsl:variable>
+      
       <xsl:variable name="these-orig-refs-analyzed" as="element()*">
          <xsl:for-each select="$parent-orig-refs">
             <xsl:variable name="this-ref" select="."/>
-            <xsl:for-each select="$these-ns-analyzed/*">
+            <xsl:for-each select="$these-ns-analyzed-pass-2/*">
                <ref>
                   <xsl:value-of select="string-join(($this-ref/text(), .), $separator-hierarchy)"/>
                   <xsl:copy-of select="$this-ref/*"/>
@@ -566,7 +649,7 @@
                (parent::tan:adjustments/(tan:div-type | tan:where/tan:div-type) = $these-div-types)
             else
                true()]/(tan:div-type[. = $these-div-types],
-            tan:n[. = $these-ns-analyzed/*], tan:ref[text() = $these-orig-refs-analyzed/text()])"
+            tan:n[. = $these-ns-analyzed-pass-2/*], tan:ref[text() = $these-orig-refs-analyzed/text()])"
       />
       
       
@@ -593,7 +676,7 @@
             </xsl:when>
             <xsl:otherwise>
                <!-- There may be multiple rename n actions or equate actions, but only one per value of n -->
-               <xsl:for-each select="distinct-values($these-ns-analyzed/*)">
+               <xsl:for-each select="distinct-values($these-ns-analyzed-pass-2/*)">
                   <xsl:variable name="this-n" select="."/>
                   <xsl:sequence select="($rename-n-locators[. = $this-n], $equate-locators[. = $this-n])[1]"/>
                </xsl:for-each>
@@ -723,6 +806,7 @@
                <xsl:if test="$text-end-is-fragmentary">
                   <xsl:attribute name="frag-from" select="$element-with-rest-of-fragment/@q"/>
                </xsl:if>
+               <xsl:copy-of select="tan:type"/>
                <!-- new n -->
                <xsl:copy-of select="$this-new-ref/tan:n[last()]"/>
                <!-- new ref -->
@@ -750,13 +834,10 @@
             </div>
          </xsl:when>
          <xsl:otherwise>
-            <!--<xsl:variable name="is-tei" select="namespace-uri() = 'http://www.tei-c.org/ns/1.0'"
-               as="xs:boolean"/>-->
-            
             <xsl:variable name="new-ns" as="element()*">
                <xsl:choose>
                   <xsl:when test="exists($actionable-adjustments)">
-                     <xsl:for-each select="$these-ns-analyzed">
+                     <xsl:for-each select="$these-ns-analyzed-pass-2/*">
                         <xsl:variable name="this-n" select="."/>
                         <xsl:variable name="this-adjustment" select="$actionable-adjustments[. = $this-n]"/>
                         <xsl:choose>
@@ -784,7 +865,7 @@
                      </xsl:for-each>
                   </xsl:when>
                   <xsl:otherwise>
-                     <xsl:sequence select="$these-ns-analyzed/*"/>
+                     <xsl:sequence select="$these-ns-analyzed-pass-2/*"/>
                   </xsl:otherwise>
                </xsl:choose>
             </xsl:variable>
@@ -828,6 +909,7 @@
                   <xsl:if test="$text-end-is-fragmentary">
                      <xsl:attribute name="frag-from" select="$element-with-rest-of-fragment/@q"/>
                   </xsl:if>
+                  <xsl:copy-of select="tan:type"/>
                   <xsl:copy-of select="$new-ns"/>
                   <xsl:copy-of select="$new-refs"/>
                   <xsl:copy-of select="$notices-to-imprint"/>

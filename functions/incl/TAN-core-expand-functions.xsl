@@ -31,6 +31,8 @@
       </xsl:document>
       
    </xsl:function>
+   
+   <xsl:template match="*[@attr]/tan:item" mode="strip-distributed-vocabulary-from-idrefs"/>
 
    <xsl:function name="tan:expand-doc">
       <!-- Input: a resolved TAN document, a string indicating a phase of expansion, a boolean indicating whether the function is intended
@@ -148,7 +150,7 @@
       
       <xsl:variable name="reference-trees" as="element()*">
          <xsl:for-each-group select="$class-2-expansion-pass-2-body//*[(tan:src | tan:work)]"
-            group-by="tan:src, tan:work">
+            group-by="tan:src/text(), tan:work/text()">
             <xsl:variable name="ref-parents" select="current-group()/descendant-or-self::*[tan:ref]"/>
             <xsl:variable name="ref-parents-that-do-not-need-iteration"
                select="$ref-parents[count(tan:ref) eq 1]"/>
@@ -166,7 +168,20 @@
                   </xsl:for-each>
                </xsl:for-each>
             </xsl:variable>
-            
+            <xsl:variable name="ref-parents-adjusted" as="element()*">
+               <xsl:choose>
+                  <xsl:when test="$distribute-vocabulary">
+                     <xsl:apply-templates
+                        select="$ref-parents-that-do-not-need-iteration, $other-ref-parents-iterated"
+                        mode="strip-distributed-vocabulary-from-idrefs"/>
+                  </xsl:when>
+                  <xsl:otherwise>
+                     <xsl:sequence
+                        select="$ref-parents-that-do-not-need-iteration, $other-ref-parents-iterated"
+                     />
+                  </xsl:otherwise>
+               </xsl:choose>
+            </xsl:variable>
             <doc>
                <src>
                   <xsl:value-of select="current-grouping-key()"/>
@@ -174,9 +189,7 @@
                <!-- Copy at the root level of the tree any claims that are not tethered to a particular reference -->
                <xsl:copy-of select="current-group()/self::tan:tok[not(tan:ref)]"/>
                <!-- Now build the reference tree -->
-               <xsl:copy-of
-                  select="tan:build-parent-ref-tree(($ref-parents-that-do-not-need-iteration, $other-ref-parents-iterated), 1, ())"
-               />
+               <xsl:copy-of select="tan:build-parent-ref-tree($ref-parents-adjusted, 1, ())"/>
             </doc>
          </xsl:for-each-group>
 
@@ -473,11 +486,11 @@
                   <core-terse-pass-1><xsl:copy-of select="$core-terse-expansion-pass-1"/></core-terse-pass-1>
                   <!--<core-terse-pass-2><xsl:copy-of select="$core-terse-expansion-pass-2"/></core-terse-pass-2>-->
                   <xsl:if test="$this-is-class-2">
-                     <!--<dependencies-resolved><xsl:copy-of select="$dependencies-resolved"/></dependencies-resolved>-->
+                     <dependencies-resolved><xsl:copy-of select="$dependencies-resolved"/></dependencies-resolved>
                      <reference-trees count="{count($reference-trees)}"><xsl:copy-of select="$reference-trees"/></reference-trees>
                      <!--<adjustments-1><xsl:copy-of select="$adjustments-part-1"/></adjustments-1>-->
                      <!--<adjustments-2><xsl:copy-of select="$adjustments-part-2"/></adjustments-2>-->
-                     <!--<make-adjustments-pass-1><xsl:value-of select="$make-adjustments-pass-1"/></make-adjustments-pass-1>-->
+                     <make-adjustments-pass-1><xsl:value-of select="$make-adjustments-pass-1"/></make-adjustments-pass-1>
                      <!--<div-filters><xsl:copy-of select="$div-filters"/></div-filters>-->
                      <dep-adjusted-1a><xsl:copy-of select="$dependencies-adjusted-pass-1a"/></dep-adjusted-1a>
                      <dep-adj-1-divs-to-reset><xsl:copy-of select="$adjustment-pass-1a-dependency-divs-to-reset"/></dep-adj-1-divs-to-reset>

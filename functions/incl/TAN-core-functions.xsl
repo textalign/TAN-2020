@@ -2349,6 +2349,8 @@
             else
                ()"
       />
+      <!-- If URI b ends in a path indicator, add a dummy string so that its path is picked. -->
+      <xsl:variable name="uri-b-normalized" select="replace($uri-b-resolved, '/$', '/.')"/>
       <xsl:variable name="path-a" as="element()">
          <path-a>
             <xsl:if test="string-length($uri-a-resolved) gt 0">
@@ -2364,8 +2366,8 @@
       </xsl:variable>
       <xsl:variable name="path-b" as="element()">
          <path-b>
-            <xsl:if test="string-length($uri-b-resolved) gt 0">
-               <xsl:analyze-string select="$uri-b-resolved" regex="/">
+            <xsl:if test="string-length($uri-b-normalized) gt 0">
+               <xsl:analyze-string select="$uri-b-normalized" regex="/">
                   <xsl:non-matching-substring>
                      <step>
                         <xsl:value-of select="."/>

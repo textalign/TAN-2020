@@ -14,14 +14,23 @@
    
    <xsl:template match="tan:body | tan:group | tan:item" mode="imprint-vocabulary" priority="1">
       <xsl:param name="inherited-affects-elements" as="xs:string*" tunnel="yes"/>
+      <xsl:param name="inherited-affects-attributes" as="xs:string*" tunnel="yes"/>
       <xsl:variable name="these-affects-elements"
          select="tokenize(normalize-space(@affects-element), ' ')"/>
+      <xsl:variable name="these-affects-attributes"
+         select="tokenize(normalize-space(@affects-attribute), ' ')"/>
       <xsl:variable name="current-affects-elements"
          select="
             if (exists($these-affects-elements)) then
                $these-affects-elements
             else
                $inherited-affects-elements"/>
+      <xsl:variable name="current-affects-attributes"
+         select="
+            if (exists($these-affects-attributes)) then
+               $these-affects-attributes
+            else
+               $inherited-affects-attributes"/>
       <xsl:copy>
          <xsl:copy-of select="@*"/>
          <xsl:if test="name(.) = 'item'">
@@ -30,9 +39,16 @@
                   <xsl:value-of select="."/>
                </affects-element>
             </xsl:for-each>
+            <xsl:for-each select="$current-affects-attributes">
+               <affects-attribute>
+                  <xsl:value-of select="."/>
+               </affects-attribute>
+            </xsl:for-each>
          </xsl:if>
          <xsl:apply-templates mode="#current">
             <xsl:with-param name="inherited-affects-elements" select="$current-affects-elements"
+               tunnel="yes"/>
+            <xsl:with-param name="inherited-affects-attributes" select="$current-affects-attributes"
                tunnel="yes"/>
          </xsl:apply-templates>
       </xsl:copy>
@@ -48,8 +64,6 @@
          <xsl:apply-templates mode="#current">
             <xsl:with-param name="duplicate-IRIs" select="tan:duplicate-items($all-body-iris)"
                tunnel="yes"/>
-            <!--<xsl:with-param name="inherited-affects-elements" select="tan:affects-element"
-               tunnel="yes"/>-->
             <xsl:with-param name="is-reserved"
                select="(parent::tan:TAN-voc/@id = $TAN-vocabulary-files/*/@id) or $doc-is-error-test"
                tunnel="yes"/>
