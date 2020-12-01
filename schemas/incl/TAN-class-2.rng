@@ -94,6 +94,12 @@
       <ref name="data-picker-item"/>
     </attribute>
   </define>
+  <define name="attr-priority">
+    <attribute name="priority">
+      <a:documentation>specifies placement of a reassigned passage relative to the main passage and other reassigned passages. The target is presumed to be a value of 0. The higher the value of @priority, the earlier the passage is placed. Passages with positive integers are prepended; negative integers, appended.</a:documentation>
+      <data type="integer"/>
+    </attribute>
+  </define>
   <define name="attr-ref-many">
     <attribute name="ref">
       <a:documentation>lists references to one or more &lt;div&gt;s. It consists of one or more simple references joined by commas or hyphens. A simple reference is a string value that points to a single &lt;div&gt; by joining one of its values of @n with those of its ancestors, e.g., "1 1". </a:documentation>
@@ -174,6 +180,9 @@
       <a:documentation>Only the first &lt;reassign&gt; applying to a &lt;div&gt; in a given source will be applied.    </a:documentation>
       <optional>
         <ref name="ed-stamp"/>
+      </optional>
+      <optional>
+        <ref name="attr-priority"/>
       </optional>
       <choice>
         <ref name="inclusion"/>
