@@ -98,23 +98,44 @@
                 </constraints>
             </verb>
             <group type="subject_postdates_object textual_object">
-                <verb group="cf">
-                    <IRI>tag:textalign.net,2015:verb:paraphrases</IRI>
-                    <name>paraphrases</name>
-                    <desc>The subject (a textual artefact or passage) paraphrases the object (a
-                        bearer or creator of texts). Relationship may be direct or indirect. The
-                        subject by implication postdates the object.</desc>
+                <verb group="near_verbatim textual_object">
+                    <IRI>tag:textalign.net,2015:verb:quotes</IRI>
+                    <name>quotes</name>
+                    <desc>The subject (a textual artefact or passage) reproduces text from the
+                        object (a bearer or creator of texts) in verbatim, or near-verbatim fashion.
+                        Relationship may be direct or indirect. The subject by implication postdates
+                        the object.</desc>
                     <constraints>
                         <subject status="required" item-type="ref scriptum work version source"/>
                         <object status="required" item-type="ref scriptum work version source person organization algorithm"/>
                     </constraints>
                 </verb>
-                <verb group="near_verbatim textual_object">
-                    <IRI>tag:textalign.net,2015:verb:quotes</IRI>
-                    <name>quotes</name>
-                    <desc>The subject (a textual artefact or passage) quotes from the object (a
-                        bearer or creator of texts). Relationship may be direct or indirect. The
-                        subject by implication postdates the object.</desc>
+                <verb group="cf">
+                    <IRI>tag:textalign.net,2015:verb:paraphrases</IRI>
+                    <name>paraphrases</name>
+                    <desc>The subject (a textual artefact or passage) reproduces text from the
+                        object (a bearer or creator of texts) without verbatim or near-verbatim
+                        accuracy. Relationship may be direct or indirect. The subject by implication
+                        postdates the object. Paraphrasing differs from rephrasing in that word
+                        changes in the former retain a similar meaning, whereas the latter changes
+                        it. For example, "apple" if changed to "fruit" would be a paraphrase, but if
+                        changed to "banana" would be a rephrasing. </desc>
+                    <constraints>
+                        <subject status="required" item-type="ref scriptum work version source"/>
+                        <object status="required" item-type="ref scriptum work version source person organization algorithm"/>
+                    </constraints>
+                </verb>
+                <verb group="cf">
+                    <IRI>tag:textalign.net,2015:verb:rephrases</IRI>
+                    <name>rephrases</name>
+                    <desc>The subject (a textual artefact or passage) reproduces text from the
+                        object (a bearer or creator of texts) but revises it in such a way as to
+                        alter the meaning. Reproduction may be verbatim, near-verbatim, or loose.
+                        Relationship may be direct or indirect. The subject by implication postdates
+                        the object. Rephrasing differs from paraphrasing in that word changes in the
+                        former introduces changes in meaning, whereas the latter does not. For
+                        example, "apple" if changed to "banana" would be a rephrasing, but if
+                        changed to "fruit" would be a paraphrase. </desc>
                     <constraints>
                         <subject status="required" item-type="ref scriptum work version source"/>
                         <object status="required" item-type="ref scriptum work version source person organization algorithm"/>
