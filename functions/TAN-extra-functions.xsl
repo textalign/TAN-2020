@@ -31,6 +31,8 @@
    <xsl:variable name="doc-filename" select="tan:cfne(/)"/>
    <xsl:param name="saxon-extension-functions-available" static="yes" as="xs:boolean" select="function-available('saxon:evaluate', 3)"/>
    
+   <xsl:variable name="self-expanded-vocabulary" select="tan:vocabulary((), (), ($self-expanded/(*/tan:head | (tan:TAN-A | tan:TAN-voc)/tan:body)))"/>
+   
    <!-- sources -->
    <!--<xsl:variable name="sources-1st-da" select="tan:get-1st-doc($head/tan:source)"/>
    <xsl:variable name="sources-must-be-adjusted"
@@ -972,6 +974,13 @@
          </xsl:choose>
       </xsl:variable>
       <xsl:value-of select="$test-1 and $test-2"/>
+   </xsl:function>
+   
+   <xsl:function name="tan:reverse-string" as="xs:string?">
+      <!-- Input: any string -->
+      <!-- Output: the string in reverse order -->
+      <xsl:param name="string-to-reverse" as="xs:string?"/>
+      <xsl:sequence select="codepoints-to-string(reverse(string-to-codepoints($string-to-reverse)))"/>
    </xsl:function>
    
    

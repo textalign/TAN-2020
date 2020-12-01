@@ -359,6 +359,8 @@
          return
             tan:get-1st-doc($i)"
    />
+   <!-- The following variable fetches vocabulary available after resolution. But TAN-A files attract as <work> vocabulary
+   the items from their sources, and that happens only after expansion. -->
    <xsl:variable name="doc-vocabulary" select="tan:vocabulary((), (), ($head, $self-resolved/(tan:TAN-A, tan:TAN-voc)/tan:body))"/>
 
    <!-- sources -->
@@ -2260,7 +2262,7 @@
                else
                   tan:base-uri(.)"
          />
-         <xsl:value-of select="replace(xs:string($this-base), '.+/([^/]+)\.\w+$', '$1')"/>
+         <xsl:value-of select="replace(tan:cfne($this-base), '\.[^.]*$', '')"/>
       </xsl:for-each>
    </xsl:function>
    <xsl:function name="tan:cfne" as="xs:string*">
@@ -2275,7 +2277,7 @@
                else
                   tan:base-uri(.)"
          />
-         <xsl:value-of select="replace(xs:string($this-base), '.+/([^/]+\.\w+)$', '$1')"/>
+         <xsl:value-of select="replace(xs:string($this-base), '.+/([^/]+)$', '$1')"/>
       </xsl:for-each>
    </xsl:function>
    <xsl:function name="tan:is-valid-uri" as="xs:boolean?">

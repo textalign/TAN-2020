@@ -118,7 +118,7 @@
    <xsl:template
       match="
          tan:adjustments/tan:skip/tan:div-type |
-         tan:adjustments/tan:*/tan:ref | tan:adjustments/tan:*/tan:n | tan:passage/tan:ref"
+         tan:adjustments/tan:*/tan:ref | tan:adjustments/tan:*/tan:n | tan:passage/tan:ref[not(@q)]"
       mode="core-expansion-terse">
       <xsl:copy>
          <xsl:copy-of select="@*"/>
@@ -175,7 +175,7 @@
       <!-- equate locators should be more forgiving than other adjustment locators: you do not want every value of @n to match each source, only one combination -->
       <xsl:param name="dependencies-adjusted-and-marked" as="document-node()*" tunnel="yes"/>
       <xsl:variable name="these-src-id-nodes" select="ancestor-or-self::*[tan:src][1]"/>
-      <xsl:variable name="these-src-ids" select="$these-src-id-nodes/tan:src"/>
+      <xsl:variable name="these-src-ids" select="$these-src-id-nodes/tan:src/text()"/>
       <xsl:variable name="this-q" select="@q"/>
       <xsl:variable name="these-ns" select="tan:n"/>
       <xsl:variable name="duplicate-ns" select="tan:duplicate-items($these-ns)"/>
@@ -223,8 +223,8 @@
       <xsl:param name="dependencies-adjusted-and-marked" as="document-node()*" tunnel="yes"/>
       <xsl:variable name="this-work-node-parent" select="ancestor-or-self::*[tan:work][1]"/>
       <xsl:variable name="this-src-node-parent" select="ancestor-or-self::*[tan:src][1]"/>
-      <xsl:variable name="these-work-ids" select="$this-work-node-parent/tan:work"/>
-      <xsl:variable name="these-src-ids" select="$this-src-node-parent/tan:src"/>
+      <xsl:variable name="these-work-ids" select="$this-work-node-parent/tan:work/text()"/>
+      <xsl:variable name="these-src-ids" select="$this-src-node-parent/tan:src/text()"/>
       <xsl:variable name="is-from" select="exists(@from)"/>
       <xsl:variable name="this-q" select="@q"/>
       <xsl:variable name="this-ref" select="text()"/>

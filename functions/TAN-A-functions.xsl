@@ -210,9 +210,17 @@
             />
             <xsl:variable name="these-equate-works"
                select="$this-head/tan:vocabulary-key/tan:alias[tan:idref = $this-src]"/>
+            <xsl:variable name="vocab-info-to-include"
+               select="
+                  $this-vocabulary-item/(tan:IRI, tan:name),
+                  (if ($is-validation) then
+                     ()
+                  else
+                     $this-vocabulary-item/tan:desc)"
+            />
             <xsl:copy>
                <xsl:copy-of select="@*"/>
-               <xsl:for-each select="$this-vocabulary-item/(tan:IRI, tan:name)">
+               <xsl:for-each select="$vocab-info-to-include">
                   <xsl:copy>
                      <xsl:copy-of select="@norm, @xml:lang"/>
                      <xsl:value-of select="."/>

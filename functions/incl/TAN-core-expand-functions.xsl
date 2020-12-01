@@ -482,28 +482,28 @@
             <xsl:message select="'Replacing the output of tan:expand-doc() with diagnostic feedback'"/>
             <xsl:document>
                <expand-diagnostics>
-                  <core-expansion-ad-hoc-pre-pass><xsl:copy-of select="$core-expansion-ad-hoc-pre-pass"/></core-expansion-ad-hoc-pre-pass>
+                  <!--<core-expansion-ad-hoc-pre-pass><xsl:copy-of select="$core-expansion-ad-hoc-pre-pass"/></core-expansion-ad-hoc-pre-pass>-->
                   <core-terse-pass-1><xsl:copy-of select="$core-terse-expansion-pass-1"/></core-terse-pass-1>
-                  <!--<core-terse-pass-2><xsl:copy-of select="$core-terse-expansion-pass-2"/></core-terse-pass-2>-->
+                  <core-terse-pass-2><xsl:copy-of select="$core-terse-expansion-pass-2"/></core-terse-pass-2>
                   <xsl:if test="$this-is-class-2">
                      <dependencies-resolved><xsl:copy-of select="$dependencies-resolved"/></dependencies-resolved>
                      <reference-trees count="{count($reference-trees)}"><xsl:copy-of select="$reference-trees"/></reference-trees>
-                     <!--<adjustments-1><xsl:copy-of select="$adjustments-part-1"/></adjustments-1>-->
-                     <!--<adjustments-2><xsl:copy-of select="$adjustments-part-2"/></adjustments-2>-->
+                     <adjustments-1><xsl:copy-of select="$adjustments-part-1"/></adjustments-1>
+                     <adjustments-2><xsl:copy-of select="$adjustments-part-2"/></adjustments-2>
                      <make-adjustments-pass-1><xsl:value-of select="$make-adjustments-pass-1"/></make-adjustments-pass-1>
-                     <!--<div-filters><xsl:copy-of select="$div-filters"/></div-filters>-->
+                     <div-filters><xsl:copy-of select="$div-filters"/></div-filters>
                      <dep-adjusted-1a><xsl:copy-of select="$dependencies-adjusted-pass-1a"/></dep-adjusted-1a>
-                     <dep-adj-1-divs-to-reset><xsl:copy-of select="$adjustment-pass-1a-dependency-divs-to-reset"/></dep-adj-1-divs-to-reset>
+                     <!--<dep-adj-1-divs-to-reset><xsl:copy-of select="$adjustment-pass-1a-dependency-divs-to-reset"/></dep-adj-1-divs-to-reset>-->
                      <!--<dep-adj-1-divs-with-attr-frag-from count="{count($adjustment-pass-1a-divs-with-attr-frag-from)}"><xsl:value-of select="$adjustment-pass-1a-divs-with-attr-frag-from"/></dep-adj-1-divs-with-attr-frag-from>-->
-                     <dep-adjusted-1b><xsl:copy-of select="$dependencies-adjusted-pass-1b"/></dep-adjusted-1b>
-                     <!--<dep-adjusted-2a><xsl:copy-of select="$dependencies-adjusted-pass-2a"/></dep-adjusted-2a>-->
-                     <!--<dep-adjusted-2b><xsl:copy-of select="$dependencies-adjusted-pass-2b"/></dep-adjusted-2b>-->
-                     <dep-marked-1><xsl:copy-of select="$dependencies-marked-pass-1"/></dep-marked-1>
-                     <dep-marked-2><xsl:copy-of select="$dependencies-marked-pass-2"/></dep-marked-2>
-                     <dep-stripped><xsl:copy-of select="$dependencies-stripped-to-markers"/></dep-stripped>
+                     <!--<dep-adjusted-1b><xsl:copy-of select="$dependencies-adjusted-pass-1b"/></dep-adjusted-1b>-->
+                     <dep-adjusted-2a><xsl:copy-of select="$dependencies-adjusted-pass-2a"/></dep-adjusted-2a>
+                     <dep-adjusted-2b><xsl:copy-of select="$dependencies-adjusted-pass-2b"/></dep-adjusted-2b>
+                     <!--<dep-marked-1><xsl:copy-of select="$dependencies-marked-pass-1"/></dep-marked-1>-->
+                     <!--<dep-marked-2><xsl:copy-of select="$dependencies-marked-pass-2"/></dep-marked-2>-->
+                     <!--<dep-stripped><xsl:copy-of select="$dependencies-stripped-to-markers"/></dep-stripped>-->
                   </xsl:if>
-                  <core-terse-pass-3><xsl:copy-of select="$core-terse-expansion-pass-3"/></core-terse-pass-3>
-                  <core-terse-pass-4><xsl:copy-of select="$core-terse-expansion-pass-4"/></core-terse-pass-4>
+                  <!--<core-terse-pass-3><xsl:copy-of select="$core-terse-expansion-pass-3"/></core-terse-pass-3>-->
+                  <!--<core-terse-pass-4><xsl:copy-of select="$core-terse-expansion-pass-4"/></core-terse-pass-4>-->
                </expand-diagnostics>
             </xsl:document>
          </xsl:when>
@@ -1774,7 +1774,7 @@
       <xsl:copy>
          <xsl:copy-of select="@*"/>
          <xsl:copy-of select="$this-vocabulary//tan:token-definition/@*"/>
-         <xsl:if test="$token-definition-errors = tan:src">
+         <xsl:if test="$token-definition-errors = tan:src/text()">
             <xsl:copy-of select="tan:error('cl202', concat('Duplicates: ', string-join($token-definition-errors, ', ')))"/>
          </xsl:if>
          <xsl:if test="not(exists(@src))">

@@ -301,7 +301,7 @@
             <xsl:variable name="attribute-filters-for-vocabularies" as="element()*">
                <xsl:for-each-group select="$attributes-that-take-vocab-based-aliases" group-by="name(.)">
                   <xsl:variable name="this-attr-name" select="current-grouping-key()"/>
-                  <xsl:for-each-group select="current-group()" group-by=".">
+                  <xsl:for-each-group select="current-group()" group-by="tokenize(., '\s+')">
                      <xsl:variable name="this-val" select="current-grouping-key()"/>
                      <filter type="vocabulary">
                         <attribute-name>
@@ -1194,6 +1194,7 @@
             return
                tan:string-to-numerals(lower-case($i), $ambig-is-roman, false(), $n-aliases-to-process)"/>
       <xsl:variable name="n-val-rebuilt" select="string-join($vals-normalized, ' ')"/>
+      
       <xsl:variable name="diagnostics-on" select="false()"/>
       <xsl:if test="$diagnostics-on">
          <xsl:message select="'diagnostics on, template mode resolve-numerals, for: ', ."/>
@@ -1202,6 +1203,7 @@
          <xsl:message select="'n alias constraints: ', $n-alias-div-type-constraints"/>
          <xsl:message select="'n aliases should be checked: ', $n-aliases-should-be-checked"/>
       </xsl:if>
+      
       <xsl:copy>
          <xsl:copy-of select="@*"/>
          <xsl:attribute name="n" select="$n-val-rebuilt"/>
@@ -1225,12 +1227,14 @@
       <xsl:variable name="this-element-name" select="name(.)"/>
       <xsl:variable name="val-normalized"
          select="tan:string-to-numerals(lower-case(text()), $ambig-is-roman, false(), $n-alias-items)"/>
+      
       <xsl:variable name="diagnostics-on" select="false()"/>
       <xsl:if test="$diagnostics-on">
          <xsl:message select="'diagnostics on, template mode resolve-numerals, for: ', ."/>
          <xsl:message select="'ambig #s are roman: ', $ambig-is-roman"/>
          <xsl:message select="'Qty n aliases: ', count($n-alias-items)"/>
       </xsl:if>
+      
       <xsl:copy>
          <xsl:copy-of select="@*"/>
          <xsl:value-of select="$val-normalized"/>
