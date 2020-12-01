@@ -136,6 +136,11 @@ td div.label ~ *
 {
    display: inherit;
 }
+td div.label ~ .tok,
+td div.label ~ .non-tok
+{
+   display: inline;
+}
 
 /* FONTS */
 .last-picker,
