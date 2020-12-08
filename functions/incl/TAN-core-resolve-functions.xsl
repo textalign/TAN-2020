@@ -92,6 +92,9 @@
       <xsl:variable name="this-doc-id" select="$TAN-document/*/@id"/>
       <xsl:variable name="this-doc-base-uri" select="tan:base-uri($TAN-document)"/>
       <xsl:variable name="this-is-collection-document" select="$TAN-document/collection"/>
+      <xsl:variable name="this-is-class-1-source" select="
+            some $i in $attributes-to-add-to-root-element
+               satisfies name($i) eq 'src'"/>
       
       <xsl:choose>
          <xsl:when test="exists($TAN-document/*) and not(namespace-uri($TAN-document/*) = ($TAN-namespace, $TEI-namespace)) and not($this-is-collection-document)">
@@ -207,9 +210,12 @@
             
             <!-- Step 2b: vocabulary element filters -->
             
-            <xsl:variable name="names-of-attributes-that-take-vocab-based-aliases"
+            <!-- We add @n only if it's a non-dependent class-1 file. Dependent class-1 files (i.e., sources of class-2 files)
+            will have ALL their @n vocabulary retrieved, because a class-2 file needs to be able to access the entire library of
+            synonyms. -->
+            <xsl:variable name="names-of-attributes-that-take-vocab-based-aliases" as="xs:string*"
                select="
-                  if (exists($TAN-document/(tei:TEI | tan:TAN-T)/tan:head/tan:vocabulary)) then
+                  if (exists($TAN-document/(tei:TEI | tan:TAN-T)/tan:head/tan:vocabulary) and not($this-is-class-1-source)) then
                      'n'
                   else
                      ()"
@@ -262,7 +268,7 @@
                      </xsl:otherwise>
                   </xsl:choose>
                   
-               </xsl:for-each-group> 
+               </xsl:for-each-group>
             </xsl:variable>
             
             <xsl:variable name="vocabulary-heads" select="$doc-stamped/*/tan:head, $doc-stamped/(tan:TAN-voc, tan:TAN-A)/tan:body"/>
@@ -315,7 +321,13 @@
                         </name>
                      </filter>
                   </xsl:for-each-group> 
-               </xsl:for-each-group> 
+               </xsl:for-each-group>
+               <xsl:if test="$this-is-class-1-source">
+                  <filter type="vocabulary">
+                     <attribute-name>n</attribute-name>
+                     <name norm="">*</name>
+                  </filter>
+               </xsl:if>
             </xsl:variable>
 
 
@@ -534,6 +546,10 @@
          <xsl:for-each select="$element-filters">
             <xsl:choose>
                <xsl:when test="not(tan:element-name = $these-element-names) and not(tan:attribute-name = $these-attribute-names)"/>
+               <!-- If the filter is asking for everything that matches a given element or attribute, then return it. -->
+               <xsl:when test="tan:name = '*'">
+                  <xsl:sequence select="."/>
+               </xsl:when>
                <xsl:when test="exists(tan:name) and not(tan:name = $these-normalized-name-children)
                   and not(exists($this-attr-include))"
                />
@@ -1066,7 +1082,7 @@
       <xsl:variable name="filter-matches" select="$vocabulary-element-filters[(tan:element-name = $these-element-names)], 
          $vocabulary-attribute-filters[(tan:attribute-name = $these-attribute-names)]"/>
       <xsl:choose>
-         <xsl:when test="exists($filter-matches) and $is-validation">
+         <xsl:when test="exists($filter-matches) and ($is-validation or ($filter-matches/tan:name = '*'))">
             <!-- If validating, we want all options for a given category, to supply help for errors -->
             <xsl:copy-of select="."/>
          </xsl:when>

@@ -191,75 +191,74 @@
          'non-Latin-alphabet numeral', 'string', 'Roman or alphabet numeral')"/>
 
    <!-- URN namespaces come from the Official IANA Registry of URN Namespaces, https://www.iana.org/assignments/urn-namespaces/urn-namespaces.xhtml, accessed 2020-05-24 -->
-   <xsl:variable name="official-urn-namespaces"
-      select="
-      ('3gpp',
-      '3gpp2',
-      'adid',
-      'alert',
-      'bbf',
-      'broadband-forum-org',
-      'cablelabs',
-      'ccsds',
-      'cgi',
-      'clei',
-      'dgiwg',
-      'dslforum-org',
-      'dvb',
-      'ebu',
-      'eidr',
-      'epc',
-      'epcglobal',
-      'etsi',
-      'eurosystem',
-      'example',
-      'fdc',
-      'fipa',
-      'geant',
-      'globus',
-      'gsma',
-      'hbbtv',
-      'ieee',
-      'ietf',
-      'iptc',
-      'isan',
-      'isbn',
-      'iso',
-      'issn',
-      'itu',
-      'ivis',
-      'liberty',
-      'mace',
-      'mef',
-      'mpeg',
-      'mrn',
-      'nato',
-      'nbn',
-      'nena',
-      'newsml',
-      'nfc',
-      'nzl',
-      'oasis',
-      'ogc',
-      'ogf',
-      'oid',
-      'oipf',
-      'oma',
-      'onf',
-      'pin',
-      'publicid',
-      's1000d',
-      'schac',
-      'service',
-      'smpte',
-      'swift',
-      'tva',
-      'uci',
-      'ucode',
-      'uuid',
-      'web3d',
-      'xmlorg',
-      'xmpp',
+   <xsl:variable name="official-urn-namespaces" select="
+         ('3gpp',
+         '3gpp2',
+         'adid',
+         'alert',
+         'bbf',
+         'broadband-forum-org',
+         'cablelabs',
+         'ccsds',
+         'cgi',
+         'clei',
+         'dgiwg',
+         'dslforum-org',
+         'dvb',
+         'ebu',
+         'eidr',
+         'epc',
+         'epcglobal',
+         'etsi',
+         'eurosystem',
+         'example',
+         'fdc',
+         'fipa',
+         'geant',
+         'globus',
+         'gsma',
+         'hbbtv',
+         'ieee',
+         'ietf',
+         'iptc',
+         'isan',
+         'isbn',
+         'iso',
+         'issn',
+         'itu',
+         'ivis',
+         'liberty',
+         'mace',
+         'mef',
+         'mpeg',
+         'mrn',
+         'nato',
+         'nbn',
+         'nena',
+         'newsml',
+         'nfc',
+         'nzl',
+         'oasis',
+         'ogc',
+         'ogf',
+         'oid',
+         'oipf',
+         'oma',
+         'onf',
+         'pin',
+         'publicid',
+         's1000d',
+         'schac',
+         'service',
+         'smpte',
+         'swift',
+         'tva',
+         'uci',
+         'ucode',
+         'uuid',
+         'web3d',
+         'xmlorg',
+         'xmpp',
          'urn-1',
          'urn-2',
          'urn-3',
@@ -1750,6 +1749,7 @@
             <xsl:otherwise> *, *</xsl:otherwise>
          </xsl:choose>
       </xsl:variable>
+      
       <xsl:variable name="diagnostics-on" select="false()"/>
       <xsl:if test="$diagnostics-on">
          <xsl:message select="'diagnostics on for tan:normalize-sequence()'"/>
@@ -1759,6 +1759,7 @@
          <xsl:message select="'normalization pass 2: ', $seq-string-normalized"/>
          <xsl:message select="'tokenization pattern: ', $primary-tokenization-pattern"/>
       </xsl:if>
+      
       <xsl:for-each select="tokenize($seq-string-normalized, $primary-tokenization-pattern)">
          <xsl:choose>
             <xsl:when test="$attribute-name = ('pos', 'chars', 'm-has-how-many-features')">
@@ -1827,7 +1828,8 @@
                $name-of-attribute"/>
       <xsl:variable name="is-div-ref" select="$attribute-name = ('ref', 'new')" as="xs:boolean"/>
       <xsl:variable name="string-normalized"
-         select="tan:normalize-sequence($sequence-string, $attribute-name)"/>
+         select="tan:normalize-sequence($sequence-string, $attribute-name)" as="xs:string*"/>
+      
       <xsl:variable name="pass-1" as="element()">
          <analysis>
             <xsl:for-each select="$string-normalized">
@@ -1961,10 +1963,20 @@
          select="tan:string-to-numerals(lower-case($this-last-n), $ambig-is-roman, false(), ())"/>
       <xsl:variable name="last-value"
          select="tan:string-to-numerals(lower-case($this-to-last-n), $ambig-is-roman, false(), ())"/>
-      <xsl:variable name="this-sequence-expanded"
-         select="tan:expand-numerical-sequence(concat($first-value, ' - ', $last-value), xs:integer($last-value))"/>
       <xsl:variable name="first-is-arabic" select="$first-value castable as xs:integer"/>
       <xsl:variable name="last-is-arabic" select="$last-value castable as xs:integer"/>
+      <xsl:variable name="first-is-compound" select="matches($first-value, '^\d+#\d+$')"/>
+      <xsl:variable name="last-is-compound" select="matches($last-value, '^\d+#\d+$')"/>
+      <xsl:variable name="first-is-number" select="$first-is-arabic or $first-is-compound"/>
+      <xsl:variable name="last-is-number" select="$last-is-arabic or $last-is-compound"/>
+      <xsl:variable name="last-value-as-int"
+         select="
+            if ($last-is-arabic) then
+               xs:integer($last-value)
+            else
+               xs:integer(tokenize($last-value, '\D+')[last()])"
+         as="xs:integer?"/>
+      
       <xsl:copy>
          <xsl:copy-of select="@*"/>
          <xsl:value-of
@@ -1976,16 +1988,59 @@
       </xsl:copy>
       <xsl:choose>
          <xsl:when test="not($expand-ranges)"/>
-         <xsl:when test="not($first-is-arabic) and not($last-is-arabic)">
+         <xsl:when test="not($first-is-number) and not($last-is-number)">
             <xsl:copy-of
                select="tan:error('seq05', concat('neither ', $this-last-n, ' nor ', $this-to-last-n, ' are numerals'))"
             />
          </xsl:when>
-         <xsl:when test="not($first-is-arabic)">
+         <xsl:when test="not($first-is-number)">
             <xsl:copy-of select="tan:error('seq05', concat($this-last-n, ' is not a numeral'))"/>
          </xsl:when>
-         <xsl:when test="not($last-is-arabic)">
+         <xsl:when test="not($last-is-number)">
             <xsl:copy-of select="tan:error('seq05', concat($this-to-last-n, ' is not a numeral'))"/>
+         </xsl:when>
+         <xsl:when test="$first-is-compound or $last-is-compound">
+            <xsl:variable name="first-values"
+               select="
+                  for $i in tokenize($first-value, '#')
+                  return
+                     xs:integer($i)"
+            />
+            <xsl:variable name="last-values"
+               select="
+                  for $i in tokenize($last-value, '#')
+                  return
+                     xs:integer($i)"
+            />
+            <xsl:choose>
+               <xsl:when test="$first-is-arabic or $last-is-arabic">
+                  <xsl:copy-of select="tan:error('seq05', 'A reference range cannot be calculated between a digit and a compound digit.')"/>
+               </xsl:when>
+               <xsl:when test="$first-values[1] ne $last-values[1]">
+                  <xsl:copy-of select="tan:error('seq05', 'A reference range cannot be calculated between compound digits that do not begin identically.')"/>
+               </xsl:when>
+               <xsl:when test="$first-values[last()] ge $last-values[last()]">
+                  <xsl:copy-of select="tan:error('seq05', 'A reference range cannot be calculated from a smaller compound digit to a larger one.')"/>
+               </xsl:when>
+               <xsl:otherwise>
+                  <xsl:for-each select="$first-values[last()] + 1 to $last-values[last()] - 1">
+                     <xsl:variable name="this-new-value"
+                        select="
+                           string-join((for $i in $first-values[position() lt last()]
+                           return
+                              xs:string($i), xs:string(.)), '#')"
+                     />
+                     <ref>
+                        <xsl:value-of
+                           select="string-join(($these-preceding-ns, $this-new-value), $separator-hierarchy)"/>
+                        <xsl:copy-of select="$these-preceding-ns"/>
+                        <n>
+                           <xsl:value-of select="$this-new-value"/>
+                        </n>
+                     </ref>
+                  </xsl:for-each>
+               </xsl:otherwise>
+            </xsl:choose>
          </xsl:when>
          <xsl:when
             test="
@@ -2044,8 +2099,34 @@
                   />
                </xsl:when>
                <xsl:otherwise>
-                  <xsl:variable name="new-children" as="element()*"
-                     select="$current-contextual-ref/*[position() le ($number-of-contextual-ns - $number-of-ns)], $this-element-to-process/*"/>
+                  <xsl:variable name="current-context-last-digit" select="$current-contextual-ref/*[last()]"/>
+                  <xsl:variable name="this-last-digit" select="$this-element-to-process/*[last()]"/>
+                  <!-- Fix cases such as 1a - d, where 1d is implied for the last digit -->
+                  <xsl:variable name="adjust-last-digit"
+                     select="
+                        contains($current-context-last-digit, '#')
+                        and not(contains($this-last-digit, '#'))
+                        and (
+                           matches($current-context-last-digit/@orig, '^\d') ne matches($this-last-digit/@orig, '^\d')
+                        )"
+                  />
+                  <xsl:variable name="new-children" as="element()*">
+                     <xsl:sequence
+                        select="$current-contextual-ref/*[position() le ($number-of-contextual-ns - $number-of-ns)]"
+                     />
+                     <xsl:choose>
+                        <xsl:when test="$adjust-last-digit">
+                           <xsl:sequence select="$this-element-to-process/* except $this-last-digit"/>
+                           <n>
+                              <xsl:copy-of select="$this-last-digit/@*"/>
+                              <xsl:value-of select="concat(tokenize($current-context-last-digit, '#')[1], '#', $this-last-digit)"/>
+                           </n>
+                        </xsl:when>
+                        <xsl:otherwise>
+                           <xsl:sequence select="$this-element-to-process/*"/>
+                        </xsl:otherwise>
+                     </xsl:choose>
+                  </xsl:variable>
                   <xsl:element name="{name($this-element-to-process)}">
                      <xsl:copy-of select="$this-element-to-process/@*"/>
                      <xsl:value-of select="string-join($new-children, $separator-hierarchy)"/>

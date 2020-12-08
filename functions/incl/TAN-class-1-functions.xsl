@@ -1141,7 +1141,6 @@
       <xsl:variable name="text-part-count" select="count($text-parts)"/>
       <xsl:variable name="text-to-drop" select="$text-parts[$text-part-count - 1]"/>
       
-      
       <xsl:copy>
          <xsl:copy-of select="@*"/>
          <xsl:if test="$adjust-this-text">
@@ -1217,9 +1216,18 @@
       <xsl:variable name="next-level" select="$level + 1"/>
       <xsl:for-each-group select="tan:div" group-by="tan:ref[1]/tan:n[$level]">
          <xsl:variable name="divs-to-process-now" select="current-group()[tan:ref[1][not(exists(tan:n[$next-level]))]]"/>
+         <xsl:variable name="divs-to-process-now-sorted" as="element()*">
+            <xsl:for-each select="$divs-to-process-now">
+               <xsl:sort select="(xs:integer((.//@priority)[1]), 0)[1]" order="descending"/>
+               <xsl:sequence select="."/>
+            </xsl:for-each>
+         </xsl:variable>
          <xsl:variable name="divs-to-re-group" select="current-group() except $divs-to-process-now"/>
          
-         <xsl:apply-templates select="$divs-to-process-now" mode="#current"/>
+         <!--<xsl:apply-templates select="$divs-to-process-now" mode="#current"/>-->
+         <xsl:apply-templates select="$divs-to-process-now-sorted[1]" mode="#current">
+            <xsl:with-param name="divs-to-insert" select="$divs-to-process-now-sorted[position() gt 1]"/>
+         </xsl:apply-templates>
          
          <xsl:if test="exists($divs-to-re-group)">
             <!-- If there are divs that go deeper than the current level, keep processing, within a shell
@@ -1246,10 +1254,16 @@
    </xsl:template>
    
    <xsl:template match="tan:div" mode="process-appended-div">
+      <xsl:param name="divs-to-insert" as="element()*"/>
+      <xsl:variable name="these-text-nodes" select="tan:tok | tan:non-tok | text()"/>
+      <xsl:variable name="insertion-text-nodes" select="$divs-to-insert/(tan:tok | tan:non-tok | text())"/>
       <xsl:copy>
          <xsl:copy-of select="@*"/>
          <xsl:attribute name="has-been-reset"/>
-         <xsl:apply-templates mode="strip-divs-to-reset"/>
+         <xsl:apply-templates select="node() except $these-text-nodes" mode="strip-divs-to-reset"/>
+         <xsl:apply-templates select="$divs-to-insert/node() except $insertion-text-nodes" mode="strip-divs-to-reset"/>
+         <xsl:apply-templates select="$these-text-nodes" mode="strip-divs-to-reset"/>
+         <xsl:apply-templates select="$insertion-text-nodes" mode="strip-divs-to-reset"/>
       </xsl:copy>
    </xsl:template>
    
@@ -1536,17 +1550,24 @@
             <!-- First, reprint the main <div>, with any text that should be retained -->
             <div>
                <xsl:copy-of select="@*"/>
-               <xsl:copy-of select="$this-div/(* except (tan:tok, tan:non-tok))"/>
+               <xsl:copy-of select="$this-div/(* except (tan:tok | tan:non-tok))"/>
                
                <xsl:copy-of
                   select="tan:imprint-adjustment-locator($passages-with-faulty-locators/*)"/>
                <xsl:copy-of
                   select="tan:imprint-adjustment-locator($overlapping-passages, tan:error('rea02'))"
                />
-               <xsl:if test="exists($previous-ref-renames) and exists($actionable-passages)">
-                  <xsl:copy-of
+               <xsl:if test="$use-validation-mode and exists($previous-ref-renames) and exists($actionable-passages)">
+                  <!--<xsl:copy-of
                      select="tan:imprint-adjustment-locator(($previous-ref-renames/*, $actionable-passages), tan:error('rea03'))"
-                  />
+                  />-->
+                  <!--<xsl:copy-of select="tan:imprint-adjustment-locator($previous-ref-renames/*)"/>-->
+                  <xsl:for-each select="$actionable-passages">
+                     <xsl:copy>
+                        <xsl:copy-of select="@*"/>
+                        <xsl:copy-of select="tan:error('rea03')"/>
+                     </xsl:copy>
+                  </xsl:for-each>
                </xsl:if>
                
                <!-- For non-validation purposes, leave a marker to indicate the text has been reassigned. -->
@@ -1877,7 +1898,7 @@
             <xsl:variable name="this-matching-item" select="$n-alias-items[tan:name = $this-val]"/>
             <xsl:choose>
                <xsl:when test="exists($this-matching-item)">
-                  <xsl:value-of select="$this-matching-item[1]/tan:name[1]"/>
+                  <xsl:value-of select="replace($this-matching-item[1]/tan:name[1], ' ', '_')"/>
                </xsl:when>
                <xsl:otherwise>
                   <xsl:value-of select="."/>
@@ -1887,7 +1908,7 @@
       </xsl:variable>
       <xsl:copy>
          <xsl:copy-of select="@*"/>
-         <xsl:value-of select="string-join($this-val-rechecked, ' ')"/>
+         <xsl:value-of select="string-join($this-val-rechecked, $separator-hierarchy)"/>
          <xsl:apply-templates select="*" mode="#current"/>
       </xsl:copy>
    </xsl:template>
@@ -3243,6 +3264,9 @@
       <xsl:variable name="non-numbered-children-divs" select="tan:div[tan:non-numbered], $elements-to-merge/tan:div[tan:non-numbered]"/>
       <xsl:variable name="non-numbered-children-divs-grouped" select="tan:group-divs-by-ref($non-numbered-children-divs)"/>
       <xsl:variable name="numbered-children-divs" select="tan:div[not(tan:non-numbered)], $elements-to-merge/tan:div[not(tan:non-numbered)]"/>
+      <xsl:variable name="non-leaf-adjustments" select="self::*[tan:div]/(tan:rename | tan:equate | tan:skip),
+         $elements-to-merge[tan:div]/(tan:rename | tan:equate | tan:skip)" as="element()*"/>
+      
       <xsl:copy>
 
          <!-- leave a copy of distinct n values -->
@@ -3259,12 +3283,31 @@
                </xsl:for-each>
             </ref>
          </xsl:for-each-group>
+         
          <!-- specify the sources that are part of the merged group -->
          <xsl:for-each select="distinct-values((@src, $elements-to-merge/@src))">
             <src>
                <xsl:value-of select="."/>
             </src>
          </xsl:for-each>
+         
+         <!-- Leaf-level adjustments will populate the individual leaves, but any adjustments applied earlier will not be
+         recorded unless this provision is made. -->
+         <xsl:if test="exists($non-leaf-adjustments)">
+            <adjustments>
+               <xsl:for-each select="$non-leaf-adjustments">
+                  <xsl:variable name="this-src" select="ancestor-or-self::*[(@src | tan:src)][1]/(@src | tan:src)"/>
+                  
+                  <xsl:copy>
+                     <xsl:copy-of select="@*"/>
+                     <src><xsl:value-of select="$this-src"/></src>
+                     <xsl:copy-of select="node()"/>
+                  </xsl:copy>
+               </xsl:for-each>
+            </adjustments> 
+            
+         </xsl:if>
+         
          <!-- This or elements to merge that are leaf divs should be processed before their children are grouped -->
          <xsl:apply-templates select="self::tan:div[not(tan:div)], $elements-to-merge[not(tan:div)]"
             mode="merge-tan-doc-leaf-divs"/>
