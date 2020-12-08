@@ -4,7 +4,15 @@ The following changes have been made since version 2020. See the git log of the 
 
 ## General
 
-[items pending]
+### Class 2
+* Fix: adjustment reference systems are converted into the target source file's preferred @n system before application.
+* Class-1 sources now fetch all @n aliases, so that the host class 2 file can use synonyms. The concept here is that a class 2 file is a kind of extension of a class 1 file, which means that the former should be able to access the terminology of the latter.
+
+#### Adjustments
+* Permitted reassignments to be given priority values, so they can be placed in a target div in a requested order.
+* Allowed nonvalidation routine to preserve a record in a source div of any passages moved out due to reassign. Marker is made via `<reassigned>`.
+* Streamlined allocation of reassigned tokens
+* Ranges can be declared of predictable compound numbers, e.g., 4a-4e (or its equivalent, 4a-e).
 
 ## Functions
 
@@ -21,7 +29,8 @@ Added:
 * `tan:replace-expanded-class-1-body()`. Replaces the text content of an expanded file with another string. It is presumed that the replacement string is similar to the current text content, so `tan:diff()` is used to allocate the replacement.
 * `tan:concat-and-sort-diff-output()`. Takes one or more outputs of `tan:diff()`, puts them together, and makes sure that the content follows the sequence a, b, common, with adjacent elements combined.
 * `tan:filename-satisfies-regex(es)()` and `tan:satisfies-regex(es)()`: 2, 3, 4-param versions to check whether a string matches a given regex and does not match one. Useful for applications that need to filter values based on both matching and non-matching values. 
-* `tan:map-put()`: 2-, 3-param versions of a function that inserts or replaces one or more map entries deep within a map. Useful for developming modules of maps for `fn:transform()`. 
+* `tan:map-put()`: 2-, 3-param versions of a function that inserts or replaces one or more map entries deep within a map. Useful for developming modules of maps for `fn:transform()`.
+* `tan:reverse-string()`. Returns a string but in reverse order. 
  
 Altered:
 * `tan:text-join()` now has an option to insert a new line at each `<div>` (useful for string differences).
@@ -33,3 +42,7 @@ Introduced batch replacement for Latin, Greek, Syriac.
 ## Applications
 
 major tests, refinement to compare class 1 file tool, display of merged sources
+
+## Pending changes
+
+* Consolidate `rename` and `reassign` into a single adjustment action: `move`. With that change, the priority for adjustments will be: skip, equate, move whole divs, move passages. Convert the current two-step process into a single step.
