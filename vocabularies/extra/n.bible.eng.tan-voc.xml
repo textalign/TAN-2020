@@ -126,6 +126,7 @@
             <IRI>http://dbpedia.org/resource/1_Samuel</IRI>
             <name>1sm</name>
             <name>1sa</name>
+            <name>1sam</name>
             <name>1 sm</name>
             <name>1 sam</name>
             <name>1 samuel</name>
@@ -147,6 +148,7 @@
             <IRI>http://dbpedia.org/resource/2_Samuel</IRI>
             <name>2sm</name>
             <name>2sa</name>
+            <name>2sam</name>
             <name>2 sm</name>
             <name>2 sam</name>
             <name>2 samuel</name>
@@ -257,10 +259,6 @@
             <name>esd</name>
             <name>ezra</name>
             <name>esdras</name>
-            <name>1 esdras</name>
-            <name>1esd</name>
-            <name>i esdras</name>
-            <name>iesd</name>
         </item>
         <item>
             <IRI>tag:textalign.net,2015:ns:work:nehemiah</IRI>
@@ -268,10 +266,26 @@
             <name>ne</name>
             <name>neh</name>
             <name>nehemiah</name>
-            <name>2 esdras</name>
+        </item>
+        <item>
+            <IRI>tag:textalign.net,2015:ns:work:1esdra</IRI>
+            <IRI>http://dbpedia.org/resource/1_Esdras</IRI>
+            <name>1esd</name>
+            <name>1esdr</name>
+            <name>1 esdras</name>
+            <name>iesd</name>
+            <name>iesdr</name>
+            <name>i esdras</name>
+        </item>
+        <item>
+            <IRI>tag:textalign.net,2015:ns:work:2esdras</IRI>
+            <IRI>http://dbpedia.org/resource/2_Esdras</IRI>
             <name>2esd</name>
-            <name>ii esdras</name>
+            <name>2esdr</name>
+            <name>2 esdras</name>
             <name>iiesd</name>
+            <name>iiesdr</name>
+            <name>ii esdras</name>
         </item>
         <item>
             <IRI>tag:textalign.net,2015:ns:work:tobías</IRI>

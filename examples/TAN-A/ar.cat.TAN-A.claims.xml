@@ -31,6 +31,7 @@
             <location href="../ar.cat.eng.1926.edghill.ref-scriptum.xml" accessed-when="2017-12-31"/>
         </source>
         <vocabulary-key>
+            <alias xml:id="all" idrefs="grc eng"/>
             <algorithm xml:id="xslt1">
                 <IRI>tag:textalign.net,2015:stylesheet:convert-tan2018-to-tan2020</IRI>
                 <name>Stylesheet to create a TAN file.</name>
@@ -179,7 +180,7 @@
                 <name xml:lang="eng">creator</name>
             </role>
             <period xml:id="per2010s" from="2010-01-01" to="2019-12-31"/>
-            <period xml:id="late-antiquty">
+            <period xml:id="late-antiquity">
                 <IRI>tag:parkj@textalign.net,2015:period:late-antiquity</IRI>
                 <name>late antiquity</name>
                 <desc>Roughly starting in the second to fourth century and finishing from the sixth

@@ -240,7 +240,7 @@
         <error xml:id="rea04"><rule>A &lt;reassign> may be applied only to leaf &lt;div>s.</rule></error>
     </group>
     <group affects-element="reassign rename">
-        <warning xml:id="rea03"><rule>If a &lt;div> is renamed, and the target reference is subject to &lt;reassign> instructions, the following message will appear.</rule><message>&lt;reassign> targets a reference that has been altered by &lt;rename>. Any reassignments will treat the newly created &lt;div>, not the original.</message></warning>
+        <warning xml:id="rea03"><rule>If a &lt;div> is renamed, and the target reference is subject to &lt;reassign> instructions, the following message will appear.</rule><message>&lt;reassign> targets a reference that has been altered by &lt;rename>. Any reassignments will apply to the newly created &lt;div>, not the original.</message></warning>
     </group>
     <group affects-element="reassign rename adjustments to" affects-attribute="new">
         <error xml:id="cl217"><rule>No adjustment action should result in the mixing of leaf &lt;div>s and non-leaf &lt;div>s.</rule></error>
