@@ -96,7 +96,7 @@
   </define>
   <define name="attr-priority">
     <attribute name="priority">
-      <a:documentation>specifies placement of a reassigned passage relative to the main passage and other reassigned passages. The target is presumed to be a value of 0. The higher the value of @priority, the earlier the passage is placed. Passages with positive integers are prepended; negative integers, appended.</a:documentation>
+      <a:documentation>specifies where a renamed div or reassigned passage should be placed relative to the target and other renamed divs or reassigned passages. The target is presumed to be a value of 0. The higher the value of @priority, the earlier the passage is placed. Negative integers specify the material should come after the base target.</a:documentation>
       <data type="integer"/>
     </attribute>
   </define>
@@ -204,6 +204,9 @@
       <a:documentation>If a &lt;div&gt; is renamed such that it needs to be moved elsewhere in the hierarchy, and it matches the reference of another &lt;div&gt;, the text from the renamed &lt;div&gt; will be added to the end of the target &lt;div&gt;.</a:documentation>
       <optional>
         <ref name="ed-stamp"/>
+      </optional>
+      <optional>
+        <ref name="attr-priority"/>
       </optional>
       <choice>
         <ref name="inclusion"/>

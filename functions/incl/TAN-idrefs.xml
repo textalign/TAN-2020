@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- This file maps attributes that take idrefs to vocabulary elements that take ids.  -->
 <id-idrefs xmlns="tag:textalign.net,2015:ns">
     <id>
         <element>person</element>

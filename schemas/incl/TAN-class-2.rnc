@@ -55,7 +55,7 @@ attr-pos-one =
    attribute pos { data-picker-item }
 attr-priority =
    
-   ## specifies placement of a reassigned passage relative to the main passage and other reassigned passages. The target is presumed to be a value of 0. The higher the value of @priority, the earlier the passage is placed. Passages with positive integers are prepended; negative integers, appended.
+   ## specifies where a renamed div or reassigned passage should be placed relative to the target and other renamed divs or reassigned passages. The target is presumed to be a value of 0. The higher the value of @priority, the earlier the passage is placed. Negative integers specify the material should come after the base target.
    attribute priority { xsd:integer }
 attr-ref-many =
    
@@ -143,6 +143,7 @@ adj-element-rename =
    ## If a <div> is renamed such that it needs to be moved elsewhere in the hierarchy, and it matches the reference of another <div>, the text from the renamed <div> will be added to the end of the target <div>.
    element rename {
       ed-stamp?,
+      attr-priority?,
       (inclusion | (simple-rename | complex-rename))
    }
 adj-element-skip =
