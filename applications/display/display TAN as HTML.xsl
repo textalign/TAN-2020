@@ -13,8 +13,11 @@
     
     <xsl:param name="output-diagnostics-on" static="yes" as="xs:boolean" select="false()"/>
     
-    <xsl:import href="../get%20inclusions/convert.xsl"/>
-    <xsl:import href="../get%20inclusions/convert-TAN-to-HTML.xsl"/>
+    <!--<xsl:import href="../get%20inclusions/convert.xsl"/>-->
+    <xsl:include href="../../functions/TAN-A-functions.xsl"/>
+    <xsl:include href="../../functions/TAN-extra-functions.xsl"/>
+    <xsl:include href="../get%20inclusions/convert-TAN-to-HTML.xsl"/>
+    <xsl:import href="../../parameters/application-parameters.xsl"/>
     
     <xsl:output method="html" use-when="not($output-diagnostics-on)"/>
     <xsl:output method="xml" indent="yes" use-when="$output-diagnostics-on"/>
@@ -34,21 +37,51 @@
         </to-do>
     </xsl:param>
     
+    <!-- What form of the TAN file do you wish to view: 'raw' (default), 'resolved', or 'expanded'? -->
+    <xsl:param name="TAN-file-state" as="xs:string?" select="'raw'"/>
     
     <xsl:param name="validation-phase" select="'terse'"/>
-    <xsl:param name="input-items" select="$self-expanded"/>
-    <xsl:param name="default-html-template" as="xs:string" select="resolve-uri('../../templates/template.html', static-base-uri())"/>
-    <xsl:param name="template-url-relative-to-actual-input" select="$default-html-template"/>
+    <xsl:param name="html-template-uri-resolved" select="$default-html-template-uri-resolved"/>
     
-    <xsl:param name="output-filename" select="tan:cfn($doc-uri) || '.html'"/>
+    <!-- START OF PROCESS -->
     
-    <xsl:param name="input-pass-4" select="tan:tan-to-html($input-pass-3)" as="item()*"/>
+    <xsl:variable name="input-item" as="document-node()?">
+        <xsl:choose>
+            <xsl:when test="$TAN-file-state = 'expanded'">
+                <xsl:sequence select="$self-expanded[1]"/>
+            </xsl:when>
+            <xsl:when test="$TAN-file-state eq 'resolved'">
+                <xsl:sequence select="$self-resolved"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:sequence select="$orig-self"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:variable>
+    <xsl:variable name="input-item-revised" select="tan:revise-hrefs($input-item, $doc-uri, $html-template-uri-resolved)"/>
+    <xsl:variable name="input-as-html" select="tan:tan-to-html($input-item-revised)" as="item()*"/>
     
-    <xsl:template match="/" use-when="$output-diagnostics-on">
+    <xsl:variable name="html-template-doc" select="doc($html-template-uri-resolved)"/>
+    <xsl:variable name="template-infused" as="document-node()?">
+        <xsl:apply-templates select="$html-template-doc" mode="infuse-html-template"/>
+    </xsl:variable>
+    <xsl:template match="html:body/html:div[1]" mode="infuse-html-template">
+        <xsl:apply-templates select="$input-as-html" mode="#current"/>
+    </xsl:template>
+    
+    <xsl:variable name="output-with-hrefs-fixed" select="tan:revise-hrefs($template-infused, $html-template-uri-resolved, $target-output-directory-resolved)"/>
+    
+    
+    <xsl:template match="/" priority="1" use-when="$output-diagnostics-on">
+        <xsl:message select="'Diagnostics on for ' || static-base-uri()"/>
         <diagnostics>
-            <input-pass-1><xsl:copy-of select="$input-pass-1"/></input-pass-1>
-            <input-as-html><xsl:copy-of select="$input-pass-4"/></input-as-html>
+            <input-as-html><xsl:copy-of select="$input-as-html"/></input-as-html>
+            <html-template><xsl:copy-of select="$html-template-doc"/></html-template>
+            <template-infused><xsl:copy-of select="$template-infused"/></template-infused>
         </diagnostics>
+    </xsl:template>
+    <xsl:template match="/">
+        <xsl:copy-of select="$template-infused"/>
     </xsl:template>
 
 </xsl:stylesheet>

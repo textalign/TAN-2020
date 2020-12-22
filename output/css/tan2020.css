@@ -306,8 +306,9 @@ div.tei .id,
 div.tei > .anchor,
 .display-n ~ .n,
 td .n,
+div.div > div.n,
+.ref > .n,
 td.ref > div:first-child ~ *,
-td .display-n,
 .emph > .resp,
 .allusion > .type
 {
@@ -351,6 +352,8 @@ div.p > *,
 tr > td div.tei,
 tr > td div.tei > *,
 tr > td div.tei > .list,
+.prevFrag,
+.nextFrag,
 .meta td .label ~ *
 /*.tei .wrapper > *,*/
 
@@ -385,7 +388,6 @@ tr > td div.tei > .list,
 .align > .tok,
 .td,
 .n,
-.display-n,
 .claim > * {
    display: table-cell;
    /*border: 1px solid green;*/
@@ -504,7 +506,9 @@ td.label,
 .tei .ref .rend,
 .milestone .rend,
 .passage,
-.rename{
+.rename,
+div.ref ~ div.ref,
+div.n ~ div.n{
    font-size: smaller;
 }
 .name,
@@ -642,7 +646,8 @@ table
 thead td,
 td .label,
 td .passage,
-td .rename{
+td .rename
+{
    text-align: center;
 }
 table.tablesorter td.stats,

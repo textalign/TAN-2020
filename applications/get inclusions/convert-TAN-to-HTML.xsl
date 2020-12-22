@@ -9,8 +9,8 @@
 
     <xsl:param name="attribute-values-to-add-to-class-attribute" as="xs:string*" select="('type')"/>
     <xsl:param name="attributes-to-convert-to-elements" as="xs:string*"
-        select="('href', 'accessed-when', 'type', 'resp', 'wit', 'rend')"/>
-    <xsl:param name="attributes-to-retain" as="xs:string*" select="('xml:lang')"/>
+        select="('href', 'accessed-when', 'type', 'resp', 'wit', 'rend', 'cRef')"/>
+    <xsl:param name="attributes-to-retain" as="xs:string*" select="('xml:lang', 'src-qualifier')"/>
     <xsl:param name="children-element-values-to-add-to-class-attribute" as="xs:string*"
         select="('type')"/>
     <xsl:param name="elements-to-be-labeled" as="xs:string*" select="()"/>
@@ -18,10 +18,13 @@
         select="('teiHeader', 'head', 'vocabulary-key', 'adjustments')"/>
     <xsl:param name="elements-who-should-not-be-grouped-and-labeled" as="xs:string*"
         select="('src')"/>
-    <xsl:param name="elements-to-be-given-class-hidden" as="xs:string*" select="('rdg', 'note', 'add')"/>
+    <!-- Normally, if something is really to be hidden, it should be done via CSS. If you wish
+    some elements to be hidden depending upon whether the first sibling is a label or .showAll
+    that too is best handled by CSS, not here. -->
+    <xsl:param name="elements-to-be-given-class-hidden" as="xs:string*" select="()"/>
 
     <xsl:param name="td-widths-proportionate-to-string-length" as="xs:boolean" select="false()"/>
-    <xsl:param name="td-widths-proportionate-to-td-count" as="xs:boolean" select="true()"/>
+    <xsl:param name="td-widths-proportionate-to-td-count" as="xs:boolean" select="false()"/>
 
     <xsl:function name="tan:tan-to-html" as="item()*">
         <!-- Input: TAN XML -->
@@ -42,9 +45,13 @@
         <xsl:choose>
             <xsl:when test="$diagnostics-on">
                 <xsl:message>diagnostics turned on for tan:tan-to-html()</xsl:message>
-                <pass-1><xsl:copy-of select="$pass-1"/></pass-1>
-                <pass-2><xsl:copy-of select="$pass-2"/></pass-2>
-                <pass-3><xsl:copy-of select="$pass-3"/></pass-3>
+                <xsl:document>
+                    <diagnostics-for-tan-to-html>
+                        <pass-1><xsl:copy-of select="$pass-1"/></pass-1>
+                        <pass-2><xsl:copy-of select="$pass-2"/></pass-2>
+                        <pass-3><xsl:copy-of select="$pass-3"/></pass-3>
+                    </diagnostics-for-tan-to-html>
+                </xsl:document>
             </xsl:when>
             <xsl:otherwise>
                 <xsl:copy-of select="$pass-3"/>
@@ -52,7 +59,7 @@
         </xsl:choose>
     </xsl:function>
 
-    <xsl:template match="html:*" mode="tan-to-html-pass-1 tan-to-html-pass-2 tan-to-html-pass-3">
+    <xsl:template match="html:*" priority="1" mode="tan-to-html-pass-1 tan-to-html-pass-2 tan-to-html-pass-3">
         <xsl:copy>
             <xsl:copy-of select="@*"/>
             <xsl:apply-templates mode="#current"/>
@@ -84,7 +91,7 @@
         <xsl:variable name="class-vals-from-attributes"
             select="@*[name(.) = $attribute-values-to-add-to-class-attribute]"/>
         <xsl:variable name="class-vals-from-children"
-            select="*[name(.) = $children-element-values-to-add-to-class-attribute]"/>
+            select="*[name(.) = $children-element-values-to-add-to-class-attribute]/text()"/>
         <xsl:variable name="other-class-values-to-add" as="xs:string*">
             <xsl:value-of select="name(.)"/>
             <xsl:if test="name(.) = $elements-to-be-given-class-hidden">hidden</xsl:if>
@@ -96,10 +103,6 @@
             </xsl:if>
             <xsl:for-each select="distinct-values(tan:src)">
                 <xsl:value-of select="concat('src--', .)"/>
-                <!--<xsl:variable name="this-src-order" select="index-of($src-ids, .)"/>
-                <xsl:if test="exists($this-src-order)">
-                    <xsl:value-of select="concat('src-\-', string($this-src-order[1]))"/>
-                </xsl:if>-->
             </xsl:for-each>
         </xsl:variable>
         <xsl:variable name="all-class-attribute-values"
@@ -140,21 +143,11 @@
         </xsl:element>
     </xsl:template>
 
-    <!-- pass 2: reserved for individual situations (e.g., processes that use TAN-T-merge might need to untangle sources a bit) -->
+    <!-- pass 2: reserved for individual situations (e.g., processes that use TAN-T_merge might need to untangle sources a bit) -->
 
 
     <!-- pass 3: convert everything to html <div> -->
 
-    <!--<xsl:template match="/tan:*" mode="tan-to-html-pass-3">
-        <xsl:variable name="src-order" select="tan:head/tan:src"/>
-        <!-\- add a label to the root elements -\->
-        <div>
-            <xsl:copy-of select="@*"/>
-            <xsl:apply-templates mode="#current">
-                <xsl:with-param name="src-order" select="$src-order" tunnel="yes"/>
-            </xsl:apply-templates>
-        </div>
-    </xsl:template>-->
     <xsl:template match="*" mode="tan-to-html-pass-3">
         <xsl:variable name="this-name" select="name(.)"/>
         <xsl:variable name="children-should-be-grouped-and-labeled-by-source"
@@ -203,202 +196,5 @@
         </a>
     </xsl:template>
 
-    <!--<xsl:template match="tan:head | tei:teiHeader | tan:vocabulary-key" mode="tan-to-html-pass-3">
-        <!-\- Some children items should be grouped and labeled, to make it easier to understand the data -\->
-        <div>
-            <xsl:copy-of select="@*"/>
-            <xsl:if test="name(.) = $elements-to-be-labeled">
-                <div class="label">
-                    <xsl:value-of select="name(.)"/>
-                </div>
-            </xsl:if>
-            <xsl:apply-templates select="tan:src" mode="#current"/>
-            <xsl:for-each-group select="* except tan:src" group-adjacent="name(.)">
-                <xsl:variable name="this-count" select="count(current-group())"/>
-                <xsl:variable name="this-suffix"
-                    select="
-                        if ($this-count gt 1) then
-                            concat('s (', string($this-count), ')')
-                        else
-                            ()"/>
-                <div class="group">
-                    <div class="label">
-                        <xsl:value-of select="current-grouping-key()"/>
-                        <xsl:value-of select="$this-suffix"/>
-                    </div>
-                    <xsl:apply-templates select="current-group()" mode="#current"/>
-                </div>
-            </xsl:for-each-group>
-        </div>
-    </xsl:template>-->
-
-
-
-    <xsl:template
-        match="tan:div[not(tokenize(@class, ' ') = 'td')][tan:div[tokenize(@class, ' ') = 'td']]"
-        priority="1" mode="tan-to-html-pass-3-dont-use-me">
-        <xsl:variable name="these-tds" select="tan:div[tokenize(@class, ' ') = 'td']"/>
-        <!-- Looking for parents of .td that are themselves not .td -->
-        <xsl:variable name="content-text" select="normalize-space(tan:value-of($these-tds))"/>
-        <xsl:variable name="content-string-length" select="max((string-length($content-text), 1))"/>
-        <div>
-            <xsl:copy-of select="@*"/>
-            <xsl:apply-templates select="* except tan:div" mode="#current"/>
-            <xsl:for-each-group select="tan:div" group-adjacent="tokenize(@class, ' ') = 'td'">
-                <xsl:choose>
-                    <xsl:when test="current-grouping-key()">
-                        <xsl:apply-templates select="current-group()" mode="#current">
-                            <xsl:with-param name="context-string-length" tunnel="yes"
-                                select="$content-string-length"/>
-                            <xsl:with-param name="td-count" select="count($these-tds)"/>
-                        </xsl:apply-templates>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <div class="td">
-                            <!-- we wrap in a div with class td, for easier CSS formatting -->
-                            <xsl:apply-templates select="current-group()" mode="#current"/>
-                        </div>
-                    </xsl:otherwise>
-                </xsl:choose>
-            </xsl:for-each-group>
-        </div>
-    </xsl:template>
-    <xsl:template
-        match="tan:div[not(tokenize(@class, ' ') = 'td')]/tan:div[tokenize(@class, ' ') = 'td']"
-        mode="tan-to-html-pass-3-dont-use-me">
-        <!-- Looking for the immediate .td children of non-.td parents -->
-        <xsl:param name="context-string-length" as="xs:integer" tunnel="yes"/>
-        <xsl:param name="td-count" as="xs:integer"/>
-        <xsl:variable name="this-text" select="normalize-space(tan:value-of(.))"/>
-        <xsl:variable name="this-text-length" select="string-length($this-text)"/>
-        <xsl:variable name="this-width" as="xs:string?">
-            <xsl:choose>
-                <xsl:when test="$td-widths-proportionate-to-string-length">
-                    <xsl:value-of
-                        select="format-number(($this-text-length div $context-string-length), '0.0%')"
-                    />
-                </xsl:when>
-                <xsl:when test="$td-widths-proportionate-to-td-count">
-                    <xsl:value-of select="format-number((1 div $td-count), '0.0%')"/>
-                </xsl:when>
-            </xsl:choose>
-        </xsl:variable>
-        <div>
-            <xsl:if test="string-length($this-width) gt 0">
-                <xsl:attribute name="style" select="concat('width: ', $this-width)"/>
-            </xsl:if>
-            <xsl:copy-of select="@*"/>
-            <xsl:apply-templates mode="#current"/>
-        </div>
-    </xsl:template>
-
-    <xsl:template match="*[tokenize(@class, ' ') = ('make-html-table', 'table')]"
-        mode="tan-to-html-pass-3-dont-use-me">
-        <xsl:param name="src-order" tunnel="yes"/>
-        <xsl:variable name="diagnostics" select="true()"/>
-        <xsl:variable name="td-count" as="xs:integer" select="count(distinct-values(tan:src))"/>
-        <xsl:variable name="this-width" as="xs:string?">
-            <xsl:choose>
-                <xsl:when test="$td-widths-proportionate-to-td-count">
-                    <xsl:value-of select="format-number((1 div $td-count), '0.0%')"/>
-                </xsl:when>
-            </xsl:choose>
-        </xsl:variable>
-        <table>
-            <caption>
-                <xsl:apply-templates select="* except tan:div" mode="#current"/>
-            </caption>
-            <tbody>
-                <xsl:variable name="these-tds-pass-1" as="element()*">
-                    <xsl:for-each-group select=".//tan:div[tan:type = 'version']" group-by="tan:src">
-                        <xsl:sort select="index-of($src-order, current-grouping-key())"/>
-                        <group class="{current-grouping-key()}">
-                            <xsl:for-each select="current-group()">
-                                <td pos="{position()}">
-                                    <xsl:copy-of select="@*"/>
-                                    <xsl:if test="exists($this-width)">
-                                        <xsl:attribute name="style" select="'width: ', $this-width"
-                                        />
-                                    </xsl:if>
-                                    <xsl:apply-templates mode="#current"/>
-                                </td>
-                            </xsl:for-each>
-                        </group>
-                    </xsl:for-each-group>
-                </xsl:variable>
-                <xsl:variable name="max-leaf-divs"
-                    select="
-                        max((for $i in $these-tds-pass-1
-                        return
-                            count($i/*)))"/>
-                <xsl:variable name="these-tds-pass-2" as="element()*">
-                    <xsl:for-each select="$these-tds-pass-1">
-                        <xsl:variable name="this-group" select="."/>
-                        <xsl:variable name="number-of-tds" select="count(*)"/>
-                        <xsl:copy>
-                            <xsl:copy-of select="@*"/>
-                            <xsl:for-each select="1 to $max-leaf-divs">
-                                <xsl:variable name="this-ratio" select=". div $max-leaf-divs"/>
-                                <xsl:variable name="this-position"
-                                    select="max((round(($number-of-tds * $this-ratio)), 1))"/>
-                                <xsl:variable name="this-td"
-                                    select="$this-group/*[position() = $this-position]"/>
-                                <td max-pos="{.}">
-                                    <xsl:copy-of select="$this-td/@*"/>
-                                    <xsl:copy-of select="$this-td/node()"/>
-                                </td>
-                            </xsl:for-each>
-                        </xsl:copy>
-                    </xsl:for-each>
-                </xsl:variable>
-                <xsl:variable name="these-tds-pass-3" as="element()*">
-                    <xsl:for-each select="$these-tds-pass-2">
-                        <xsl:copy>
-                            <xsl:copy-of select="@*"/>
-                            <xsl:for-each-group select="*" group-adjacent="@pos">
-                                <td rowspan="{count(current-group())}">
-                                    <xsl:copy-of select="current-group()[1]/(@* except @pos)"/>
-                                    <xsl:copy-of select="current-group()[1]/node()"/>
-                                </td>
-                            </xsl:for-each-group>
-                        </xsl:copy>
-                    </xsl:for-each>
-                </xsl:variable>
-                <xsl:for-each select="1 to $max-leaf-divs">
-                    <xsl:variable name="this-max-pos" select="."/>
-                    <tr>
-                        <xsl:copy-of
-                            select="tan:copy-of-except($these-tds-pass-3/*[@max-pos = $this-max-pos], (), 'max-pos', ())"
-                        />
-                    </tr>
-                </xsl:for-each>
-            </tbody>
-        </table>
-    </xsl:template>
-    <!--<xsl:template match="tan:div[@type = '#version']" mode="input-pass-3">
-        <td>
-            <xsl:copy-of select="@*"/>
-            <xsl:apply-templates mode="#current"/>
-        </td>
-    </xsl:template>-->
-    <xsl:template match="tan:ref | tan:div/tan:n" mode="tan-to-html-pass-3-dont-use-me">
-        <div>
-            <xsl:copy-of select="@*"/>
-            <xsl:apply-templates mode="#current"/>
-        </div>
-        <xsl:apply-templates select="tan:orig-ref, tan:orig-n" mode="#current"/>
-        <!--<!-\- remove duplicate refs and ns -\->
-        <xsl:if
-            test="
-                every $i in preceding-sibling::*
-                    satisfies not(deep-equal(., $i))">
-            <div>
-                <xsl:copy-of select="@*"/>
-                <xsl:apply-templates mode="#current"/>
-            </div>
-            <!-\- In many HTML pages, we want in the version node to suppress a reference, but not its original reference -\->
-            <xsl:apply-templates select="tan:orig-ref" mode="#current"/>
-        </xsl:if>-->
-    </xsl:template>
 
 </xsl:stylesheet>
