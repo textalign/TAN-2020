@@ -114,7 +114,7 @@
         </xsl:if>
     </xsl:function>
     <xsl:function name="tan:chop-string" as="xs:string*">
-        <!-- 2-param version of the fuller one below -->
+        <!-- 2-param version of the full one below -->
         <xsl:param name="input" as="xs:string?"/>
         <xsl:param name="chop-after-regex" as="xs:string"/>
         <xsl:copy-of

@@ -3165,10 +3165,17 @@
       This function has assumed the following principles, most important first:
       - merged output need not have everything needed to reconstruct the original sources, but the data must permit 
       enough differentiation among sources to facilitate a variety of later uses, and therefore different configurations:
-      - merged versions should retain their relative order
-      - in a merge, <div>s should be sorted by numerical order, or by relative order, taking the group of divs as a whole
+      - each part of a merged version should keep its relative order
+      - in a merge, <div>s should be sorted by numerical order, if available, or by relative order, if not
+      - merges may mix leaf and non-leaf divs
       - merges on the leaf div level should not lack any version, including versions that span or bridge other leaf divs
-      - if a merge results in multiple copies, or parts, of a div, the div should be tagged with appropriate metadata
+      - if a merge results in multiple copies, or parts, of a div, the div should be tagged with appropriate metadata 
+      indicating that copies of it reside elsewhere
+      - divs should retain their depth in the hierarchy, but <div>s that are versions of the same leaf node should be
+      pushed down one level, encompassed by a <div> that groups it and its fellow version <div>s.
+      
+      The result is a series of simplified <div>s that contain key <n>, <ref>, <src>, and class-2 adjustment anchors, 
+      with leaf divs in the innermost position of the appropriate grouping <div>
       
       The above list will be better understood in light of specific challenges in class 1 merges, discussed below. -->
       <!-- Some challenges in merging TAN-T files, discussed point by point: --> 
@@ -3179,11 +3186,11 @@
       The situation would get even more complicated for a version C with non-leaf divs that would need to be 
       merged. On the other hand, the grouping does not mean consolidation. The two, three, or more parts of a 
       split div will be preserved as sibling elements within a merge. To assist in later processing, such split divs will
-      be given @part and @part-count and appropriate integers (to be able to express something like "part 1 of 3"). 
+      be given @part and @part-count and appropriate integers (to be able to express something like "part 1 of 3").
       In addition, each split div element will have the same value for @q, to facilitate referencing. --> 
       
       <!-- Challenge: A particular version might have a div where numerical @ns do not follow their original sequence 
-      (remember, a TAN-T file should follow the sequence of the text within the scriptum, not the reference system)
+      (remember, a TAN-T file should honor the sequence of the text within the scriptum, ahead of any reference system)
       Resolution: A merge necessarily has to rearrange divs. As a general rule, the order of divs should be determined 
       by adhering to the numerical value of @ns.--> 
       
@@ -3201,14 +3208,18 @@
       <!-- Challenge: Some non-numerical @n's appear in different orders in different versions.
       Resolution: An example of the challenge would be the Old Testament / Tanakh. Modern editions have an
       order of books that diverges from what is in the Septuagint, and a merge of those two versions, according
-      to the principles outlined above, would result in an idiosyncractic order followed by no version. If the
+      to the principles outlined above, would result in an idiosyncractic order of books. If the
       user wishes such divs to follow a particular order, it is up to a later process to re-sort the output. --> 
       
+      <!-- Challenge: After adjustment actions, some sources may have empty divs (those without children divs and 
+      without text / tokens).
+      Resolution: Empty divs will be skipped. -->
+      
       <!-- Challenge: Some @ns might have multiple values, with complex overlap patterns
-      Resolution: In a merge, when the algorithm encounters multiple values of @n, any numerical values are
-      retained, excluding any non-numerical values, and the numerals are treated as requiring distribution.
+      Resolution: In a merge, when the algorithm encounters multiple values of @n, all numerical values are
+      retained, and any non-numerical values are thrown out. The numerals are treated as requiring distribution.
       That is, if @n points to multiple numerical references, copies of the div are to distributed to the 
-      atomic numerical values of @n. If no non-numerical values are found, the values are treated as aliases, and 
+      atomic numerical values of @n. If no numerical values of @n are found, each value is treated as an alias, and 
       invite merging, greedily.
          Numerical example: four divs with @n values of (The_Cow, 1), (The_Cow, 2), (1), (2). The non-numerical
       values are ignored for their numerical counterparts, resulting in two merge groups, one for 1, another for 2.
@@ -3216,7 +3227,6 @@
       aliases results in a single group.
          Mixed example: three divs with @n values of (head), (head, title, 1), (title). Because the middle term has 
       a numerical value, the non-numerical values are ignored, resulting in three merge groups: head, 1, and title.
-      This group too would be merged:
          Numerical example with ranges: four divs with @n values of (1), (2), (3), (1-3). The last @n value, a 
       complex/spanning range, requires distribution. Three merge groups are created. The three copies of the
       fourth div are each imprinted with @copy (value 1, 2, or 3) and @copy-count (value 3). Each copy retains 
@@ -3224,7 +3234,7 @@
       proportionately, it will need to perform that operation upon the merged output. (There are many methods of
       proportional reallocation, and some of them require inspection of other versions that are in the merge, so
       there is little point in implementing in this merge algorithm a complex process that many users will not
-      find useful or representative of their assumptions.)
+      find useful or representative of their texts.)
          The position of merged divs follow the principles detailed earlier. Those with numerical references retain 
       their position relative to their @n value. Those with only non-numerical references will attract a position 
       computed by their position relative to the closest preceding div with a numerical value for @n. -->
@@ -3234,7 +3244,7 @@
       <xsl:variable name="mergable-elements" select="$elements-to-merge[name(.) = $this-root-name]"/>
       <xsl:variable name="pre-merge-bodies-pass-1" as="element()*">
          <xsl:apply-templates select="tan:body, $mergable-elements/tan:body"
-            mode="prep-div-refs-pass-1"/>
+            mode="prep-class-1-files-for-merge"/>
       </xsl:variable>
       <xsl:element name="{concat($this-root-name, '_merge')}">
          <xsl:apply-templates select="tan:head, $mergable-elements/tan:head" mode="#current"/>
@@ -3257,9 +3267,12 @@
    
    <xsl:template match="tan:body | tan:div" mode="merge-tan-docs">
       <xsl:param name="elements-to-merge" as="element()*"/>
+      <xsl:param name="primary-n-value" as="xs:string" tunnel="yes" select="''"/>
       <!-- We assume that the current context element is the primary/first element, whose children divs should be merged with the children divs of the elements to merge -->
       <!-- Any child element that is not a div will get copied first, and stamped with @src, to specify the source -->
       <!-- Any host attributes, which are source-specific, will be lost -->
+
+      <xsl:variable name="this-is-body" select="name(.) eq 'body'" as="xs:boolean"/>
 
       <xsl:variable name="non-numbered-children-divs" select="tan:div[tan:non-numbered], $elements-to-merge/tan:div[tan:non-numbered]"/>
       <xsl:variable name="non-numbered-children-divs-grouped" select="tan:group-divs-by-ref($non-numbered-children-divs)"/>
@@ -3267,22 +3280,59 @@
       <xsl:variable name="non-leaf-adjustments" select="self::*[tan:div]/(tan:rename | tan:equate | tan:skip),
          $elements-to-merge[tan:div]/(tan:rename | tan:equate | tan:skip)" as="element()*"/>
       
+      <xsl:variable name="primary-n-value-is-number" select="matches($primary-n-value, '^\d+(#\d+)?$')" as="xs:boolean"/>
+      <xsl:variable name="unique-non-numbered-ns" select="
+            tan:distinct-items((self::*[tan:non-numbered]/tan:n[not(. eq $primary-n-value)],
+            $elements-to-merge[tan:non-numbered]/tan:n[not(. eq $primary-n-value)]))"
+         as="element()*"/>
+      
       <xsl:copy>
 
          <!-- leave a copy of distinct n values -->
-         <xsl:copy-of select="tan:distinct-items((tan:n, $elements-to-merge/tan:n))"/>
-         
-         <!-- leave a copy of the ref that synthesizes the refs of all the other versions -->
-         <xsl:for-each-group select="tan:ref, $elements-to-merge/tan:ref" group-by="text()">
-            <ref>
-               <xsl:value-of select="current-grouping-key()"/>
-               <xsl:for-each select="tokenize(current-grouping-key(), $separator-hierarchy)">
-                  <n>
-                     <xsl:value-of select="."/>
-                  </n>
-               </xsl:for-each>
-            </ref>
-         </xsl:for-each-group>
+         <xsl:choose>
+            <!-- no need to copy <n> or <ref> in a body -->
+            <xsl:when test="$this-is-body"/>
+            <xsl:when test="$primary-n-value-is-number">
+               <n><xsl:value-of select="$primary-n-value"/></n>
+               <xsl:for-each-group select="tan:ref, $elements-to-merge/tan:ref" group-by="(string-join((tan:n except tan:n[last()]), $separator-hierarchy), '')[1]">
+                  <ref>
+                     <xsl:value-of select="normalize-space(string-join((current-grouping-key(), $primary-n-value), $separator-hierarchy))"/>
+                     <xsl:copy-of select="current-group()[1]/(tan:n except tan:n[last()])"/>
+                     <n><xsl:value-of select="$primary-n-value"/></n>
+                  </ref>
+               </xsl:for-each-group>
+            </xsl:when>
+            <xsl:when test="matches($primary-n-value, 'group \d')">
+               <xsl:copy-of select="$unique-non-numbered-ns"/>
+               <xsl:for-each-group select="tan:ref, $elements-to-merge/tan:ref" group-by="(string-join((tan:n except tan:n[last()]), $separator-hierarchy), '')[1]">
+                  <xsl:variable name="this-ref-base" select="current-grouping-key()" as="xs:string"/>
+                  <xsl:variable name="this-ref-group" select="current-group()" as="element()+"/>
+                  <xsl:for-each select="$unique-non-numbered-ns">
+                     <ref>
+                        <xsl:value-of select="normalize-space(string-join(($this-ref-base, .), $separator-hierarchy))"/>
+                        <xsl:copy-of select="$this-ref-group[1]/(tan:n except tan:n[last()])"/>
+                        <n><xsl:value-of select="."/></n>
+                     </ref>
+                  </xsl:for-each>
+               </xsl:for-each-group>
+            </xsl:when>
+            <xsl:when test="string-length($primary-n-value) gt 0">
+               <n><xsl:value-of select="$primary-n-value"/></n>
+               <xsl:copy-of select="$unique-non-numbered-ns"/>
+               <xsl:for-each-group select="tan:ref, $elements-to-merge/tan:ref" group-by="(string-join((tan:n except tan:n[last()]), $separator-hierarchy), '')[1]">
+                  <xsl:variable name="this-ref-base" select="current-grouping-key()" as="xs:string"/>
+                  <xsl:variable name="this-ref-group" select="current-group()" as="element()+"/>
+                  <xsl:for-each select="$primary-n-value, $unique-non-numbered-ns">
+                     <ref>
+                        <xsl:value-of select="normalize-space(string-join(($this-ref-base, .), $separator-hierarchy))"/>
+                        <xsl:copy-of select="$this-ref-group[1]/(tan:n except tan:n[last()])"/>
+                        <n><xsl:value-of select="."/></n>
+                     </ref>
+                  </xsl:for-each>
+               </xsl:for-each-group>
+               
+            </xsl:when>
+         </xsl:choose>
          
          <!-- specify the sources that are part of the merged group -->
          <xsl:for-each select="distinct-values((@src, $elements-to-merge/@src))">
@@ -3338,16 +3388,24 @@
             />
 
             <xsl:apply-templates select="current-group()[1]" mode="#current">
-                  <xsl:with-param name="elements-to-merge" select="current-group()[position() gt 1]"/>
+               <xsl:with-param name="elements-to-merge" select="current-group()[position() gt 1]"/>
+               <xsl:with-param name="primary-n-value" as="xs:string" tunnel="yes" select="current-grouping-key()"
+               />
                </xsl:apply-templates>
          </xsl:for-each-group>
       </xsl:copy>
    </xsl:template>
    <xsl:template match="tan:div" mode="merge-tan-doc-leaf-divs">
+      <xsl:param name="primary-n-value" as="xs:string" tunnel="yes" select="''"/>
+      <xsl:variable name="this-div-has-been-distributed" as="xs:boolean" select="not(tan:non-numbered) and count(tan:n) gt 1"/>
       <xsl:copy>
          <xsl:copy-of select="@* except @type"/>
          <!-- Special feature to itemize leaf divs, to differentiate them in a merge from <div>s of other versions -->
          <xsl:attribute name="type" select="'#version'"/>
+         <xsl:if test="$this-div-has-been-distributed">
+            <xsl:attribute name="copy" select="index-of(tan:n, $primary-n-value)"/>
+            <xsl:attribute name="copy-count" select="count(tan:n)"/>
+         </xsl:if>
          <xsl:apply-templates mode="#current"/>
       </xsl:copy>
    </xsl:template>
@@ -3371,7 +3429,11 @@
    <xsl:template match="tan:_weight | tan:_rel-pos | tan:_n-pos | tan:_n-integer | tan:non-numbered"
       mode="merge-tan-docs merge-tan-doc-leaf-divs stamp-with-src-attr"/>
    
-   <xsl:template match="tan:div" mode="prep-div-refs-pass-1">
+   <!-- Omit any empty divs -->
+   <xsl:template match="tan:div[not(tan:div)][not(text())][not(tan:tok)][not(tei:*)]"
+      mode="prep-class-1-files-for-merge"/>
+   
+   <xsl:template match="tan:div" mode="prep-class-1-files-for-merge">
       <xsl:variable name="numbered-ns" select="tan:n[matches(., '^\d+(#\d+)?$')]"/>
       <xsl:variable name="this-src-or-id-attr" select="root(.)/*[1]/(@src, @id)[1]"/>
       <xsl:copy>
@@ -3390,7 +3452,7 @@
                   return
                      xs:integer(tokenize($i, '#')[1])))"
             />
-            <!-- The non-numbered divs should come after any preceding numbered divs, including letter+Arabic and Arabic+letter combos,
+            <!-- Any div that lacks a numbered value of @n should come after any preceding numbered divs, including letter+Arabic and Arabic+letter combos,
             which have two levels of sorting. We assume that the second tier of ranking won't go beyond a 999,998 (in the Arabic+letter combo,
             that would require 38,472 letter ls). -->
             <xsl:variable name="second-n-pos" select="count($intervening-divs) + 999999"/>
@@ -3404,10 +3466,16 @@
             </non-numbered>
 
          </xsl:if>
-         <xsl:apply-templates mode="#current"/>
+         <!-- Because <n>s are the primary point of merging, we eliminate any duplicates that might have creeped in. -->
+         <xsl:for-each-group select="tan:n" group-by=".">
+            <n>
+               <xsl:value-of select="current-grouping-key()"/>
+            </n>
+         </xsl:for-each-group> 
+         <xsl:apply-templates select="node() except tan:n" mode="#current"/>
       </xsl:copy>
    </xsl:template>
-   <xsl:template match="tan:ref" mode="prep-div-refs-pass-1">
+   <xsl:template match="tan:ref" mode="prep-class-1-files-for-merge">
       <xsl:variable name="this-src-or-id-attr" select="root(.)/*[1]/(@src, @id)[1]"/>
       <xsl:copy>
          <xsl:copy-of select="@*"/>
@@ -3416,7 +3484,7 @@
       </xsl:copy>
    </xsl:template>
    
-   <xsl:template match="tan:div[not(tan:ref[tan:_n-integer])]" mode="prep-div-refs-pass-2">
+   <!--<xsl:template match="tan:div[not(tan:ref[tan:_n-integer])]" mode="prep-div-refs-pass-2">
       <xsl:variable name="last-numbered-div" select="preceding-sibling::tan:div[tan:ref[tan:_n-integer]][1]"/>
       <xsl:variable name="intervening-divs"
          select="preceding-sibling::tan:div except $last-numbered-div/(self::*, preceding-sibling::tan:div)"
@@ -3435,7 +3503,7 @@
          <_n-pos><xsl:value-of select="$first-n-pos"/></_n-pos>
          <_n-pos><xsl:value-of select="$second-n-pos"/></_n-pos>
       </xsl:copy>
-   </xsl:template>
+   </xsl:template>-->
    
 
 

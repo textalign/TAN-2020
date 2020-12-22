@@ -3,6 +3,7 @@
    xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tan="tag:textalign.net,2015:ns"
    xmlns:tei="http://www.tei-c.org/ns/1.0" xmlns:math="http://www.w3.org/2005/xpath-functions/math"
    xmlns:functx="http://www.functx.com" xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+   xmlns:map="http://www.w3.org/2005/xpath-functions/map"
    exclude-result-prefixes="#all" version="3.0">
    <!-- XSLT 3.0 functions for TAN -->
    <!-- These are functions that otherwise would be part of the core TAN function library, but are written in 3.0, before the
@@ -1641,6 +1642,102 @@
       <xsl:param name="snap-to-word" as="xs:boolean"/>
       <xsl:param name="preprocess-long-strings" as="xs:boolean"/>
       <xsl:sequence select="tan:diff($string-a, $string-b, $snap-to-word, $preprocess-long-strings)"/>
+   </xsl:function>
+   
+   
+   <xsl:function name="tan:numbers-to-portions" as="xs:decimal*">
+      <!-- Input: a sequence of numbers -->
+      <!-- Output: one double per number, from 0 to 1, reflecting where each finishes in the sequence proportionate to the sum of the whole. 
+      The last item always returns 1. Anything not castable to a double will be given the empty sequence. -->
+      <!-- Example:
+      Input:  -->
+      <xsl:param name="numbers" as="item()*"/>
+      <xsl:variable name="this-sum" select="
+            sum(for $i in $numbers[. castable as xs:double]
+            return
+               number($i))" as="xs:double?"/>
+      <xsl:iterate select="$numbers">
+         <xsl:param name="last-portion-end" as="xs:double" select="0"/>
+         <xsl:variable name="this-is-castable-as-double" select=". castable as xs:double" as="xs:boolean"/>
+         <xsl:variable name="this-double" as="xs:double" select="
+               if ($this-is-castable-as-double) then
+                  xs:double(.)
+               else
+                  0"/>
+         <xsl:variable name="new-portion-end" select="$this-double + $last-portion-end" as="xs:double"/>
+         <xsl:choose>
+            <xsl:when test="$this-is-castable-as-double">
+               <xsl:sequence select="xs:decimal($new-portion-end div $this-sum)"/>
+            </xsl:when>
+            <xsl:otherwise>
+               <xsl:sequence select="()"/>
+            </xsl:otherwise>
+         </xsl:choose>
+         <xsl:next-iteration>
+            <xsl:with-param name="last-portion-end" as="xs:double" select="$new-portion-end"/>
+         </xsl:next-iteration>
+      </xsl:iterate>
+   </xsl:function>
+   
+   <xsl:function name="tan:segment-string" as="xs:string*">
+      <!-- 2-arity version of the more complete function, below -->
+      <xsl:param name="string-to-segment" as="xs:string?"/>
+      <xsl:param name="segment-portions" as="xs:decimal*"/>
+      <xsl:sequence select="tan:segment-string($string-to-segment, $segment-portions, '\s+')"/>
+   </xsl:function>
+   
+   <xsl:function name="tan:segment-string" as="xs:string*">
+      <!-- Input: a string, a sequence of doubles from 0 through 1, a regular expression -->
+      <!-- Output: the string divided into segments proportionate to the doubles, with divisions allowed only by the regular expression -->
+      <xsl:param name="string-to-segment" as="xs:string?"/>
+      <xsl:param name="segment-portions" as="xs:decimal*"/>
+      <xsl:param name="break-at-regex" as="xs:string"/>
+      <xsl:variable name="snap-marker" as="xs:string" select="
+            if (string-length($break-at-regex) lt 1) then
+               '\s+'
+            else
+               $break-at-regex"/>
+      <xsl:variable name="input-length" as="xs:integer" select="string-length($string-to-segment)"/>
+      <xsl:variable name="new-content-tokenized" as="xs:string*"
+         select="tan:chop-string($string-to-segment, $snap-marker)"/>
+      
+      <xsl:choose>
+         <xsl:when test="$input-length lt 1"/>
+         <xsl:otherwise>
+            <xsl:variable name="new-content-map" as="map(xs:decimal, xs:string)">
+               <xsl:map>
+                  <xsl:iterate select="$new-content-tokenized">
+                     <xsl:param name="last-pos" as="xs:integer" select="0"/>
+                     <xsl:variable name="this-length" select="string-length(.)" as="xs:integer"/>
+                     <xsl:variable name="new-pos" as="xs:integer" select="$last-pos + $this-length"/>
+                     <xsl:map-entry key="($last-pos + 1) div $input-length" select="."/>
+                     <xsl:next-iteration>
+                        <xsl:with-param name="last-pos" select="$new-pos" as="xs:integer"/>
+                     </xsl:next-iteration>
+                  </xsl:iterate>
+               </xsl:map>
+            </xsl:variable>
+            <xsl:variable name="new-content-keys" select="map:keys($new-content-map)" as="xs:decimal+"/>
+            <xsl:iterate select="sort(distinct-values(($segment-portions, 1)))">
+               <xsl:param name="prev-portion" as="xs:decimal" select="-1"/>
+               <xsl:variable name="this-portion" select="."/>
+               <xsl:variable name="these-keys" select="$new-content-keys[. gt $prev-portion][. le $this-portion]"/>
+               <xsl:choose>
+                  <xsl:when test=". le 0 or . gt 1"/>
+                  <xsl:otherwise>
+                     <xsl:value-of select="
+                           string-join((for $i in sort($these-keys)
+                           return
+                              $new-content-map($i)))"/>
+                  </xsl:otherwise>
+               </xsl:choose>
+               <xsl:next-iteration>
+                  <xsl:with-param name="prev-portion" select="."/>
+               </xsl:next-iteration>
+            </xsl:iterate>
+         </xsl:otherwise>
+      </xsl:choose>
+      
    </xsl:function>
    
    
