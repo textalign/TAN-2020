@@ -341,18 +341,20 @@
   </define>
   <!-- PATTERNS -->
   <define name="adjust-class-2">
-    <zeroOrMore>
-      <ref name="adj-element-skip"/>
-    </zeroOrMore>
-    <zeroOrMore>
-      <ref name="adj-element-rename"/>
-    </zeroOrMore>
-    <zeroOrMore>
-      <ref name="adj-element-equate"/>
-    </zeroOrMore>
-    <zeroOrMore>
-      <ref name="adj-element-reassign"/>
-    </zeroOrMore>
+    <interleave>
+      <zeroOrMore>
+        <ref name="adj-element-skip"/>
+      </zeroOrMore>
+      <zeroOrMore>
+        <ref name="adj-element-rename"/>
+      </zeroOrMore>
+      <zeroOrMore>
+        <ref name="adj-element-equate"/>
+      </zeroOrMore>
+      <zeroOrMore>
+        <ref name="adj-element-reassign"/>
+      </zeroOrMore>
+    </interleave>
   </define>
   <define name="adjust-non-class-2">
     <empty/>

@@ -223,7 +223,7 @@ element-through-tok-with-ref =
    ## points to a single token in a single reference that is the end of a range of tokens to be selected from a source, in the context of @ref.
    element through-tok { attr-ref-one, tok-selector-attributes-one }
 # PATTERNS
-adjust-class-2 = adj-element-skip*, adj-element-rename*, adj-element-equate*, adj-element-reassign*
+adjust-class-2 = adj-element-skip* & adj-element-rename* & adj-element-equate* & adj-element-reassign*
 adjust-non-class-2 = empty
 body-content-class-2 = claimant-attributes?
 body-content-non-class-2 = body-group* & body-item*

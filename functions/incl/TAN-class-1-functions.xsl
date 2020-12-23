@@ -582,8 +582,15 @@
       <xsl:param name="drop-divs" as="xs:boolean?" tunnel="yes"/>
       <xsl:param name="use-validation-mode" as="xs:boolean?" tunnel="yes" select="$is-validation"/>
       
-
       <xsl:variable name="these-div-types" select="tokenize(normalize-space(@type), ' ')"/>
+      
+      <xsl:variable name="these-adjustment-actions" select="
+            $adjustment-actions-resolved[if (exists(parent::tan:adjustments/(tan:div-type | tan:where/tan:div-type)))
+            then
+               (parent::tan:adjustments/(tan:div-type | tan:where/tan:div-type) = $these-div-types)
+            else
+               true()]"/>
+
 
       <xsl:variable name="this-n-analyzed" as="element()">
          <analysis>
@@ -605,11 +612,12 @@
          </analysis>
       </xsl:variable>
       
+      <xsl:variable name="equate-n-aliases" select="$these-adjustment-actions/self::tan:equate[tan:n = $this-n-analyzed/*]" as="element()*"/>
       
       <xsl:variable name="these-orig-refs-analyzed" as="element()*">
          <xsl:for-each select="$parent-orig-refs">
             <xsl:variable name="this-ref" select="."/>
-            <xsl:for-each select="$this-n-analyzed/*">
+            <xsl:for-each select="$this-n-analyzed/*, $equate-n-aliases/tan:n[not(. = $this-n-analyzed/*)]">
                <ref>
                   <xsl:value-of select="string-join(($this-ref/text(), .), $separator-hierarchy)"/>
                   <xsl:copy-of select="$this-ref/*"/>
@@ -621,13 +629,8 @@
 
       <!-- When fetching the appropriate adjustment actions, first check to see if one of a div-type filter is relevant. Then look for the three
       other types of locators: div-type, n, ref -->
-      <xsl:variable name="these-adjustment-action-locators"
-         select="
-            $adjustment-actions-resolved[if (exists(parent::tan:adjustments/(tan:div-type | tan:where/tan:div-type)))
-            then
-               (parent::tan:adjustments/(tan:div-type | tan:where/tan:div-type) = $these-div-types)
-            else
-               true()]/(tan:div-type[. = $these-div-types],
+      <xsl:variable name="these-adjustment-action-locators" select="
+            $these-adjustment-actions/(tan:div-type[. = $these-div-types],
             tan:n[. = $this-n-analyzed/*], tan:ref[text() = $these-orig-refs-analyzed/text()])"
       />
       
@@ -719,6 +722,7 @@
             else
                concat($this-text, ' ')"
       />
+      
       
       <xsl:choose>
          <xsl:when test="exists($skip-locators)">
