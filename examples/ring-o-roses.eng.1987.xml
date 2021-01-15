@@ -18,9 +18,14 @@
          <IRI>http://dbpedia.org/resource/Ring_a_Ring_o%27_Roses</IRI>
          <name>Ring around the Rosie</name>
       </work>
+      <version>
+         <IRI>tag:parkj@textalign.net,2015:work:ring02:version:american</IRI>
+         <name>American version of Ring-around-a-rosie</name>
+      </version>
       <source>
          <IRI>http://lccn.loc.gov/87042504</IRI>
          <name>Mother Goose, from nursery to literature / by Gloria T. Delama, 1987.</name>
+         <desc>See p. 38, left column, lines 28-31</desc>
       </source>
       <vocabulary>
          <IRI>tag:parkj@textalign.net,2015:TAN-voc:standard</IRI>

@@ -28,7 +28,7 @@
             <IRI>tag:parkj@textalign.net,2015:ring04</IRI>
             <name>TAN transcription of 1790 version of Ring around the Rosie reported by Newell in
                 1883</name>
-            <location href="../ring-o-roses.eng.1957.xml" accessed-when="2017-10-21"/>
+            <location href="../ring-o-roses.eng.1951.xml" accessed-when="2017-10-21"/>
         </source>
         <adjustments src="ger">
             <skip div-type="Gedicht"/>
