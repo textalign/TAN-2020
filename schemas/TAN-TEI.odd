@@ -147,10 +147,10 @@
         </elementSpec>
         <elementSpec mode="change" ident="div" module="textstructure">
           <desc>Every &lt;div> either contains purely &lt;div>s / empty elements (like
-            &lt;milestone>) or it does not (leaf &lt;div>s). This element is redefined to be much more like
-          the HTML div, which may be any unit whatsover, even those that are inline stretches of text.
-          It does the job of &lt;ab>, &lt;p>, &lt;l>, and all other text segmentation elements, leaving to @type
-          the job of defining exactly what kind(s) of division is (are) intended.</desc>
+            &lt;milestone>) or it does not (leaf &lt;div>s). The TAN-TEI div is much more like the
+            HTML div, which may be any unit whatsover, even an inline phrase. It does the job of
+            &lt;ab>, &lt;p>, &lt;l>, and all other text segmentation elements, with @type declaring
+            exactly the kind(s) of division.</desc>
           <classes mode="change">
             <memberOf key="att.global" mode="delete"/>
             <memberOf key="att.divLike" mode="delete"/>
@@ -176,6 +176,20 @@
                   <rng:data type="date"/>
                   <rng:data type="dateTime"/>
                 </rng:choice>
+              </rng:attribute>
+            </rng:optional>
+            <rng:optional>
+              <rng:attribute name="ref-alias">
+                <a:documentation>Contains one or more supplemental references to a &lt;div>. Each
+                  reference must have the same number of @n values as the &lt;div> is deep in the
+                  body hierarchy. Each atomic @n value inherits the corresponding div type. For example,
+                  in &lt;div type="letter" n="1"> &lt;div type="section" n="1" ref-alias="3
+                  4">text&lt;/div> &lt;/div> the @ref-alias ensures that the innermost &lt;div> is
+                  assigned both 1 1 and 3 4 as references, each typed to letter, section. The values
+                  of @ref-alias are strongly inheritable by any children &lt;div>s. This feature is
+                  intended for parts of a transcription that correspond to more than one section of
+                  a work. </a:documentation>
+                <rng:data type="string"/>
               </rng:attribute>
             </rng:optional>
             <rng:choice>

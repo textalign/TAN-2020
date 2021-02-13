@@ -627,6 +627,10 @@ voc-element-role =
     
     ## See main.xml#vocabularies-roles for standard TAN vocabulary.
     element role { entity-nondigital-id }
+voc-element-scri =
+    
+    ## contains an IRI + name pattern identifying a text-bearing object.
+    element scriptum { entity-nondigital-id }
 voc-element-verb =
     
     ## contains an IRI + name pattern identifying a property, relationship, action, or something else that is used to say something about something. 
@@ -635,6 +639,14 @@ voc-element-verb =
     
     ## See main.xml#vocabularies-verbs for standard TAN vocabulary items.
     element verb { extra-verb-attrs?, entity-nondigital-constrained }
+voc-element-work =
+    
+    ## identifies a creative textual work, understood conceptually, not physically (e.g., Homer's Iliad, not a particular version or copy of it).
+    
+    ## The term "work" is only loosely defined in TAN. Any text that has enough unity to be referred to in ordinary conversation as a single entity may be identified as a work. A work may be composed of other works, be a part of other works, or even overlap with other works. E.g., Q, the Lord's Prayer, the Gospel of Luke, the Tetravengelion, the New Testament, and the Bible are all valid works, despite their complex interrelationships of nesting and spanning one another.
+    
+    ## This element takes the IRI + name pattern. For more, see main.xml#conceptual_works
+    element work { entity-nondigital-id }
 # 
 #   1D. PATTERNS
 action-condition = action-simple-condition | action-complex-condition

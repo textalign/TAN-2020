@@ -284,12 +284,6 @@
       <ref name="entity-nondigital-id"/>
     </element>
   </define>
-  <define name="voc-element-scri">
-    <element name="scriptum">
-      <a:documentation>contains an IRI + name pattern identifying a text-bearing object.</a:documentation>
-      <ref name="entity-nondigital-id"/>
-    </element>
-  </define>
   <define name="voc-element-topic">
     <element name="topic">
       <a:documentation>contains an IRI + name pattern identifying a topic.</a:documentation>
@@ -307,14 +301,6 @@
       <a:documentation>identifies the version of a work. Applicable to sources that contain multiple versions, e.g., original text and facing translations. Like &lt;work&gt;, &lt;version&gt; points to a conceptual entity, not a physical one.</a:documentation>
       <a:documentation>Very few work-versions have their own URNs. It is advisable to assign a tag URN or a UUID. If you have used an IRI for &lt;work&gt; that you are entitled to modify, you may wish to add a suffix that will name the version. If you need to specify exactly where on a text-bearing object a version appears, &lt;desc&gt; or &lt;comment&gt; should be used.</a:documentation>
       <a:documentation>For background, see main.xml#conceptual_works</a:documentation>
-      <ref name="entity-nondigital-id"/>
-    </element>
-  </define>
-  <define name="voc-element-work">
-    <element name="work">
-      <a:documentation>identifies a creative textual work, understood conceptually, not physically (e.g., Homer's Iliad, not a particular version or copy of it).</a:documentation>
-      <a:documentation>The term "work" is only loosely defined in TAN. Any text that has enough unity to be referred to in ordinary conversation as a single entity may be identified as a work. A work may be composed of other works, be a part of other works, or even overlap with other works. E.g., Q, the Lord's Prayer, the Gospel of Luke, the Tetravengelion, the New Testament, and the Bible are all valid works, despite their complex interrelationships of nesting and spanning one another.</a:documentation>
-      <a:documentation>This element takes the IRI + name pattern. For more, see main.xml#conceptual_works</a:documentation>
       <ref name="entity-nondigital-id"/>
     </element>
   </define>

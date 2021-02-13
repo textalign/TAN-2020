@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<grammar ns="tag:textalign.net,2015:ns" xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0" xmlns:local="tag:textalign.net,2015:ns" xmlns="http://relaxng.org/ns/structure/1.0">
+<grammar ns="tag:textalign.net,2015:ns" xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0" xmlns:local="tag:textalign.net,2015:ns" xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
   <include href="TAN-core.rng">
     <define name="source-content">
       <choice>
@@ -53,9 +53,38 @@
     </define>
   </include>
   <!-- ATTRIBUTES -->
+  <define name="attr-ref-alias">
+    <attribute name="ref-alias">
+      <a:documentation>contains one or more supplemental references to a &lt;div&gt;. Each reference must have the same number of @n values as the &lt;div&gt; is deep in the body hierarchy. Each atomic @n value inherits the corresponding div type. For example, in &lt;div type="letter" n="1"&gt; &lt;div type="section" n="1" ref-alias="3 4"&gt;text&lt;/div&gt; &lt;/div&gt; the @ref-alias ensures that the innermost &lt;div&gt; is assigned both 1 1 and 3 4 as references, each typed to letter, section. The values of @ref-alias are strongly inheritable by any children &lt;div&gt;s. </a:documentation>
+      <a:documentation>This feature is intended for parts of a transcription that correspond to more than one section of a work.</a:documentation>
+    </attribute>
+  </define>
   <define name="attr-replacement">
     <attribute name="replacement">
       <a:documentation>contains a string used to replace any occurrence of @pattern </a:documentation>
+    </attribute>
+  </define>
+  <define name="attr-scriptum">
+    <attribute name="scriptum">
+      <a:documentation>points to a text-bearing object that forms the basis of the reference system. The reference system must be the primary one used in the scriptum for the type indicated, material or logical. Many scripta have both a primary material system (e.g., pages, columns, lines) as well as a logical one (e.g., chapters, sections, paragraphs). </a:documentation>
+    </attribute>
+  </define>
+  <define name="attr-type-ref-system">
+    <attribute name="type">
+      <a:documentation>declares the main type of reference system is being used: material (based on the material features of a scriptum, e.g., page, column, line) or logical (e.g., chapter, paragraph, stanza). This is evaluated primarily against the top level of the reference system </a:documentation>
+      <choice>
+        <value>material</value>
+        <value>logical</value>
+      </choice>
+    </attribute>
+  </define>
+  <define name="attr-wf-ready">
+    <attribute name="wf-ready">
+      <a:documentation>specifies whether the class 1 file's reference system is suited for Writing Fragid URIs. Default is false. If @wf-ready is true, the class 1 file can be parsed against, and be used to generate, Writing Fragid URIs. A value of true may be supplied only if the following are true: </a:documentation>
+      <a:documentation>The scriptum used for the reference system has no more than one logical and no more than one material reference system (the "key reference system," defined by the specifications for Writing Fragids, version 0).</a:documentation>
+      <a:documentation>The division of a text unit should result in a unique numbered sequence. That is, in any given enumerable text division sequence (sibling &lt;div&gt;s whose values of @n can be converted to integers or integer-qualified integers, e.g., 3b), Arabic numerals, Roman numerals, and alphabetic numerals may not be mixed.</a:documentation>
+      <a:documentation>It is permitted to divide a key reference system more finely, but only in its innermost (leafmost) structures, not at the branch or root levels. </a:documentation>
+      <data type="boolean"/>
     </attribute>
   </define>
   <!-- ELEMENTS -->
@@ -72,6 +101,22 @@
       <a:documentation>The sequence of consecutive &lt;normalization&gt; is immaterial.</a:documentation>
       <a:documentation>See main.xml#vocabularies-normalizations for standard TAN vocabulary for normalizations. For general discussion see main.xml#normalizing_transcriptions </a:documentation>
       <ref name="entity-nondigital-no-id"/>
+    </element>
+  </define>
+  <define name="element-reference-system">
+    <element name="reference-system">
+      <a:documentation>specifies the type of reference system and its basis. The attributes of this element specify the type of reference system (material or logical); point to one or more reference scripta that form the basis of the reference system, and stipulate whether the scripta use that reference system as their key material or logical reference system.  </a:documentation>
+      <a:documentation>In the absence of this element or any individual attribute, the following values are presumed: </a:documentation>
+      <a:documentation>The default reference type, material (i.e., scriptum-based: pages, columns, lines) or logical (based on conceptual divisions), is determined by the types of text units in the topmost tier of &lt;div&gt;s. </a:documentation>
+      <a:documentation>The default reference scriptum is &lt;source&gt;. The reference system is assumed not to be the primary one.</a:documentation>
+      <a:documentation>For a class 1 file to be a candidate for Literature Fragid URIs, whether as a target or as a source of creating LF URIs, the reference system must be the key reference system of its type in the reference scriptum.</a:documentation>
+      <ref name="attr-type-ref-system"/>
+      <optional>
+        <ref name="attr-wf-ready"/>
+      </optional>
+      <optional>
+        <ref name="attr-scriptum"/>
+      </optional>
     </element>
   </define>
   <define name="element-replace">
@@ -161,6 +206,9 @@
       <optional>
         <ref name="element-n-alias"/>
       </optional>
+      <optional>
+        <ref name="element-reference-system"/>
+      </optional>
     </interleave>
   </define>
   <define name="decl-non-class-1">
@@ -169,6 +217,12 @@
   <define name="voc-element-class-1">
     <zeroOrMore>
       <ref name="voc-element-div-type"/>
+    </zeroOrMore>
+    <zeroOrMore>
+      <ref name="voc-element-scri"/>
+    </zeroOrMore>
+    <zeroOrMore>
+      <ref name="voc-element-work"/>
     </zeroOrMore>
   </define>
   <define name="voc-element-non-class-1">

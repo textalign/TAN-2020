@@ -911,6 +911,12 @@
       <ref name="entity-nondigital-id"/>
     </element>
   </define>
+  <define name="voc-element-scri">
+    <element name="scriptum">
+      <a:documentation>contains an IRI + name pattern identifying a text-bearing object.</a:documentation>
+      <ref name="entity-nondigital-id"/>
+    </element>
+  </define>
   <define name="voc-element-verb">
     <element name="verb">
       <a:documentation>contains an IRI + name pattern identifying a property, relationship, action, or something else that is used to say something about something. </a:documentation>
@@ -920,6 +926,14 @@
         <ref name="extra-verb-attrs"/>
       </optional>
       <ref name="entity-nondigital-constrained"/>
+    </element>
+  </define>
+  <define name="voc-element-work">
+    <element name="work">
+      <a:documentation>identifies a creative textual work, understood conceptually, not physically (e.g., Homer's Iliad, not a particular version or copy of it).</a:documentation>
+      <a:documentation>The term "work" is only loosely defined in TAN. Any text that has enough unity to be referred to in ordinary conversation as a single entity may be identified as a work. A work may be composed of other works, be a part of other works, or even overlap with other works. E.g., Q, the Lord's Prayer, the Gospel of Luke, the Tetravengelion, the New Testament, and the Bible are all valid works, despite their complex interrelationships of nesting and spanning one another.</a:documentation>
+      <a:documentation>This element takes the IRI + name pattern. For more, see main.xml#conceptual_works</a:documentation>
+      <ref name="entity-nondigital-id"/>
     </element>
   </define>
   <!--

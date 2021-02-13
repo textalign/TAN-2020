@@ -9,10 +9,10 @@ namespace teix = "http://www.tei-c.org/ns/Examples"
 namespace xi = "http://www.w3.org/2001/XInclude"
 namespace xlink = "http://www.w3.org/1999/xlink"
 
-# Schema generated from ODD source 2020-08-11T13:45:56Z. .
-# TEI Edition: Version 4.0.0. Last updated on
-#	13th February 2020, revision ccd19b0ba
-# TEI Edition Location: http://www.tei-c.org/Vault/P5/Version 4.0.0/
+# Schema generated from ODD source 2021-02-13T12:28:44Z. .
+# TEI Edition: Version 4.1.0. Last updated on
+#	19th August 2020, revision b414ba550
+# TEI Edition Location: https://www.tei-c.org/Vault/P5/Version 4.1.0/
 #
 
 # Insofar as this ODD file constitutes an original work (see below) all material is released under a GNU General Public License, https://opensource.org/licenses/GPL-3.0 The notice in the next paragraph is preserved from the template upon which this ODD file is based.  TEI material can be licensed differently depending on the use you intend to make of it. Hence it is made available under both the CC+BY and BSD-2 licences. The CC+BY licence is generally appropriate for usages which treat TEI content as data or documentation. The BSD-2 licence is generally appropriate for usage of TEI content in a software environment. For further information or clarification, please contact the TEI Consortium (info@tei-c.org).
@@ -608,6 +608,18 @@ div {
       
       ## See main.xml#vocabularies-roles for standard TAN vocabulary.
       element role { entity-nondigital-id }
+    voc-element-scri =
+      
+      ## contains an IRI + name pattern identifying a text-bearing object.
+      element scriptum { entity-nondigital-id }
+    voc-element-work =
+      
+      ## identifies a creative textual work, understood conceptually, not physically (e.g., Homer's Iliad, not a particular version or copy of it).
+      
+      ## The term "work" is only loosely defined in TAN. Any text that has enough unity to be referred to in ordinary conversation as a single entity may be identified as a work. A work may be composed of other works, be a part of other works, or even overlap with other works. E.g., Q, the Lord's Prayer, the Gospel of Luke, the Tetravengelion, the New Testament, and the Bible are all valid works, despite their complex interrelationships of nesting and spanning one another.
+      
+      ## This element takes the IRI + name pattern. For more, see main.xml#conceptual_works
+      element work { entity-nondigital-id }
     action-condition-attributes = empty
     adjustment-list = element-adjustments*
     adjust-condition = empty
@@ -714,6 +726,24 @@ div {
     
     ## contains a string used to replace any occurrence of @pattern 
     attribute replacement { text }
+  attr-scriptum =
+    
+    ## points to a text-bearing object that forms the basis of the reference system. The reference system must be the primary one used in the scriptum for the type indicated, material or logical. Many scripta have both a primary material system (e.g., pages, columns, lines) as well as a logical one (e.g., chapters, sections, paragraphs). 
+    attribute scriptum { text }
+  attr-type-ref-system =
+    
+    ## declares the main type of reference system is being used: material (based on the material features of a scriptum, e.g., page, column, line) or logical (e.g., chapter, paragraph, stanza). This is evaluated primarily against the top level of the reference system 
+    attribute type { "material" | "logical" }
+  attr-wf-ready =
+    
+    ## specifies whether the class 1 file's reference system is suited for Writing Fragid URIs. Default is false. If @wf-ready is true, the class 1 file can be parsed against, and be used to generate, Writing Fragid URIs. A value of true may be supplied only if the following are true: 
+    
+    ## The scriptum used for the reference system has no more than one logical and no more than one material reference system (the "key reference system," defined by the specifications for Writing Fragids, version 0).
+    
+    ## The division of a text unit should result in a unique numbered sequence. That is, in any given enumerable text division sequence (sibling <div>s whose values of @n can be converted to integers or integer-qualified integers, e.g., 3b), Arabic numerals, Roman numerals, and alphabetic numerals may not be mixed.
+    
+    ## It is permitted to divide a key reference system more finely, but only in its innermost (leafmost) structures, not at the branch or root levels. 
+    attribute wf-ready { xsd:boolean }
   element-n-alias =
     
     ## specifies whether aliases for n should be applied selectively. For files that use <vocabulary> with @which, for extra @n vocabulary, this element improves the efficiency of validation.
@@ -728,6 +758,20 @@ div {
     
     ## See main.xml#vocabularies-normalizations for standard TAN vocabulary for normalizations. For general discussion see main.xml#normalizing_transcriptions 
     element normalization { entity-nondigital-no-id }
+  element-reference-system =
+    
+    ## specifies the type of reference system and its basis. The attributes of this element specify the type of reference system (material or logical); point to one or more reference scripta that form the basis of the reference system, and stipulate whether the scripta use that reference system as their key material or logical reference system.  
+    
+    ## In the absence of this element or any individual attribute, the following values are presumed: 
+    
+    ## The default reference type, material (i.e., scriptum-based: pages, columns, lines) or logical (based on conceptual divisions), is determined by the types of text units in the topmost tier of <div>s. 
+    
+    ## The default reference scriptum is <source>. The reference system is assumed not to be the primary one.
+    
+    ## For a class 1 file to be a candidate for Literature Fragid URIs, whether as a target or as a source of creating LF URIs, the reference system must be the key reference system of its type in the reference scriptum.
+    element reference-system {
+      attr-type-ref-system, attr-wf-ready?, attr-scriptum?
+    }
   element-replace =
     
     ## contains the equivalent of the XPath replace() function plus parameters, indicating a replacement operation that should be, or has been, applied to a digital file.
@@ -791,8 +835,10 @@ div {
     & element-version?
     & element-token-definition*
     & element-n-alias?
+    & element-reference-system?
   decl-non-class-1 = empty
-  voc-element-class-1 = voc-element-div-type*
+  voc-element-class-1 =
+    voc-element-div-type*, voc-element-scri*, voc-element-work*
   voc-element-non-class-1 = empty
 }
 macro.paraContent =
@@ -805,7 +851,11 @@ macro.paraContent =
    | model.lLike)*
 macro.limitedContent = (text | model.limitedPhrase | model.inter)*
 macro.phraseSeq =
-  (text | model.gLike | model.qLike | model.phrase | model.global)*
+  (text
+   | model.gLike
+   | model.attributable
+   | model.phrase
+   | model.global)*
 macro.phraseSeq.limited = (text | model.limitedPhrase | model.global)*
 macro.specialPara =
   (text
@@ -831,7 +881,7 @@ anyElement-content =
     (text | anyElement-content)*
   }
   >> sch:pattern [
-       id = "d9e110440-constraint"
+       id = "d9e111134-constraint"
        "\x{a}" ~
        "         "
        sch:rule [
@@ -862,7 +912,7 @@ anyElement-datatype =
     (text | anyElement-datatype)*
   }
   >> sch:pattern [
-       id = "d9e111604-constraint"
+       id = "d9e112298-constraint"
        "\x{a}" ~
        "         "
        sch:rule [
@@ -1616,15 +1666,7 @@ att.resourced.attribute.url =
   
   ## (uniform resource locator) specifies the URL from which the media concerned may be obtained.
   attribute url { xsd:anyURI }
-att.interpLike.attributes =
-  att.interpLike.attribute.type, att.interpLike.attribute.inst
-att.interpLike.attribute.type =
-  
-  ## indicates what kind of phenomenon is being noted in the passage.
-  ## Sample values include: 1] image; 2] character; 3] theme; 4] allusion
-  attribute type {
-    xsd:token { pattern = "[^\p{C}\p{Z}]+" }
-  }?
+att.interpLike.attributes = att.interpLike.attribute.inst
 att.interpLike.attribute.inst =
   
   ## (instances) points to instances of the analysis or interpretation represented by the current element.
@@ -2188,12 +2230,12 @@ model.nameLike.agent_sequenceOptionalRepeatable =
   name*, orgName*, persName*
 model.nameLike.agent_sequenceRepeatable = name+, orgName+, persName+
 model.segLike = s | cl | phr | w | m | c | pc | seg
-model.hiLike = hi
-model.hiLike_alternation = hi
-model.hiLike_sequence = hi
-model.hiLike_sequenceOptional = hi?
-model.hiLike_sequenceOptionalRepeatable = hi*
-model.hiLike_sequenceRepeatable = hi+
+model.hiLike = hi | q
+model.hiLike_alternation = hi | q
+model.hiLike_sequence = hi, q
+model.hiLike_sequenceOptional = hi?, q?
+model.hiLike_sequenceOptionalRepeatable = hi*, q*
+model.hiLike_sequenceRepeatable = hi+, q+
 model.emphLike =
   foreign
   | emph
@@ -2849,16 +2891,17 @@ model.quoteLike_sequence = quote, cit
 model.quoteLike_sequenceOptional = quote?, cit?
 model.quoteLike_sequenceOptionalRepeatable = quote*, cit*
 model.quoteLike_sequenceRepeatable = quote+, cit+
-model.qLike = model.quoteLike | said | q | floatingText
-model.qLike_alternation =
-  model.quoteLike_alternation | said | q | floatingText
-model.qLike_sequence = model.quoteLike_sequence, said, q, floatingText
-model.qLike_sequenceOptional =
-  model.quoteLike_sequenceOptional?, said?, q?, floatingText?
-model.qLike_sequenceOptionalRepeatable =
-  model.quoteLike_sequenceOptionalRepeatable*, said*, q*, floatingText*
-model.qLike_sequenceRepeatable =
-  model.quoteLike_sequenceRepeatable+, said+, q+, floatingText+
+model.attributable = model.quoteLike | said | floatingText
+model.attributable_alternation =
+  model.quoteLike_alternation | said | floatingText
+model.attributable_sequence =
+  model.quoteLike_sequence, said, floatingText
+model.attributable_sequenceOptional =
+  model.quoteLike_sequenceOptional?, said?, floatingText?
+model.attributable_sequenceOptionalRepeatable =
+  model.quoteLike_sequenceOptionalRepeatable*, said*, floatingText*
+model.attributable_sequenceRepeatable =
+  model.quoteLike_sequenceRepeatable+, said+, floatingText+
 model.respLike =
   author | editor | respStmt | meeting | sponsor | funder | principal
 model.divWrapper =
@@ -3032,9 +3075,9 @@ model.inter =
   | model.labelLike
   | model.listLike
   | model.stageLike
-  | model.qLike
+  | model.attributable
   | castList
-model.common = model.divPart | model.inter | model.entryLike
+model.common = model.divPart | model.inter | q | model.entryLike
 model.phrase =
   model.segLike
   | model.highlighted
@@ -3064,6 +3107,8 @@ model.div4Like = div4
 model.div5Like = div5
 model.div6Like = div6
 model.div7Like = div7
+model.annotationLike = note | annotation | annotationBlock
+model.annotationPart.body = ptr | ref | note
 model.applicationLike = application
 model.teiHeaderPart = encodingDesc | profileDesc | xenoData
 model.sourceDescPart = scriptStmt | recordingStmt
@@ -3111,17 +3156,18 @@ model.standOffPart =
   model.global.meta
   | model.biblLike
   | model.listLike
+  | model.annotationLike
   | model.entryLike
   | castList
   | listChange
   | seg
+  | listAnnotation
   | graph
   | tree
   | eTree
   | forest
   | listForest
   | u
-  | annotationBlock
   | zone
 att.formula.attributes = att.formula.attribute.formula
 att.formula.attribute.formula =
@@ -3433,12 +3479,15 @@ cit =
   
   ## (cited quotation) contains a quotation from some other document, together with a bibliographic reference to its source. In a dictionary it may contain an example text with at least one occurrence of the word form, used in the sense being described, or a translation of the headword, or an example. [3.3.3. Quotation 4.3.1. Grouped Texts 9.3.5.1. Examples]
   element tei:cit {
-    (model.qLike
+    (model.biblLike
      | model.egLike
-     | model.biblLike
-     | model.ptrLike
+     | model.entryPart
      | model.global
-     | model.entryPart)+,
+     | model.graphicLike
+     | model.ptrLike
+     | model.attributable
+     | pc
+     | q)+,
     att.global.attributes,
     att.typed.attributes,
     empty
@@ -3863,12 +3912,12 @@ ptr =
          "\x{a}" ~
          "         "
        ],
-    att.global.attributes,
-    att.pointing.attributes,
-    att.internetMedia.attributes,
-    att.typed.attributes,
-    att.declaring.attributes,
     att.cReferencing.attributes,
+    att.declaring.attributes,
+    att.global.attributes,
+    att.internetMedia.attributes,
+    att.pointing.attributes,
+    att.typed.attributes,
     empty
   }
 ref =
@@ -3898,12 +3947,12 @@ ref =
          "\x{a}" ~
          "         "
        ],
-    att.global.attributes,
-    att.pointing.attributes,
-    att.internetMedia.attributes,
-    att.typed.attributes,
-    att.declaring.attributes,
     att.cReferencing.attributes,
+    att.declaring.attributes,
+    att.global.attributes,
+    att.internetMedia.attributes,
+    att.pointing.attributes,
+    att.typed.attributes,
     empty
   }
 \list =
@@ -4530,8 +4579,8 @@ sp =
        | model.pLike
        | model.listLike
        | model.stageLike
-       | model.qLike),
-      model.global*)+),
+       | model.attributable),
+      (model.global* | q))+),
     att.global.attributes,
     att.ascribed.directed.attributes,
     empty
@@ -4645,7 +4694,19 @@ textLang =
     }?,
     empty
   }
+att.lexicographic.normalized.attributes =
+  att.lexicographic.normalized.attribute.norm,
+  att.lexicographic.normalized.attribute.orig
+att.lexicographic.normalized.attribute.norm =
+  
+  ## (normalized) provides the normalized/standardized form of information present in the source text in a non-normalized form
+  attribute norm { xsd:string }?
+att.lexicographic.normalized.attribute.orig =
+  
+  ## (original) gives the original string or is the empty string when the element does not appear in the source text.
+  attribute orig { xsd:string }?
 att.linguistic.attributes =
+  att.lexicographic.normalized.attributes,
   att.linguistic.attribute.lemma,
   att.linguistic.attribute.lemmaRef,
   att.linguistic.attribute.pos,
@@ -4941,6 +5002,7 @@ span =
     att.global.attributes,
     att.interpLike.attributes,
     att.pointing.attributes,
+    att.typed.attributes,
     [
       a:documentation [
         "gives the identifier of the node which is the starting point of the span of text being annotated; if not accompanied by a "
@@ -4958,7 +5020,11 @@ spanGrp =
   
   ## (span group) collects together span tags. [17.3. Spans and Interpretations]
   element tei:spanGrp {
-    span*, att.global.attributes, att.interpLike.attributes, empty
+    span*,
+    att.global.attributes,
+    att.interpLike.attributes,
+    att.typed.attributes,
+    empty
   }
 interp =
   
@@ -4967,6 +5033,7 @@ interp =
     (text | model.gLike | model.descLike | model.certLike)*,
     att.global.attributes,
     att.interpLike.attributes,
+    att.typed.attributes,
     empty
   }
 interpGrp =
@@ -4976,6 +5043,7 @@ interpGrp =
     (model.descLike*, interp+),
     att.global.attributes,
     att.interpLike.attributes,
+    att.typed.attributes,
     empty
   }
 precision =
@@ -5420,11 +5488,10 @@ att.entryLike.attribute.type =
   }?
 att.lexicographic.attributes =
   att.datcat.attributes,
+  att.lexicographic.normalized.attributes,
   att.lexicographic.attribute.expand,
-  att.lexicographic.attribute.norm,
   att.lexicographic.attribute.split,
   att.lexicographic.attribute.value,
-  att.lexicographic.attribute.orig,
   att.lexicographic.attribute.location,
   att.lexicographic.attribute.mergedIn,
   att.lexicographic.attribute.opt
@@ -5432,10 +5499,6 @@ att.lexicographic.attribute.expand =
   
   ## gives an expanded form of information presented more concisely in the dictionary
   attribute expand { xsd:string }?
-att.lexicographic.attribute.norm =
-  
-  ## (normalized) gives a normalized form of information given by the source text in a non-normalized form
-  attribute norm { xsd:string }?
 att.lexicographic.attribute.split =
   
   ## gives the list of split values for a merged form
@@ -5444,10 +5507,6 @@ att.lexicographic.attribute.value =
   
   ## gives a value which lacks any realization in the printed source text.
   attribute value { xsd:string }?
-att.lexicographic.attribute.orig =
-  
-  ## (original) gives the original string or is the empty string when the element does not appear in the source text.
-  attribute orig { xsd:string }?
 att.lexicographic.attribute.location =
   [
     a:documentation [
@@ -5640,6 +5699,7 @@ pron =
     att.lexicographic.attributes,
     att.notated.attributes,
     att.partials.attributes,
+    att.typed.attributes,
     empty
   }
 hyph =
@@ -6081,7 +6141,8 @@ move =
     ## Sample values include: 1] L (left); 2] R (right); 3] C (center)
     attribute where {
       list {
-        xsd:token { pattern = "[^\p{C}\p{Z}]+" }+
+        (xsd:token { pattern = "[^\p{C}\p{Z}]+" }
+         | xsd:anyURI)+
       }
     }?,
     [
@@ -7477,7 +7538,7 @@ fileDesc =
       editionStmt?,
       extent?,
       publicationStmt,
-      seriesStmt?,
+      seriesStmt*,
       notesStmt?),
      sourceDesc+),
     att.global.attributes,
@@ -7646,6 +7707,7 @@ seriesStmt =
     (model.pLike+
      | (title+, (editor | respStmt)*, (idno | biblScope)*)),
     att.global.attributes,
+    att.declarable.attributes,
     empty
   }
 notesStmt =
@@ -7672,7 +7734,7 @@ biblFull =
        editionStmt?,
        extent?,
        publicationStmt,
-       seriesStmt?,
+       seriesStmt*,
        notesStmt?),
       sourceDesc*)
      | (fileDesc, profileDesc)),
@@ -8021,7 +8083,7 @@ cRefPattern =
   }
 prefixDef =
   
-  ## (prefix definition) defines a prefixing scheme used in data.pointer values, showing how abbreviated URIs using the scheme may be expanded into full URIs. [16.2.3. Using Abbreviated Pointers]
+  ## (prefix definition) defines a prefixing scheme used in teidata.pointer values, showing how abbreviated URIs using the scheme may be expanded into full URIs. [16.2.3. Using Abbreviated Pointers]
   element tei:prefixDef {
     model.pLike*,
     att.global.attributes,
@@ -8035,7 +8097,7 @@ prefixDef =
   }
 listPrefixDef =
   
-  ## (list of prefix definitions) contains a list of definitions of prefixing schemes used in data.pointer values, showing how abbreviated URIs using each scheme may be expanded into full URIs. [16.2.3. Using Abbreviated Pointers]
+  ## (list of prefix definitions) contains a list of definitions of prefixing schemes used in teidata.pointer values, showing how abbreviated URIs using each scheme may be expanded into full URIs. [16.2.3. Using Abbreviated Pointers]
   element tei:listPrefixDef {
     (desc*, (prefixDef | listPrefixDef)+),
     att.global.attributes,
@@ -8403,7 +8465,7 @@ revisionDesc =
   }
 change =
   
-  ## documents a change or set of changes made during the production of a source document, or during the revision of an electronic file. [2.6. The Revision Description 2.4.1. Creation 11.7. Identifying Changes and Revisions]
+  ## documents a change or set of changes made during the production of a source document, or during the revision of an electronic file. [2.6. The Revision Description 2.4.1. Creation 11.6. Identifying Changes and Revisions]
   element tei:change {
     macro.specialPara,
     att.ascribed.attributes,
@@ -8429,7 +8491,7 @@ scriptNote =
   }
 listChange =
   
-  ## groups a number of change descriptions associated with either the creation of a source text or the revision of an encoded text. [2.6. The Revision Description 11.7. Identifying Changes and Revisions]
+  ## groups a number of change descriptions associated with either the creation of a source text or the revision of an encoded text. [2.6. The Revision Description 11.6. Identifying Changes and Revisions]
   element tei:listChange {
     (desc*, (listChange | change)+),
     att.global.attributes,
@@ -9021,7 +9083,7 @@ when =
       | xsd:token { pattern = "[^\p{C}\p{Z}]+" }
     }?,
     
-    ## specifies a time interval either as a number or as one of the keywords defined by the datatype data.interval
+    ## specifies a time interval either as a number or as one of the keywords defined by the datatype teidata.interval
     attribute interval {
       xsd:float
       | (
@@ -9272,6 +9334,122 @@ standOff =
     att.global.attributes,
     att.typed.attributes,
     att.declaring.attributes,
+    empty
+  }
+listAnnotation =
+  [
+    a:documentation [
+      "contains a list of annotations, typically encoded as "
+      ns1:code [ "<annotation>" ]
+      ", "
+      ns1:code [ "<annotationBlock>" ]
+      ", or "
+      ns1:code [ "<note>" ]
+      ", possibly organized with nested "
+      ns1:code [ "<listAnnotation>" ]
+      " elements. [16.10. The standOff Container]"
+    ]
+  ]
+  element tei:listAnnotation {
+    (model.headLike*,
+     model.labelLike*,
+     (model.annotationLike | listAnnotation)+),
+    att.global.attributes,
+    att.typed.attributes,
+    att.notated.attributes,
+    att.declaring.attributes,
+    empty
+  }
+annotation =
+  [
+    a:documentation [
+      "represents an annotation following the "
+      ns1:a [
+        href = "#WADM"
+        "Web\x{a}" ~
+        "      Annotation Data Model"
+      ]
+      ". [16.10. The standOff Container]"
+    ]
+  ]
+  element tei:annotation {
+    (respStmt*, revisionDesc*, licence*, model.annotationPart.body*),
+    att.global.attribute.n,
+    att.global.attribute.xmllang,
+    att.global.attribute.xmlbase,
+    att.global.attribute.xmlspace,
+    att.global.rendition.attribute.rend,
+    att.global.rendition.attribute.style,
+    att.global.rendition.attribute.rendition,
+    att.global.linking.attribute.corresp,
+    att.global.linking.attribute.synch,
+    att.global.linking.attribute.sameAs,
+    att.global.linking.attribute.copyOf,
+    att.global.linking.attribute.next,
+    att.global.linking.attribute.prev,
+    att.global.linking.attribute.exclude,
+    att.global.linking.attribute.select,
+    att.global.analytic.attribute.ana,
+    att.global.facs.attribute.facs,
+    att.global.change.attribute.change,
+    att.global.responsibility.attribute.cert,
+    att.global.responsibility.attribute.resp,
+    att.global.source.attribute.source,
+    att.pointing.attribute.targetLang,
+    att.pointing.attribute.evaluate,
+    
+    ## (identifier) provides a unique identifier for the element bearing the attribute.
+    attribute xml:id { xsd:ID },
+    
+    ## specifies the destination of the reference by supplying one or more URI References
+    attribute target {
+      list { xsd:anyURI+ }
+    },
+    
+    ##
+    attribute motivation {
+      list {
+        (
+         ## intent is to assess the target resource in some way, rather than simply make a comment about it
+         "assessing"
+         | 
+           ## intent is to create a bookmark to the target or part thereof
+           "bookmarking"
+         | 
+           ## intent is to classify the target in some way
+           "classifying"
+         | 
+           ## intent is to comment about the target
+           "commenting"
+         | 
+           ## intent is to describe the target, rather than (for example) comment on it
+           "describing"
+         | 
+           ## intent is to request an edit or a change to the target resource
+           "editing"
+         | 
+           ## intent is to highlight the target resource or a segment thereof
+           "highlighting"
+         | 
+           ## intent is to assign an identity to the target
+           "identifying"
+         | 
+           ## intent is to link to a resource related to the target
+           "linking"
+         | 
+           ## intent is to assign some value or quality to the target
+           "moderating"
+         | 
+           ## intent is to ask a question about the target
+           "questioning"
+         | 
+           ## intent is to reply to a previous statement, either an annotation or another resource
+           "replying"
+         | 
+           ## intent is to associate a tag with the target
+           "tagging")+
+      }
+    }?,
     empty
   }
 att.msExcerpt.attributes = att.msExcerpt.attribute.defective
@@ -10861,7 +11039,7 @@ occupation =
   }
 org =
   
-  ## (organization) provides information about an identifiable organization such as a business, a tribe, or any other grouping of people. [13.2.2. Organizational Names]
+  ## (organization) provides information about an identifiable organization such as a business, a tribe, or any other grouping of people. [13.3.3. Organizational Data]
   element tei:org {
     (model.headLike*,
      (model.pLike*
@@ -11974,6 +12152,21 @@ lem =
     (text
      | model.divLike
      | model.divPart
+     | titlePage
+     | argument
+     | byline
+     | docAuthor
+     | docDate
+     | docEdition
+     | docImprint
+     | docTitle
+     | epigraph
+     | imprimatur
+     | titlePart
+     | epilogue
+     | performance
+     | prologue
+     | set
      | model.gLike
      | model.phrase
      | model.inter
@@ -11991,6 +12184,21 @@ rdg =
     (text
      | model.divLike
      | model.divPart
+     | titlePage
+     | argument
+     | byline
+     | docAuthor
+     | docDate
+     | docEdition
+     | docImprint
+     | docTitle
+     | epigraph
+     | imprimatur
+     | titlePart
+     | epilogue
+     | performance
+     | prologue
+     | set
      | model.gLike
      | model.phrase
      | model.inter
@@ -12275,12 +12483,13 @@ floatingText =
   }
 \div =
   
-  ## (text division) Every <div> either contains purely <div>s / empty elements (like <milestone>) or it does not (leaf <div>s). This element is redefined to be much more like the HTML div, which may be any unit whatsover, even those that are inline stretches of text. It does the job of <ab>, <p>, <l>, and all other text segmentation elements, leaving to @type the job of defining exactly what kind(s) of division is (are) intended. [4.1. Divisions of the Body]
+  ## (text division) Every <div> either contains purely <div>s / empty elements (like <milestone>) or it does not (leaf <div>s). The TAN-TEI div is much more like the HTML div, which may be any unit whatsover, even an inline phrase. It does the job of <ab>, <p>, <l>, and all other text segmentation elements, with @type declaring exactly the kind(s) of division. [4.1. Divisions of the Body]
   element tei:div {
     attribute ed-who {
       xsd:string { pattern = ".+" }
     }?,
     attribute ed-when { xsd:date | xsd:dateTime }?,
+    attribute ref-alias { xsd:string }?,
     (attribute include { xsd:string }
      | (att.global.attributes,
         att.divLike.attributes,
@@ -13130,7 +13339,7 @@ ex =
   }
 fw =
   
-  ## (forme work) contains a running head (e.g. a header, footer), catchword, or similar material appearing on the current page. [11.6. Headers, Footers, and Similar Matter]
+  ## (forme work) contains a running head (e.g. a header, footer), catchword, or similar material appearing on the current page. [11.5. Headers, Footers, and Similar Matter]
   element tei:fw {
     macro.phraseSeq,
     att.global.attributes,
@@ -13193,7 +13402,7 @@ restore =
   }
 space =
   
-  ## indicates the location of a significant space in the text. [11.5.1. Space]
+  ## indicates the location of a significant space in the text. [11.4.1. Space]
   element tei:space {
     (model.descLike | model.certLike)*,
     att.global.attribute.xmlid,
@@ -13238,9 +13447,9 @@ space =
   }
 subst =
   
-  ## (substitution) groups one or more deletions with one or more additions when the combination is to be regarded as a single intervention in the text. [11.3.1.5. Substitutions]
+  ## (substitution) groups one or more deletions (or surplus text) with one or more additions when the combination is to be regarded as a single intervention in the text. [11.3.1.5. Substitutions]
   element tei:subst {
-    ((add | del | model.milestoneLike)+)
+    ((add | surplus | del | model.milestoneLike)+)
     >> sch:pattern [
          id = "tei_all-subst-substContents1-constraint-assert-26"
          "\x{a}" ~
@@ -13250,11 +13459,12 @@ subst =
            "\x{a}" ~
            "               "
            sch:assert [
-             test = "child::tei:add and child::tei:del"
+             test =
+               "child::tei:add and (child::tei:del or child::tei:surplus)"
              "\x{a}" ~
              "                  "
              sch:name [ ]
-             " must have at least one child add and at least one child del"
+             " must have at least one child add and at least one child del or surplus"
            ]
            "\x{a}" ~
            "            "
@@ -13269,7 +13479,7 @@ subst =
   }
 substJoin =
   
-  ## (substitution join) identifies a series of possibly fragmented additions, deletions or other revisions on a manuscript that combine to make up a single intervention in the text [11.3.1.5. Substitutions]
+  ## (substitution join) identifies a series of possibly fragmented additions, deletions, or other revisions on a manuscript that combine to make up a single intervention in the text [11.3.1.5. Substitutions]
   element tei:substJoin {
     (model.descLike | model.certLike)*,
     att.global.attributes,
@@ -13408,7 +13618,9 @@ retrace =
 transpose =
   
   ## describes a single textual transposition as an ordered list of at least two pointers specifying the order in which the elements indicated should be re-combined. [11.3.4.5. Transpositions]
-  element tei:transpose { (ptr, ptr+), att.global.attributes, empty }
+  element tei:transpose {
+    (ptr, ptr, ptr*), att.global.attributes, empty
+  }
 undo =
   
   ## indicates one or more marked-up interventions in a document which have subsequently been marked for cancellation. [11.3.4.4. Confirmation, Cancellation, and Reinstatement of Modifications]
@@ -15271,6 +15483,26 @@ dataRef =
              test = "@restriction"
              role = "nonfatal"
              "The attribute restriction cannot be used when dataFacet elements are present."
+           ]
+           "\x{a}" ~
+           "            "
+         ]
+         "\x{a}" ~
+         "         "
+       ]
+    >> sch:pattern [
+         id =
+           "tei_all-dataRef-restrictAttResctrictionName-constraint-rule-29"
+         "\x{a}" ~
+         "            "
+         sch:rule [
+           context = "tei:dataRef"
+           "\x{a}" ~
+           "               "
+           sch:report [
+             test = "@restriction and not(@name)"
+             role = "fatal"
+             "The attribute restriction can only be used with a name attribute."
            ]
            "\x{a}" ~
            "            "

@@ -34,6 +34,9 @@
           <optional>
             <ref name="attr-lang-xml"/>
           </optional>
+          <optional>
+            <ref name="attr-ref-alias"/>
+          </optional>
           <choice>
             <oneOrMore>
               <ref name="element-div"/>
