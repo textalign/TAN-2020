@@ -142,17 +142,38 @@
                     </constraints>
                 </verb>
                 <verb group="cf">
+                    <IRI>tag:textalign.net,2015:verb:refers-to</IRI>
+                    <name>refers to</name>
+                    <desc>The subject (a textual artefact) refers to the object (a textual artefact
+                        or text maker). The reference is direct (explicit), via a verbatim
+                        quotation, number, name of the author, or some other text that explicitly
+                        points to the object. The subject postdates the object. See also refers or
+                        alludes to.</desc>
+                    <constraints>
+                        <subject status="required" item-type="ref scriptum work version source"/>
+                        <object status="required" item-type="ref scriptum work version source person organization algorithm"/>
+                    </constraints>
+                </verb>
+                <verb group="cf">
+                    <IRI>tag:textalign.net,2015:verb:alludes-to</IRI>
+                    <name>alludes to</name>
+                    <desc>The subject (a textual artefact) refers to the object (a textual artefact
+                        or text maker). The reference is indirect (implicit), via a verbatim
+                        quotation, paraphrase, synonym, or some other text that only indirectly
+                        suggests the object. The subject postdates the object. See also refers or
+                        alludes to.</desc>
+                    <constraints>
+                        <subject status="required" item-type="ref scriptum work version source"/>
+                        <object status="required" item-type="ref scriptum work version source person organization algorithm"/>
+                    </constraints>
+                </verb>
+                <verb group="cf">
                     <IRI>tag:textalign.net,2015:verb:alludes-or-refers-to</IRI>
                     <name>alludes or refers to</name>
                     <name>refers or alludes to</name>
-                    <desc>The subject (a textual artefact) alludes to or refers to the object (a
-                        textual artefact or text maker). The allusion or reference may be direct or
-                        indirect. The subject by implication postdates the object.</desc>
-                    <desc>Although some people distinguish alluding and referring, this vocabulary
-                        item does not, since the distinction is very frequently hard to make or
-                        follow. Many people use the terms interchangeably. If gradated specificity
-                        is needed, @cert should be used, or a separate verb should be coined in a
-                        TAN-voc file or locally in &lt;vocabulary-key>.</desc>
+                    <desc>The subject (a textual artefact) refers to the object (a textual artefact
+                        or text maker) directly or indirectly. The subject postdates the object.
+                        See also refers to, alludes to.</desc>
                     <constraints>
                         <subject status="required" item-type="ref scriptum work version source"/>
                         <object status="required" item-type="ref scriptum work version source person organization algorithm"/>
