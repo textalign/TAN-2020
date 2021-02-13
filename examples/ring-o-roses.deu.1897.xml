@@ -13,6 +13,7 @@
          <desc>Dieses Werk ist lizenziert unter einer Creative Commons Namensnennung 4.0
             International Lizenz.</desc>
       </license>
+      <reference-system type="logical" wf-ready="false"/>
       <work>
          <IRI>tag:beispiel.com,2014:texte:holderbusch</IRI>
          <name>"Die Kinder auf dem Holderbusch"</name>

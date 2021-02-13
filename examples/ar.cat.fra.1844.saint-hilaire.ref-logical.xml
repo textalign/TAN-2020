@@ -14,6 +14,7 @@
             sources listed below, this data file, insofar as it constitutes an independent work, is
             licensed under a Creative Commons Attribution 4.0 International License.</desc>
       </license>
+      <reference-system type="logical" wf-ready="true"/>
       <work>
          <IRI>http://dbpedia.org/resource/Categories_(Aristotle)</IRI>
          <name xml:lang="fra">Aristote, Catégories</name>
@@ -31,6 +32,7 @@
       </redivision>
       <adjustments>
          <normalization which="no hyphens"/>
+         <normalization which="no ligatures"/>
       </adjustments>
       <vocabulary-key>
          <algorithm xml:id="xslt2">

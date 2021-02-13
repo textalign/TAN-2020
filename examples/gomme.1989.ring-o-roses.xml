@@ -26,6 +26,7 @@
         License. The license is granted independent of rights and licenses associated with the
         source. </name>
     </license>
+    <reference-system type="logical" wf-ready="true"/>
     <work>
       <IRI>tag:kalvesmaki@gmail.com,2014:work:gomme.1898.ring-o-roses</IRI>
       <name>Article by Alice Bertha Gomme on Ring a Ring o' Roses</name>
@@ -78,7 +79,12 @@
         <IRI>tag:parkj@textalign.net,2015:self</IRI>
         <name xml:lang="eng">Jenny Park</name>
       </person>
-      <algorithm xml:id="xslt1"><IRI>tag:textalign.net,2015:stylesheet:convert-tan2017-to-tan2018</IRI><name>Stylesheet to populate a TAN-A file from collections.</name><location accessed-when="2018-08-09T11:09:27.084-04:00" href="../applications/convert/convert%20TAN%202017%20to%20TAN%202018.xsl"/></algorithm>
+      <algorithm xml:id="xslt1">
+        <IRI>tag:textalign.net,2015:stylesheet:convert-tan2017-to-tan2018</IRI>
+        <name>Stylesheet to populate a TAN-A file from collections.</name>
+        <location accessed-when="2018-08-09T11:09:27.084-04:00"
+          href="../applications/convert/convert%20TAN%202017%20to%20TAN%202018.xsl"/>
+      </algorithm>
       <role xml:id="editor">
         <IRI>http://schema.org/editor</IRI>
         <name xml:lang="eng">Editor</name>
@@ -90,6 +96,7 @@
     <resp who="xslt2" roles="stylesheet1"/>
     <resp roles="editor" who="park"/>
     <resp who="xslt1" roles="stylesheet1"/>
+    <change when="2021-02-13" who="park">Replaced ever • with an em dash</change>
     <change when="2015-03-10" who="park">Created new TAN-TEI file.</change>
     <change who="xslt1" when="2017-11-02T22:22:13.424-04:00">TAN file updated to 2018 schemas.</change>
     <change when="2017-11-02" who="park">Removed reference numerals from text.</change>
@@ -112,13 +119,13 @@
             <l part="N">One for me, and one for you,</l>
           </div>
           <div type="line" n="4" part="N" org="uniform" sample="complete">
-            <l part="N">And one for little Moses•</l>
+            <l part="N">And one for little Moses—</l>
           </div>
           <div type="line" n="5" part="N" org="uniform" sample="complete">
             <l part="N">Hasher, Hasher, Hasher, all fall down.</l>
           </div>
           <div type="cit" n="cit" part="N" org="uniform" sample="complete">
-            <p part="N">•Winterton, Lincoln, and Leadenham (Miss M. Peacock).</p>
+            <p part="N">—Winterton, Lincoln, and Leadenham (Miss M. Peacock).</p>
           </div>
         </div>
         <div type="var" n="2" part="N" org="uniform" sample="complete">
@@ -129,13 +136,13 @@
             <l part="N">A pocket-full o' posies;</l>
           </div>
           <div type="line" n="3" part="N" org="uniform" sample="complete">
-            <l part="N">One for Jack, and one for Jim, and one for little Moses•</l>
+            <l part="N">One for Jack, and one for Jim, and one for little Moses—</l>
           </div>
           <div type="line" n="4" part="N" org="uniform" sample="complete">
             <l part="N">A-tisha! a-tisha! a-tisha!</l>
           </div>
           <div type="cit" n="cit" part="N" org="uniform" sample="complete">
-            <p part="N">•Shropshire (Burne's Shropshire Folk-lore, p. 511).</p>
+            <p part="N">—Shropshire (Burne's Shropshire Folk-lore, p. 511).</p>
           </div>
         </div>
         <div type="var" n="3" part="N" org="uniform" sample="complete">
@@ -152,7 +159,7 @@
             <l part="N">And a curchey all together.</l>
           </div>
           <div type="cit" n="cit" part="N" org="uniform" sample="complete">
-            <p part="N">•Egmond (Burne's Shropshire Folk-lore, p. 571).</p>
+            <p part="N">—Egmond (Burne's Shropshire Folk-lore, p. 571).</p>
           </div>
         </div>
         <div type="var" n="4" part="N" org="uniform" sample="complete">

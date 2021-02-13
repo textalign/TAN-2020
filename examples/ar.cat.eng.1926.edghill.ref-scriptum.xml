@@ -29,6 +29,8 @@
          <name>Categories, Aristotle, English translation by E. M. Edghill</name>
          <location href="ar.cat.eng.1926.edghill.ref-logical.xml"
             accessed-when="2016-07-07T16:36:28.867-04:00"/>
+         <comment who="kalvesmaki" when="2021-02-12">A scan is available here:
+            https://ia600908.us.archive.org/33/items/worksofaristotle01arisuoft/worksofaristotle01arisuoft.pdf</comment>
       </redivision>
       <model>
          <IRI>tag:kalvesmaki.com,2014:tan-t:ar.cat.grc.1949.minio-paluello:object-refs</IRI>
@@ -68,10 +70,19 @@
             <name xml:lang="eng">Editor</name>
          </role>
          <role xml:id="stylesheet1" which="stylesheet"/>
+         <scriptum xml:id="bekker">
+            <IRI>http://id.lib.harvard.edu/alma/990017941240203941/catalog</IRI>
+            <IRI>http://www.worldcat.org/oclc/490107033</IRI>
+            <name>Bekker</name>
+            <name>Bekker, I., Brandis, C., Bonitz, H., Deutsche Akademie der Wissenschaften zu
+               Berlin, &amp; Society for the Collegiate Instruction of Women, former owner. (1831).
+               Aristotelis opera. Berolini: Apud G. Reimerum.</name>
+         </scriptum>
       </vocabulary-key>
       <file-resp who="kalvesmaki"/>
       <resp roles="editor" who="kalvesmaki"/>
       <resp who="xslt1" roles="stylesheet1"/>
+      <change when="2020-12-31" who="kalvesmaki">Added new reference-system declaration.</change>
       <change when="2016-07-07T16:36:28.867-04:00" who="kalvesmaki">Reformatted file at
          ar.cat.eng.1926.edghill.sem.xml to the structure of the copy of the model.</change>
       <change who="xslt1" when="2017-11-02T22:27:59.302-04:00">TAN file updated to 2018

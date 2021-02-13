@@ -12,6 +12,7 @@
             <IRI>http://dbpedia.org/resource/Ring_a_Ring_o%27_Roses</IRI>
             <name>"Ring a Ring o' Roses" or "Ring Around the Rosie"</name>
         </work>
+        <reference-system type="logical" wf-ready="true"/>
         <source>
             <IRI>http://lccn.loc.gov/12032709</IRI>
             <name>Kate Greenaway, Mother Goose, New York, G. Routledge and sons [1881]</name>

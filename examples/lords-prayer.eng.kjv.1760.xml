@@ -9,6 +9,7 @@
       <master-location
          href="https://raw.githubusercontent.com/textalign/TAN-2020/master/examples/lords-prayer.eng.kjv.1760.xml"/>
       <license which="by 4.0" licensor="park"/>
+      <reference-system type="logical" wf-ready="false"/>
       <work>
          <IRI>http://dbpedia.org/resource/Lord%27s_Prayer</IRI>
          <name>Lord's Prayer</name>

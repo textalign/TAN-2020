@@ -4,27 +4,30 @@
 <!--<?xml-model href="http://textalign.net/release/TAN-2020/schemas/TAN-T.rnc" type="application/relax-ng-compact-syntax"?>
 <?xml-model href="http://textalign.net/release/TAN-2020/schemas/TAN-T.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>-->
 <TAN-T xmlns="tag:textalign.net,2015:ns" id="tag:kalvesmaki.com,2014:tan-t:ar.cat.lat.1961.a.minio-paluello:object-refs" TAN-version="2020">
-    <head>
-        <name>Categories, Aristotle, Latin translation by Boethius, first recension, edited by Minio-Paluello</name>
-       <master-location href="https://raw.githubusercontent.com/textalign/TAN-2020/master/examples/ar.cat.lat.1949.minio-paluello.ref-scriptum.xml"/>
-        <license licensor="kalvesmaki">
-            <IRI>http://creativecommons.org/licenses/by/4.0/deed.en_US</IRI>
-            <name>Creative Commons Attribution 4.0 International License</name>
-            <desc>Exclusive of rights held and licenses offered by rightsholders of the source or
-                sources listed below, this data file, insofar as it constitutes an independent work,
-                is licensed under a Creative Commons Attribution 4.0 International License.</desc>
-        </license>
-   <work>
-      <IRI>http://dbpedia.org/resource/Categories_(Aristotle)</IRI>
-      <name>Aristotle, Categories</name>
-   </work>
-        <source>
-            <IRI>http://id.lib.harvard.edu/aleph/000987221/catalog</IRI>
-            <IRI>http://www.worldcat.org/oclc/912995321</IRI>
-            <name>Aristoteles latinus. 1. 1-5, Categoriae vel praedicamenta : translatio Boethii -
-                editio composita translatio Guillelmi de Moerbeka, lemmata e simplicii commentario
-                decerpta pseudo-Augustini paraphrasis themistiana</name>
-        </source>
+   <head>
+      <name>Categories, Aristotle, Latin translation by Boethius, first recension, edited by
+         Minio-Paluello</name>
+      <master-location
+         href="https://raw.githubusercontent.com/textalign/TAN-2020/master/examples/ar.cat.lat.1949.minio-paluello.ref-scriptum.xml"/>
+      <license licensor="kalvesmaki">
+         <IRI>http://creativecommons.org/licenses/by/4.0/deed.en_US</IRI>
+         <name>Creative Commons Attribution 4.0 International License</name>
+         <desc>Exclusive of rights held and licenses offered by rightsholders of the source or
+            sources listed below, this data file, insofar as it constitutes an independent work, is
+            licensed under a Creative Commons Attribution 4.0 International License.</desc>
+      </license>
+      <work>
+         <IRI>http://dbpedia.org/resource/Categories_(Aristotle)</IRI>
+         <name>Aristotle, Categories</name>
+      </work>
+      <reference-system type="material" wf-ready="true"/>
+      <source>
+         <IRI>http://id.lib.harvard.edu/aleph/000987221/catalog</IRI>
+         <IRI>http://www.worldcat.org/oclc/912995321</IRI>
+         <name>Aristoteles latinus. 1. 1-5, Categoriae vel praedicamenta : translatio Boethii -
+            editio composita translatio Guillelmi de Moerbeka, lemmata e simplicii commentario
+            decerpta pseudo-Augustini paraphrasis themistiana</name>
+      </source>
       <see-also relationship="alt">
          <IRI>tag:kalvesmaki.com,2014:tan-t:ar.cat.grc.1949.minio-paluello:semantic-refs</IRI>
          <name>Categories, Aristotle, Greek text by Minio-Paluello</name>
@@ -35,8 +38,9 @@
          <algorithm xml:id="xslt2">
             <IRI>tag:textalign.net,2015:stylesheet:convert-tan2018-to-tan2020</IRI>
             <name>Stylesheet to create a TAN file.</name>
-            <location href="../applications/convert/convert%20TAN%202018%20to%20TAN%202020.xsl" accessed-when="2018-08-06T15:44:43.225-04:00"/>
-      </algorithm>
+            <location href="../applications/convert/convert%20TAN%202018%20to%20TAN%202020.xsl"
+               accessed-when="2018-08-06T15:44:43.225-04:00"/>
+         </algorithm>
          <div-type xml:id="p">
             <IRI>http://dbpedia.org/resource/Page_(paper)</IRI>
             <name>page</name>
@@ -57,7 +61,8 @@
          <algorithm xml:id="xslt1">
             <IRI>tag:textalign.net,2015:stylesheet:convert-tan2017-to-tan2018</IRI>
             <name>Stylesheet to populate a TAN-A file from collections.</name>
-            <location href="../applications/convert/convert%20TAN%202017%20to%20TAN%202018.xsl" accessed-when="2018-08-05"/>
+            <location href="../applications/convert/convert%20TAN%202017%20to%20TAN%202018.xsl"
+               accessed-when="2018-08-05"/>
          </algorithm>
          <role xml:id="editor">
             <IRI>http://schema.org/editor</IRI>
@@ -68,17 +73,28 @@
             <IRI>tag:kalvesmaki.com,2014:relationship:diff-work-version</IRI>
             <name>different work version</name>
          </relationship>
+         <scriptum xml:id="bekker">
+            <IRI>http://id.lib.harvard.edu/alma/990017941240203941/catalog</IRI>
+            <IRI>http://www.worldcat.org/oclc/490107033</IRI>
+            <name>Bekker</name>
+            <name>Bekker, I., Brandis, C., Bonitz, H., Deutsche Akademie der Wissenschaften zu
+               Berlin, &amp; Society for the Collegiate Instruction of Women, former owner. (1831).
+               Aristotelis opera. Berolini: Apud G. Reimerum.</name>
+         </scriptum>
       </vocabulary-key>
-    
-    <file-resp who="kalvesmaki"/>
-   <resp who="xslt2" roles="stylesheet1"/>
-   <resp roles="editor" who="kalvesmaki"/>
-    <resp who="xslt1" roles="stylesheet1"/>
-        <change when="2015-07-09-04:00" who="kalvesmaki">Started new file.</change>
-        <change who="xslt1" when="2017-11-02T22:20:37.256-04:00">TAN file updated to 2018 schemas.</change>
-   <change who="xslt2" when="2018-08-06T15:44:43.225-04:00">Converted from 2018 to 2019 schemas.</change>
+
+      <file-resp who="kalvesmaki"/>
+      <resp who="xslt2" roles="stylesheet1"/>
+      <resp roles="editor" who="kalvesmaki"/>
+      <resp who="xslt1" roles="stylesheet1"/>
+      <change when="2020-12-31" who="kalvesmaki">Added new reference-system declaration.</change>
+      <change when="2015-07-09-04:00" who="kalvesmaki">Started new file.</change>
+      <change who="xslt1" when="2017-11-02T22:20:37.256-04:00">TAN file updated to 2018
+         schemas.</change>
+      <change who="xslt2" when="2018-08-06T15:44:43.225-04:00">Converted from 2018 to 2019
+         schemas.</change>
       <to-do/>
-    </head>
+   </head>
     <body xml:lang="lat">
    <div type="p" n="5">
       <div type="l" n="1">LIBER ARISTOTELIS</div>

@@ -34,9 +34,15 @@
       <IRI>http://dbpedia.org/resource/Ring_a_Ring_o%27_Roses</IRI>
       <name>Ring around the Rosie</name>
     </work>
+    <version>
+      <IRI>tag:parkj@textalign.net,2015:work:ring:version:newell-reported</IRI>
+      <name>Ring around the Rosie, second version</name>
+      <name>Ring around the Rosie, version reported by Newell</name>
+    </version>
     <source>
       <IRI>http://lccn.loc.gov/51014126</IRI>
       <name>The Oxford dictionary of nursery rhymes, edited by Iona and Peter Opie.</name>
+      <desc>See p. 364, lines 37-40</desc>
     </source>
     <adjustments>
     </adjustments>

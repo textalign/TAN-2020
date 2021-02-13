@@ -91,6 +91,7 @@
       <resp who="xslt2" roles="stylesheet1"/>
       <resp roles="editor" who="kalvesmaki"/>
       <resp who="xslt1" roles="stylesheet1"/>
+      <change when="2020-12-31" who="kalvesmaki">Added new reference-system declaration.</change>
       <change when="2016-06-22T08:04:25.003-04:00" who="kalvesmaki">Reformatted according to first
          model found. Backup made at
          file:/C:/Users/jdkalv/Dropbox/TAN/library/TAN-2018/examples/ar.cat.eng.1926.edghill.sem-201606220804250030400.xml.</change>

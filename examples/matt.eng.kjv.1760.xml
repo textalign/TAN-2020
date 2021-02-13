@@ -6,6 +6,7 @@
       <name>Gospel of Matthew, King James Version of the Bible, 1760 edition</name>
       <master-location href="https://raw.githubusercontent.com/textalign/TAN-2020/master/examples/matt.eng.kjv.1760.xml"/>
       <license which="by 4.0" licensor="park"/>
+      <reference-system type="logical" wf-ready="true"/>
       <work which="matthew"/>
       <inclusion xml:id="serm-mount">
          <IRI>tag:parkj@textalign.net,2015:bible:matthew:sermon-on-the-mount</IRI>

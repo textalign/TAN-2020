@@ -144,6 +144,7 @@
             License. The license is granted independent of rights and licenses associated with the
             source. </name>
       </license>
+      <reference-system type="logical" wf-ready="false"/>
       <work>
          <IRI>tag:parkj@textalign.net,2015:work:patricius:confessio</IRI>
          <name>Confession of St. Patrick</name>

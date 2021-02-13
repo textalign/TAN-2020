@@ -19,6 +19,7 @@
             <IRI>tag:textalign.net,2015:work:aristotle:categories</IRI>
             <name>Aristotle, Categories</name>
         </work>
+        <reference-system type="material" wf-ready="true"/>
         <source>
             <IRI>http://lccn.loc.gov/50036648</IRI>
             <name>L. Minio-Paluello, Aristotelis categoriae et liber de interpretatione. Oxford,
@@ -64,10 +65,19 @@
                 <name xml:lang="eng">Editor</name>
             </role>
             <role xml:id="stylesheet1" which="stylesheet"/>
+            <scriptum xml:id="bekker">
+                <IRI>http://id.lib.harvard.edu/alma/990017941240203941/catalog</IRI>
+                <IRI>http://www.worldcat.org/oclc/490107033</IRI>
+                <name>Bekker</name>
+                <name>Bekker, I., Brandis, C., Bonitz, H., Deutsche Akademie der Wissenschaften zu
+                    Berlin, &amp; Society for the Collegiate Instruction of Women, former owner. (1831).
+                    Aristotelis opera. Berolini: Apud G. Reimerum.</name>
+            </scriptum>
         </vocabulary-key>
         <file-resp who="kalvesmaki"/>
         <resp who="xslt2" roles="stylesheet1"/>
         <resp who="kalvesmaki" roles="editor"/>
+        <change when="2020-12-31" who="kalvesmaki">Added new reference-system declaration.</change>
         <change when="2015-07-09-04:00" who="kalvesmaki">Started new file.</change>
         <change who="xslt2" when="2018-08-05T00:07:25.099-04:00">Converted from 2018 to 2019 schemas.</change>
         <to-do/>
