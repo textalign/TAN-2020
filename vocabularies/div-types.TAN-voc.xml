@@ -938,6 +938,7 @@
             <item>
                 <IRI>tag:textalign.net,2015:div-type:variant</IRI>
                 <name>variant</name>
+                <name>variation</name>
                 <desc>An alternative rendition of a passage. It is assumed that every variant will
                     have at least one sibling.</desc>
             </item>
