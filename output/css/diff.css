@@ -69,7 +69,8 @@ thead > tr:first-of-type > th[colspan] {
 }
 .e-div > .e-ref,
 .e-div > .a-n,
-.title{
+.title,
+.subtitle{
     color: blue
 }
 
@@ -119,6 +120,8 @@ script,
 .a-_len,
 .a-string-pos,
 .a-_pos,
+.a-_pos-a,
+.a-_pos-b,
 .a-orig-n,
 .e-div > .e-ref > .e-n,
 .e-div > .a-type,
@@ -149,13 +152,17 @@ td div.label ~ .non-tok
 }
 .label,
 .bottomline,
+.subtitle,
 .title{
    font-weight: 900;
 }
 .explanation {
    font-style: italic;
 }
-.title,
+.title{
+   font-size: 180%;
+}
+.subtitle,
 body > div > div.label{
    font-size:larger;
 }
@@ -182,8 +189,8 @@ body > * > .label {
 .explanation {
    margin: 2px 6px 6px 6px;
 }
-.e-div > .e-ref,
-.e-div > .a-n{
+.e-ref,
+.a-n{
     margin: 0px 4px;
 }
 .e-div > .e-div{

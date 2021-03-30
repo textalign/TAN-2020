@@ -31,7 +31,7 @@ $("table.e-stats .switch").click(function () {
    });
    console.log("Witnesses to show: ", arOn, arOn.length);
    /* ("div.e-u, div.e-a, div.e-b") */
-   $(this).parents("table.e-stats").parents("td, body").first().find("div.e-u, div.e-a, div.e-b").each(function () {
+   $(this).parents("table.e-stats").parents("td, body").first().find("div.e-u, div.e-a, div.e-b, div.siglum").each(function () {
       thisAttrClass = $(this).attr("class");
       theseClasses = thisAttrClass.match(/a-w-\S+|e-[ab]/g);
       commonWitnesses = arOn.filter(value => theseClasses.includes(value));

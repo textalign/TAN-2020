@@ -4,13 +4,16 @@
 /* background */
 .label:hover,
 .signal:hover,
-.TAN-T-merge .head > .src:hover,
+.TAN-T_merge .head > .src:hover,
+.e-TAN-T_merge .e-head > .src:hover,
 .option-item:hover
 {
    background-color: lightgreen;
 }
 .head,
+.e-head,
 .teiHeader,
+.e-teiHeader,
 tr > td.irrelevant,
 tr > td.label
 {
@@ -186,6 +189,7 @@ td div {
 }
 
 .head,
+.e-head,
 .control .group {
    border: 1px solid tan;
    border-radius: 5px;
@@ -245,12 +249,14 @@ div.lb:before {
 
 
 /* cursor */
-.TAN-T-merge .head,
+.TAN-T_merge .head,
+.e-TAN-T_merge .e-head,
 .control .sortable > * {
    cursor: move;
 }
 .label,
-.TAN-T-merge .head > .src,
+.TAN-T_merge .head > .src,
+.e-TAN-T_merge .e-head > .src,
 .switch,
 .signal,
 .tei .lem,
@@ -271,58 +277,93 @@ div.lb:before {
 
 .bibl > .label ~ *,
 .head > .label ~ *,
+.e-head > .label ~ *,
 .meta .label ~ *,
 .control > .group > .label ~ *,
 .hideNext ~ *,
 .tei .hideNext ~ *,
 /* hide specific elements that you wish to suppress */
 .error,
+.e-error,
 .warning,
+.e-warning,
 .expansion,
+.e-expansion,
 .skip,
+.e-skip,
 .hidden,
 .type,
+.a-type,
 .ed-who,
+.a-ed-who,
 /* TAN-T expansions produce both <ref> and <n>s. Your choice as to which to display */
 .TAN-T .ref,
+.e-TAN-T .e-ref,
 .div > .src,
+.e-div > .e-src,
 /*.ref,  */
 /* one shouldn't hide refs, generally */
 .TAN-T_merge > .label,
+.e-TAN-T_merge > .label,
 .TAN-T_merge .tr > .src,
+.e-TAN-T_merge .tr > .e-src,
 .TAN-T_merge .orig-ref,
+.e-TAN-T_merge .e-orig-ref,
 .TAN-T_merge .version > .ref > *,
+.e-TAN-T_merge .version > .e-ref > *,
 /*.TAN-T_merge .version > .n,*/
 /* suppress the info in each TAN-T-merge head so the source id can fit a single cell */
 /*.TAN-T_merge .head > .label ~ *,*/
 .tok-ref > .max,
 .tok > .tok-ref ~ *,
+.e-tok > .e-tok-ref ~ *,
 .div .tok-ref > .src,
+.e-div .e-tok-ref > .e-src,
 .div .tok-ref > .ref,
+.e-div .e-tok-ref > .e-ref,
 .div .tok-ref > .pos,
+.e-div .e-tok-ref > .a-pos,
 div.version > div.ref,
+div.version > div.e-ref,
 div.tei .hidden,
+div.ns-tei .hidden,
 div.tei .id,
+div.ns-tei .a-id,
 div.tei > .anchor,
+div.ns-tei > .e-anchor,
 .display-n ~ .n,
+.e-display-n ~ .a-n,
 td .n,
+td .a-n,
+td .e-n,
 div.div > div.n,
+div.e-div > div.a-n,
 .ref > .n,
+.e-ref > .e-n,
 td.ref > div:first-child ~ *,
+td.e-ref > div:first-child ~ *,
 .emph > .resp,
+.e-emph > .e-resp,
 .allusion > .type
+.e-allusion > .a-type
 {
    display: none
 }
 
 .tok,
+.e-tok,
 .non-tok,
+.e-non-tok,
 .inline,
 div.p > *,
 .when,
+.a-when,
 .who,
+.a-who,
 .tok *,
-.tei *
+.e-tok *,
+.tei *,
+.ns-tei *
 /*.tei .app,
 .tei .lem,
 .tei .rdg,
@@ -336,16 +377,25 @@ div.p > *,
 }
 .body > .div > .type:first-of-type,
 .p.tei,
-.tei .list {
+.ns-tei .e-p,
+.tei .list,
+.ns-tei .e-list
+{
    display: block
 }
 
 .inlineBlock,
 .TAN-T_merge .head,
+.e-TAN-T_merge .e-head,
 .div.version > .orig-ref,
 .div > .claim,
+.e-div > .e-claim,
 .claim .score,
+.e-claim .e-score,
 .claim div.ref,
+.e-claim div.e-ref,
+.claim > *,
+.e-claim > *,
 .bibl-key-item > *,
 .classSwitch > *,
 .option-item,
@@ -366,7 +416,8 @@ tr > td div.tei > .list,
 .group.sortable {
    display: table-row;
 }
-.TAN-T-merge .td > .version
+.TAN-T_merge .td > .version,
+.e-TAN-T_merge .td > .version
 {
    display: block;
 }
@@ -384,11 +435,15 @@ tr > td div.tei > .list,
    /*justify-content: space-around;*/
    /*align-items: center;*/
 }
-.TAN-T-merge .version,
+.TAN-T_merge .version,
+.e-TAN-T_merge .version,
 .align > .tok,
 .td,
 .n,
-.claim > * {
+.e-n,
+.claim > * 
+.e-claim > * 
+{
    display: table-cell;
    /*border: 1px solid green;*/
    vertical-align: middle;
@@ -399,27 +454,37 @@ td.version .version {
 
 /* float */
 /* leaf-div metadata */
-.TAN-T .n
+.TAN-T .n,
+.e-TAN-T .e-n
 {
    float: left;
    margin-right: 6px;
    color: gray
 }
 caption,
-.body > .div > .type {
+.body > .div > .type, 
+.e-body > .e-div > .e-type 
+{
    float: left;
 }
 .when,
+.a-when,
 .who,
+.a-who,
 .claimant,
+.a-claimant,
 .switch,
 .filter
 {
    float: right
 }
 .a,
+.e-a,
 .b,
-.common {
+.e-b,
+.common,
+.e-common
+{
    display: inline
 }
 
@@ -486,35 +551,64 @@ body > * > .name,
 
 /* font attributes */
 .head,
+.e-head,
 .teiHeader,
+.e-teiHeader,
 .IRI,
+.e-IRI,
 .who,
+.a-who,
 .when
+.a-when
 .claimant,
+.a-claimant,
 .desc,
+.e-desc,
 .src,
+.a-src,
+.e-src,
 .orig-ref,
+.a-orig-ref,
 .div > .tok > *,
+.e-div > .e-tok > *,
 .note,
+.e-note,
 .tei .resp,
+.ns-tei .a-resp,
 .tei .wit,
+.ns-tei .a-wit,
 .signal,
+.a-signal,
 td.n,
+td.a-n,
+td.e-n,
 .option-item,
 td .label,
 td.label,
 .tei .ref .rend,
+.ns-tei .e-ref .a-rend,
 .milestone .rend,
+.e-milestone .a-rend,
 .passage,
+.e-passage,
 .rename,
+.e-rename,
 div.ref ~ div.ref,
-div.n ~ div.n{
+div.e-ref ~ div.e-ref,
+div.n ~ div.n,
+div.a-n ~ div.a-n
+{
    font-size: smaller;
 }
 .name,
+.e-name,
 .body > .div > .n,
+.e-body > .e-div > .e-n,
 .body > .div > .display-n,
-.type
+.e-body > .e-div > .e-display-n,
+.type,
+.e-type,
+.a-type
 {
    font-size: 24px;
 }
@@ -526,11 +620,14 @@ div.n ~ div.n{
     font-style: italic;
 }*/
 .name,
+.e-name,
 .match,
 .boldface,
 .stats-diff,
 .tei .lem,
-.scholion /*,
+.ns-tei .e-lem,
+.scholion,
+.e-scholion /*,
 .tei .emph*/
 {
    font-weight: 900;
@@ -539,11 +636,15 @@ div.n ~ div.n{
 
 /* margins */
 .TAN-A-tok ~ .TAN-T .div,
-.TAN-A-lm ~ .TAN-T .div {
+.e-TAN-A-tok ~ .e-TAN-T .e-div,
+.TAN-A-lm ~ .TAN-T .div, 
+.e-TAN-A-lm ~ .e-TAN-T .div 
+{
    margin-top: 3em;
 }
 
-.scholion {
+.scholion,
+.e-scholion {
    margin-left: 3em;
 }
 
@@ -555,27 +656,39 @@ div.n ~ div.n{
    margin: initial
 }
 .head > .label,
+.e-head > .label,
 .bibl-item > .desc,
 .meta > .claim .label ~ div,
+.meta > .e-claim .label ~ div,
 .option-item {
    margin-left: 0.5em;
 }
 .tok,
+.e-tok,
 .non-tok,
+.e-non-tok,
 .div > .tok *,
+.e-div > .e-tok *,
 div.a,
+div.e-a,
 div.b,
+div.e-b,
 div.common,
-.tei div
+div.e-common,
+.tei div,
+.ns-tei div
 {
    margin-left: 0em;
 }
 div.group.sortable,
 .claim,
+.e-claim,
 .bibl-key {
    margin-bottom: 1em;
 }
-.meta .claim {
+.meta .claim, 
+.meta .e-claim 
+{
    margin-bottom: 0em;
 }
 .version-wrapper {
@@ -588,7 +701,8 @@ div.group.sortable,
 {
    opacity: 0.5;
 }
-.tei .add {
+.tei .add,
+.ns-tei .add{
    opacity: 0.7;
 }
 
@@ -598,26 +712,37 @@ div.group.sortable,
 #parameters .td {
    padding: 0px 8px;
 }
-.n {
+.n,
+.a-n,
+.e-n {
    padding: 0px 5px;
 }
-.claim > div {
+.claim > div,
+.e-claim > div{
    padding: 0px 2px 0px 0px;
 }
 td,
 td div {
    padding: 2px;
 }
-td div.tei div
+td div.tei div,
+td div.ns-tei div
 {
    padding: 0px;
 }
 div.lb,
+div.e-lb,
 div.a,
+div.e-a,
 div.b,
+div.e-b,
 div.common,
+div.e-common,
 div.tok,
-div.non-tok{
+div.e-tok,
+div.non-tok,
+div.e-non-tok
+{
    padding: 0px;
 }
 td.version.filler {
@@ -630,10 +755,14 @@ td.version.filler {
 
 
 /* position */
-.div > .tok > * {
+.div > .tok > *
+.e-div > .e-tok > *
+{
    position: absolute;
 }
-.div > .tok {
+.div > .tok
+.e-div > .e-tok
+{
    position: relative;
 }
 /* table */
@@ -646,7 +775,9 @@ table
 thead td,
 td .label,
 td .passage,
-td .rename
+td .e-passage,
+td .rename,
+td .e-rename
 {
    text-align: center;
 }
@@ -658,18 +789,28 @@ table.tablesorter td.stats-diff,
    text-align: right;
 }
 .a,
+.e-a,
 .tei .emph,
-.tei .quote {
+.ns-tei .e-emph,
+.tei .quote
+.ns-tei .e-quote
+{
    text-decoration: underline;
 }
 .b,
-.corr ~ .sic {
+.e-b,
+.corr ~ .sic
+.e-corr ~ .e-sic
+{
    text-decoration: line-through;
 }
-.resp {
+.resp
+.e-resp
+{
    text-decoration: inherit;
 }
-div.ref
+div.ref,
+div.e-ref
 {
    text-indent: 0px
 }
@@ -678,10 +819,15 @@ div.ref
 }
 /* vertical alignment */
 .tei .resp,
+.ns-tei .e-resp,
 .tei .wit,
+.ns-tei .e-wit,
 .signal,
 .tei .ref,
-.tei .milestone {
+.ns-tei .e-ref,
+.tei .milestone,
+.ns-tei .e-milestone
+{
    vertical-align: top;
    font-size: 0.6em;
 }
@@ -699,6 +845,9 @@ table {
 }*/
 /* word break */
 
-.n {
+.n,
+.e-n,
+.a-n
+{
    word-break: break-word;
 }
