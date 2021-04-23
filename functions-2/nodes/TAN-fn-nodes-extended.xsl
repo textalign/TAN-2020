@@ -104,29 +104,6 @@
    </xsl:template>
    
    
-   
-   <xsl:function name="tan:node-type" as="xs:string*" visibility="public">
-      <!-- Input: any XML items -->
-      <!-- Output: the node types of each item -->
-      <xsl:param name="xml-items" as="item()*"/>
-      <xsl:for-each select="$xml-items">
-         <xsl:choose>
-            <xsl:when test=". instance of document-node()">document-node</xsl:when>
-            <xsl:when test=". instance of comment()">comment</xsl:when>
-            <xsl:when test=". instance of processing-instruction()"
-               >processing-instruction</xsl:when>
-            <xsl:when test=". instance of element()">element</xsl:when>
-            <xsl:when test=". instance of attribute()">attribute</xsl:when>
-            <xsl:when test=". instance of text()">text</xsl:when>
-            <xsl:when test=". instance of xs:boolean">boolean</xsl:when>
-            <xsl:when test=". instance of map(*)">map</xsl:when>
-            <xsl:when test=". instance of array(*)">array</xsl:when>
-            <xsl:otherwise>undefined</xsl:otherwise>
-         </xsl:choose>
-      </xsl:for-each>
-   </xsl:function>
-   
-   
    <xsl:mode name="tan:strip-text" on-no-match="shallow-copy"/>
    
    <xsl:template match="text()" mode="tan:strip-text"/>
@@ -609,6 +586,50 @@
          </xsl:for-each-group> 
       </xsl:copy>
    </xsl:template>
+   
+   
+   <xsl:function name="tan:trim-long-tree" as="item()*">
+      <!-- Input: an XML tree, two integers -->
+      <!-- Output: the tree, anything beyond the shallow-copy point will be shallow-copied
+            and anything beyond the deep skip point will be deep-skipped. Comments will always 
+            indicate how many nodes were shallow-copied or deep-skipped.
+        -->
+      <!-- This function was written to truncate large diagnostic output -->
+      <xsl:param name="tree-to-trim" as="item()*"/>
+      <xsl:param name="shallow-copy-point" as="xs:integer"/>
+      <xsl:param name="deep-skip-point" as="xs:integer"/>
+      <xsl:apply-templates select="$tree-to-trim" mode="tan:trim-long-tree">
+         <xsl:with-param name="shallow-copy-point" tunnel="yes" as="xs:integer" select="$shallow-copy-point"/>
+         <xsl:with-param name="deep-skip-point" tunnel="yes" as="xs:integer" select="$deep-skip-point"/>
+      </xsl:apply-templates>
+   </xsl:function>
+   
+   <xsl:mode name="tan:trim-long-tree" on-no-match="shallow-copy"/>
+   
+   <xsl:template match="*" mode="tan:trim-long-tree">
+      <xsl:param name="shallow-copy-point" tunnel="yes" as="xs:integer"/>
+      <xsl:param name="deep-skip-point" tunnel="yes" as="xs:integer"/>
+      <xsl:variable name="children-to-process" as="node()*" select="node()[position() le $shallow-copy-point]"/>
+      <xsl:variable name="children-to-deep-skip" as="node()*" select="node()[position() gt $deep-skip-point]"/>
+      <xsl:variable name="children-to-shallow-copy" as="node()*" select="node() except ($children-to-process | $children-to-deep-skip)"/>
+      <xsl:copy>
+         <xsl:copy-of select="@*"/>
+         <xsl:apply-templates select="$children-to-process" mode="#current"/>
+         <xsl:if test="exists($children-to-shallow-copy)">
+            <xsl:text>&#xa;</xsl:text>
+            <xsl:comment select="'Trimming next ' || string(count($children-to-shallow-copy)) || ' nodes (shallow copy)'"/>
+            <xsl:text>&#xa;</xsl:text>
+            <xsl:copy-of select="tan:shallow-copy($children-to-shallow-copy)"/>
+         </xsl:if>
+         <xsl:if test="exists($children-to-deep-skip)">
+            <xsl:text>&#xa;</xsl:text>
+            <xsl:comment select="'Trimming next ' || string(count($children-to-deep-skip)) || ' nodes (deep skip)'"/>
+         </xsl:if>
+      </xsl:copy>
+   </xsl:template>
+   
+   
+   
    
 
    

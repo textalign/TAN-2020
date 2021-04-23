@@ -13,18 +13,22 @@
    </xsl:function>
    <xsl:function name="tan:shallow-copy" as="item()*" visibility="public">
       <!-- Input: any document fragment; boolean indicating whether attributes should be kept -->
-      <!-- Output: a shallow copy of the fragment, perhaps with attributes -->
+      <!-- Output: a shallow copy of the fragment -->
+      <!-- Attributes will be preserved in a shallow-copied element. -->
+      <!-- Maps and arrays will be discarded. -->
+      <!-- This function was written to truncate large trees for output to messages and diagnostic
+         result trees. -->
       <xsl:param name="items" as="item()*"/>
       <xsl:param name="depth" as="xs:integer"/>
-      <xsl:apply-templates select="$items" mode="tan:shallow-copy">
+      <xsl:apply-templates select="$items" mode="tan:fn-shallow-copy">
          <xsl:with-param name="levels-to-go" select="$depth"/>
       </xsl:apply-templates>
    </xsl:function>
    
    
-   <xsl:mode name="tan:shallow-copy" on-no-match="shallow-skip"/>
+   <xsl:mode name="tan:fn-shallow-copy" on-no-match="shallow-skip"/>
    
-   <xsl:template match="node() | document-node()" mode="tan:shallow-copy">
+   <xsl:template match="node() | document-node()" mode="tan:fn-shallow-copy">
       <xsl:param name="levels-to-go" as="xs:integer?"/>
       <xsl:if test="$levels-to-go gt 0">
          <xsl:copy>
@@ -1122,7 +1126,7 @@
          <xsl:variable name="diagnostics-on" select="false()" as="xs:boolean"/>
          <xsl:if test="$diagnostics-on">
             <xsl:message select="'Diagnostics on, tan:stamp-tree-with-text-data()'"/>
-            <xsl:message select="'Current node type, name:', tan:node-type(.), name(.)" use-when="not($tan:validation-mode-on)"/>
+            <xsl:message select="'Current node type, name:', tan:item-type(.), name(.)" use-when="not($tan:validation-mode-on)"/>
             <xsl:message select="'Current char pos:', $current-char-pos"/>
             <xsl:message select="'Element prepped 1: ', $this-element-prepped-1"/>
             <xsl:message select="'Element prepped 2: ', $this-element-prepped-2"/>
