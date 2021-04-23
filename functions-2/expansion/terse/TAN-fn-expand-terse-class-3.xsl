@@ -7,16 +7,18 @@
 
    <!-- TAN Function Library, terse expansion, class 3 files. -->
    
-   <xsl:template match="tan:TAN-mor/tan:body" mode="tan:dependency-adjustments-pass-1 tan:core-expansion-terse">
+   <xsl:template match="tan:TAN-mor/tan:body[tan:category]" mode="tan:dependency-adjustments-pass-1 tan:core-expansion-terse">
       <xsl:variable name="duplicate-features" select="tan:duplicate-items(tan:category/tan:feature/tan:type)"/>
+      <xsl:variable name="alias-ids" as="xs:string*" select="preceding-sibling::tan:head/tan:vocabulary-key/tan:alias/(@xml:id, @id)"/>
       <xsl:copy>
          <xsl:copy-of select="@*"/>
          <xsl:apply-templates mode="#current">
             <xsl:with-param name="duplicate-features" select="$duplicate-features" tunnel="yes"/>
+            <xsl:with-param name="alias-ids" tunnel="yes" select="$alias-ids"/>
          </xsl:apply-templates>
       </xsl:copy>
    </xsl:template>
-   <xsl:template match="tan:category " mode="tan:dependency-adjustments-pass-1 tan:core-expansion-terse">
+   <xsl:template match="tan:category" mode="tan:dependency-adjustments-pass-1 tan:core-expansion-terse">
       <xsl:variable name="duplicate-codes" select="tan:duplicate-items(tan:feature/tan:code)"/>
       <xsl:copy>
          <xsl:copy-of select="@*"/>
@@ -27,8 +29,12 @@
    </xsl:template>
    <xsl:template match="tan:feature/tan:type" mode="tan:dependency-adjustments-pass-1 tan:core-expansion-terse">
       <xsl:param name="duplicate-features" tunnel="yes"/>
+      <xsl:param name="alias-ids" as="xs:string*" tunnel="yes"/>
+      <xsl:if test=". = $alias-ids">
+         <xsl:copy-of select="tan:error('tmo03', (. || ' is an alias id'))"/>
+      </xsl:if>
       <xsl:if test=". = $duplicate-features">
-         <xsl:copy-of select="tan:error('tmo01', (. || ' repeats'))"/>
+         <xsl:copy-of select="tan:error('tmo01', (. || ' is repeated'))"/>
       </xsl:if>
       <xsl:copy-of select="."/>
    </xsl:template>
@@ -48,9 +54,9 @@
    <!-- TAN-mor -->
    
    <xsl:template match="tan:TAN-mor/tan:head/tan:vocabulary-key/tan:feature[@which]/tan:id" priority="1" mode="tan:core-expansion-terse">
-      <!-- This template overrules the default, because TAN-mor files
-      must cite all features that are allowed, and many times the name
-      is conveniently also the perfect id. -->
+      <!-- This template overrules the default, which flags as erroneous any vocabulary item whose @xml:id repeats
+         the value of @which. TAN-mor files must cite every feature that is allowed, and many times the @which value
+         is conveniently also the perfect id. -->
       <xsl:copy-of select="."/>
    </xsl:template>
    

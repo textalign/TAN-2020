@@ -962,7 +962,8 @@
    
    <xsl:template match="tan:m" mode="tan:tan-a-lm-expansion-terse">
       <xsl:param name="dependencies" tunnel="yes" as="document-node()*"/>
-      <xsl:variable name="morphology-ids" select="ancestor-or-self::*[tan:morphology][1]/tan:morphology"/>
+      <xsl:variable name="morphology-ids" select="ancestor-or-self::*[tan:morphology][1]/tan:morphology/text()"/>
+      <xsl:variable name="vocabulary-head" as="element()" select="root(.)/tan:TAN-A-lm/tan:head"/>
       <xsl:variable name="these-morphologies" as="document-node()*">
          <xsl:for-each select="$morphology-ids">
             <xsl:choose>
@@ -970,7 +971,7 @@
                   <xsl:sequence select="$dependencies[tan:TAN-mor/@morphology = $morphology-ids]"/>
                </xsl:when>
                <xsl:otherwise>
-                  <xsl:variable name="this-vocab" select="tan:vocabulary('morphology', ., root()/tan:TAN-A-lm/tan:head)"/>
+                  <xsl:variable name="this-vocab" select="tan:vocabulary('morphology', ., $vocabulary-head)"/>
                   <xsl:variable name="this-tan-mor" select="$dependencies[tan:TAN-mor/@id = $this-vocab/tan:item/tan:IRI]"/>
                   <xsl:sequence select="$this-tan-mor"/>
                </xsl:otherwise>
@@ -1020,7 +1021,9 @@
             <xsl:when test="exists($these-morphologies)">
                <xsl:apply-templates mode="#current">
                   <xsl:with-param name="dependencies" select="$these-morphologies" tunnel="yes"/>
-                  <xsl:with-param name="feature-vocabulary" select="$these-morphologies/tan:TAN-mor/tan:head/(tan:vocabulary, tan:tan-vocabulary, tan:vocabulary-key)/(tan:feature, tan:item[tan:affects-element = 'feature'])"/>
+                  <xsl:with-param name="feature-vocabulary"
+                     select="$these-morphologies/tan:TAN-mor/tan:head/(tan:vocabulary | tan:tan-vocabulary | tan:vocabulary-key)/(tan:feature | tan:item[tan:affects-element = 'feature'])"
+                  />
                </xsl:apply-templates>
             </xsl:when>
             <xsl:otherwise>
@@ -1033,7 +1036,7 @@
    
    <xsl:template match="tan:f[text()]" mode="tan:tan-a-lm-expansion-terse">
       <xsl:param name="dependencies" tunnel="yes" as="document-node()*"/>
-      <xsl:param name="feature-vocabulary"/>
+      <xsl:param name="feature-vocabulary" as="element()*"/>
       <xsl:variable name="this-f" select="."/>
       <xsl:variable name="help-requested" select="exists(@help)"/>
       <xsl:variable name="this-pos" select="xs:integer(@n)"/>
@@ -1056,8 +1059,16 @@
          <xsl:message select="'this voc item: ', tan:xml-to-string($this-voc-item)"/>
       </xsl:if>
       
-      <xsl:copy-of select="."/>
-      <!-- these errors are set as following siblings of the errant element because we need to tether it as a child to an element that was in the original. -->
+      <!--<xsl:copy-of select="."/>-->
+      <xsl:copy>
+         <xsl:copy-of select="@*"/>
+         <xsl:apply-templates mode="#current"/>
+         <xsl:if test="$tan:distribute-vocabulary">
+            <xsl:copy-of select="$this-voc-item/self::tan:item"/>
+         </xsl:if>
+      </xsl:copy>
+      <!-- these errors are set as following siblings of the errant element because we need to tether it as a child 
+         to an element that was in the original. -->
       <xsl:if test="not(exists($this-voc-item)) or $help-requested = true()">
          <xsl:variable name="this-message" as="xs:string*">
             <xsl:value-of select="
