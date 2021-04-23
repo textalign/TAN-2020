@@ -1,5 +1,5 @@
 [submodule "functions/regex"]
-	path = functions/regex
+	path = functions-old/regex
 	url = https://github.com/textalign/TAN-regex.git
 [submodule "applications/get inclusions/xslt-for-docx"]
 	path = applications/get inclusions/xslt-for-docx
@@ -11,7 +11,7 @@
 	path = output/js/venn.js
 	url = https://github.com/benfred/venn.js.git
 [submodule "applications/get"]
-	path = applications/get inclusions/xslt-for-docx
+	path = applications-old/get inclusions/xslt-for-docx
 	url = https://github.com/Arithmeticus/xslt-for-docx.git
 [submodule "output/js/tablesorter"]
 	path = output/js/tablesorter
