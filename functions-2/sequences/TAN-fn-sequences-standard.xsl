@@ -2,19 +2,120 @@
    xmlns="tag:textalign.net,2015:ns"
    xmlns:xs="http://www.w3.org/2001/XMLSchema"
    xmlns:tan="tag:textalign.net,2015:ns"
+   xmlns:math="http://www.w3.org/2005/xpath-functions/math"
+   xmlns:array="http://www.w3.org/2005/xpath-functions/array"
    xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="3.0">
 
    <!-- TAN Function Library sequence functions. -->
+   
+   
+   <xsl:function name="tan:item-type" as="xs:string*" visibility="public">
+      <!-- Input: any XML items -->
+      <!-- Output: the type of each item -->
+      <xsl:param name="xml-items" as="item()*"/>
+      <xsl:for-each select="$xml-items">
+         <xsl:choose>
+            <xsl:when test=". instance of document-node()">document-node</xsl:when>
+            <xsl:when test=". instance of comment()">comment</xsl:when>
+            <xsl:when test=". instance of processing-instruction()"
+               >processing-instruction</xsl:when>
+            <xsl:when test=". instance of element()">element</xsl:when>
+            <xsl:when test=". instance of attribute()">attribute</xsl:when>
+            <xsl:when test=". instance of text()">text</xsl:when>
+            <xsl:when test=". instance of map(*)">map</xsl:when>
+            <xsl:when test=". instance of array(*)">array</xsl:when>
+            <xsl:when test=". instance of function(*)" use-when="$tan:advanced-processing-available">function</xsl:when>
+            
+            <!-- The atomic types below follows the sequence presented in the chart at 
+               http://w3.org/TR/xmlschema11-2/#built-in-datatypes, but derived types are
+               tested before the archetypes.
+            -->
+            
+            <xsl:when test=". instance of xs:anyURI">xs:anyURI</xsl:when>
+            <xsl:when test=". instance of xs:base64Binary">xs:base64Binary</xsl:when>
+            <xsl:when test=". instance of xs:boolean">xs:boolean</xsl:when>
+            <xsl:when test=". instance of xs:date">xs:date</xsl:when>
+            <xsl:when test=". instance of xs:dateTime">xs:dateTime</xsl:when>
+            <xsl:when test=". instance of xs:dateTimeStamp">xs:dateTimeStamp</xsl:when>
+            
+            <!-- derivation line #3 from decimal -->
+            <xsl:when test=". instance of xs:negativeInteger">xs:negativeInteger</xsl:when>
+            <xsl:when test=". instance of xs:nonPositiveInteger">xs:nonPositiveInteger</xsl:when>
+            <!-- derivation line #2 from decimal -->
+            <xsl:when test=". instance of xs:unsignedByte">xs:unsignedByte</xsl:when>
+            <xsl:when test=". instance of xs:unsignedShort">xs:unsignedShort</xsl:when>
+            <xsl:when test=". instance of xs:unsignedInt">xs:unsignedInt</xsl:when>
+            <xsl:when test=". instance of xs:unsignedLong">xs:unsignedLong</xsl:when>
+            <xsl:when test=". instance of xs:positiveInteger">xs:positiveInteger</xsl:when>
+            <xsl:when test=". instance of xs:nonNegativeInteger">xs:nonNegativeInteger</xsl:when>
+            <!-- derivation line #1 from decimal -->
+            <xsl:when test=". instance of xs:byte">xs:byte</xsl:when>
+            <xsl:when test=". instance of xs:short">xs:short</xsl:when>
+            <xsl:when test=". instance of xs:int">xs:int</xsl:when>
+            <xsl:when test=". instance of xs:long">xs:long</xsl:when>
+            <xsl:when test=". instance of xs:integer">xs:integer</xsl:when>
+            <!-- master -->
+            <xsl:when test=". instance of xs:decimal">xs:decimal</xsl:when>
+            
+            <xsl:when test=". instance of xs:double">xs:double</xsl:when>
+            
+            <!-- derivation line #2 from duration -->
+            <xsl:when test=". instance of xs:yearMonthDuration">xs:yearMonthDuration</xsl:when>
+            <!-- derivation line #1 from duration -->
+            <xsl:when test=". instance of xs:dayTimeDuration">xs:dayTimeDuration</xsl:when>
+            <!-- master -->
+            <xsl:when test=". instance of xs:duration">xs:duration</xsl:when>
+            
+            <xsl:when test=". instance of xs:float">xs:float</xsl:when>
+            <xsl:when test=". instance of xs:gDay">xs:gDay</xsl:when>
+            <xsl:when test=". instance of xs:gMonth">xs:gMonth</xsl:when>
+            <xsl:when test=". instance of xs:gMonthDay">xs:gMonthDay</xsl:when>
+            <xsl:when test=". instance of xs:gYear">xs:gYear</xsl:when>
+            <xsl:when test=". instance of xs:gYearMonth">xs:gYearMonth</xsl:when>
+            <xsl:when test=". instance of xs:hexBinary">xs:hexBinary</xsl:when>
+            <xsl:when test=". instance of xs:NOTATION">xs:NOTATION</xsl:when>
+            <xsl:when test=". instance of xs:QName">xs:QName</xsl:when>
+            
+            <!-- derivation line #1 from string -->
+            <xsl:when test=". instance of xs:NMTOKEN">xs:NMTOKEN</xsl:when>
+            <xsl:when test=". instance of xs:IDREF">xs:IDREF</xsl:when>
+            <xsl:when test=". instance of xs:ID">xs:ID</xsl:when>
+            <xsl:when test=". instance of xs:ENTITY">xs:ENTITY</xsl:when>
+            <xsl:when test=". instance of xs:NCName">xs:NCName</xsl:when>
+            <xsl:when test=". instance of xs:Name">xs:Name</xsl:when>
+            <xsl:when test=". instance of xs:language">xs:language</xsl:when>
+            <xsl:when test=". instance of xs:token">xs:token</xsl:when>
+            <xsl:when test=". instance of xs:normalizedString">xs:normalizedString</xsl:when>
+            <!-- master -->
+            <xsl:when test=". instance of xs:string">xs:string</xsl:when>
+            
+            <xsl:when test=". instance of xs:time">xs:time</xsl:when>
+            
+            <xsl:when test=". instance of xs:untypedAtomic">xs:untypedAtomic</xsl:when>
+            
+            <xsl:otherwise>undefined</xsl:otherwise>
+         </xsl:choose>
+      </xsl:for-each>
+   </xsl:function>
    
    <xsl:function name="tan:duplicate-items" as="item()*" visibility="public">
       <!-- Input: any sequence of items -->
       <!-- Output: those items that appear in the sequence more than once -->
       <!-- This function parallels the standard fn:distinct-values() -->
       <xsl:param name="sequence" as="item()*"/>
-      <xsl:for-each-group select="$sequence" group-by=".">
-         <xsl:if test="count(current-group()) gt 1">
-            <xsl:sequence select="current-group()"/>
-         </xsl:if>
+      <xsl:for-each-group select="$sequence" group-by="tan:item-type(.)">
+         <xsl:choose>
+            <xsl:when test="current-grouping-key() = ('map', 'array', 'function')"/>
+            <xsl:otherwise>
+               <!-- Here a fingerprint function testing for deep equality would be good;
+                  for now, we just use the item itself. -->
+               <xsl:for-each-group select="current-group()" group-by=".">
+                  <xsl:if test="count(current-group()) gt 1">
+                     <xsl:sequence select="current-group()"/>
+                  </xsl:if>
+               </xsl:for-each-group> 
+            </xsl:otherwise>
+         </xsl:choose>
       </xsl:for-each-group> 
    </xsl:function>
    
@@ -105,17 +206,146 @@
                   <xsl:value-of select="."/>
                </xsl:for-each>
             </xsl:variable>
-            <xsl:variable name="this-collation"
+            <xsl:variable name="this-collation" as="element()"
                select="tan:collate-pair-of-sequences($results-so-far, $next-sequence)"/>
             <xsl:copy-of
-               select="tan:collate-sequence-loop($elements-with-elements[position() gt 1], $this-collation)"
+               select="tan:collate-sequence-loop($elements-with-elements[position() gt 1], $this-collation/*)"
             />
          </xsl:otherwise>
       </xsl:choose>
    </xsl:function>
    
    
-   <xsl:function name="tan:collate-pair-of-sequences" as="element()*" visibility="public">
+   <xsl:function name="tan:collate-pair-of-sequences" as="element()" visibility="public">
+      <!-- Input: two sequences of strings -->
+      <!-- Output: an element sequence that collates the two sequences as a single sequence, attempting to 
+         preserve the longest common subsequence. -->
+      <!-- This function has been written for two different scenarios: 
+        1. @n values in two sets of <div>s that must be collated;
+        2. pre-processing two long strings that need to be compared. 
+      Although the primary context is two sets of unique string-sequences, one could imagine situations 
+      where one or both input strings have repetition, in which case it is best to retain information about the
+      sequence. Hence the output is a sequence of elements, with @p1, @p2, or both signifying the position
+      of the original input. Hence the transformation is lossless, and the original input can be reconstructed
+      if needed.
+      -->
+      <xsl:param name="string-sequence-1" as="xs:string*"/>
+      <xsl:param name="string-sequence-2" as="xs:string*"/>
+      
+      <xsl:variable name="string-1-sequence-count" as="xs:integer" select="count($string-sequence-1)"/>
+      <xsl:variable name="string-2-sequence-of-p1-integers" as="array(xs:integer*)*">
+         <xsl:for-each select="$string-sequence-2">
+            <xsl:variable name="this-pos" as="xs:integer" select="position()"/>
+            <xsl:variable name="this-val" as="xs:string" select="."/>
+            <xsl:variable name="s1-index-points" as="xs:integer*" select="index-of($string-sequence-1, $this-val)"/>
+            <xsl:choose>
+               <xsl:when test="exists($s1-index-points)">
+                  <xsl:sequence select="[$s1-index-points]"/>
+               </xsl:when>
+               <xsl:otherwise>
+                  <xsl:sequence select="[()]"/>
+               </xsl:otherwise>
+            </xsl:choose>
+         </xsl:for-each>
+      </xsl:variable>
+
+      <xsl:variable name="longest-ascending-subsquence" as="array(xs:integer+)?"
+         select="tan:longest-ascending-subsequence(array:join($string-2-sequence-of-p1-integers))"/>
+      <xsl:variable name="las-size" as="xs:integer?" select="
+            if (exists($longest-ascending-subsquence)) then
+               array:size($longest-ascending-subsquence)
+            else
+               ()"/>
+      <xsl:variable name="str-1-las-values" as="xs:integer*" select="
+            for $i in (1 to $las-size)
+            return
+               $longest-ascending-subsquence($i)[2]"/>
+      <xsl:variable name="str-2-las-values" as="xs:integer*" select="
+            for $i in (1 to $las-size)
+            return
+               $longest-ascending-subsquence($i)[1]"/>
+
+      <xsl:variable name="seq-1-analyzed" as="element()*">
+         <xsl:for-each select="$string-sequence-1">
+            <xsl:choose>
+               <xsl:when test="position() = $str-1-las-values">
+                  <common>
+                     <xsl:value-of select="."/>
+                  </common>
+               </xsl:when>
+               <xsl:otherwise>
+                  <a><xsl:value-of select="."/></a>
+               </xsl:otherwise>
+            </xsl:choose>
+         </xsl:for-each>
+      </xsl:variable>
+      
+      <xsl:variable name="seq-2-analyzed" as="element()*">
+         <xsl:for-each select="$string-sequence-2">
+            <xsl:variable name="this-pos" as="xs:integer" select="position()"/>
+            <xsl:variable name="this-index-point" as="xs:integer?" select="index-of($str-2-las-values, $this-pos)"/>
+            <xsl:choose>
+               <xsl:when test="exists($this-index-point)">
+                  <!--  n="{$str-1-las-values[$this-index-point]}" -->
+                  <common>
+                     <xsl:value-of select="."/>
+                  </common>
+               </xsl:when>
+               <xsl:otherwise>
+                  <b><xsl:value-of select="."/></b>
+               </xsl:otherwise>
+            </xsl:choose>
+         </xsl:for-each>
+      </xsl:variable>
+      
+      <xsl:variable name="string-groups" as="element()+">
+         <string-1>
+            <xsl:for-each-group select="$seq-1-analyzed" group-ending-with="self::tan:common">
+               <group pos="{position()}">
+                  <xsl:copy-of select="current-group()"/>
+               </group>
+            </xsl:for-each-group> 
+         </string-1>
+         <string-2>
+            <xsl:for-each-group select="$seq-2-analyzed" group-ending-with="self::tan:common">
+               <group pos="{position()}">
+                  <xsl:copy-of select="current-group()"/>
+               </group>
+            </xsl:for-each-group> 
+         </string-2>
+      </xsl:variable>
+      
+      <xsl:variable name="diagnostics-on" select="false()"/>
+      <xsl:if test="$diagnostics-on">
+         <xsl:message select="'Diagnostics on, tan:collate-pair-of-sequences()'"/>
+         <!--<xsl:message select="'string-2-sequence-of-p1-integers:', tan:array-to-xml($string-2-sequence-of-p1-integers)"/>-->
+         <!--<xsl:message select="'String 1 prepped (', count($string-1-prep/*),  '): ', string-join($string-1-prep/*/text(), ' ')"/>-->
+         <!--<xsl:message select="'String 2 prepped (', count($string-2-prep/*), '): ', string-join($string-2-prep/*//text(), ' ')"/>-->
+         <!--<xsl:message select="'Longest ascending subsequence: ', tan:array-to-xml($longest-ascending-subsquence)"/>-->
+         <!--<xsl:message select="'Longest ascending subsequence (', count($longest-ascending-subsquence), '): ', string-join($longest-ascending-subsquence, ' ')"/>-->
+         <!--<xsl:message select="'String 1 grouped: ', $string-1-groups"/>-->
+         <!--<xsl:message select="'String 2 grouped: ', $string-2-groups"/>-->
+         
+      </xsl:if>
+      
+      <sequence>
+         <xsl:for-each-group select="$string-groups/*" group-by="@pos">
+            <xsl:copy-of select="current-group()/tan:a"/>
+            <xsl:copy-of select="current-group()/tan:b"/>
+            <xsl:copy-of select="(current-group()/tan:common)[1]"/>
+            
+            <xsl:if test="count(current-group()/tan:common) eq 1 or 
+               (count(current-group()/tan:common) eq 2 and not((current-group()/tan:common)[1] eq (current-group()/tan:common)[2]))">
+               <xsl:message select="'Unexpected problem in current group:', current-group()"/>
+            </xsl:if>
+            
+         </xsl:for-each-group>
+      </sequence> 
+   </xsl:function>
+   
+   
+   <!-- To be deleted next commit -->
+   <xsl:function name="tan:collate-pair-of-sequences-old" as="element()*" visibility="public">
       <!-- Input: two sequences of strings -->
       <!-- Output: an element sequence that collates the two sequences as a single sequence, attempting to 
          preserve the longest common subsequence. -->
@@ -163,7 +393,7 @@
          </xsl:for-each>
       </xsl:variable>
       <xsl:variable name="longest-ascending-subsquence" as="element()*"
-         select="tan:longest-ascending-subsequence($string-2-sequence-of-p1-integers)"/>
+         select="tan:longest-ascending-subsequence-old($string-2-sequence-of-p1-integers)"/>
       <xsl:variable name="subsequence-length" select="count($longest-ascending-subsquence)"/>
       <xsl:variable name="string-1-groups" as="element()">
          <string-1>
@@ -861,7 +1091,354 @@
    
    
    
-   <xsl:function name="tan:longest-ascending-subsequence" as="element()*" visibility="public">
+   <xsl:function name="tan:longest-ascending-subsequence" as="array(xs:integer+)?" visibility="public">
+      <!-- Input: a sequence of items. Each item is either an integer, an array of integer sequences, or a sequence of integers 
+         serialized as text nodes (within child elements) -->
+      <!-- Output: An array. Each member of the array is a sequence of two integers. The first represents the position of the 
+         output integer, and the second is the integer itself that is a member of the longest ascending subsequence. The positional
+         first integer allows one to disambiguate repetitions in the input. -->
+      <!-- Although this function claims by its name to find the longest subsequence, in the interests of efficiency, it applies 
+         the so-called Patience method of finding the string, which may return only a very long string, not the longest possible string. 
+         Such an approach allows the number of operations to be directly proportionate to the number of input values (backtracking would 
+         be computationally intensive on long sequences). The routine does "remember" gaps. If, given a set of integers, there is no
+         increment available in candidate sequences, the sequences are retained, but a check is made backward for a subsequence that
+         would account for the smallest of the new integers.
+      -->
+      <!-- The input allows a sequence of elements, along with integers, because this function has been written to support 
+         tan:collate-pairs-of-sequences(), which requires choice options. That is, you may have a situation
+         where you are comparing two sequences, either of which may have values that repeat, e.g., (a, b, c, b, d) and 
+         (c, b, d). The first sequence is converted (1, 2, 3, 4, 5). In finding a corresponding sequence of integers
+         for the second set, b must be allowed to be either 2 or 4, i.e., the array [3, (2, 4), 5]. Both items of input would ideally 
+         be expressed as arrays of integers, but this function serves an XSLT 2.0 library (where arrays are not recognized), and 
+         arrays are not as easy to construct and extract in XSLT 3.0 as maps are. -->
+      <!-- If an input array member consists of the empty sequence, its position impacts the positions that are returned in the output, but
+         not the corresponding values (obviously). -->
+      <xsl:param name="integer-sequence" as="item()*"/>
+      
+      <xsl:variable name="integer-sequence-arrays" as="array(*)*">
+         <xsl:apply-templates select="$integer-sequence" mode="tan:build-integer-arrays"/>
+      </xsl:variable>
+      <xsl:variable name="master-array" as="array(xs:integer*)?" select="array:join($integer-sequence-arrays)"/>
+      
+      <xsl:variable name="sequence-count" as="xs:integer" select="array:size($master-array)"/>
+      
+      <xsl:variable name="max-threads-allowed" as="xs:integer" select="4"/>
+      
+      <xsl:variable name="subsequence-arrays" as="array(xs:integer+)*">
+         <xsl:iterate select="1 to $sequence-count">
+            <xsl:param name="subsequence-arrays-so-far" as="array(xs:integer+)*"/>
+            
+            <xsl:on-completion select="$subsequence-arrays-so-far"/>
+            
+            <xsl:variable name="this-pos" as="xs:integer" select="."/>
+            <xsl:variable name="these-ints" as="xs:integer*" select="sort($master-array($this-pos))"/>
+            
+            <xsl:variable name="incremented-subsequence-arrays" as="array(xs:integer+)*">
+               <xsl:iterate select="$subsequence-arrays-so-far">
+                  <xsl:param name="ints-to-place" as="xs:integer*" select="$these-ints"/>
+                  
+                  <xsl:on-completion>
+                     <xsl:if test="exists($ints-to-place)">
+                        <xsl:sequence select="[($this-pos, $ints-to-place[1])]"/>
+                     </xsl:if>
+                  </xsl:on-completion>
+                  
+                  <xsl:variable name="this-array" as="array(xs:integer+)" select="."/>
+
+                  <xsl:variable name="this-top-int" as="xs:integer" select="$this-array(1)[2]"/>
+                  <!--<xsl:variable name="this-backup-int" as="xs:integer?" select="
+                        if (array:size($this-array) ge 2) then
+                           $this-array(2)[2]
+                        else
+                           ()"/>-->
+                  <xsl:variable name="best-int" select="min($ints-to-place[. gt $this-top-int])" as="xs:integer?"/>
+                  <!--<xsl:variable name="best-int-pos" as="xs:integer?" select="
+                        if (exists($best-int)) then
+                           index-of($ints-to-place, $best-int)
+                        else
+                           ()"/>-->
+                  <!--<xsl:variable name="next-ints-to-place" as="xs:integer*" select="
+                        if (exists($best-int-pos)) then
+                           $ints-to-place[position() lt $best-int-pos]
+                        else
+                           $ints-to-place"/>-->
+                  <xsl:variable name="next-ints-to-place" as="xs:integer*" select="$ints-to-place[. lt $this-top-int]"/>
+                  <!--<xsl:variable name="next-best-int" as="xs:integer?">
+                     <!-\-<xsl:iterate select="2 to array:size($this-array)">
+                        <xsl:param name="prev-val" as="xs:integer" select="$this-top-int"/>
+                        <xsl:variable name="this-pos" as="xs:integer" select="."/>
+                        <xsl:variable name="this-val" as="xs:integer" select="$this-array($this-pos)[2]"/>
+                        <xsl:choose>
+                           <xsl:when test="$this-val lt $prev-val - 1">
+                              <xsl:if test="exists($these-ints[. lt $prev-val][. gt $this-val])">
+                                 <xsl:sequence select="$this-pos"/>
+                              </xsl:if>
+                              <xsl:break/>
+                           </xsl:when>
+                           <xsl:otherwise>
+                              <xsl:next-iteration>
+                                 <xsl:with-param name="prev-val" select="$this-val"/>
+                              </xsl:next-iteration>
+                           </xsl:otherwise>
+                        </xsl:choose>
+                     </xsl:iterate>-\->
+                  </xsl:variable>-->
+                  <!--<xsl:variable name="next-best-int" as="xs:integer?" select="
+                        if (array:size($this-array) ge 2) then
+                           min($these-ints[. lt $this-top-int][. gt $this-array(2)[2]])
+                        else
+                           ()"/>-->
+                  
+                  <!--<xsl:variable name="backup-pos" as="xs:integer?">
+                     <xsl:if test="false() and not(exists($best-int)) and not(exists($next-best-int))">
+
+                        <xsl:iterate select="1 to array:size($this-array)">
+                           <xsl:variable name="this-subseq-pos" as="xs:integer" select="."/>
+                           <xsl:variable name="this-array-point" as="xs:integer" select="$this-array($this-subseq-pos)[2]"/>
+
+                           <xsl:choose>
+                              <xsl:when test="$this-array-point lt $these-ints[1]">
+                                 <xsl:sequence select="$this-subseq-pos"/>
+                                 <xsl:break/>
+                              </xsl:when>
+                              <xsl:otherwise>
+                                 <xsl:next-iteration/>
+                              </xsl:otherwise>
+                           </xsl:choose>
+                        </xsl:iterate>
+                     </xsl:if>
+                  </xsl:variable>-->
+                  
+                  
+                  <!--<xsl:variable name="preliminary-results" as="array(xs:integer+)*">
+                     <xsl:if test="exists($best-int)">
+                        <xsl:sequence
+                           select="array:insert-before($this-array, 1, ($this-pos, $best-int))"
+                        />
+                        <xsl:if test="$best-int gt $this-top-int + 1">
+                           <!-\- If there's a gap, leave a copy of the original array, in case we can backtrack -\->
+                           <xsl:sequence select="$this-array"/>
+                        </xsl:if>
+                     </xsl:if>
+                     <!-\- Back up one spot -\->
+                     <xsl:if test="exists($next-best-int)">
+                        <!-\-<xsl:sequence
+                           select="array:insert-before(array:tail($this-array), 1, ($this-pos, $next-best-int))"
+                        />-\->
+                        <xsl:sequence
+                           select="array:insert-before(array:remove($this-array, (1 to ($next-best-int - 1))), 1, ($this-pos, $next-best-int))"
+                        />
+                     </xsl:if>
+                     
+                  </xsl:variable>-->
+                  
+                  <xsl:choose>
+                     <xsl:when test="exists($best-int)">
+                        <xsl:sequence
+                           select="array:insert-before($this-array, 1, ($this-pos, $best-int))"
+                        />
+                        <!--<xsl:if test="(position() eq 1) and (($best-int - 2) gt $this-top-int)">
+                           <!-\- If there's a gappy jump, keep a copy of what was done, in case we can roll back. -\->
+                           <xsl:sequence select="$this-array"/>
+                        </xsl:if>-->
+                     </xsl:when>
+                     <xsl:otherwise>
+                        <!--<xsl:if test="exists($backup-pos)">
+                           <xsl:sequence select="
+                                 array:insert-before(array:remove($this-array, (1 to ($backup-pos - 1))), 1, ($this-pos, $these-ints[1]))"
+                           />
+                           <!-\- The following works for Saxon versions starting March 2020: https://saxonica.plan.io/issues/4500 -\->
+                           <!-\-<xsl:sequence
+                           select="array:insert-before(array:subarray($this-array, $backup-pos), 1, ($this-pos, $these-ints[1]))"
+                        />-\->
+                        </xsl:if>-->
+                        <!-- If none of the incoming integers are higher than the given subsequence, keep it,
+                           in case there's a future match. -->
+                        <xsl:sequence select="$this-array"/>
+                     </xsl:otherwise>
+                  </xsl:choose>
+                  
+                  <xsl:next-iteration>
+                     <xsl:with-param name="ints-to-place" select="$next-ints-to-place"/>
+                  </xsl:next-iteration>
+                  
+               </xsl:iterate>
+               <!-- This is for starting out. -->
+               <!--<xsl:if test="not(exists($subsequence-arrays-so-far))">
+                  <xsl:sequence select="[($this-pos, $these-ints[1])]"/>
+               </xsl:if>-->
+            </xsl:variable>
+            
+            <xsl:variable name="diagnostics-on" as="xs:boolean" select="false()"/>
+            <xsl:if test="$diagnostics-on">
+               <xsl:message select="'Diagnostics on, tan:longest-ascending-subsequence()'"/>
+               <xsl:message select="'iteration', ."/>
+               <xsl:message select="'Subsequence arrays so far (' || string(count($subsequence-arrays-so-far)) || '):', for $i in $subsequence-arrays-so-far return (array:flatten($i), '|')" use-when="not($tan:validation-mode-on)"/>
+               <xsl:message select="'Incremented subsequence arrays (' || string(count($incremented-subsequence-arrays)) || '):', for $i in $incremented-subsequence-arrays return (array:flatten($i), '|')" use-when="not($tan:validation-mode-on)"/>
+            </xsl:if>
+            
+            <xsl:next-iteration>
+               <xsl:with-param name="subsequence-arrays-so-far" select="$incremented-subsequence-arrays[position() le $max-threads-allowed]"/>
+            </xsl:next-iteration>
+         </xsl:iterate>
+      </xsl:variable>
+
+      <!--<xsl:variable name="subsequences" as="element()*">
+         <xsl:iterate select="$integer-sequence">
+            <xsl:param name="subsequences-so-far" as="element()*"/>
+            <xsl:variable name="this-pos" select="position()"/>
+            <xsl:variable name="these-ints" as="xs:integer*">
+               <xsl:choose>
+                  <!-\- If the item's children are castable as a sequence of integers, do so-\->
+                  <xsl:when test="(. instance of node()) and
+                        (every $i in *
+                           satisfies $i castable as xs:integer)">
+                     <xsl:sequence select="
+                           for $i in *
+                           return
+                              xs:integer($i)"/>
+                  </xsl:when>
+                  <!-\- If the item is castable as a single integer, do so -\->
+                  <xsl:when test=". castable as xs:integer">
+                     <xsl:sequence select="xs:integer(.)"/>
+                  </xsl:when>
+                  <!-\- Otherwise we don't know what kind of input is being given, and the item is skipped. -\->
+                  <xsl:otherwise>
+                     <xsl:message
+                        select="'Cannot interpret the following as an integer or sequence of integers: ' || ."
+                     />
+                  </xsl:otherwise>
+               </xsl:choose>
+            </xsl:variable>
+            <!-\- Look at the sequences so far and find those whose first (i.e., reversed last) value is less than
+            the current value -\->
+            <xsl:variable name="eligible-subsequences"
+               select="$subsequences-so-far[xs:integer(tan:val[1]) lt max($these-ints)][not(@before) or (xs:integer(@before) gt min($these-ints))]"/>
+            <xsl:variable name="new-subsequences" as="element()*">
+               <xsl:for-each select="$these-ints">
+                  <!-\- Iterate over each of the integers in the current item and build new sequences out of the
+                  eligible ones. -\->
+                  <xsl:variable name="this-int" select="."/>
+                  <!-\- Find within the eligible subsequences (1) those that are gapped (marked by @before) and the integer 
+                     precedes where the gap was, (2) the standard <seq> that -\->
+                  <xsl:variable name="these-eligible-subsequences"
+                     select="$eligible-subsequences[xs:integer(tan:val[1]) lt $this-int][not(@before) 
+                     or (xs:integer(@before) gt $this-int)]"/>
+                  <xsl:for-each select="$these-eligible-subsequences">
+                     <xsl:sort select="count(*)" order="descending"/>
+                     <xsl:variable name="this-subsequence-last-int" select="xs:integer(tan:val[1])"/>
+                     <!-\- Retain as a default only the longest new subsequence -\->
+                     <xsl:if test="position() eq 1">
+                        <xsl:copy>
+                           <val pos="{$this-pos}">
+                              <xsl:value-of select="$this-int"/>
+                           </val>
+                           <xsl:copy-of select="*"/>
+                        </xsl:copy>
+                        <!-\- If there's a gap in the sequence, "remember" the sequence before the gap -\->
+                        <xsl:if test="$this-int gt ($this-subsequence-last-int + 1)">
+                           <gap before="{$this-int}">
+                              <xsl:copy-of select="*"/>
+                           </gap>
+                        </xsl:if>
+                     </xsl:if>
+                  </xsl:for-each>
+                  <xsl:if test="not(exists($these-eligible-subsequences))">
+                     <!-\- If there's no match, let the integer start a new subsequence -\->
+                     <seq>
+                        <val pos="{$this-pos}">
+                           <xsl:value-of select="."/>
+                        </val>
+                     </seq>
+                  </xsl:if>
+               </xsl:for-each>
+               <xsl:copy-of select="$subsequences-so-far except $eligible-subsequences"/>
+            </xsl:variable>
+
+            <xsl:variable name="diagnostics-on" select="false()"/>
+            <xsl:if test="$diagnostics-on">
+               <xsl:message select="'Diagnostics on, tan:longest-ascending-subsequence(), building $subsequences'"/>
+               <xsl:message select="'Iteration number: ', $this-pos"/>
+               <xsl:message select="'These integers: ', $these-ints"/>
+               <xsl:message select="'Eligible subsequences:', $eligible-subsequences"/>
+               <xsl:message select="'New subsequences:', $new-subsequences"/>
+               <!-\-<xsl:message select="
+                  'Eligible subsequences: ',
+                  string-join(for $i in $eligible-subsequences
+                  return
+                  string-join((name($i), name($i/@before), $i/(@before, *)), ' '), '; ')"
+               />-\->
+               <!-\-<xsl:message select="
+                  'New subsequences: ',
+                  string-join(for $i in $new-subsequences
+                  return
+                  string-join((name($i), name($i/@before), $i/(@before, *)), ' '), '; ')"
+               />-\->
+            </xsl:if>
+
+            <xsl:if test="position() eq ($sequence-count)">
+               <xsl:copy-of select="$new-subsequences"/>
+            </xsl:if>
+            <xsl:next-iteration>
+               <xsl:with-param name="subsequences-so-far" select="$new-subsequences"/>
+            </xsl:next-iteration>
+         </xsl:iterate>
+      </xsl:variable>-->
+
+      <!-- The longest subsequence might not be at the top, so we re-sort, then
+      return a reversal of the children (because the subsequence was built in
+      reverse). -->
+      <!--<xsl:for-each select="$subsequences">
+         <xsl:sort select="count(*)" order="descending"/>
+         <xsl:if test="position() eq 1">
+            <xsl:for-each select="reverse(*)">
+               <xsl:copy-of select="."/>
+            </xsl:for-each>
+         </xsl:if>
+      </xsl:for-each>-->
+      <xsl:for-each select="$subsequence-arrays">
+         <xsl:sort select="array:size(.)" order="descending"/>
+         <xsl:if test="position() eq 1">
+            <xsl:sequence select="array:reverse(.)"/>
+         </xsl:if>
+      </xsl:for-each>
+
+   </xsl:function>
+   
+   
+   <xsl:mode name="tan:build-integer-arrays" on-no-match="shallow-skip"/>
+   
+   <xsl:template match="*" mode="tan:build-integer-arrays">
+      <xsl:variable name="viable-integer-candidates" as="node()*" select="text() | */text()"/>
+      <xsl:variable name="this-contains-only-integers" as="xs:boolean" select="
+            every $i in $viable-integer-candidates
+               satisfies $i castable as xs:integer"/>
+      <xsl:choose>
+         <xsl:when test="$this-contains-only-integers">
+            <xsl:sequence select="
+                  [
+                     (for $i in $viable-integer-candidates
+                     return
+                        xs:integer($i))
+                  ]"/>
+         </xsl:when>
+         <xsl:otherwise>
+            <xsl:apply-templates mode="#current"/>
+         </xsl:otherwise>
+      </xsl:choose>
+   </xsl:template>
+   
+   <xsl:template match=".[. castable as xs:integer]" priority="-1" mode="tan:build-integer-arrays">
+      <xsl:sequence select="[xs:integer(.)]"/>
+   </xsl:template>
+   
+   <xsl:template match=".[. instance of array(xs:integer*)]" mode="tan:build-integer-arrays">
+      <xsl:sequence select="."/>
+   </xsl:template>
+   
+   
+   
+   <xsl:function name="tan:longest-ascending-subsequence-old" as="element()*" visibility="public">
       <!-- Input: a sequence of items. Each item is either an integer or a sequence of integers (via child elements) -->
       <!-- Output: a sequence of elements. Each one has in its text node an integer greater than the preceding element's text node. 
          Each output element has a @pos with an integer identifying the position of the input item that has been chosen (to handle 
@@ -883,7 +1460,7 @@
       <xsl:param name="integer-sequence" as="item()*"/>
       <xsl:variable name="sequence-count" select="count($integer-sequence)"/>
       <xsl:variable name="first-item" select="$integer-sequence[1]"/>
-
+      
       <xsl:variable name="subsequences" as="element()*">
          <xsl:iterate select="$integer-sequence">
             <xsl:param name="subsequences-so-far" as="element()*"/>
@@ -892,12 +1469,12 @@
                <xsl:choose>
                   <!-- If the item's children are castable as a sequence of integers, do so-->
                   <xsl:when test="
-                        every $i in *
-                           satisfies $i castable as xs:integer">
+                     every $i in *
+                     satisfies $i castable as xs:integer">
                      <xsl:sequence select="
-                           for $i in *
-                           return
-                              xs:integer($i)"/>
+                        for $i in *
+                        return
+                        xs:integer($i)"/>
                   </xsl:when>
                   <!-- If the item is castable as a single integer, do so -->
                   <xsl:when test=". castable as xs:integer">
@@ -955,7 +1532,7 @@
                </xsl:for-each>
                <xsl:copy-of select="$subsequences-so-far except $eligible-subsequences"/>
             </xsl:variable>
-
+            
             <xsl:variable name="diagnostics-on" select="false()"/>
             <xsl:if test="$diagnostics-on">
                <xsl:message select="'Diagnostics on, tan:longest-ascending-subsequence(), building $subsequences'"/>
@@ -974,7 +1551,7 @@
                   string-join((name($i), name($i/@before), $i/(@before, *)), ' '), '; ')"
                />
             </xsl:if>
-
+            
             <xsl:if test="position() eq ($sequence-count)">
                <xsl:copy-of select="$new-subsequences"/>
             </xsl:if>
@@ -983,7 +1560,7 @@
             </xsl:next-iteration>
          </xsl:iterate>
       </xsl:variable>
-
+      
       <!-- The longest subsequence might not be at the top, so we re-sort, then
       return a reversal of the children (because the subsequence was built in
       reverse). -->
@@ -995,7 +1572,7 @@
             </xsl:for-each>
          </xsl:if>
       </xsl:for-each>
-
+      
    </xsl:function>
 
 

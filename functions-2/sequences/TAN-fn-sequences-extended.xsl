@@ -21,27 +21,5 @@
    </xsl:function>
    
    
-   <xsl:function name="tan:array-to-xml" as="element()*" visibility="public">
-      <!-- Input: an array -->
-      <!-- Output: the array expressed in an XML tree -->
-      <xsl:param name="array-to-convert" as="array(*)*"/>
-      <xsl:apply-templates select="$array-to-convert" mode="tan:array-to-xml"/>
-   </xsl:function>
-   
-   <xsl:mode name="tan:array-to-xml" on-no-match="shallow-copy"/>
-   
-   <xsl:template match=".[. instance of array(*)]" mode="tan:array-to-xml">
-      <xsl:variable name="this-array" as="array(*)" select="."/>
-      <xsl:variable name="this-size" as="xs:integer" select="array:size(.)"/>
-      <array>
-         <xsl:for-each select="1 to $this-size">
-            <item>
-               <xsl:apply-templates select="$this-array(.)" mode="#current"/>
-            </item>
-         </xsl:for-each>
-      </array>
-   </xsl:template>
-   
-   
 
 </xsl:stylesheet>
