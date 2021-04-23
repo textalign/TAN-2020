@@ -3,10 +3,13 @@
    xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tan="tag:textalign.net,2015:ns"
    xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:tei="http://www.tei-c.org/ns/1.0"
    xmlns:math="http://www.w3.org/2005/xpath-functions/math" xmlns:functx="http://www.functx.com"
-   xmlns:sch="http://purl.oclc.org/dsdl/schematron" exclude-result-prefixes="#all" version="2.0">
+   xmlns:sch="http://purl.oclc.org/dsdl/schematron" exclude-result-prefixes="#all" version="3.0">
 
    <!-- The parameters in this file are to be used in the core validation function files. -->
 
+   <!-- Schematron validation will override this value; setting it to false() ensures that non-validation algorithms using the function library get richer results -->
+   <xsl:param name="is-validation" as="xs:boolean" select="false()"/>
+   
    <!-- This is a special set of parameters with low import precedence, to optimize time spent in Schematron validation -->
    <xsl:param name="validation-is-terse" as="xs:boolean" select="false()"/>
    <xsl:param name="validation-is-normal" as="xs:boolean" select="false()"/>
@@ -33,9 +36,6 @@
    
    <!-- What string in an attribute value should be interpreted as a request for help? -->
    <xsl:param name="help-trigger" select="'???'"/>
-   
-   <!-- Schematron validation will override this value; setting it to false() ensures that non-validation algorithms using the function library get richer results -->
-   <xsl:param name="is-validation" as="xs:boolean" select="false()"/>
    
    <!-- How many loops should be tolerated in a recursive function before exiting? -->
    <xsl:param name="loop-tolerance" as="xs:integer" select="550"/>

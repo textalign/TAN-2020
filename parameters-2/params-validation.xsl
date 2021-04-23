@@ -19,7 +19,10 @@
    <!-- What should the default whitespace indentation value be? -->
    <xsl:param name="tan:default-indent-value" select="3"/>
    
-   <!-- During expansion, should every value for every attribute that points to a vocabulary item have the vocabulary imprinted with the value? This is used primarily in non-validation applications where immediate, quick access to the vocabulary is required. Caution: setting this value to true may result in very large files. -->
+   <!-- During expansion, should every value for every attribute that points to a vocabulary item 
+      have the vocabulary imprinted with the value? This is used primarily in non-validation applications, 
+      where immediate, quick access to the vocabulary is required. Caution: setting this value to true may 
+      result in very large files. -->
    <xsl:param name="tan:distribute-vocabulary" select="false() and $tan:validation-mode-on"/>
    
    <!-- If an item is invalid, what is the maximum number of suggestions that should be offered? -->

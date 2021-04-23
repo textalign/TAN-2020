@@ -11,13 +11,13 @@
    <!-- DIFF/COLLATE INPUT ADJUSTMENT -->
 
    <!-- Should punctuation be ignored? -->
-   <xsl:param name="ignore-punctuation-differences" as="xs:boolean" select="true()"/>
+   <xsl:param name="ignore-punctuation-differences" as="xs:boolean" select="false()"/>
    
    <!-- Should combining marks be ignored? -->
-   <xsl:param name="ignore-combining-marks" as="xs:boolean?" select="true()"/>
+   <xsl:param name="ignore-combining-marks" as="xs:boolean?" select="false()"/>
    
    <!-- Should differences in case be ignored? -->
-   <xsl:param name="ignore-case-differences" as="xs:boolean?" select="true()"/>
+   <xsl:param name="ignore-case-differences" as="xs:boolean?" select="false()"/>
    
    <!-- Summary of alterations, if any, that should be made to strings BEFORE tan:diff() 
       or tan:collate() are applied. -->
