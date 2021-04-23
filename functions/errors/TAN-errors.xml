@@ -155,6 +155,12 @@
     <group affects-element="model">
         <warning xml:id="cl107"><rule>If a class 1 file diverges from the structure of its model a warning will be generated specifying where differences exist.</rule></warning>
     </group>
+    <group affects-element="model reference-system">
+        <error xml:id="cl120"><rule>A class 1 file with a &lt;model> should not declare a &lt;reference-system>, which is inherited from the model.</rule></error>
+    </group>
+    <group affects-element="reference-system">
+        <error xml:id="cl121"><rule></rule></error>
+    </group>
     <group affects-element="model redivision companion-version">
         <error xml:id="cl102"><rule>Class 1 files must share the same work as any model, redivision, or companion version.</rule></error>
     </group>
@@ -182,6 +188,9 @@
     </group>
     <group affects-element="source">
         <error xml:id="cl114"><rule>A class 1 &lt;source> may not point to a TAN file.</rule></error>
+    </group>
+    <group affects-element="div" affects-attribute="ref-alias">
+        <error xml:id="cl119"><rule>Each value in @ref-alias must consist of as many @n values as the current div is deep in the body structure.</rule></error>
     </group>
     
     <!-- CLASS 2 ERRORS -->

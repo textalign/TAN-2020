@@ -66,6 +66,7 @@
     </group>
     <group affects-attribute="idrefs" affects-element="alias">
         <error xml:id="tan14"><rule>&lt;alias> references must not be circular.</rule></error>
+        <error xml:id="tan22"><rule>Every value in @idrefs must correspond to an @id or @xml:id in the file.</rule></error>
     </group>
     <group affects-element="master-location" affects-attribute="href">
         <error xml:id="tan15"><rule>No &lt;master-location> may have an @href that points to a compressed archive.</rule></error>
@@ -295,7 +296,8 @@
     
     <!-- TAN-mor ERRORS -->
     <group affects-attribute="type" affects-element="category feature">
-        <error xml:id="tmo01"><rule>Features may not be repeated within a given category.</rule></error>
+        <error xml:id="tmo01"><rule>Features may not be repeated in a categorized code scheme.</rule></error>
+        <error xml:id="tmo03"><rule>Codes in categorized features may not be keyed to aliases. @type must point to a single feature id.</rule></error>
     </group>
     <group affects-attribute="code" affects-element="feature">
         <error xml:id="tmo02"><rule>Codes for features must be case-indifferently unique within a given category.</rule></error>
