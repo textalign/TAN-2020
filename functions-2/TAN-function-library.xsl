@@ -99,6 +99,8 @@
    <xsl:include href="booleans/TAN-fn-booleans.xsl" use-when="not($tan:validation-mode-on)"/>
    <!-- Maps -->
    <xsl:include href="maps/TAN-fn-maps-extended.xsl" use-when="not($tan:validation-mode-on)"/>
+   <!-- Arrays -->
+   <xsl:include href="arrays/TAN-fn-arrays-extended.xsl" use-when="not($tan:validation-mode-on)"/>
    <!-- Language -->
    <xsl:include href="language/TAN-fn-language-extended.xsl" use-when="not($tan:validation-mode-on)"/>
    <!-- Diagnostics -->
