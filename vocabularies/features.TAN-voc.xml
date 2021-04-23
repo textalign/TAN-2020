@@ -88,6 +88,7 @@
         <item>
             <IRI>http://purl.org/olia/olia.owl#Adjective</IRI>
             <IRI>tag:textalign.net,2015:feature:Adjective</IRI>
+            <IRI>http://dbpedia.org/resource/Adjective</IRI>
             <name>adjective</name>
             <desc>EAGLES top-level category Adjective (AJ).</desc>
             <desc> An Adjective is a noun-modifying expression that specifies the properties or
@@ -262,6 +263,7 @@
         <item>
             <IRI>http://purl.org/olia/olia.owl#Adverb</IRI>
             <IRI>tag:textalign.net,2015:feature:Adverb</IRI>
+            <IRI>http://dbpedia.org/resource/Adverb</IRI>
             <name>adverb</name>
             <desc>EAGLES top-level category Adverb (AV). Skipped subconcepts ParticleAdverb and
                 GeneralAdverb: ParticleAdverb is better described by the join of particles or
@@ -2260,6 +2262,7 @@
         <item>
             <IRI>http://purl.org/olia/olia.owl#Comma</IRI>
             <IRI>tag:textalign.net,2015:feature:Comma</IRI>
+            <IRI>http://dbpedia.org/resource/Comma</IRI>
             <name>comma</name>
             <desc>http://www.isocat.org/datcat/DC-1448</desc>
             <desc> Mark (,) used in writing to show a short pause or to separate items in a list.
@@ -4010,6 +4013,7 @@
         <item>
             <IRI>http://purl.org/olia/olia.owl#Interjection</IRI>
             <IRI>tag:textalign.net,2015:feature:Interjection</IRI>
+            <IRI>http://dbpedia.org/resource/Interjection</IRI>
             <name>interjection</name>
             <desc>EAGLES top-level category Interjection (I).</desc>
             <desc> An interjection is a form, typically brief, such as one syllable or word, which
@@ -6714,6 +6718,7 @@
             <IRI>tag:textalign.net,2015:feature:LeftParentheticalPunctuation</IRI>
             <name>punctuation parenthetical left</name>
             <name>left parenthetical punctuation</name>
+            <name>opening parenthetical punctuation</name>
             <desc>TODO: rename to OpeningPerentheticalPunctuation to support scripts running from
                 left to right.</desc>
             <desc>added in accordance with a suggestion by Wilson and Leech (1996);
@@ -6726,6 +6731,7 @@
             <IRI>tag:textalign.net,2015:feature:RightParentheticalPunctuation</IRI>
             <name>punctuation parenthetical right</name>
             <name>right parenthetical punctuation</name>
+            <name>closing parenthetical punctuation</name>
             <desc>TODO: rename to ClosePunctuation to support scripts running from left to
                 right</desc>
             <desc>http://www.isocat.org/datcat/DC-2079</desc>
@@ -8217,6 +8223,7 @@
         <item>
             <IRI>http://purl.org/olia/olia.owl#ModalVerb</IRI>
             <IRI>tag:textalign.net,2015:feature:ModalVerb</IRI>
+            <IRI>http://dbpedia.org/resource/Modal_verb</IRI>
             <name>verb modal</name>
             <name>modal verb</name>
             <desc> Added for compatibility with the SFB632 annotation guidelines. May correspond to
