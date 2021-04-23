@@ -54,9 +54,8 @@
             <xsl:when test="ends-with(lower-case($this-path-normalized), '.docx')">
                <xsl:sequence select="tan:open-docx($this-path-normalized)"/>
             </xsl:when>
-            <xsl:when test="true()" use-when="$tan:advanced-processing-available">
-               <xsl:variable name="file-exists" use-when="$tan:advanced-processing-available"
-                  as="xs:boolean?">
+            <xsl:when test="true()" use-when="$tan:file-functions-available">
+               <xsl:variable name="file-exists" as="xs:boolean?">
                   <xsl:try select="file:exists($this-path-normalized-for-extension-functions)">
                      <xsl:catch>
                         <xsl:message

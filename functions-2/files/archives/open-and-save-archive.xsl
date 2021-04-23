@@ -90,36 +90,6 @@
     
     <!-- ANCILLARY UTILITY FUNCTIONS -->
 
-    <xsl:function name="tan:map-to-xml" as="element()*">
-        <!-- Input: any items -->
-        <!-- Output: any maps in each item serialized as XML elements -->
-        <!-- For those accustomed to handling ordinary XML nodes, maps can be frustrating to work with.
-        This function allows one to change a map to XML, and do fun things with it, without requiring
-        map functions. -->
-        <xsl:param name="items-to-convert" as="item()*"/>
-        <xsl:apply-templates select="$items-to-convert" mode="tan:map-to-xml"/>
-    </xsl:function>
-    
-    
-    <xsl:mode name="tan:map-to-xml" on-no-match="shallow-copy"/>
-    
-    <xsl:template match=".[. instance of map(*)]" mode="tan:map-to-xml">
-        <xsl:variable name="this-map" select="." as="map(*)"/>
-        <map>
-            <xsl:for-each select="map:keys(.)">
-                <entry>
-                    <key>
-                        <xsl:copy-of select="."/>
-                    </key>
-                    <value>
-                        <xsl:apply-templates select="$this-map(.)" mode="#current"/>
-                    </value>
-                </entry>
-            </xsl:for-each>
-        </map>
-    </xsl:template>
-    
-    
     <xsl:function name="tan:extract-map" as="map(xs:string,map(xs:string,item()?))" 
         use-when="$advanced-functions-available">
         <!-- Input: an archive in xs:base64Binary, entries as maps -->
