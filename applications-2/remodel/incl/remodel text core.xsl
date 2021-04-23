@@ -348,7 +348,7 @@
     </xsl:template>
     
     
-    <xsl:variable name="output-pass-2" as="document-node()" select="tan:update-change-log($output-pass-1)"/>
+    <xsl:variable name="output-pass-2" as="document-node()" select="tan:update-TAN-change-log($output-pass-1)"/>
     
 
     
