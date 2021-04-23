@@ -4434,29 +4434,31 @@ tag:bbrb@example.org,1995-04-01:pos-grc</programlisting>
                      <title>Extra <code><link linkend="attribute-n">@n</link></code>
                         vocabulary</title>
                      <para>If you are using <code><link linkend="attribute-n">@n</link></code> to
-                        label the names of books of the Bible or Surahs of the Qur'an, you will run
-                        into the issue of different conventions for <code><link
-                              linkend="attribute-n">@n</link></code>. To avoid this long-standing
-                        problem, you may want to use extra TAN vocabulary for <code><link
-                              linkend="attribute-n">@n</link></code>. If you include in the head of
-                        your TAN file <code>&lt;vocabulary which="bible eng"/></code>, then any
-                        non-numeric values of <code><link linkend="attribute-n">@n</link></code>
-                        will be checked against the corresponding TAN-voc file (in this case, the
-                        TAN-voc file at <code>/vocabularies/extra/n.bible.eng.tan-voc.xml</code>).
-                        This, in turn, will will allow other files to refer to that <code><link
-                              linkend="element-div">&lt;div></link></code> by any other <code><link
-                              linkend="element-name">&lt;name&gt;</link></code> that is a synonym.
-                        For example, in a class-1 file pointing to the TAN English Bible vocabulary
-                        above, a <code>&lt;div type="book" n="matt">...&lt;/div></code> would be
-                        regarded as containing the work the Gospel of Matthew. Any class-2 file that
-                        refers to that class-1 file as a source may use any synonym listed in the
-                        extra vocabulary file <code>n.bible.eng.tan-voc.xml</code>, i.e.,
-                           <code>Mt</code>, <code>Mat</code>, <code>Matt</code>, or
-                           <code>Matthew</code> (or their lowercase equivalents). An extra benefit
-                        of this method is that such <code><link linkend="element-div"
-                              >&lt;div></link></code>s are also marked as the works, identified by
-                        the <code><link linkend="element-IRI">&lt;IRI></link></code>s of the target
-                        TAN vocabulary items.</para>
+                        identify works within works, e.g., poems within a cycle, books in the Bible,
+                        or Surahs of the Qur'an, you will run into the issue of different
+                        conventions for <code><link linkend="attribute-n">@n</link></code>. The
+                        abbreviation chosen by one person or project is rarely the same as that
+                        adopted by the next. To avoid this long-standing problem, you may want to
+                        use extra TAN vocabulary for <code><link linkend="attribute-n"
+                           >@n</link></code>. If you include in the head of your TAN file
+                           <code>&lt;vocabulary which="bible eng"/></code>, then any non-numeric
+                        values of <code><link linkend="attribute-n">@n</link></code> will be checked
+                        against the corresponding TAN-voc file (in this case, the TAN-voc file at
+                           <code>/vocabularies/extra/n.bible.eng.tan-voc.xml</code>, one of several
+                        available in that directory). This, in turn, will will allow other files to
+                        refer to that <code><link linkend="element-div">&lt;div></link></code> by
+                        any other <code><link linkend="element-name">&lt;name&gt;</link></code> that
+                        is a synonym. For example, in a class-1 file pointing to the TAN English
+                        Bible vocabulary above, a <code>&lt;div type="book"
+                           n="matt">...&lt;/div></code> would be regarded as containing the work the
+                        Gospel of Matthew. Any class-2 file that refers to that class-1 file as a
+                        source may use any synonym listed in the extra vocabulary file
+                           <code>n.bible.eng.tan-voc.xml</code>, i.e., <code>Mt</code>,
+                           <code>Mat</code>, <code>Matt</code>, or <code>Matthew</code> (or their
+                        lowercase equivalents). An extra benefit of this method is that such
+                              <code><link linkend="element-div">&lt;div></link></code>s are also
+                        marked as the works, identified by the <code><link linkend="element-IRI"
+                              >&lt;IRI></link></code>s of the target TAN vocabulary items.</para>
                      <para>If you use extra TAN vocabulary, it is recommended you include in the
                         declarations section of your <code><link linkend="element-head"
                               >&lt;head></link></code> an <code><link linkend="element-n-alias"
@@ -4470,7 +4472,7 @@ tag:bbrb@example.org,1995-04-01:pos-grc</programlisting>
                         about what abbreviations are used to name well-known, unnumbered <code><link
                               linkend="element-div">&lt;div></link></code>s. It is hoped that in
                         future releases of TAN these extra vocabularies will grow in number and
-                        quality.</para>
+                        quality. You can write your own TAN-voc file for a set of n aliases.</para>
                      <para>Extra TAN <code><link linkend="attribute-n">@n</link></code> vocabularies:<itemizedlist>
                            <listitem>
                               <para><xref linkend="vocabularies-n-bible-eng"/></para>
@@ -5813,6 +5815,12 @@ tag:bbrb@example.org,1995-04-01:pos-grc</programlisting>
                         >&lt;lm&gt;</link></code>) is asserted to be true for every <code><link
                         linkend="element-tok">&lt;tok></link></code> or <code><link
                         linkend="element-group">&lt;group></link></code>. </para>
+               <para>All assertions are assumed to be made with 100% confidence unless <code><link
+                        linkend="attribute-cert">@cert</link></code> is invoked. This still holds
+                  even when a <code><link linkend="element-tok">&lt;tok></link></code> is the
+                  subject of multiple <code><link linkend="element-ana">&lt;ana&gt;</link></code>s,
+                  because it is possible to be completely confident that a given word has two
+                  different grammatical profiles in the target text (e.g., puns, wordplay).</para>
                <para>Many TAN-A-lm files will be generated by an algorithm that automatically lists
                   all possible morphological values of each token. It is advised that such automatic
                   calculations always include in their output <code><link linkend="attribute-cert"
