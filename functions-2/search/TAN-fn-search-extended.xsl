@@ -14,7 +14,7 @@
 
    <!-- TAN Function Library extended search functions. -->
 
-   <xsl:variable name="search-services" select="doc('TAN-search-services.xml')" as="document-node()"/>
+   <xsl:variable name="search-services" select="doc('search-services.xml')" as="document-node()"/>
 
    <xsl:function name="tan:search-for-scripta" as="item()*" visibility="public">
       <!-- Input: a search expression, an integer indicating the number of records requested -->
@@ -80,7 +80,7 @@
          <xsl:choose>
             <xsl:when test="
                   not(some $i in $morpheus-results
-                     satisfies tan:node-type($i) = 'document')">
+                     satisfies tan:item-type($i) = 'document')">
                <xsl:document>
                   <xsl:copy-of select="$morpheus-results"/>
                </xsl:document>

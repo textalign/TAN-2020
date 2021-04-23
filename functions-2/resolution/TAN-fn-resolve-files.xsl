@@ -40,7 +40,7 @@
             as "src" that we make the transition now. -->
          <xsl:variable name="this-name-norm" select="replace($this-element-name, 'source', 'src')"/>
          <xsl:variable name="this-id" select="@xml:id"/>
-         <xsl:variable name="this-first-doc" select="tan:get-1st-doc($this-element-expanded)"/>
+         <xsl:variable name="this-first-doc" as="document-node()?" select="tan:get-1st-doc($this-element-expanded)[1]"/>
          <xsl:variable name="these-attrs-to-stamp" as="attribute()*">
             <xsl:attribute name="{$this-name-norm}" select="($this-id, $this-element-expanded/(@xml:id, tan:id), '1')[1]"/>
          </xsl:variable>
