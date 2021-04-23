@@ -12,6 +12,7 @@
    <xsl:param name="advanced-saxon-features-available" static="yes"
       select="system-property('xsl:supports-higher-order-functions') eq 'yes'"/>
 
+   <xsl:include href="extra/TAN-rdf-functions.xsl"/>
    <xsl:include href="extra/TAN-function-functions.xsl"/>
    <xsl:include href="extra/TAN-schema-functions.xsl"/>
    <xsl:include href="extra/TAN-search-functions.xsl"/>
@@ -2048,8 +2049,8 @@
             <testing>
                <a2-to-a-diff><xsl:copy-of select="$a2-to-a-diff"/></a2-to-a-diff>
                <b2-to-b-diff><xsl:copy-of select="$b2-to-b-diff"/></b2-to-b-diff>
-               <a2-to-a-map><xsl:value-of select="map:for-each($a2-to-a-diff-map, function($k, $v){string($k) || ' ' || serialize($v) || ' (' || string(count($v)) || '); '})"/></a2-to-a-map>
-               <b2-to-b-map><xsl:value-of select="map:for-each($b2-to-b-diff-map, function($k, $v){string($k) || ' ' || serialize($v) || ' (' || string(count($v)) || '); '})"/></b2-to-b-map>
+               <!--<a2-to-a-map><xsl:value-of select="map:for-each($a2-to-a-diff-map, function($k, $v){string($k) || ' ' || serialize($v) || ' (' || string(count($v)) || '); '})"/></a2-to-a-map>-->
+               <!--<b2-to-b-map><xsl:value-of select="map:for-each($b2-to-b-diff-map, function($k, $v){string($k) || ' ' || serialize($v) || ' (' || string(count($v)) || '); '})"/></b2-to-b-map>-->
                <diff-to-replace-stamped><xsl:copy-of select="$diff-to-replace-stamped"/></diff-to-replace-stamped>
                <out-pass1><xsl:copy-of select="$output-pass-1"/></out-pass1>
                <out-pass2><xsl:copy-of select="$output-pass-2"/></out-pass2>
@@ -2146,7 +2147,7 @@
                <orig-witness-text><xsl:value-of select="$original-witness-string"/></orig-witness-text>
                <collate-witness-text><xsl:value-of select="$picked-witness-text"/></collate-witness-text>
                <wit2-to-wit-diff><xsl:copy-of select="$wit2-to-wit-diff"/></wit2-to-wit-diff>
-               <wit2-to-wit-map><xsl:value-of select="map:for-each($wit2-to-wit-diff-map, function($k, $v){string($k) || ' ' || serialize($v) || ' (' || string(count($v)) || '); '})"/></wit2-to-wit-map>
+               <!--<wit2-to-wit-map><xsl:value-of select="map:for-each($wit2-to-wit-diff-map, function($k, $v){string($k) || ' ' || serialize($v) || ' (' || string(count($v)) || '); '})"/></wit2-to-wit-map>-->
                <output-pass-1><xsl:copy-of select="$output-pass-1"/></output-pass-1>
             </testing>
          </xsl:when>
@@ -3254,7 +3255,7 @@
                   <current-text><xsl:value-of select="$current-text"/></current-text>
                   <new-body-text><xsl:value-of select="$new-body-text"/></new-body-text>
                   <text-diff><xsl:copy-of select="$text-diff"/></text-diff>
-                  <wit2-to-wit-map><xsl:value-of select="map:for-each($text-diff-map, function($k, $v){string($k) || ' ' || serialize($v) || ' (' || string(count($v)) || '); '})"/></wit2-to-wit-map>
+                  <!--<wit2-to-wit-map><xsl:value-of select="map:for-each($text-diff-map, function($k, $v){string($k) || ' ' || serialize($v) || ' (' || string(count($v)) || '); '})"/></wit2-to-wit-map>-->
                   <input-file-marked><xsl:copy-of select="$input-file-marked"/></input-file-marked>
                   <output-pass-1><xsl:copy-of select="$output-pass-1"/></output-pass-1>
                </diagnostics>
@@ -3319,6 +3320,22 @@
       <xsl:value-of
          select="string-join(distinct-values(($this-citation-longest-words[position() lt 3], $this-citation-dates[1])), ' ')"
       />
+   </xsl:function>
+   
+   <!-- UUIDs -->
+   <xsl:function name="tan:get-uuid">
+      <!-- zero-param version of the full one -->
+      <xsl:sequence select="tan:get-uuid(1)"/>
+   </xsl:function>
+   <xsl:function name="tan:get-uuid" as="xs:string*">
+      <!-- Input: a digit -->
+      <!-- Output: that digit's quantity of UUIDs -->
+      <!-- Code courtesy D. Novatchev, https://stackoverflow.com/questions/8126963/xslt-generate-uuid/64792196#64792196 -->
+      <xsl:param name="quantity" as="xs:integer"/>
+      <xsl:sequence select="
+            for $i in 1 to $quantity
+            return
+               unparsed-text(concat('https://uuidgen.org/api/v/4?x=', $i))"/>
    </xsl:function>
 
 </xsl:stylesheet>

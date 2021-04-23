@@ -364,6 +364,17 @@
             </xsl:otherwise>
          </xsl:choose>
       </xsl:variable>
+      
+      <!-- In validating, we need only worry about whether each reference is accurate. But that means
+      that a @ref such as 1-4 will mark only 1 and 4 as candidates for the annotation. Outside of
+      validation, we want every relevant intervening <div> marked as being part of the same claim. We
+      focus here on <ref>, using the @q value of the @from as a marker for intervening items (but without
+      @from, to distinguish it from the initial one) -->
+      <xsl:variable name="reference-tree-supplement" as="element()*">
+         <xsl:if test="not($use-validation-mode)">
+            
+         </xsl:if>
+      </xsl:variable>
 
       <!-- On the second pass, set all token- and character-based markers; all tokenization should have happened in the previous step -->
       <xsl:variable name="dependencies-marked-pass-2" as="document-node()*">
@@ -379,7 +390,9 @@
             </xsl:when>
             <xsl:otherwise>
                <xsl:apply-templates select="$dependencies-marked-pass-1"
-                  mode="mark-dependencies-pass-2"/>
+                  mode="mark-dependencies-pass-2">
+                  <xsl:with-param name="reference-trees" tunnel="yes" select="$reference-trees"/>
+               </xsl:apply-templates>
             </xsl:otherwise>
          </xsl:choose>
       </xsl:variable>
@@ -495,11 +508,11 @@
                      <dep-adjusted-1a><xsl:copy-of select="$dependencies-adjusted-pass-1a"/></dep-adjusted-1a>
                      <dep-adj-1-divs-to-reset><xsl:copy-of select="$adjustment-pass-1a-dependency-divs-to-reset"/></dep-adj-1-divs-to-reset>
                      <dep-adj-1-divs-with-attr-frag-from count="{count($adjustment-pass-1a-divs-with-attr-frag-from)}"><xsl:value-of select="$adjustment-pass-1a-divs-with-attr-frag-from"/></dep-adj-1-divs-with-attr-frag-from>
-                     <dep-adjusted-1b><xsl:copy-of select="$dependencies-adjusted-pass-1b"/></dep-adjusted-1b>
+                     <!--<dep-adjusted-1b><xsl:copy-of select="$dependencies-adjusted-pass-1b"/></dep-adjusted-1b>-->
                      <!--<dep-adjusted-2a><xsl:copy-of select="$dependencies-adjusted-pass-2a"/></dep-adjusted-2a>-->
                      <!--<dep-adjusted-2b><xsl:copy-of select="$dependencies-adjusted-pass-2b"/></dep-adjusted-2b>-->
-                     <!--<dep-marked-1><xsl:copy-of select="$dependencies-marked-pass-1"/></dep-marked-1>-->
-                     <!--<dep-marked-2><xsl:copy-of select="$dependencies-marked-pass-2"/></dep-marked-2>-->
+                     <dep-marked-1><xsl:copy-of select="$dependencies-marked-pass-1"/></dep-marked-1>
+                     <dep-marked-2><xsl:copy-of select="$dependencies-marked-pass-2"/></dep-marked-2>
                      <!--<dep-stripped><xsl:copy-of select="$dependencies-stripped-to-markers"/></dep-stripped>-->
                   </xsl:if>
                   <!--<core-terse-pass-3><xsl:copy-of select="$core-terse-expansion-pass-3"/></core-terse-pass-3>-->

@@ -129,6 +129,11 @@
         <idrefs attribute="version"/>
     </id>
     <id>
+        <element>work</element>
+        <element>version</element>
+        <idrefs attribute="work-version"/>
+    </id>
+    <id>
         <element>scriptum</element>
         <idrefs attribute="scriptum"/>
     </id>

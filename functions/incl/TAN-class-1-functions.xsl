@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns="tag:textalign.net,2015:ns" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
    xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tan="tag:textalign.net,2015:ns"
-   xmlns:tei="http://www.tei-c.org/ns/1.0" 
-   xmlns:math="http://www.w3.org/2005/xpath-functions/math" exclude-result-prefixes="#all"
-   version="2.0">
+   xmlns:tei="http://www.tei-c.org/ns/1.0" xmlns:map="http://www.w3.org/2005/xpath-functions/map"
+   xmlns:math="http://www.w3.org/2005/xpath-functions/math"
+   xmlns:array="http://www.w3.org/2005/xpath-functions/array"
+   exclude-result-prefixes="#all"
+   version="3.0">
 
    <!-- Core functions for class 1 files. Written principally for Schematron validation, but suitable for general use in other contexts -->
 
@@ -266,6 +268,16 @@
          <xsl:apply-templates mode="#current"/>
       </xsl:copy>
    </xsl:template>
+   
+   <xsl:template match="tan:reference-system" mode="core-expansion-terse">
+      <xsl:copy>
+         <xsl:copy-of select="@*"/>
+         <xsl:if test="exists(../tan:model)">
+            <xsl:copy-of select="tan:error('cl120')"/>
+         </xsl:if>
+         <xsl:apply-templates mode="#current"/>
+      </xsl:copy>
+   </xsl:template>
 
    <xsl:template match="tan:model" mode="core-expansion-terse">
       <xsl:variable name="these-iris" select="tan:IRI"/>
@@ -409,12 +421,71 @@
       </TAN-T>
    </xsl:template>
    
-   <xsl:template match="tei:body" mode="core-expansion-terse dependency-adjustments-pass-1">
+   <xsl:template match="*:body" mode="core-expansion-terse dependency-adjustments-pass-1">
+      <!-- Rebuild any divs with @ref-alias by making a copy of them, reconstructing a single-link hierarchy chain,
+      and sending them as last children of body through the current template -->
+      <xsl:variable name="divs-with-ref-alias" select="descendant::*:div[@ref-alias]" as="element()*"/>
+      <xsl:variable name="divs-with-ref-aliases-rebuilt" as="element()*">
+         <xsl:apply-templates select="$divs-with-ref-alias" mode="rebuild-divs-with-ref-aliases"/>
+      </xsl:variable>
+      
       <body>
          <xsl:copy-of select="@*"/>
          <xsl:apply-templates mode="#current"/>
+         <xsl:apply-templates select="$divs-with-ref-aliases-rebuilt" mode="#current"/>
       </body>
    </xsl:template>
+   
+   <xsl:template match="*:div[@ref-alias]" mode="rebuild-divs-with-ref-aliases">
+      <xsl:variable name="this-div" select="."/>
+      <xsl:variable name="div-chain" select="ancestor-or-self::*:div" as="element()*"/>
+      <xsl:variable name="depth-level" as="xs:integer" select="count($div-chain)"/>
+      <xsl:variable name="ref-alias-components" select="tokenize(@ref-alias, ' ')" as="xs:string+"/>
+      <xsl:variable name="ref-alias-errors" as="element()*">
+         <xsl:if test="count($ref-alias-components) mod $depth-level ne 0">
+            <xsl:copy-of select="tan:error('cl119')"/>
+         </xsl:if>
+      </xsl:variable>
+      
+      <xsl:for-each-group select="$ref-alias-components"
+         group-by="ceiling(position() div $depth-level)">
+         <xsl:variable name="these-n-vals" select="current-group()" as="xs:string+"/>
+         
+         <xsl:apply-templates select="$this-div" mode="rebuild-div-chain">
+            <xsl:with-param name="divs-to-model" as="element()+" select="$div-chain"/>
+            <xsl:with-param name="n-components" as="xs:string+" select="$these-n-vals"/>
+         </xsl:apply-templates>
+      </xsl:for-each-group>
+
+   </xsl:template>
+   
+   <xsl:template match="*:div" mode="rebuild-div-chain">
+      <xsl:param name="divs-to-model" as="element()+"/>
+      <xsl:param name="n-components" as="xs:string+"/>
+
+      <xsl:choose>
+         <xsl:when test="count($divs-to-model) gt 1">
+            <xsl:copy>
+               <xsl:copy-of select="$divs-to-model[1]/@type"/>
+               <xsl:attribute name="n" select="$n-components[1]"/>
+               <xsl:apply-templates select="." mode="#current">
+                  <xsl:with-param name="divs-to-model" as="element()+" select="tail($divs-to-model)"/>
+                  <xsl:with-param name="n-components" as="xs:string+" select="tail($n-components)"/>
+               </xsl:apply-templates>
+            </xsl:copy>
+         </xsl:when>
+         <xsl:otherwise>
+            <xsl:copy>
+               <xsl:copy-of select="@* except @n"/>
+               <xsl:attribute name="n" select="$n-components[1]"/>
+               <xsl:attribute name="alias-copy" select="true()"/>
+               <xsl:copy-of select="node()"/>
+            </xsl:copy>
+         </xsl:otherwise>
+      </xsl:choose>
+   </xsl:template>
+   
+   
    
    <xsl:template match="tei:text" mode="core-expansion-terse dependency-adjustments-pass-1">
       <!-- Makes sure tei:body rises rootward one level, as is customary for <body> in TAN and HTML -->
@@ -469,6 +540,27 @@
             </xsl:for-each>
          </xsl:for-each>
       </xsl:variable>
+      
+      <!--<xsl:variable name="ref-aliases" as="element()*">
+         <xsl:if test="exists(@ref-alias)">
+            <xsl:variable name="depth-level" select="count(ancestor-or-self::*:div)" as="xs:integer"/>
+            <xsl:variable name="ref-alias-components" select="tokenize(@ref-alias, ' ')" as="xs:string+"/>
+            <xsl:if test="count($ref-alias-components) mod $depth-level ne 0">
+               <xsl:copy-of select="tan:error('cl119')"/>
+            </xsl:if>
+            <xsl:for-each-group select="$ref-alias-components" group-by="ceiling(position() div $depth-level)">
+               <ref>
+                  <xsl:value-of select="string-join(current-group(), $separator-hierarchy)"/>
+                  <xsl:for-each select="current-group()">
+                     <n>
+                        <xsl:value-of select="."/>
+                     </n>
+                  </xsl:for-each>
+               </ref>
+            </xsl:for-each-group> 
+         </xsl:if>
+      </xsl:variable>-->
+      
       <xsl:variable name="is-leaf-div" select="not(exists(*:div))"/>
       
       <xsl:variable name="diagnostics-on" select="false()" as="xs:boolean"/>
@@ -481,6 +573,7 @@
          <xsl:copy-of select="@*"/>
          <xsl:copy-of select="$this-n-analyzed/*"/>
          <xsl:copy-of select="$new-refs"/>
+         <!--<xsl:copy-of select="$ref-aliases"/>-->
          <xsl:if
             test="
                some $i in $this-n-analyzed/*
@@ -614,6 +707,26 @@
       
       <xsl:variable name="equate-n-aliases" select="$these-adjustment-actions/self::tan:equate[tan:n = $this-n-analyzed/*]" as="element()*"/>
       
+      <!--<xsl:variable name="ref-aliases" as="element()*">
+         <xsl:if test="exists(@ref-alias)">
+            <xsl:variable name="depth-level" select="count(ancestor-or-self::*:div)" as="xs:integer"/>
+            <xsl:variable name="ref-alias-components" select="tokenize(@ref-alias, ' ')" as="xs:string+"/>
+            <xsl:if test="count($ref-alias-components) mod $depth-level ne 0">
+               <xsl:copy-of select="tan:error('cl119')"/>
+            </xsl:if>
+            <xsl:for-each-group select="$ref-alias-components" group-by="ceiling(position() div $depth-level)">
+               <ref>
+                  <xsl:value-of select="string-join(current-group(), $separator-hierarchy)"/>
+                  <xsl:for-each select="current-group()">
+                     <n>
+                        <xsl:value-of select="."/>
+                     </n>
+                  </xsl:for-each>
+               </ref>
+            </xsl:for-each-group> 
+         </xsl:if>
+      </xsl:variable>-->
+      
       <xsl:variable name="these-orig-refs-analyzed" as="element()*">
          <xsl:for-each select="$parent-orig-refs">
             <xsl:variable name="this-ref" select="."/>
@@ -678,6 +791,7 @@
                select="tan:imprint-adjustment-locator($not-actionable-adjustments, tan:error('cl219', $adjustment-error-message))"
             />
          </xsl:if>
+         <!--<xsl:copy-of select="$ref-aliases/self::tan:error"/>-->
       </xsl:variable>
       <xsl:variable name="is-tei" select="namespace-uri() = 'http://www.tei-c.org/ns/1.0'"
          as="xs:boolean"/>
@@ -1803,7 +1917,7 @@
    <xsl:template match="/" priority="1" mode="mark-dependencies-pass-1">
       <xsl:param name="class-2-doc" tunnel="yes" as="document-node()?"/>
       <xsl:param name="reference-trees" tunnel="yes" as="element()*"/>
-      <xsl:param name="use-validation-mode" tunnel="yes" as="xs:boolean?"/>
+      <xsl:param name="use-validation-mode" tunnel="yes" as="xs:boolean?" select="$is-validation"/>
       
       <xsl:variable name="this-src-id" select="*/@src"/>
       <xsl:variable name="this-token-definition"
@@ -1822,8 +1936,9 @@
             </xsl:otherwise>
          </xsl:choose>
       </xsl:variable>
+      <xsl:variable name="this-doc-node" select="." as="document-node()"/>
 
-      <xsl:variable name="these-reference-trees" select="$reference-trees[tan:src/text() = $this-src-id]"/>
+      <xsl:variable name="these-reference-trees" select="$reference-trees[tan:src/text() = $this-src-id]" as="element()*"/>
       <xsl:variable name="tokenize-here-universally" select="exists($these-reference-trees/tan:tok)"/>
       
       <xsl:variable name="n-alias-items"
@@ -1966,6 +2081,7 @@
       <xsl:param name="reference-trees" tunnel="yes" as="element()*"/>
       
       <xsl:variable name="universal-token-refs" select="$reference-trees/tan:tok"/>
+      
       <xsl:copy>
          <xsl:copy-of select="@*"/>
          <xsl:if test="exists($universal-token-refs)">
@@ -2048,11 +2164,11 @@
       <xsl:param name="reference-trees" tunnel="yes" as="element()*"/>
       <xsl:param name="please-tokenize" tunnel="yes" as="xs:boolean?"/>
 
-      <xsl:variable name="is-leaf-div" select="not(exists(tan:div))"/>
-      <xsl:variable name="these-ns" select="tan:n"/>
-      <xsl:variable name="this-n-level" select="count(tan:ref[1]/tan:n)"/>
-      <xsl:variable name="next-n-level" select="$this-n-level + 1"/>
-      <xsl:variable name="next-ns" select="tan:div[not(tan:ref/@reset)]/tan:n"/>
+      <!--<xsl:variable name="is-leaf-div" select="not(exists(tan:div))"/>-->
+      <!--<xsl:variable name="these-ns" select="tan:n"/>-->
+      <!--<xsl:variable name="this-n-level" select="count(tan:ref[1]/tan:n)"/>-->
+      <!--<xsl:variable name="next-n-level" select="$this-n-level + 1"/>-->
+      <!--<xsl:variable name="next-ns" select="tan:div[not(tan:ref/@reset)]/tan:n"/>-->
       <xsl:variable name="these-refs" select="tan:ref/text()"/>
 
       <xsl:variable name="these-reference-trees"
@@ -2314,6 +2430,247 @@
       </xsl:choose>
       
 
+   </xsl:template>
+   
+   <xsl:template match="/" mode="mark-dependencies-pass-2">
+      <xsl:param name="reference-trees" tunnel="yes" as="element()*"/>
+      
+      <xsl:variable name="this-doc-node" select="." as="document-node()"/>
+      <xsl:variable name="this-src" select="*/@src" as="attribute()"/>
+      <xsl:variable name="these-reference-trees" select="$reference-trees[tan:src/text() = $this-src]" as="element()*"/>
+      <xsl:variable name="this-insertion-key" as="element()*">
+         <!-- The goal is to find out at what point each from-to pair diverge in the tree. All other values can be ignored. -->
+
+         <xsl:for-each select="$these-reference-trees//*[@from][@alter-q]">
+            <xsl:variable name="this-q" select="@q"/>
+            <xsl:variable name="this-alter-q" select="@alter-q"/>
+            <xsl:variable name="these-markers" select="key('q-ref', $this-q, $this-doc-node)"
+               as="element()*"/>
+            <xsl:variable name="these-alter-markers"
+               select="key('q-ref', $this-alter-q, $this-doc-node)" as="element()*"/>
+
+            <xsl:variable name="these-from-qs" as="array(xs:string+)*">
+               <xsl:for-each select="$these-markers">
+                  <xsl:variable name="these-ancestral-divs" select="ancestor::tan:div"
+                     as="element()*"/>
+                  <xsl:if test="exists($these-ancestral-divs)">
+                     <xsl:sequence select="
+                           array {
+                              for $i in $these-ancestral-divs
+                              return
+                                 string($i/@q)
+                           }"/>
+                  </xsl:if>
+               </xsl:for-each>
+            </xsl:variable>
+            <xsl:variable name="these-to-qs" as="array(xs:string+)*">
+               <xsl:for-each select="$these-alter-markers">
+                  <xsl:variable name="these-ancestral-divs" select="ancestor::tan:div"
+                     as="element()*"/>
+                  <xsl:if test="exists($these-ancestral-divs)">
+                     <xsl:sequence select="
+                           array {
+                              for $i in $these-ancestral-divs
+                              return
+                                 string($i/@q)
+                           }"/>
+                  </xsl:if>
+               </xsl:for-each>
+            </xsl:variable>
+            <xsl:variable name="marker-to-implant" as="element()?">
+               <xsl:for-each select="$these-markers[1]">
+                  <xsl:copy>
+                     <xsl:copy-of select="@q | @attr"/>
+                     <xsl:attribute name="cont"/>
+                  </xsl:copy>
+               </xsl:for-each>
+            </xsl:variable>
+
+            <xsl:variable name="max-length" as="xs:integer?" select="
+                  max((for $i in ($these-from-qs, $these-to-qs)
+                  return
+                     array:size($i)))"/>
+
+
+
+            <xsl:if test="exists($max-length)">
+               <xsl:iterate select="1 to $max-length">
+                  <xsl:variable name="this-level" select="."/>
+                  <xsl:variable name="these-start-qs" select="
+                        for $i in $these-from-qs[array:size(.) gt 0]
+                        return
+                           $i($this-level)" as="xs:string+"/>
+                  <xsl:variable name="these-end-qs" select="
+                        for $i in $these-to-qs[array:size(.) gt 0]
+                        return
+                           $i($this-level)" as="xs:string+"/>
+                  <xsl:variable name="sets-differ" as="xs:boolean" select="
+                        (some $i in $these-start-qs
+                           satisfies not($i = $these-end-qs)) or (some $i in $these-end-qs
+                           satisfies not($i = $these-start-qs))"/>
+                  <xsl:choose>
+                     <xsl:when test="$sets-differ">
+                        <insert>
+                           <what>
+                              <xsl:copy-of select="$marker-to-implant"/>
+                           </what>
+                           <xsl:for-each select="$these-from-qs">
+                              <between>
+                                 <xsl:for-each
+                                    select="array:flatten(array:subarray(., $this-level))">
+                                    <q>
+                                       <xsl:value-of select="."/>
+                                    </q>
+                                 </xsl:for-each>
+                              </between>
+                           </xsl:for-each>
+                           <xsl:for-each select="$these-to-qs">
+                              <and>
+                                 <xsl:for-each
+                                    select="array:flatten(array:subarray(., $this-level))">
+                                    <q>
+                                       <xsl:value-of select="."/>
+                                    </q>
+                                 </xsl:for-each>
+                              </and>
+                           </xsl:for-each>
+                        </insert>
+                        <xsl:break/>
+                     </xsl:when>
+                     <xsl:otherwise>
+                        <xsl:next-iteration/>
+                     </xsl:otherwise>
+                  </xsl:choose>
+               </xsl:iterate>
+            </xsl:if>
+
+
+
+         </xsl:for-each>
+
+      </xsl:variable>
+      
+      <xsl:variable name="this-doc-with-from-to-pairs-prepped" as="document-node()">
+         <xsl:document>
+            <xsl:choose>
+               <xsl:when test="exists($this-insertion-key)">
+                  <xsl:apply-templates mode="mark-dependencies-pass-2-from-tos">
+                     <xsl:with-param name="insertions-to-process" as="element()*" select="$this-insertion-key" tunnel="yes"/>
+                  </xsl:apply-templates>
+               </xsl:when>
+               <xsl:otherwise>
+                  <xsl:sequence select="."/>
+               </xsl:otherwise>
+            </xsl:choose>
+         </xsl:document>
+      </xsl:variable>
+      
+      <xsl:document>
+         <xsl:apply-templates select="$this-doc-with-from-to-pairs-prepped/node()" mode="#current"/>
+      </xsl:document>
+      
+   </xsl:template>
+   
+   <xsl:template match="tan:body | tan:div" mode="mark-dependencies-pass-2-from-tos">
+      <xsl:param name="insertions-to-process" as="element()*" tunnel="yes"/>
+      <xsl:param name="nodes-to-insert" as="element()*"/>
+      <xsl:param name="insertions-for-starting-children" as="element()*"/>
+      <xsl:param name="insertions-for-ending-children" as="element()*"/>
+      
+      <xsl:variable name="these-children-qs" select="*/@q"/>
+      
+      <xsl:variable name="new-insertions-to-be-applied" select="$insertions-to-process[*/tan:q = $these-children-qs]"/>
+      <xsl:variable name="insertions-to-process-to-pass-on" select="$insertions-to-process except $new-insertions-to-be-applied" as="element()*"/>
+      
+      <xsl:variable name="new-insertions-revised" as="element()*">
+         <xsl:for-each select="$new-insertions-to-be-applied">
+            <xsl:variable name="matching-betweens" select="tan:between[tan:q[1] = $these-children-qs]"/>
+            <xsl:variable name="matching-ands" select="tan:and[tan:q[1] = $these-children-qs]"/>
+            <xsl:variable name="first-betweens" as="element()?">
+               <xsl:for-each-group select="$matching-betweens" group-by="tan:q[1]">
+                  <xsl:sort select="index-of($these-children-qs, current-grouping-key())"/>
+                  <xsl:if test="position() eq 1">
+                     <xsl:copy-of select="current-group()"/>
+                  </xsl:if>
+               </xsl:for-each-group> 
+            </xsl:variable>
+            <xsl:variable name="last-ands" as="element()?">
+               <xsl:for-each-group select="$matching-ands" group-by="tan:q[1]">
+                  <xsl:sort select="index-of($these-children-qs, current-grouping-key())" order="descending"/>
+                  <xsl:if test="position() eq 1">
+                     <xsl:copy-of select="current-group()"/>
+                  </xsl:if>
+               </xsl:for-each-group> 
+            </xsl:variable>
+            
+            <xsl:copy>
+               <xsl:copy-of select="tan:what"/>
+               <xsl:copy-of select="$first-betweens"/>
+               <xsl:copy-of select="$last-ands"/>
+            </xsl:copy>
+            
+         </xsl:for-each>
+      </xsl:variable>
+      
+      <!--<test28a>
+         <insertions-to-process><xsl:copy-of select="$insertions-to-process"/></insertions-to-process>
+         <new-insertions-to-be-applied><xsl:copy-of select="$new-insertions-to-be-applied"/></new-insertions-to-be-applied>
+         <new-insertions-revised><xsl:copy-of select="$new-insertions-revised"/></new-insertions-revised>
+      </test28a>-->
+      <xsl:copy>
+         <xsl:copy-of select="@*"/>
+         <xsl:copy-of select="$nodes-to-insert"/>
+         <xsl:iterate select="node()">
+            <xsl:param name="new-insertions-to-process" as="element()*" select="$new-insertions-revised"/>
+            <xsl:param name="insertions-to-place" as="element()*"/>
+            <xsl:param name="starting-insertions" as="element()*" select="$insertions-for-starting-children"/>
+            <xsl:param name="ending-insertions" as="element()*"/>
+            
+            <xsl:variable name="this-q" select="self::tan:div/@q"/>
+            <xsl:variable name="these-new-insertion-froms"
+               select="$new-insertions-to-process[tan:between/tan:q = $this-q]" as="element()*"/>
+            <xsl:variable name="these-new-insertion-tos"
+               select="$insertions-to-place[tan:and/tan:q = $this-q]" as="element()*"/>
+            <xsl:variable name="these-starting-insertions-to-end" select="$starting-insertions[tan:and/tan:q = $this-q]"/>
+            <xsl:variable name="these-ending-insertions-to-start" select="$ending-insertions[tan:between/tan:q = $this-q]"/>
+            
+            <xsl:choose>
+               <xsl:when test="not(exists($this-q))">
+                  <xsl:copy-of select="."/>
+               </xsl:when>
+               <!-- testing -->
+               <xsl:when test="true() and false()">
+                  <test28a>
+                     <new-ins-froms><xsl:copy-of select="$these-new-insertion-froms"/></new-ins-froms>
+                     <new-ins-tos><xsl:copy-of select="$these-new-insertion-tos"/></new-ins-tos>
+                     <start-insertions-to-end><xsl:copy-of select="$these-starting-insertions-to-end"/></start-insertions-to-end>
+                     <end-insertions-to-start><xsl:copy-of select="$these-ending-insertions-to-start"/></end-insertions-to-start>
+                     <nodes-to-insert><xsl:copy-of select="($starting-insertions except $these-starting-insertions-to-end)/tan:what/node(),
+                        $ending-insertions/tan:what/node(),
+                        ($insertions-to-place except $these-new-insertion-tos)/tan:what/node()"/></nodes-to-insert>
+                  </test28a>
+                  <xsl:copy-of select="."/>
+               </xsl:when>
+               <xsl:otherwise>
+                  <xsl:apply-templates select="." mode="#current">
+                     <xsl:with-param name="insertions-to-process" tunnel="yes" select="$insertions-to-process-to-pass-on"/>
+                     <xsl:with-param name="nodes-to-insert" select="($starting-insertions except $these-starting-insertions-to-end)/tan:what/node(),
+                        $ending-insertions/tan:what/node(),
+                        ($insertions-to-place except $these-new-insertion-tos)/tan:what/node()"/>
+                     <xsl:with-param name="insertions-for-starting-children" as="element()*" select="$insertions-for-starting-children, $these-new-insertion-tos"/>
+                     <xsl:with-param name="insertions-for-ending-children" as="element()*" select="$insertions-for-ending-children, $these-new-insertion-froms"/>
+                  </xsl:apply-templates>
+               </xsl:otherwise>
+            </xsl:choose>
+            <xsl:next-iteration>
+               <xsl:with-param name="new-insertions-to-process" select="$new-insertions-to-process except $these-new-insertion-froms"/>
+               <xsl:with-param name="insertions-to-place" select="($insertions-to-place, $these-new-insertion-froms) except $these-new-insertion-tos"/>
+               <xsl:with-param name="starting-insertions" as="element()*" select="$starting-insertions except $these-starting-insertions-to-end"/>
+               <xsl:with-param name="ending-insertions" as="element()*" select="$ending-insertions, $these-ending-insertions-to-start"/>
+            </xsl:next-iteration>
+         </xsl:iterate>
+      </xsl:copy>
+      
    </xsl:template>
    
    <xsl:template match="*[tan:hold]" mode="mark-dependencies-pass-2">
@@ -3250,6 +3607,10 @@
          <xsl:apply-templates select="tan:body, $mergable-elements/tan:body"
             mode="prep-class-1-files-for-merge"/>
       </xsl:variable>
+      
+      <!--<test30b>
+         <pre-merge-bodies-pass-1><xsl:copy-of select="$pre-merge-bodies-pass-1"/></pre-merge-bodies-pass-1>
+      </test30b>-->
       <xsl:element name="{concat($this-root-name, '_merge')}">
          <xsl:apply-templates select="tan:head, $mergable-elements/tan:head" mode="#current"/>
          <xsl:apply-templates select="$pre-merge-bodies-pass-1[1]" mode="#current">
@@ -3291,14 +3652,14 @@
          as="element()*"/>
       
       <xsl:copy>
-
-         <!-- leave a copy of distinct n values -->
+         
+         <!-- leave a copy of distinct <n>s and <ref>s -->
          <xsl:choose>
             <!-- no need to copy <n> or <ref> in a body -->
             <xsl:when test="$this-is-body"/>
             <xsl:when test="$primary-n-value-is-number">
                <n><xsl:value-of select="$primary-n-value"/></n>
-               <xsl:for-each-group select="tan:ref, $elements-to-merge/tan:ref" group-by="(string-join((tan:n except tan:n[last()]), $separator-hierarchy), '')[1]">
+               <xsl:for-each-group select="tan:ref[tan:n], $elements-to-merge/tan:ref[tan:n]" group-by="(string-join((tan:n except tan:n[last()]), $separator-hierarchy), '')[1]">
                   <ref>
                      <xsl:value-of select="normalize-space(string-join((current-grouping-key(), $primary-n-value), $separator-hierarchy))"/>
                      <xsl:copy-of select="current-group()[1]/(tan:n except tan:n[last()])"/>
@@ -3308,7 +3669,7 @@
             </xsl:when>
             <xsl:when test="matches($primary-n-value, 'group \d')">
                <xsl:copy-of select="$unique-non-numbered-ns"/>
-               <xsl:for-each-group select="tan:ref, $elements-to-merge/tan:ref" group-by="(string-join((tan:n except tan:n[last()]), $separator-hierarchy), '')[1]">
+               <xsl:for-each-group select="tan:ref[tan:n], $elements-to-merge/tan:ref[tan:n]" group-by="(string-join((tan:n except tan:n[last()]), $separator-hierarchy), '')[1]">
                   <xsl:variable name="this-ref-base" select="current-grouping-key()" as="xs:string"/>
                   <xsl:variable name="this-ref-group" select="current-group()" as="element()+"/>
                   <xsl:for-each select="$unique-non-numbered-ns">
@@ -3323,7 +3684,7 @@
             <xsl:when test="string-length($primary-n-value) gt 0">
                <n><xsl:value-of select="$primary-n-value"/></n>
                <xsl:copy-of select="$unique-non-numbered-ns"/>
-               <xsl:for-each-group select="tan:ref, $elements-to-merge/tan:ref" group-by="(string-join((tan:n except tan:n[last()]), $separator-hierarchy), '')[1]">
+               <xsl:for-each-group select="tan:ref[tan:n], $elements-to-merge/tan:ref[tan:n]" group-by="(string-join((tan:n except tan:n[last()]), $separator-hierarchy), '')[1]">
                   <xsl:variable name="this-ref-base" select="current-grouping-key()" as="xs:string"/>
                   <xsl:variable name="this-ref-group" select="current-group()" as="element()+"/>
                   <xsl:for-each select="$primary-n-value, $unique-non-numbered-ns">

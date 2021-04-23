@@ -131,6 +131,29 @@
       </xsl:copy>
    </xsl:template>
    
+   <xsl:template match="tan:ref[@q][@from]" mode="core-expansion-terse">
+      <xsl:param name="use-validation-mode" select="$is-validation" tunnel="yes"/>
+      <xsl:variable name="companion-to" select="following-sibling::tan:ref[1][@to]"/>
+      <xsl:copy>
+         <xsl:copy-of select="@*"/>
+         <xsl:if test="not($use-validation-mode) and exists($companion-to)">
+            <xsl:attribute name="alter-q" select="$companion-to/@q"/>
+         </xsl:if>
+         <xsl:apply-templates mode="#current"/>
+      </xsl:copy>
+   </xsl:template>
+   <xsl:template match="tan:ref[@q][@to]" mode="core-expansion-terse">
+      <xsl:param name="use-validation-mode" select="$is-validation" tunnel="yes"/>
+      <xsl:variable name="companion-to" select="preceding-sibling::tan:ref[1][@from]"/>
+      <xsl:copy>
+         <xsl:copy-of select="@*"/>
+         <xsl:if test="not($use-validation-mode) and exists($companion-to)">
+            <xsl:attribute name="alter-q" select="$companion-to/@q"/>
+         </xsl:if>
+         <xsl:apply-templates mode="#current"/>
+      </xsl:copy>
+   </xsl:template>
+   
    <!-- class 2 -->
    
    <xsl:template match="tan:skip/tan:div-type | tan:skip/tan:n | tan:rename/tan:n | tan:passage

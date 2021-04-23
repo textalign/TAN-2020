@@ -1194,8 +1194,9 @@
       <xsl:param name="ambig-is-roman" as="xs:boolean?" tunnel="yes" select="true()"/>
       <xsl:param name="n-alias-items" as="element()*" tunnel="yes"/>
       <xsl:param name="n-alias-div-type-constraints" as="xs:string*" tunnel="yes"/>
-      <xsl:variable name="these-n-vals" select="tokenize(normalize-space(@n), ' ')"/>
-      <xsl:variable name="these-div-types" select="tokenize(@type, '\s+')"/>
+      
+      <xsl:variable name="these-n-vals" select="tokenize(normalize-space(@n), ' ')" as="xs:string+"/>
+      <xsl:variable name="these-div-types" select="tokenize(@type, '\s+')" as="xs:string+"/>
       <xsl:variable name="n-aliases-should-be-checked" as="xs:boolean"
          select="not(exists($n-alias-div-type-constraints)) or ($these-div-types = $n-alias-div-type-constraints)"/>
       <xsl:variable name="n-aliases-to-process" as="element()*"
@@ -1210,6 +1211,13 @@
             return
                tan:string-to-numerals(lower-case($i), $ambig-is-roman, false(), $n-aliases-to-process)"/>
       <xsl:variable name="n-val-rebuilt" select="string-join($vals-normalized, ' ')"/>
+      
+      <xsl:variable name="these-ref-alias-vals" select="tokenize(normalize-space(@ref-alias), ' ')" as="xs:string*"/>
+      <xsl:variable name="ref-alias-vals-normalized" as="xs:string*" select="
+            for $i in $these-ref-alias-vals
+            return
+               tan:string-to-numerals(lower-case($i), $ambig-is-roman, false(), $n-aliases-to-process)"
+      />
       
       <xsl:variable name="diagnostics-on" select="false()"/>
       <xsl:if test="$diagnostics-on">
@@ -1226,6 +1234,14 @@
          <xsl:if test="not(@n = $n-val-rebuilt)">
             <xsl:attribute name="orig-n" select="@n"/>
          </xsl:if>
+         <xsl:if test="exists(@ref-alias)">
+            <xsl:variable name="ref-alias-val-rebuilt" select="string-join($ref-alias-vals-normalized, ' ')"/>
+            <xsl:attribute name="ref-alias" select="$ref-alias-val-rebuilt"/>
+            <xsl:if test="not($ref-alias-val-rebuilt eq @ref-alias)">
+               <xsl:attribute name="orig-ref-alias" select="@ref-alias"/>
+            </xsl:if>
+         </xsl:if>
+         
          <xsl:if
             test="
                some $i in $these-n-vals
