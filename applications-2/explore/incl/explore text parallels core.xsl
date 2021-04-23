@@ -38,48 +38,6 @@
     <xsl:param name="tan:change-message" select="'Exploring text parallels'"/>
     
     
-    <!-- SOME USEFUL FUNCTIONS -->
-    
-    <xsl:function name="tan:TAN-A-lm-hrefs" as="xs:string*" visibility="private">
-        <!-- Input: two strings; catalog documents -->
-        <!-- Output: the @href values of any documents in the catalog that both support the language specified (1st 
-            param) and have a <tok-starts-with> or a <tok-is> that matches the 2nd parameter -->
-        <!-- If there is no match, then the empty string will be returned. -->
-        <xsl:param name="language-of-interest" as="xs:string"/>
-        <xsl:param name="token-of-interest" as="xs:string"/>
-        <xsl:param name="language-catalogs" as="document-node()*"/>
-        <xsl:variable name="these-lang-entries" as="element()*" select="$language-catalogs/collection/doc[tan:for-lang = $language-of-interest]"/>
-        <xsl:variable name="matching-entries" as="xs:string*">
-            <xsl:for-each select="$language-catalogs">
-                <xsl:variable name="this-base-uri" select="tan:base-uri(.)" as="xs:anyURI"/>
-                <xsl:for-each select="collection/doc[tan:for-lang eq $language-of-interest]">
-                    <xsl:choose>
-                        <xsl:when test="not(exists(tan:tok-starts-with)) and not(exists(tan:tok-is))">
-                            <xsl:value-of select="resolve-uri(@href, $this-base-uri)"/>
-                        </xsl:when>
-                        <xsl:when test="tan:tok-is = $token-of-interest">
-                            <xsl:value-of select="resolve-uri(@href, $this-base-uri)"/>
-                        </xsl:when>
-                        <xsl:when test="exists(tan:tok-starts-with[starts-with($token-of-interest, .)])">
-                            <xsl:value-of select="resolve-uri(@href, $this-base-uri)"/>
-                        </xsl:when>
-                    </xsl:choose>
-                </xsl:for-each>
-            </xsl:for-each>
-        </xsl:variable>
-        <xsl:variable name="good-hrefs" select="$matching-entries[doc-available(.)]" as="xs:string*"/>
-        
-        <xsl:choose>
-            <xsl:when test="exists($good-hrefs)">
-                <xsl:sequence select="$good-hrefs"/>
-            </xsl:when>
-            <xsl:otherwise>
-                <xsl:value-of select="''"/>
-            </xsl:otherwise>
-        </xsl:choose>
-    </xsl:function>
-    
-    
     <!-- MANIFEST HANDLING -->
     
     <!-- The following templates are used for saving and retrieving temporary files. -->
@@ -112,7 +70,54 @@
     <!-- When saving a document with a <manifest> as the child of the root element, the
         document is split into two: one for the manifest and the other for the document
         without the manifest. -->
-    <xsl:mode name="save-temp-file-and-manifest" on-no-match="shallow-copy"/>
+    <xsl:mode name="save-temp-file-and-manifest" on-no-match="shallow-skip"/>
+    
+    <xsl:template match=".[. instance of map(*)][exists(.('manifest'))]" mode="save-temp-file-and-manifest">
+        <xsl:variable name="this-manifest" as="element()" select="map:get(., 'manifest')"/>
+        <xsl:variable name="target-checksum" select="$this-manifest/@checksum" as="xs:string?"/>
+        <xsl:variable name="base1" as="xs:string?" select="map:get(., 'base1')"/>
+        <xsl:variable name="base2" as="xs:string?" select="map:get(., 'base2')"/>
+        <xsl:variable name="base" as="xs:string?" select="map:get(., 'xml:base')"/>
+        
+        <xsl:if test="exists($target-checksum)">
+            <xsl:variable name="target-uri-for-manifest"
+                select="resolve-uri($target-checksum || '.xml', $temporary-file-directory-norm)"
+                as="xs:anyURI"/>
+            <xsl:variable name="target-uri-for-output"
+                select="resolve-uri($target-checksum || '-result.xml', $temporary-file-directory-norm)"
+                as="xs:anyURI"/>
+            <xsl:variable name="output-source-filenames" as="xs:string" select="
+                    if (exists($base1) or exists($base2))
+                    then
+                        string-join((tan:cfn($base1), tan:cfn($base2)), ' + ')
+                    else
+                        tan:cfn($base)"/>
+            
+            <xsl:try>
+                <xsl:result-document href="{$target-uri-for-manifest}" format="xml-indent">
+                    <xsl:document>
+                        <xsl:copy-of select="$this-manifest"/>
+                    </xsl:document>
+                </xsl:result-document>
+                <xsl:catch>
+                    <xsl:message select="'Unable to save manifest to ' || $target-uri-for-manifest"/>
+                </xsl:catch>
+            </xsl:try>
+            <xsl:try>
+                <xsl:result-document href="{$target-uri-for-output}" format="xml">
+                    <xsl:document>
+                        <xsl:copy-of select="tan:map-to-xml(map:remove(., 'manifest'), true())"/>
+                    </xsl:document>
+                    <xsl:message select="'Intermediate results of ' || $output-source-filenames || ' saved to ' || $target-uri-for-output"/>
+                </xsl:result-document>
+                <xsl:catch>
+                    <xsl:message select="'Unable to save results of ' || $output-source-filenames || ' to ' || $target-uri-for-output"/>
+                </xsl:catch>
+            </xsl:try>
+            
+        </xsl:if>
+        
+    </xsl:template>
     
     <xsl:template match="document-node()" mode="save-temp-file-and-manifest">
         <xsl:if test="count(*/tan:manifest) gt 1">
@@ -130,6 +135,12 @@
             <xsl:variable name="target-uri-for-output"
                 select="resolve-uri($target-checksum || '-result.xml', $temporary-file-directory-norm)"
                 as="xs:anyURI"/>
+            <xsl:variable name="output-source-filenames" as="xs:string" select="
+                    if (exists(@base1) or exists(@base2))
+                    then
+                        string-join((tan:cfn(@base1), tan:cfn(@base2)), ' + ')
+                    else
+                        tan:cfn(tan:base-uri(.))"/>
             
             <xsl:try>
                 <xsl:result-document href="{$target-uri-for-manifest}" format="xml-indent">
@@ -146,10 +157,10 @@
                     <xsl:document>
                         <xsl:apply-templates mode="drop-manifest"/>
                     </xsl:document>
-                    <xsl:message select="'Intermediate results of ' || tan:cfn(tan:base-uri(.)) || ' saved to ' || $target-uri-for-output"/>
+                    <xsl:message select="'Intermediate results of ' || $output-source-filenames || ' saved to ' || $target-uri-for-output"/>
                 </xsl:result-document>
                 <xsl:catch>
-                    <xsl:message select="'Unable to save results of ' || tan:cfn(tan:base-uri(.)) || ' to ' || $target-uri-for-output"/>
+                    <xsl:message select="'Unable to save results of ' || $output-source-filenames || ' to ' || $target-uri-for-output"/>
                 </xsl:catch>
             </xsl:try>
             
@@ -158,7 +169,7 @@
     
     <xsl:function name="tan:drop-manifest" as="item()*">
         <!-- Input: any fragment -->
-        <!-- Output: the same, but without the manifest -->
+        <!-- Output: the same, but without the manifest or map entries intended for diagnostics -->
         <!-- Manifests should be dropped both when saving an intermediate result, and when
             evaluating a newly constructed intermediate result that should be saved, but
             needs to be evaluated by a subsequent process.
@@ -171,6 +182,10 @@
     
     <!-- Drop the manifest from the output -->
     <xsl:template match="tan:manifest" mode="save-temp-file-and-manifest drop-manifest"/>
+    
+    <xsl:template match=".[. instance of map(*)]" mode="drop-manifest">
+        <xsl:sequence select="tan:map-remove(., ('manifest', 'diagnostics', 'diagnostics-2'))"/>
+    </xsl:template>
     
     <xsl:function name="tan:insert-manifest" as="document-node()?">
         <!-- Input: a document and a manifest element -->
@@ -251,14 +266,27 @@
     </xsl:variable>
     
     <xsl:variable name="ngram-aura-max" select="max($ngram-auras-norm)" as="xs:integer"/>
+
+    <xsl:variable name="ngram-aura-diameters-norm" as="xs:integer+">
+        <xsl:sequence select="$ngram-aura-diameters[1]"/>
+        <xsl:for-each select="2 to $target-ngram-n">
+            <xsl:variable name="this-pos" select="position()" as="xs:integer"/>
+            <xsl:variable name="first-choice" select="$ngram-aura-diameters[$this-pos]" as="xs:integer?"/>
+            <xsl:variable name="second-choice" select="$ngram-aura-diameters[last()]" as="xs:integer"/>
+            <xsl:variable name="this-choice" select="($first-choice, $second-choice)[1]" as="xs:integer"/>
+            <xsl:sequence select="max(($this-choice, $this-pos))"/>
+        </xsl:for-each>
+    </xsl:variable>
+    
+    <xsl:variable name="ngram-aura-diameter-max" select="max($ngram-aura-diameters-norm)" as="xs:integer"/>
     
     
-    <xsl:variable name="head-chop-norm" as="xs:double+">
+    <xsl:variable name="head-chop-norm" as="xs:decimal+">
         <!-- There should be one head chop per N in Ngram, in decreasing order -->
         <xsl:for-each select="$cut-most-frequent-aliases-per-ngram">
             <xsl:sort order="descending"/>
             <xsl:variable name="this-pos" select="position()"/>
-            <xsl:variable name="this-val" select="max((min((., 1)), 0))" as="xs:double"/>
+            <xsl:variable name="this-val" select="max((min((., 1)), 0))" as="xs:decimal"/>
             <xsl:sequence select="$this-val"/>
             <xsl:if test="$this-pos eq count($cut-most-frequent-aliases-per-ngram) and $this-pos lt $target-ngram-n-norm">
                 <xsl:for-each select="$this-pos + 1 to $target-ngram-n-norm">
@@ -336,6 +364,7 @@
     
     <xsl:template match="tan:annotation" mode="parse-annotations" priority="1" use-when="$tan:save-and-use-intermediate-steps">
         <xsl:variable name="annotation-doc" as="document-node()?" select="tan:get-1st-doc(.)"/>
+        <xsl:message select="'Building annotation manifest'"/>
         <xsl:variable name="manifest" as="element()?">
             <xsl:if test="exists($annotation-doc/tan:TAN-A-lm)">
                 <manifest>
@@ -367,6 +396,7 @@
                 
             </xsl:if>
         </xsl:variable>
+        <xsl:message select="'Creating annotation checksum'"/>
         <xsl:variable name="this-manifest-checksum" select="tan:checksum-fletcher-32(string($manifest))" as="xs:string"/>
         <xsl:variable name="expected-temp-file-location" as="xs:anyURI"
             select="resolve-uri($this-manifest-checksum || '-result.xml', $temporary-file-directory-norm)"
@@ -400,8 +430,13 @@
             </xsl:when>
             <xsl:when test="exists($annotation-resolved/tan:TAN-A-lm)">
                 <xsl:variable name="annotation-expanded" select="tan:expand-doc($annotation-resolved, 'terse')" as="document-node()*"/>
+                <!--<xsl:variable name="annotation-tok-population" as="xs:integer?" select="
+                        sum(for $i in $annotation-expanded/tan:TAN-A-lm/tan:body/tan:ana/@tok-pop
+                        return
+                            xs:integer($i))"/>-->
                 <xsl:apply-templates select="$annotation-expanded[tan:TAN-T]" mode="build-source-specific-tan-a-lm-annotations">
                     <xsl:with-param name="tan-a-lm" tunnel="yes" as="document-node()" select="$annotation-expanded[tan:TAN-A-lm]"/>
+                    <!--<xsl:with-param name="tok-pop-sum" as="xs:integer?" select="$annotation-tok-population"/>-->
                 </xsl:apply-templates>
             </xsl:when>
         </xsl:choose>
@@ -483,28 +518,35 @@
         <xsl:variable name="this-q" select="@q" as="xs:string"/>
         <xsl:variable name="these-class-2-anchors" select="key('tan:q-ref', $this-q, $tan-a-lm)" as="element()*"/>
         <xsl:for-each select="$these-class-2-anchors">
+            <xsl:variable name="this-seed-cert" as="xs:decimal" select="(xs:decimal(ancestor::tan:tok/@cert), 1.0)[1]"/>
+            
             <xsl:apply-templates select="ancestor::tan:ana" mode="simplify-ana">
-                <xsl:with-param name="seed-cert" as="xs:decimal" select="(xs:decimal(ancestor::tan:tok/@cert), 1.0)[1]"/>
-                <xsl:with-param name="seed-cert2" as="xs:decimal" select="(xs:decimal(ancestor::tan:tok/(@cert2, @cert)), 1.0)[1]"/>
+                <xsl:with-param name="seed-cert" as="xs:decimal" select="$this-seed-cert"/>
+                <xsl:with-param name="seed-cert2" as="xs:decimal" select="(xs:decimal(ancestor::tan:tok/@cert2), $this-seed-cert)[1]"/>
             </xsl:apply-templates>
             
         </xsl:for-each>
     </xsl:template>
     
-    <xsl:mode name="simplify-ana" on-no-match="shallow-skip"/>
+    <xsl:mode name="simplify-ana" on-no-match="shallow-copy"/>
     
     <xsl:template match="tan:ana" mode="simplify-ana">
         <xsl:param name="seed-cert" as="xs:decimal"/>
         <xsl:param name="seed-cert2" as="xs:decimal"/>
-        <xsl:variable name="new-cert" select="(xs:decimal(@cert), 1.0)[1] * $seed-cert" as="xs:decimal"/>
-        <xsl:variable name="new-cert2" select="(xs:decimal(@cert2), $new-cert)[1] * $seed-cert2" as="xs:decimal"/>
+        <xsl:variable name="this-cert" as="xs:decimal" select="(xs:decimal(@cert), 1.0)[1]"/>
+        <xsl:variable name="this-cert2" as="xs:decimal" select="(xs:decimal(@cert2), $this-cert)[1]"/>
+        <xsl:variable name="new-cert" select="$this-cert * $seed-cert" as="xs:decimal"/>
+        <xsl:variable name="new-cert2" select="$this-cert2 * $seed-cert2" as="xs:decimal"/>
         <xsl:copy>
-            <xsl:copy-of select="@* except (@cert | @cert2)"/>
+            <xsl:copy-of select="@* except (@cert | @cert2 | @q | @tok-pop)"/>
             <xsl:attribute name="cert" select="$new-cert"/>
             <xsl:attribute name="cert2" select="$new-cert2"/>
-            <xsl:copy-of select="tan:lm"/>
+            <xsl:apply-templates select="tan:lm" mode="#current"/>
         </xsl:copy>
     </xsl:template>
+    
+    <!-- Currently the application relies exclusively on lexemes, not morphological forms, so we drop those. -->
+    <xsl:template match="tan:m" mode="simplify-ana"/>
     
 
     <!-- Input prep 2: normalize space, imprint language codes -->
@@ -512,9 +554,11 @@
         in the original root element. That root element effectively acts as a body, and contains only the <div>-based
         text structure, space-normalized. -->
     <xsl:variable name="files-normalized-g1" as="document-node()*">
+        <xsl:message select="'normalizing group 1 texts'"/>
         <xsl:apply-templates select="$files-resolved-g1" mode="normalize-input"/>
     </xsl:variable>
     <xsl:variable name="files-normalized-g2" as="document-node()*">
+        <xsl:message select="'normalizing group 2 texts'"/>
         <xsl:apply-templates select="$files-resolved-g2" mode="normalize-input"/>
     </xsl:variable>
     
@@ -586,17 +630,16 @@
     
     <!-- Input prep 3: tokenize -->
     
-    
     <xsl:variable name="files-tokenized-g1" as="document-node()*">
+        <xsl:message select="'tokenizing group 1 texts'"/>
         <xsl:apply-templates select="$files-normalized-g1" mode="tokenize-text"/>
     </xsl:variable>
     <xsl:variable name="files-tokenized-g2" as="document-node()*">
+        <xsl:message select="'tokenizing group 2 texts'"/>
         <xsl:apply-templates select="$files-normalized-g2" mode="tokenize-text"/>
     </xsl:variable>
     
     <xsl:mode name="tokenize-text" on-no-match="shallow-copy"/>
-    
-    
     
     <xsl:template match="document-node()" mode="tokenize-text">
         <xsl:variable name="this-xml-base" as="attribute()" select="*/@xml:base"/>
@@ -674,6 +717,58 @@
     </xsl:template>
     
     
+    <xsl:variable name="input-tokenization-map" as="map(*)">
+        <xsl:map>
+            <xsl:apply-templates select="$files-tokenized-g1, $files-tokenized-g2"
+                mode="build-tokenization-map"/>
+        </xsl:map>
+    </xsl:variable>
+    
+    <xsl:mode name="build-tokenization-map" on-no-match="shallow-skip"/>
+    
+    <xsl:template match="/*" mode="build-tokenization-map">
+        <xsl:variable name="tok-count" as="xs:integer" select="count(tan:tok)"/>
+        <xsl:variable name="simple-tok-groups" as="array(*)*">
+            <xsl:for-each-group select="tan:tok" group-by="tan:string-base(lower-case(text()))">
+                <xsl:variable name="this-count" as="xs:integer" select="count(current-group())"/>
+                <xsl:sequence select="array {current-grouping-key(), $this-count}"/>
+            </xsl:for-each-group>
+        </xsl:variable>
+        <xsl:variable name="simple-tok-counts" as="xs:integer*" select="
+                for $i in $simple-tok-groups
+                return
+                    $i(2)"/>
+        <xsl:variable name="simple-tok-median" as="xs:decimal"
+            select="tan:median($simple-tok-counts)"/>
+        <xsl:variable name="simple-tok-avg" as="xs:decimal" select="avg($simple-tok-counts)"/>
+        <xsl:map-entry key="@xml:base">
+            <!-- build a map going from token number to tok + non-tok -->
+            <xsl:map>
+                <xsl:for-each-group select="*" group-by="@n">
+                    <xsl:map-entry key="xs:integer(current-grouping-key())">
+                        <xsl:sequence select="current-group()"/>
+                    </xsl:map-entry>
+                </xsl:for-each-group>
+            </xsl:map>
+            <!-- build a map going from simplified token to its count, average -->
+            <xsl:map>
+                <xsl:for-each select="$simple-tok-groups">
+                    <xsl:variable name="this-count" as="xs:integer" select=".(2)"/>
+                    <xsl:map-entry key=".(1)">
+                        <!-- count, per-median, per-average, per-total -->
+                        <xsl:sequence select="$this-count"/>
+                        <xsl:sequence select="$this-count div $simple-tok-median"/>
+                        <xsl:sequence select="$this-count div $simple-tok-avg"/>
+                        <xsl:sequence select="$this-count div $tok-count"/>
+                    </xsl:map-entry>
+                </xsl:for-each>
+            </xsl:map>
+        </xsl:map-entry>
+    </xsl:template>
+    
+    
+    
+    
     
     <xsl:variable name="skp-alphabet-map" as="map(xs:string,xs:string+)">
         <xsl:map>
@@ -694,9 +789,11 @@
     <!-- Alias values provide for better matching from one text to the other. -->
     
     <xsl:variable name="tok-aliases-g1" as="document-node()*">
+        <xsl:message select="'Building group 1 token aliases'"/>
         <xsl:apply-templates select="$files-tokenized-g1" mode="build-tok-aliases"/>
     </xsl:variable>
     <xsl:variable name="tok-aliases-g2" as="document-node()*">
+        <xsl:message select="'Building group 2 token aliases'"/>
         <xsl:apply-templates select="$files-tokenized-g2" mode="build-tok-aliases"/>
     </xsl:variable>
     
@@ -719,6 +816,7 @@
                     (for $i in $these-lang-catalogs
                     return
                         string(base-uri($i)))"/>
+        <xsl:message select="'Building token alias manifest'"/>
         <xsl:variable name="manifest" as="element()">
             <manifest>
                 <base-uri><xsl:value-of select="*/@xml:base"/></base-uri>
@@ -743,6 +841,7 @@
                 </xsl:if>
             </manifest>
         </xsl:variable>
+        <xsl:message select="'Building token alias checksum'"/>
         <xsl:variable name="this-manifest-checksum" select="tan:checksum-fletcher-32(string($manifest))" as="xs:string"/>
         <xsl:variable name="expected-temp-file-location" as="xs:anyURI"
             select="resolve-uri($this-manifest-checksum || '-result.xml', $temporary-file-directory-norm)"
@@ -844,7 +943,7 @@
                         <xsl:for-each-group select="current-group()" group-by=".">
                             <xsl:variable name="this-tok" select="current-grouping-key()"/>
                             <xsl:variable name="lex-matches" as="element()*"
-                                select="$this-tan-a-lm/tan:TAN-A-lm/tan:body/tan:ana[tan:tok[@val eq $this-tok or matches(@rgx, '^' || $this-tok || '$')]]"
+                                select="$this-tan-a-lm/tan:TAN-A-lm/tan:body/tan:ana[tan:tok[@val eq $this-tok or matches(@rgx, '^' || tan:escape($this-tok) || '$')]]"
                             />
                             <xsl:apply-templates select="$lex-matches" mode="lm-to-gram">
                                 <xsl:with-param name="toks-to-embed" select="current-group()" tunnel="yes" as="element()*"/>
@@ -908,10 +1007,12 @@
     </xsl:template>
     
     <xsl:template match="*[@cert or @cert2]" mode="lm-to-gram">
-        <xsl:param name="current-cert" tunnel="yes" as="xs:decimal" select="1.0"/>
-        <xsl:param name="current-cert2" tunnel="yes" as="xs:decimal" select="1.0"/>
+        <xsl:param name="current-cert" tunnel="yes" as="xs:decimal?"/>
+        <xsl:param name="current-cert2" tunnel="yes" as="xs:decimal?"/>
         <xsl:param name="toks-to-embed" tunnel="yes" as="element()*"/>
         
+        <xsl:variable name="c-cert" as="xs:decimal" select="($current-cert, 1.0)[1]"/>
+        <xsl:variable name="c-cert2" as="xs:decimal" select="($current-cert2, $c-cert)[1]"/>
         <xsl:variable name="this-tok" select="string($toks-to-embed[1])" as="xs:string"/>
         <!-- In a language-based TAN-A-lm there should just be one matching <tok>, but
             just in case... -->
@@ -929,26 +1030,29 @@
                 if (exists($toks-of-interest)) then
                     (avg(for $i in $toks-of-interest
                     return
-                        xs:decimal(($i/@cert2, 1.0)[1])))
+                        xs:decimal(($i/@cert2, $i/@cert, 1.0)[1])))
                 else
                     1.0"/>
         
         
         <xsl:apply-templates mode="#current">
-            <xsl:with-param name="current-cert" tunnel="yes" select="$current-cert * $tok-cert * xs:decimal((@cert, 1)[1])"/>
-            <xsl:with-param name="current-cert2" tunnel="yes" select="$current-cert2 * $tok-cert2 * (xs:decimal(@cert2), 1)[1]"/>
+            <xsl:with-param name="current-cert" tunnel="yes" select="$c-cert * $tok-cert * xs:decimal((@cert, 1.0)[1])"/>
+            <xsl:with-param name="current-cert2" tunnel="yes" select="$c-cert2 * $tok-cert2 * xs:decimal((@cert2, @cert, 1.0)[1])"/>
         </xsl:apply-templates>
     </xsl:template>
     
     <xsl:template match="tan:l" priority="1" mode="lm-to-gram">
         <xsl:param name="tan-a-lm-base-uri" as="xs:string?" tunnel="yes" select="tan:base-uri(.)"/>
         <xsl:param name="toks-to-embed" tunnel="yes" as="element()*"/>
-        <xsl:param name="current-cert" tunnel="yes" as="xs:decimal" select="1.0"/>
-        <xsl:param name="current-cert2" tunnel="yes" as="xs:decimal" select="1.0"/>
+        <xsl:param name="current-cert" tunnel="yes" as="xs:decimal?"/>
+        <xsl:param name="current-cert2" tunnel="yes" as="xs:decimal?"/>
         <xsl:param name="method" tunnel="yes" as="xs:string?" select="'tan-a-lm-language'"/>
         
-        <xsl:variable name="new-cert" select="$current-cert * xs:decimal((@cert, 1.0)[1])" as="xs:decimal"/>
-        <xsl:variable name="new-cert2" select="$current-cert2 * xs:decimal((@cert2, 1.0)[1])" as="xs:decimal"/>
+        <xsl:variable name="c-cert" as="xs:decimal" select="($current-cert, 1.0)[1]"/>
+        <xsl:variable name="c-cert2" as="xs:decimal" select="($current-cert2, $c-cert)[1]"/>
+        
+        <xsl:variable name="new-cert" select="$c-cert * xs:decimal((@cert, 1.0)[1])" as="xs:decimal"/>
+        <xsl:variable name="new-cert2" select="$c-cert2 * xs:decimal((@cert2, @cert, 1.0)[1])" as="xs:decimal"/>
         <xsl:variable name="context-l" select="." as="element()"/>
         <alias r="{$context-l}">
 
@@ -963,6 +1067,121 @@
     </xsl:template>
     
     
+    <xsl:variable name="token-alias-maps-g1" as="map(*)*">
+        <xsl:message select="'building group 1 token alias maps'"/>
+        <xsl:apply-templates select="$tok-aliases-g1" mode="build-tok-alias-map"/>
+    </xsl:variable>
+    <xsl:variable name="token-alias-maps-g2" as="map(*)*">
+        <xsl:message select="'building group 2 token alias maps'"/>
+        <xsl:apply-templates select="$tok-aliases-g2" mode="build-tok-alias-map"/>
+    </xsl:variable>
+    
+    <xsl:mode name="build-tok-alias-map" on-no-match="shallow-skip"/>
+    
+    <xsl:template match="*[tan:alias]" mode="build-tok-alias-map">
+        
+        <xsl:variable name="pass-1" as="map(*)">
+            <xsl:map>
+                <xsl:for-each-group select="tan:alias" group-by="@r">
+                    <xsl:sort select="count(distinct-values(current-group()/tan:tok/@n))"
+                        order="descending"/>
+                    <xsl:variable name="this-r" select="current-grouping-key()" as="xs:string"/>
+                    
+                    <xsl:map-entry key="position()">
+                        <xsl:map>
+                            <xsl:map-entry key="'r'" select="$this-r"/>
+                            <xsl:for-each-group select="current-group()/tan:tok" group-by="@n">
+                                <xsl:variable name="these-certs" as="xs:decimal*" select="
+                                        for $i in current-group()/*/@cert
+                                        return
+                                            xs:decimal($i)"/>
+                                <xsl:variable name="these-cert2s" as="xs:decimal*" select="
+                                        for $i in current-group()/*/@cert2
+                                        return
+                                            xs:decimal($i)"/>
+                                <xsl:map-entry key="xs:integer(current-grouping-key())">
+                                    <xsl:map>
+                                        <xsl:map-entry key="'val'"
+                                            select="string(current-group()[1])"/>
+                                        <xsl:map-entry key="'cert'" select="$these-certs"/>
+                                        <xsl:map-entry key="'cert2'" select="$these-cert2s"/>
+                                        <!-- If in the future the averages should be weighted depending upon source,
+                                            this is where that process should be built. -->
+                                        <xsl:map-entry key="'cert-avg'"
+                                            select="avg(($these-certs, $these-cert2s))"/>
+                                    </xsl:map>
+                                </xsl:map-entry>
+                            </xsl:for-each-group>
+                        </xsl:map>
+                    </xsl:map-entry>
+                </xsl:for-each-group>
+                
+            </xsl:map>
+        </xsl:variable>
+        
+        <xsl:variable name="token-alias-count" select="map:size($pass-1)" as="xs:integer"/>
+        <xsl:variable name="every-token-alias-tok-pop" select="
+                for $i in map:keys($pass-1)
+                return
+                    count(map:keys($pass-1($i)))" as="xs:integer+"/>
+        
+        <xsl:variable name="median-token-alias-tok-pop" select="tan:median($every-token-alias-tok-pop)" as="xs:decimal"/>
+        <xsl:variable name="average-token-alias-tok-pop" select="avg($every-token-alias-tok-pop)" as="xs:decimal"/>
+        <xsl:variable name="total-token-alias-tok-pop" select="sum($every-token-alias-tok-pop)" as="xs:integer"/>
+        
+        
+        <xsl:map>
+            <xsl:apply-templates select="@*" mode="attr-to-map-entry"/>
+            <xsl:map-entry key="'token-alias-count'" select="$token-alias-count"/>
+            
+            <!-- Build statistical profiles for each token alias. -->
+            <xsl:map-entry key="'stats'">
+                <xsl:map>
+                    <xsl:for-each select="1 to $token-alias-count">
+                        <xsl:variable name="this-n" as="xs:integer" select="."/>
+                        <xsl:variable name="this-map-entry" select="$pass-1($this-n)" as="map(*)"/>
+                        <xsl:variable name="this-map-size" select="map:size($this-map-entry) - 1"
+                            as="xs:integer"/>
+                        <xsl:variable name="this-r" as="xs:string" select="$this-map-entry('r')"/>
+
+                        <!-- Map entries keys in the statistics are bound to the token alias value,
+                        to facilitate lookup -->
+                        <xsl:map-entry key="$this-r">
+                            <xsl:map>
+                                <xsl:map-entry key="'tok-count'" select="$this-map-size"/>
+                                <xsl:map-entry key="'tok-count-per-median'"
+                                    select="$this-map-size div $median-token-alias-tok-pop"/>
+                                <xsl:map-entry key="'tok-count-per-average'"
+                                    select="$this-map-size div $average-token-alias-tok-pop"/>
+                                <xsl:map-entry key="'tok-count-per-total'"
+                                    select="$this-map-size div $total-token-alias-tok-pop"/>
+                            </xsl:map>
+                        </xsl:map-entry>
+
+                    </xsl:for-each>
+                </xsl:map>
+            </xsl:map-entry>
+            
+            <!-- The map entry keys are numbered 1 onward, from most frequent to least, so that if requested the most 
+            common can be chopped off. -->
+            <xsl:for-each select="1 to $token-alias-count">
+                <xsl:map-entry key=".">
+                    <xsl:sequence select="map:get($pass-1, .)"/>
+                </xsl:map-entry>
+            </xsl:for-each>
+        </xsl:map>
+    </xsl:template>
+    
+    
+    <xsl:mode name="attr-to-map-entry" on-no-match="shallow-skip"/>
+    
+    <xsl:template match="@*" mode="attr-to-map-entry">
+        <xsl:map-entry key="name(.)" select="string(.)"/>
+    </xsl:template>
+    
+    
+    
+    
     <!-- Consolidate <gram>s by @r (grouping key), with the most common at the top -->
     <xsl:variable name="tok-aliases-consolidated-g1" as="document-node()*">
         <xsl:apply-templates select="$tok-aliases-g1" mode="consolidate-tok-aliases"/>
@@ -970,7 +1189,6 @@
     <xsl:variable name="tok-aliases-consolidated-g2" as="document-node()*">
         <xsl:apply-templates select="$tok-aliases-g2" mode="consolidate-tok-aliases"/>
     </xsl:variable>
-    
     
     <xsl:mode name="consolidate-tok-aliases" on-no-match="shallow-copy"/>
     
@@ -1003,14 +1221,14 @@
         </xsl:variable>
         
         <xsl:variable name="alias-count" select="count($pass-1)" as="xs:integer"/>
-        <xsl:variable name="every-alias-tok-pop" select="
+        <xsl:variable name="every-token-alias-pop" select="
                 for $i in $pass-1
                 return
                     count($i/tan:tok)" as="xs:integer+"/>
         <xsl:variable name="median-alias" select="$pass-1[$alias-count idiv 2]" as="element()"/>
-        <xsl:variable name="median-alias-tok-pop" select="tan:median($every-alias-tok-pop)" as="xs:integer"/>
-        <xsl:variable name="average-alias-tok-pop" select="avg($every-alias-tok-pop)" as="xs:decimal"/>
-        <xsl:variable name="total-alias-tok-pop" select="sum($every-alias-tok-pop)" as="xs:integer"/>
+        <xsl:variable name="median-alias-tok-pop" select="tan:median($every-token-alias-pop)" as="xs:decimal"/>
+        <xsl:variable name="average-alias-tok-pop" select="avg($every-token-alias-pop)" as="xs:decimal"/>
+        <xsl:variable name="total-alias-tok-pop" select="sum($every-token-alias-pop)" as="xs:integer"/>
         
         
         <xsl:copy copy-namespaces="no">
@@ -1046,6 +1264,139 @@
     
     
     
+    <xsl:function name="tan:build-paired-1gram-map" as="map(*)?" visibility="private" _cache="{$tan:advanced-processing-available}">
+        <!-- Input: two token alias maps, a double, a boolean -->
+        <!-- Output: a paired 1gram, i.e., where there are common token aliases between the two texts -->
+        <!-- The double represents the portion of the most frequent aliases that should be excluded. The
+            boolean specifies whether any chopped aliases must be frequent in both texts. -->
+        <xsl:param name="group-1-token-alias-map" as="map(*)"/>
+        <xsl:param name="group-2-token-alias-map" as="map(*)"/>
+        <!--<xsl:param name="aura-diameter" as="xs:integer?"/>-->
+        <xsl:param name="drop-most-frequent" as="xs:decimal?"/>
+        <xsl:param name="drop-must-be-frequent-in-both" as="xs:boolean?"/>
+        
+        <xsl:variable name="current-lang" as="xs:string" select="$group-1-token-alias-map('xml:lang')"/>
+        <xsl:variable name="alias-values-to-skip" as="xs:string*" select="
+                if ($apply-skip-token-alias-map) then
+                    ($skip-token-alias-map('*'), $skip-token-alias-map($current-lang))
+                else
+                    ()"/>
+        
+        
+        <xsl:variable name="g1-token-alias-count" select="$group-1-token-alias-map('token-alias-count')" as="xs:integer"/>
+        <xsl:variable name="g1-floor" select="xs:integer(floor($drop-most-frequent * $g1-token-alias-count))" as="xs:integer"/>
+        <xsl:variable name="g1-frequent-token-aliases-to-ignore" as="map(*)*" select="
+                for $i in (1 to $g1-floor)
+                return
+                    $group-1-token-alias-map($i)"/>
+        <!-- We take the rest of the candidate integer keys, and if the token alias should be ignored, we mark it by
+            negating it, so that we can report the omission -->
+        <xsl:variable name="g1-other-token-alias-keys-checked" as="xs:integer*" select="
+                for $i in (($g1-floor + 1) to $g1-token-alias-count)
+                return
+                    if ($group-1-token-alias-map($i)('r') = $alias-values-to-skip) then
+                        ($i * -1)
+                    else
+                        $i"/>
+        <xsl:variable name="g1-keys-to-omit" as="xs:integer*"
+            select="$g1-other-token-alias-keys-checked[. lt 0]"/>
+        <xsl:variable name="g1-token-aliases-to-process" as="map(*)*" select="
+                for $i in $g1-other-token-alias-keys-checked[. gt 0]
+                return
+                    $group-1-token-alias-map($i)"/>
+        
+        
+        <xsl:variable name="g2-token-alias-count" select="$group-2-token-alias-map('token-alias-count')" as="xs:integer"/>
+        <xsl:variable name="g2-floor" select="xs:integer(floor($drop-most-frequent * $g2-token-alias-count))" as="xs:integer"/>
+        <xsl:variable name="g2-frequent-token-aliases-to-ignore" as="map(*)*" select="
+                for $i in (1 to $g2-floor)
+                return
+                    $group-2-token-alias-map($i)"/>
+        <xsl:variable name="g2-other-token-alias-keys-checked" as="xs:integer*" select="
+                for $i in (($g2-floor + 1) to $g2-token-alias-count)
+                return
+                    if ($group-2-token-alias-map($i)('r') = $alias-values-to-skip) then
+                        ($i * -1)
+                    else
+                        $i"/>
+        <xsl:variable name="g2-keys-to-omit" as="xs:integer*"
+            select="$g2-other-token-alias-keys-checked[. lt 0]"/>
+        <xsl:variable name="g2-token-aliases-to-process" as="map(*)*" select="
+                for $i in $g2-other-token-alias-keys-checked[. gt 0]
+                return
+                    $group-2-token-alias-map($i)"/>
+        
+        
+
+        <xsl:if test="exists($g1-frequent-token-aliases-to-ignore)">
+            <xsl:message select="
+                    tan:cfn($group-1-token-alias-map('xml:base')) || ' (group 1): in building 1gram, cutting the following most frequent token aliases (' || string(count($g1-frequent-token-aliases-to-ignore)) || '): ' || string-join((for $i in $g1-frequent-token-aliases-to-ignore
+                    return
+                        $i('r')), ', ')"/>
+        </xsl:if>
+        <xsl:if test="exists($g2-frequent-token-aliases-to-ignore)">
+            <xsl:message select="
+                    tan:cfn($group-2-token-alias-map('xml:base')) || ' (group 2): in building 1gram, cutting the following most frequent token aliases (' || string(count($g2-frequent-token-aliases-to-ignore)) || '): ' || string-join((for $i in $g2-frequent-token-aliases-to-ignore
+                    return
+                        $i('r')), ', ')"/>
+        </xsl:if>
+        <xsl:if test="exists($g1-keys-to-omit)">
+            <xsl:message select="
+                    tan:cfn($group-1-token-alias-map('xml:base')) || ' (group 1): in building 1gram, skipping these token aliases (' || string(count($g1-keys-to-omit)) || '): ' || string-join((for $i in $g1-keys-to-omit
+                    return
+                        $group-1-token-alias-map($i * -1)('r')), ', ')"/>
+        </xsl:if>
+        <xsl:if test="exists($g1-keys-to-omit)">
+            <xsl:message select="
+                    tan:cfn($group-2-token-alias-map('xml:base')) || ' (group 2): in building 1gram, skipping these token aliases (' || string(count($g2-keys-to-omit)) || '): ' || string-join((for $i in $g2-keys-to-omit
+                    return
+                        $group-2-token-alias-map($i * -1)('r')), ', ')"/>
+        </xsl:if>
+        
+        
+        
+        <xsl:map>
+            <xsl:map-entry key="'n'" select="1"/>
+            <xsl:map-entry key="'lang'" select="$current-lang"/>
+            <xsl:map-entry key="'base1'" select="$group-1-token-alias-map('xml:base')"/>
+            <xsl:map-entry key="'base2'" select="$group-2-token-alias-map('xml:base')"/>
+            <xsl:map-entry key="'src1'" select="$group-1-token-alias-map('src')"/>
+            <xsl:map-entry key="'src2'" select="$group-2-token-alias-map('src')"/>
+            <xsl:map-entry key="'ngrams'">
+                <xsl:map>
+                    <xsl:for-each-group select="
+                            $g1-token-aliases-to-process, $g2-token-aliases-to-process"
+                        group-by=".('r')">
+                        <!--<xsl:sort select="current-grouping-key()"/>-->
+                        <!-- ignore any aliases that are attested in only one source -->
+                        <xsl:if test="count(current-group()) gt 1">
+                            <!-- The key becomes the token alias that is alphabetically first within
+                                the ngram; in the case of a paired one-gram, the ngram's key becomes
+                                identical with its grandchildren map keys. -->
+                            <xsl:map-entry key="current-grouping-key()">
+                                <!-- Copy the two maps in sequence order, one for text 1, the other for text 2 -->
+                                <xsl:map>
+                                    <!-- Map #1 is for text 1 grams -->
+                                    <xsl:map-entry key="current-grouping-key()">
+                                        <xsl:sequence select="current-group()[1]"/>
+                                    </xsl:map-entry>
+                                </xsl:map>
+                                <xsl:map>
+                                    <!-- This is for text 2 -->
+                                    <xsl:map-entry key="current-grouping-key()">
+                                        <xsl:sequence select="current-group()[2]"/>
+                                    </xsl:map-entry>
+                                </xsl:map>
+                            </xsl:map-entry>
+                        </xsl:if>
+                    </xsl:for-each-group>
+                </xsl:map>
+            </xsl:map-entry>
+        </xsl:map>
+        
+    </xsl:function>
+    
+    
     <xsl:function name="tan:build-paired-1gram" as="document-node()?" visibility="private" _cache="{$tan:advanced-processing-available}">
         <!-- Input: two documents with token aliases, a double, a boolean -->
         <!-- Output: a paired 1gram, i.e., where there are common token aliases between the two texts -->
@@ -1054,7 +1405,7 @@
         <xsl:param name="group-1-aliases" as="document-node()"/>
         <xsl:param name="group-2-aliases" as="document-node()"/>
         <xsl:param name="aura" as="xs:integer?"/>
-        <xsl:param name="drop-most-frequent" as="xs:double?"/>
+        <xsl:param name="drop-most-frequent" as="xs:decimal?"/>
         <xsl:param name="drop-must-be-frequent-in-both" as="xs:boolean?"/>
         <xsl:apply-templates select="$group-2-aliases" mode="build-paired-1gram">
             <xsl:with-param name="aliases-to-merge" tunnel="yes" as="document-node()" select="$group-1-aliases"/>
@@ -1088,7 +1439,7 @@
             </ngram>
         </ngrams>-->
         <xsl:param name="aliases-to-merge" tunnel="yes" as="document-node()"/>
-        <xsl:param name="drop-most-frequent" tunnel="yes" select="$cut-most-frequent-aliases-per-ngram" as="xs:double?"/>
+        <xsl:param name="drop-most-frequent" tunnel="yes" select="$cut-most-frequent-aliases-per-ngram" as="xs:decimal?"/>
         <xsl:param name="drop-must-be-frequent-in-both" tunnel="yes" select="$cut-frequent-aliases-only-if-frequent-in-both-texts" as="xs:boolean?"/>
         
         <xsl:variable name="current-lang" as="xs:string" select="@xml:lang"/>
@@ -1100,12 +1451,12 @@
                     ()"/>
         
         <xsl:variable name="g1-alias-count" select="count($aliases-to-merge/*/tan:alias)" as="xs:integer"/>
-        <xsl:variable name="g1-floor" select="$drop-most-frequent * $g1-alias-count" as="xs:double"/>
+        <xsl:variable name="g1-floor" select="$drop-most-frequent * $g1-alias-count" as="xs:decimal"/>
         <xsl:variable name="g1-frequent-aliases-to-ignore" as="element()*"
             select="$aliases-to-merge/*/tan:alias[position() le $g1-floor]"/>
         
         <xsl:variable name="g2-alias-count" select="count(tan:alias)" as="xs:integer"/>
-        <xsl:variable name="g2-floor" select="$drop-most-frequent * $g2-alias-count" as="xs:double"/>
+        <xsl:variable name="g2-floor" select="$drop-most-frequent * $g2-alias-count" as="xs:decimal"/>
         <xsl:variable name="g2-frequent-aliases-to-ignore" as="element()*"
             select="tan:alias[position() le $g2-floor]"/>
         
@@ -1191,6 +1542,23 @@
     </xsl:template>
     
     
+    <xsl:variable name="all-1gram-maps" as="map(*)*">
+        <xsl:for-each select="$token-alias-maps-g1">
+            <xsl:variable name="g1-alias-map" select="." as="map(*)"/>
+            <xsl:variable name="g1-lang" select="$g1-alias-map('xml:lang')"/>
+            <xsl:variable name="corresponding-g2-alias-maps" as="map(*)*"
+                select="$token-alias-maps-g2[map:get(., 'xml:lang') eq $g1-lang]"/>
+            <xsl:if test="not(exists($corresponding-g2-alias-maps))">
+                <xsl:message select="'Group 1 file ' || $g1-alias-map('xml:base') || ' has language ' || $g1-lang || ' but there are no texts of that language in group 2.'"/>
+            </xsl:if>
+            <xsl:sequence select="
+                    for $i in $corresponding-g2-alias-maps
+                    return
+                        tan:build-paired-1gram-map($g1-alias-map, $i, $head-chop-norm[1], $cut-frequent-aliases-only-if-frequent-in-both-texts)"
+            />
+        </xsl:for-each>
+    </xsl:variable>
+    
     <xsl:variable name="all-1grams" as="document-node()*">
         <!-- This builds the seed paired 1grams that will populate 2grams, 3grams, etc. -->
         <!-- Paired 1grams are relatively quick to make, because they simply put into an
@@ -1218,6 +1586,172 @@
     <!-- At this point we have all the base 1grams, rather large files. As we go from 1grams to 2grams and 
         onward, the result should get progressively smaller. The process involves adding a 1gram to an Ngram.
     -->
+    
+    <xsl:function name="tan:add-1gram-map" as="map(*)?" visibility="private">
+        <!-- Input: an Ngram; a 1gram -->
+        <!-- Output: an N+1gram -->
+        <xsl:param name="base-ngram-map" as="map(*)?"/>
+        <xsl:param name="incoming-1gram-map" as="map(*)?"/>
+        <xsl:param name="aura-diameter" as="xs:integer"/>
+        
+        <xsl:variable name="ngram-distinct-tok-alias-count" as="xs:integer" select="map:size($base-ngram-map)"/>
+        <xsl:variable name="src1-id" as="xs:string" select="$base-ngram-map('src1')"/>
+        <xsl:variable name="src2-id" as="xs:string" select="$base-ngram-map('src2')"/>
+        
+        <xsl:variable name="base-ngram-keys" as="xs:string*" select="
+                if (exists($base-ngram-map('ngrams'))) then
+                    map:keys($base-ngram-map('ngrams'))
+                else
+                    ()"/>
+        <xsl:variable name="base-ngram-count" as="xs:integer" select="count($base-ngram-keys)"/>
+        <xsl:variable name="incoming-ngram-keys" as="xs:string*" select="
+                if (exists($incoming-1gram-map('ngrams'))) then
+                    map:keys($incoming-1gram-map('ngrams'))
+                else
+                    ()"/>
+        
+        <xsl:message select="'Adding 1gram with ' || string(map:size($incoming-1gram-map('ngrams'))) || ' distinct alias tokens to ' || 
+            string($base-ngram-map('n')) || 'gram with ' || string($ngram-distinct-tok-alias-count) || ' distinct alias tokens for ' || 
+            $src1-id || ' and ' || $src2-id || '.'"/>
+        
+        <xsl:map>
+            <xsl:map-entry key="'n'" select="$base-ngram-map('n') + 1"/>
+            <xsl:for-each select="('lang', 'src1', 'src2', 'base1', 'base2')">
+                <xsl:map-entry key="." select="map:get($base-ngram-map, .)"/>
+            </xsl:for-each>
+            <xsl:map-entry key="'ngrams'">
+                <xsl:map>
+                    <xsl:for-each select="$base-ngram-keys">
+                        <!--<xsl:sort/>-->
+                        <xsl:variable name="this-base-key" as="xs:string" select="."/>
+                        <xsl:variable name="base-ngram-texts" as="map(*)+"
+                            select="$base-ngram-map('ngrams')($this-base-key)"/>
+                        <xsl:variable name="base-ngram-token-aliases" as="xs:string+"
+                            select="map:keys($base-ngram-texts[1])"/>
+                        <xsl:variable name="existing-text-1-tok-ns" as="xs:integer+" select="
+                                for $i in $base-ngram-token-aliases
+                                return
+                                    map:keys($base-ngram-texts[1]($i))[. instance of xs:integer]"/>
+                        <xsl:variable name="existing-text-2-tok-ns" as="xs:integer+" select="
+                                for $i in $base-ngram-token-aliases
+                                return
+                                    map:keys($base-ngram-texts[2]($i))[. instance of xs:integer]"/>
+                        <xsl:variable name="text-1-aura-points" as="xs:integer+" select="
+                                distinct-values(for $i in $existing-text-1-tok-ns,
+                                    $j in (1 to $aura-diameter)
+                                return
+                                    (($i - $j), ($i + $j)))[not(. = $existing-text-1-tok-ns)]"/>
+                        <xsl:variable name="text-2-aura-points" as="xs:integer+" select="
+                                distinct-values(for $i in $existing-text-2-tok-ns,
+                                    $j in (1 to $aura-diameter)
+                                return
+                                    (($i - $j), ($i + $j)))[not(. = $existing-text-2-tok-ns)]"/>
+
+                        <xsl:variable name="relevant-incoming-keys" as="xs:string*"
+                            select="$incoming-ngram-keys[. lt $this-base-key][not(. = $base-ngram-token-aliases)]"/>
+                        
+                        <xsl:message select="
+                                'At ngram # ' || string(position()) || ' of ' || string($base-ngram-count) || ' with distinct token alias' || (if (count($base-ngram-token-aliases) gt 1) then
+                                    'es '
+                                else
+                                    ' ') || string-join($base-ngram-token-aliases, ', ') || ' checking ' || string(count($relevant-incoming-keys)) ||
+                                ' token aliases from incoming 1gram.'"/>
+
+
+                        <xsl:for-each select="$relevant-incoming-keys">
+                            <xsl:variable name="this-inc-key" as="xs:string" select="."/>
+                            <xsl:variable name="incoming-ngram-texts" as="map(*)+"
+                                select="$incoming-1gram-map('ngrams')($this-inc-key)"/>
+                            <xsl:variable name="matching-text-1-tok-ns" as="xs:integer*"
+                                select="map:keys($incoming-ngram-texts[1]($this-inc-key))[. instance of xs:integer][. = $text-1-aura-points]"/>
+                            <xsl:variable name="matching-text-2-tok-ns" as="xs:integer*"
+                                select="map:keys($incoming-ngram-texts[2]($this-inc-key))[. instance of xs:integer][. = $text-2-aura-points]"/>
+
+
+                            <xsl:if
+                                test="exists($matching-text-1-tok-ns) and exists($matching-text-2-tok-ns)">
+
+                                <!-- filter base, to retain only those tokens within the aura of the incoming gram -->
+                                <xsl:variable name="incoming-text-1-aura-points" as="xs:integer+"
+                                    select="tan:integer-clusters(($existing-text-1-tok-ns, $text-1-aura-points), $matching-text-1-tok-ns)"/>
+                                <xsl:variable name="incoming-text-2-aura-points" as="xs:integer+"
+                                    select="tan:integer-clusters(($existing-text-2-tok-ns, $text-2-aura-points), $matching-text-2-tok-ns)"/>
+
+
+                                <xsl:message select="
+                                        '✔ ' || $this-inc-key || ' from incoming 1gram falls in the aura of each text in the base ngram.'"/>
+
+                                <xsl:map-entry key="$this-inc-key || ' ' || $this-base-key">
+                                    <!-- Text 1 new ngram -->
+                                    <xsl:map>
+                                        <xsl:map-entry key="$this-inc-key">
+                                            <xsl:map>
+                                                <xsl:for-each select="$matching-text-1-tok-ns">
+                                                  <xsl:map-entry key="."
+                                                  select="map:get($incoming-ngram-texts[1]($this-inc-key), .)"
+                                                  />
+                                                </xsl:for-each>
+                                            </xsl:map>
+                                        </xsl:map-entry>
+                                        <xsl:for-each select="$base-ngram-token-aliases">
+                                            <xsl:variable name="this-base-tok-map"
+                                                select="map:get($base-ngram-texts[1], .)"/>
+                                            <xsl:variable name="these-keys-of-choice"
+                                                as="xs:integer+"
+                                                select="map:keys($this-base-tok-map)[. instance of xs:integer][. = $incoming-text-1-aura-points]"/>
+                                            <xsl:map-entry key=".">
+                                                <!--<test03a>
+                                                    <keys><xsl:copy-of select="map:keys($this-base-tok-map)"/></keys>
+                                                </test03a>-->
+                                                <xsl:map>
+                                                  <xsl:for-each select="$these-keys-of-choice">
+                                                  <xsl:map-entry key="."
+                                                  select="map:get($this-base-tok-map, .)"/>
+                                                  </xsl:for-each>
+                                                </xsl:map>
+                                            </xsl:map-entry>
+                                        </xsl:for-each>
+                                    </xsl:map>
+                                    <!-- Text 2 new ngram -->
+                                    <xsl:map>
+                                        <xsl:map-entry key="$this-inc-key">
+                                            <xsl:map>
+                                                <xsl:for-each select="$matching-text-2-tok-ns">
+                                                  <xsl:map-entry key="."
+                                                  select="map:get($incoming-ngram-texts[2]($this-inc-key), .)"
+                                                  />
+                                                </xsl:for-each>
+                                            </xsl:map>
+                                        </xsl:map-entry>
+                                        <xsl:for-each select="$base-ngram-token-aliases">
+                                            <xsl:variable name="this-base-tok-map"
+                                                select="map:get($base-ngram-texts[2], .)"/>
+                                            <xsl:variable name="these-keys-of-choice"
+                                                as="xs:integer+"
+                                                select="map:keys($this-base-tok-map)[. instance of xs:integer][. = $incoming-text-2-aura-points]"/>
+                                            <xsl:map-entry key=".">
+                                                <xsl:map>
+                                                  <xsl:for-each select="$these-keys-of-choice">
+                                                  <xsl:map-entry key="."
+                                                  select="map:get($this-base-tok-map, .)"/>
+                                                  </xsl:for-each>
+                                                </xsl:map>
+                                            </xsl:map-entry>
+                                        </xsl:for-each>
+                                    </xsl:map>
+                                </xsl:map-entry>
+
+                            </xsl:if>
+
+                        </xsl:for-each>
+
+
+                    </xsl:for-each>
+                </xsl:map>
+            </xsl:map-entry>
+        </xsl:map>
+        
+    </xsl:function>
     
     <xsl:function name="tan:add-1gram" as="document-node()?" visibility="private">
         <!-- Input: an Ngram; a 1gram -->
@@ -1449,6 +1983,17 @@
     
     
     
+    <xsl:variable name="all-cumulative-ngram-maps" as="map(*)*">
+        <xsl:choose>
+            <xsl:when test="$target-ngram-n-norm lt 2">
+                <xsl:sequence select="$all-1gram-maps"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:apply-templates select="$all-1gram-maps" mode="build-target-ngram"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:variable>
+    
     <xsl:variable name="all-cumulative-ngrams" as="document-node()*">
         <xsl:choose>
             <xsl:when test="$target-ngram-n-norm lt 2">
@@ -1461,6 +2006,118 @@
     </xsl:variable>
     
     <xsl:mode name="build-target-ngram" on-no-match="shallow-copy"/>
+    
+    <xsl:template match=".[. instance of map(*)]" mode="build-target-ngram">
+        <xsl:param name="text-1-base" as="xs:string" select="map:get(., 'base1')"/>
+        <xsl:param name="text-2-base" as="xs:string" select="map:get(., 'base2')"/>
+        
+        <xsl:variable name="context-map" as="map(*)" select="."/>
+        <xsl:variable name="context-lang" as="xs:string" select="map:get(., 'lang')"/>
+        <xsl:variable name="consolidated-tok-aliases-text-1" as="map(*)" select="$token-alias-maps-g1[.('xml:base') eq $text-1-base]"/>
+        <xsl:variable name="consolidated-tok-aliases-text-2" as="map(*)" select="$token-alias-maps-g2[.('xml:base') eq $text-2-base]"/>
+        
+        <xsl:iterate select="2 to $target-ngram-n-norm">
+            <xsl:param name="results-so-far" as="map(*)?" select="$context-map"/>
+            
+            <xsl:variable name="this-n" select="." as="xs:integer"/>
+            
+            <xsl:variable name="manifest" as="element()?">
+                <xsl:if test="$tan:save-and-use-intermediate-steps">
+                    <xsl:message select="'Building ' || string(.) || 'gram manifest'"/>
+                    <manifest>
+                        <n><xsl:value-of select="$this-n"/></n>
+                        <t1base><xsl:value-of select="$text-1-base"/></t1base>
+                        <t2base><xsl:value-of select="$text-2-base"/></t2base>
+                        <previous-step>
+                            <xsl:value-of select="
+                                    if ($verify-intermediate-steps-strictly) then
+                                        (tan:checksum-fletcher-32(tan:map-to-xml(tan:drop-manifest($results-so-far), true())))
+                                    else
+                                        ('length ' || string-length(tan:map-to-xml(tan:drop-manifest($results-so-far), true())))"
+                            />
+                        </previous-step>
+                        <aura><xsl:value-of select="$ngram-aura-diameters-norm[$this-n]"/></aura>
+                        <chop><xsl:value-of select="$head-chop-norm[$this-n]"/></chop>
+                        <xsl:if test="$apply-skip-token-alias-map">
+                            <skip-aliases>
+                                <xsl:value-of select="sort($skip-token-alias-map('*'))"/>
+                                <xsl:value-of select="sort($skip-token-alias-map($context-lang))"/>
+                            </skip-aliases>
+                        </xsl:if>
+                        <cut-only-common><xsl:value-of select="$cut-frequent-aliases-only-if-frequent-in-both-texts"/></cut-only-common>
+                        <consolidated-tok-aliases-text-1>
+                            <xsl:value-of select="
+                                    if ($verify-intermediate-steps-strictly) then
+                                        (tan:checksum-fletcher-32(tan:map-to-xml(tan:drop-manifest($consolidated-tok-aliases-text-1), true())))
+                                    else
+                                        ('length ' || string-length(tan:map-to-xml(tan:drop-manifest($consolidated-tok-aliases-text-1), true())))"
+                            />
+                        </consolidated-tok-aliases-text-1>
+                        <consolidated-tok-aliases-text-2>
+                            <xsl:value-of select="
+                                    if ($verify-intermediate-steps-strictly) then
+                                        (tan:checksum-fletcher-32(tan:map-to-xml(tan:drop-manifest($consolidated-tok-aliases-text-2), true())))
+                                    else
+                                        ('length ' || string-length(tan:map-to-xml(tan:drop-manifest($consolidated-tok-aliases-text-2), true())))"
+                            />
+                        </consolidated-tok-aliases-text-2>
+                    </manifest>
+                </xsl:if>
+            </xsl:variable>
+            <xsl:if test="$tan:save-and-use-intermediate-steps">
+                <xsl:message select="'Building ' || string(.) || 'gram checksum'"/>
+            </xsl:if>
+            <xsl:variable name="this-manifest-checksum" select="
+                    if (exists($manifest)) then
+                        tan:checksum-fletcher-32(string($manifest))
+                    else
+                        ()" as="xs:string?"/>
+            <xsl:variable name="expected-temp-file-location" as="xs:anyURI?" select="
+                    if (exists($manifest)) then
+                        resolve-uri($this-manifest-checksum || '-result.xml', $temporary-file-directory-norm)
+                    else
+                        ()"/>
+            <xsl:variable name="manifest-stamped" as="element()?"
+                select="tan:stamp-manifest($manifest, $this-manifest-checksum)"/>
+            
+            <xsl:variable name="new-results" as="map(*)">
+                <xsl:choose>
+                    <xsl:when test="exists($manifest) and doc-available($expected-temp-file-location)">
+                        <xsl:message select="'Building ' || string($this-n) || 'gram map for ' || 
+                            tan:cfn($text-1-base) || ' and ' || tan:cfn($text-2-base) || ': fetching intermediate file from ' || 
+                            $expected-temp-file-location"/>
+                        <xsl:sequence select="map:remove(tan:xml-to-map(doc($expected-temp-file-location)), 'manifest')"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:if test="$tan:save-and-use-intermediate-steps">
+                            <xsl:message select="'Building ' || string($this-n) || 'gram map for ' || 
+                                tan:cfn($text-1-base) || ' and ' || tan:cfn($text-2-base) || ': no intermediate file found at ' || 
+                                $expected-temp-file-location || '. Building afresh.'"/>
+                            
+                        </xsl:if>
+                        <xsl:variable name="new-1gram" as="map(*)"
+                            select="tan:build-paired-1gram-map($consolidated-tok-aliases-text-1, $consolidated-tok-aliases-text-2, 
+                            $head-chop-norm[$this-n], 
+                            $cut-frequent-aliases-only-if-frequent-in-both-texts)"
+                        />
+                        <xsl:variable name="new-plus-gram" as="map(*)"
+                            select="tan:add-1gram-map($results-so-far, $new-1gram, $ngram-aura-diameters-norm[$this-n])"/>
+                        
+                        <xsl:sequence
+                            select="map:put($new-plus-gram, 'manifest', $manifest-stamped)"/>
+                        
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:variable>
+            
+            <xsl:sequence select="$new-results"/>
+            
+            <xsl:next-iteration>
+                <xsl:with-param name="results-so-far" select="$new-results"/>
+            </xsl:next-iteration>
+        </xsl:iterate>
+        
+    </xsl:template>
     
     <xsl:template match="/" mode="build-target-ngram">
         <xsl:param name="text-1-base" as="xs:string" select="*/@base1"/>
@@ -1477,6 +2134,7 @@
             
             <xsl:variable name="manifest" as="element()?">
                 <xsl:if test="$tan:save-and-use-intermediate-steps">
+                    <xsl:message select="'Building ' || string(.) || 'gram manifest'"/>
                     <manifest>
                         <n><xsl:value-of select="$this-n"/></n>
                         <t1base><xsl:value-of select="$text-1-base"/></t1base>
@@ -1518,6 +2176,9 @@
                 </xsl:if>
             </xsl:variable>
             
+            <xsl:if test="$tan:save-and-use-intermediate-steps">
+                <xsl:message select="'Building ' || string(.) || 'gram checksum'"/>
+            </xsl:if>
             <xsl:variable name="this-manifest-checksum" select="
                     if (exists($manifest)) then
                         tan:checksum-fletcher-32(string($manifest))
@@ -1570,6 +2231,9 @@
     
     
     
+    <xsl:variable name="all-target-ngram-maps" as="map(*)*"
+        select="$all-cumulative-ngram-maps[.('n') eq $target-ngram-n-norm]"/>
+    
     <xsl:variable name="all-target-ngrams" as="document-node()*"
         select="$all-cumulative-ngrams[*[@n eq string($target-ngram-n-norm)]]"/>
     
@@ -1580,11 +2244,267 @@
     
     <!-- Some ngrams will be within each others' auras, and can be grouped into clusters -->
     
+    <xsl:variable name="common-output-pass-1-maps" as="map(*)*">
+        <xsl:apply-templates select="$all-target-ngram-maps"
+            mode="group-and-sort-ngrams-by-group-1-text-clusters"/>
+    </xsl:variable>
+    
     <xsl:variable name="common-output-pass-1" as="document-node()*">
         <xsl:apply-templates select="$all-target-ngrams" mode="group-and-sort-ngrams-by-group-1-text-clusters"/>
     </xsl:variable>
     
     <xsl:mode name="group-and-sort-ngrams-by-group-1-text-clusters" on-no-match="shallow-copy"/>
+    
+    <xsl:template match=".[. instance of map(*)]" mode="group-and-sort-ngrams-by-group-1-text-clusters">
+        <xsl:variable name="context-map" as="map(*)" select="."/>
+        <xsl:variable name="ngrams" select="map:get(., 'ngrams')" as="map(*)?"/>
+        <xsl:variable name="base1" as="xs:string" select="map:get(., 'base1')"/>
+        <xsl:variable name="base2" as="xs:string" select="map:get(., 'base2')"/>
+        <xsl:variable name="tok-maps-g1" as="map(*)+" select="$input-tokenization-map($base1)"/>
+        <xsl:variable name="tok-maps-g2" as="map(*)+" select="$input-tokenization-map($base2)"/>
+        <xsl:variable name="ngram-keys" as="xs:string*" select="
+                if (map:size($ngrams) gt 0) then
+                    map:keys($ngrams)
+                else
+                    ()"/>
+        <xsl:variable name="all-g1-maps" as="map(*)*" select="
+                for $i in $ngram-keys
+                return
+                    $ngrams($i)[1]"/>
+        <xsl:variable name="g1-tok-ns" as="xs:integer*" select="
+                for $i in $all-g1-maps[map:size(.) gt 0],
+                    $j in map:keys($i)
+                return
+                    map:keys($i($j)[map:size(.) gt 0])[. instance of xs:integer]"/>
+        <xsl:variable name="g1-tok-auras" as="xs:integer*" select="
+                for $i in $g1-tok-ns,
+                    $j in (1 to $ngram-aura-diameters-norm[1])
+                return
+                    (($i + $j), ($i - $j))"/>
+        <xsl:variable name="g1-aura-groups" as="array(xs:integer+)?" select="tan:integer-groups(($g1-tok-ns, $g1-tok-auras))"/>
+        
+        <xsl:variable name="token-alias-map-1" as="map(*)"
+            select="$token-alias-maps-g1[map:get(., 'xml:base') eq $base1]"/>
+        <xsl:variable name="token-alias-map-2" as="map(*)"
+            select="$token-alias-maps-g2[map:get(., 'xml:base') eq $base2]"/>
+        
+        <xsl:map>
+            <xsl:map-entry key="'diagnostics'">
+                <!--<xsl:for-each select="$ngram-keys">
+                    <xsl:message select="'iteration, ngram key, group 1 keys: ', position(), tan:map-keys($ngrams(current())[1])"/>
+                </xsl:for-each>-->
+                <ngram-keys><xsl:copy-of select="$ngram-keys"/></ngram-keys>
+                <g1-tok-ns><xsl:copy-of select="$g1-tok-ns"/></g1-tok-ns>
+                <g1-aura-groups>
+                    <!--<xsl:message select="array:flatten($g1-aura-groups)"/>-->
+                    <xsl:for-each select="1 to array:size($g1-aura-groups)">
+                        <group><xsl:copy-of select="$g1-aura-groups(current())"/></group>
+                    </xsl:for-each>
+                </g1-aura-groups>
+            </xsl:map-entry>
+            
+            <xsl:for-each select="('lang', 'src1', 'src2', 'base1', 'base2')">
+                <xsl:map-entry key="." select="map:get($context-map, .)"/>
+            </xsl:for-each>
+
+            <xsl:map-entry key="'clusters'">
+                <xsl:map>
+                    <xsl:for-each select="1 to array:size($g1-aura-groups)">
+                        <xsl:variable name="this-g1-tok-sequence" as="xs:integer+" select="$g1-aura-groups(current())"/>
+                        <xsl:variable name="relevant-g1-maps" as="map(*)*" select="
+                                for $i in $ngram-keys
+                                return
+                                    $ngrams($i)[1][tan:map-contains(., $this-g1-tok-sequence)]
+                                "/>
+                        <!--<xsl:variable name="relevant-g1-maps" as="map(*)+" select="
+                                for $i in $ngram-keys,
+                                    $j in $ngrams($i)[1],
+                                    $k in map:keys($j),
+                                    $l in $j($k)
+                                return
+                                    $l[some $i in $this-g1-tok-sequence
+                                        satisfies map:contains(., $i)]
+                                "/>-->
+                        <xsl:variable name="relevant-g2-maps" as="map(*)*" select="
+                                for $i in $ngram-keys
+                                return
+                                    (if (tan:map-contains($ngrams($i)[1], $this-g1-tok-sequence)) then
+                                        $ngrams($i)[2]
+                                    else
+                                        ())"/>
+                        <!--<xsl:message select="'iteration', ."/>
+                        <xsl:message select="'g1 tok sequence', $this-g1-tok-sequence"/>
+                        <xsl:message select="'Relevant g1 map keys ', tan:map-keys($relevant-g1-maps)"/>
+                        <xsl:message select="'Relevant g2 map keys ', tan:map-keys($relevant-g2-maps)"/>-->
+                        <!--<xsl:variable name="relevant-g2-maps" as="map(*)+" select="
+                                for $i in $ngram-keys
+                                return
+                                    if (map:for-each($ngrams($i)[1], function ($k, $v) {
+                                        map:keys($v)
+                                    }) = $this-g1-tok-sequence) then
+                                        $ngrams($i)[2]
+                                    else
+                                        ()"/>-->
+                        <xsl:variable name="g2-tok-ns" as="xs:integer*" select="
+                                for $i in $relevant-g2-maps[map:size(.) gt 0],
+                                    $j in map:keys($i)
+                                return
+                                    map:keys($i($j)[map:size(.) gt 0])[. instance of xs:integer]"
+                        />
+                        <xsl:variable name="g2-tok-auras" as="xs:integer*" select="
+                                for $i in $g2-tok-ns,
+                                    $j in (1 to $ngram-aura-diameters-norm[1])
+                                return
+                                    (($i + $j), ($i - $j))"/>
+                        <xsl:variable name="g2-aura-groups" as="array(xs:integer+)*" select="tan:integer-groups(($g2-tok-ns, $g2-tok-auras))"/>
+                        
+                        <!-- cluster number -->
+                        <xsl:map-entry key=".">
+                            <xsl:map>
+                                <xsl:map-entry key="'type'" select="'cluster'"/>
+                                <xsl:map-entry key="'diagnostics'">
+                                    <g2-tok-ns><xsl:copy-of select="$g2-tok-ns"/></g2-tok-ns>
+                                    <g2-aura-groups>
+                                        <xsl:for-each select="1 to array:size($g2-aura-groups)">
+                                            <group><xsl:copy-of select="$g2-aura-groups(current())"/></group>
+                                        </xsl:for-each>
+                                    </g2-aura-groups>
+                                </xsl:map-entry>
+                                <xsl:for-each select="$this-g1-tok-sequence">
+                                    <!-- one map entry per text 1 token -->
+                                    <xsl:variable name="this-tok-no" as="xs:integer" select="."/>
+                                    <xsl:variable name="these-g1-token-aliases" as="xs:string*" select="
+                                            for $i in $all-g1-maps,
+                                                $j in map:keys($i)
+                                            return
+                                                if (exists($i($j)($this-tok-no))) then
+                                                    $j
+                                                else
+                                                    ()"/>
+                                    <xsl:variable name="these-g1-token-alias-statistics"
+                                        as="map(*)*" select="
+                                            for $i in $these-g1-token-aliases
+                                            return
+                                                $token-alias-map-1('stats')($i)"
+                                    />
+                                    
+                                    <!-- text 1 tok number -->
+                                    <xsl:map-entry key=".">
+                                        <xsl:if test="not(exists($these-g1-token-aliases))">
+                                            <xsl:sequence select="string($tok-maps-g1[1]($this-tok-no)/self::tan:tok/text())"/>
+                                        </xsl:if>
+                                        <xsl:for-each select="distinct-values($these-g1-token-aliases)">
+                                            <xsl:variable name="this-token-alias" select="."/>
+                                            <xsl:variable name="this-tok-entry-map" as="map(*)*"
+                                                select="
+                                                    for $i in $relevant-g1-maps,
+                                                        $j in $i($this-token-alias)
+                                                    return
+                                                        $j($this-tok-no)"
+                                            />
+                                            <xsl:variable name="other-token-nos" as="xs:integer*"
+                                                select="
+                                                    for $i in $relevant-g2-maps,
+                                                        $j in $i($this-token-alias)
+                                                    return
+                                                        map:keys($j)[. = $g2-tok-ns]"
+                                            />
+                                            <xsl:variable name="this-token-alias-map" as="map(*)" select="$token-alias-map-1('stats')($this-token-alias)"/>
+                                            <!--<xsl:if test="exists($this-tok-entry-map[2])">
+                                                <xsl:message select="count($this-tok-entry-map), ' token entries found'"/>
+                                                <xsl:message select="tan:map-to-xml($this-tok-entry-map)"/>
+                                            </xsl:if>-->
+                                            <xsl:map>
+                                                <xsl:map-entry key="'r'" select="$this-token-alias"/>
+                                                <xsl:map-entry key="'counterpart-ns'"
+                                                  select="distinct-values($other-token-nos)"/>
+                                                <xsl:sequence
+                                                  select="tan:map-entries($this-token-alias-map)"/>
+                                                <xsl:sequence
+                                                  select="tan:map-entries($this-tok-entry-map[1])"/>
+                                            </xsl:map>
+                                        </xsl:for-each>
+                                    </xsl:map-entry>
+                                </xsl:for-each>
+                                <xsl:for-each select="1 to array:size($g2-aura-groups)">
+                                    <xsl:variable name="this-g2-tok-sequence" as="xs:integer+" select="$g2-aura-groups(current())"/>
+                                    <!-- one map entry per corresponding group 2 text cluster, with keys enumerated 'g2-1', 'g2-2', etc. -->
+                                    <xsl:map-entry key="'g2-' || string(.)">
+                                        <xsl:map>
+                                            <xsl:for-each select="$this-g2-tok-sequence">
+                                                <!-- one map entry per text 2 token -->
+                                                <xsl:variable name="this-tok-no" as="xs:integer"
+                                                  select="."/>
+                                                <xsl:variable name="these-g2-token-aliases"
+                                                  as="xs:string*" select="
+                                                        for $i in $relevant-g2-maps,
+                                                            $j in map:keys($i)
+                                                        return
+                                                            if (exists($i($j)($this-tok-no))) then
+                                                                $j
+                                                            else
+                                                                ()"/>
+                                                
+                                                <xsl:variable name="these-g2-token-alias-statistics"
+                                                  as="map(*)*" select="
+                                                        for $i in $these-g2-token-aliases
+                                                        return
+                                                            $token-alias-map-2('stats')($i)"
+                                                />
+                                                
+                                                <!-- text 2 tok number -->
+                                                <xsl:map-entry key=".">
+                                                    <xsl:if test="not(exists($these-g2-token-aliases))">
+                                                        <xsl:sequence select="string($tok-maps-g2[1]($this-tok-no)/self::tan:tok/text())"/>
+                                                    </xsl:if>
+                                                  <xsl:for-each select="$these-g2-token-aliases">
+                                                  <xsl:variable name="this-token-alias" select="."/>
+                                                  <xsl:variable name="this-tok-entry-map"
+                                                  as="map(*)*" select="
+                                                                for $i in $relevant-g2-maps,
+                                                                    $j in $i($this-token-alias)
+                                                                return
+                                                                    $j($this-tok-no)"/>
+                                                  <xsl:variable name="other-token-nos"
+                                                  as="xs:integer*" select="
+                                                                for $i in $relevant-g1-maps,
+                                                                    $j in $i($this-token-alias)
+                                                                return
+                                                                    map:keys($j)[. = $this-g1-tok-sequence]"/>
+                                                  <xsl:variable name="this-token-alias-map"
+                                                  as="map(*)"
+                                                  select="$token-alias-map-2('stats')($this-token-alias)"/>
+                                                  <!--<xsl:if test="exists($this-tok-entry-map[2])">
+                                                  <xsl:message
+                                                  select="count($this-tok-entry-map), ' token entries found'"/>
+                                                  <xsl:message
+                                                  select="tan:map-to-xml($this-tok-entry-map)"/>
+                                                  </xsl:if>-->
+                                                  <xsl:map>
+                                                  <xsl:map-entry key="'r'"
+                                                  select="$this-token-alias"/>
+                                                  <xsl:map-entry key="'counterpart-ns'"
+                                                  select="distinct-values($other-token-nos)"/>
+                                                  <xsl:sequence
+                                                  select="tan:map-entries($this-token-alias-map)"/>
+                                                  <xsl:sequence
+                                                  select="tan:map-entries($this-tok-entry-map[1])"/>
+                                                  </xsl:map>
+                                                  </xsl:for-each>
+                                                </xsl:map-entry>
+
+                                            </xsl:for-each>
+                                        </xsl:map>
+                                    </xsl:map-entry>
+                                </xsl:for-each>
+                            </xsl:map>
+                            
+                        </xsl:map-entry>
+                    </xsl:for-each>
+                </xsl:map>
+            </xsl:map-entry>
+        </xsl:map>
+    </xsl:template>
     
     <xsl:template match="/tan:ngrams" mode="group-and-sort-ngrams-by-group-1-text-clusters">
         <xsl:variable name="context-ngrams" as="element()*" select="tan:ngram"/>
@@ -1704,11 +2624,354 @@
     
     
     <!-- Now, score the clusters; we opt for multiple methods of scoring, to be filtered later -->
+    
+    <xsl:variable name="common-output-pass-2-maps" as="map(*)*">
+        <xsl:apply-templates select="$common-output-pass-1-maps" mode="score-clusters"/>
+    </xsl:variable>
+    
     <xsl:variable name="common-output-pass-2" as="document-node()*">
         <xsl:apply-templates select="$common-output-pass-1" mode="score-clusters"/>
     </xsl:variable>
     
     <xsl:mode name="score-clusters" on-no-match="shallow-copy"/>
+    
+    <xsl:template match=".[. instance of map(*)]" priority="-1" mode="score-clusters">
+        <xsl:variable name="this-map" select="." as="map(*)"/>
+        <xsl:map>
+            <xsl:for-each select="map:keys(.)">
+                <xsl:map-entry key=".">
+                    <xsl:apply-templates select="$this-map(current())" mode="#current"/>
+                </xsl:map-entry>
+            </xsl:for-each>
+        </xsl:map>
+    </xsl:template>
+    
+    <xsl:template match=".[. instance of map(*)][map:contains(., 'base1') and map:contains(., 'base2')]" mode="score-clusters">
+        <xsl:variable name="this-map" select="." as="map(*)"/>
+        <xsl:variable name="base1" as="xs:string?" select="map:get(., 'base1')"/>
+        <xsl:variable name="base2" as="xs:string?" select="map:get(., 'base2')"/>
+        
+        <xsl:variable name="tok-maps-g1" as="map(*)*" select="$input-tokenization-map($base1)"/>
+        <xsl:variable name="tok-maps-g2" as="map(*)*" select="$input-tokenization-map($base2)"/>
+        <xsl:map>
+            <xsl:for-each select="map:keys(.)">
+                <xsl:map-entry key=".">
+                    <xsl:apply-templates select="$this-map(current())" mode="#current">
+                        <xsl:with-param name="tok-maps-g1" tunnel="yes" select="$tok-maps-g1"/>
+                        <xsl:with-param name="tok-maps-g2" tunnel="yes" select="$tok-maps-g2"/>
+                        
+                    </xsl:apply-templates>
+                </xsl:map-entry>
+            </xsl:for-each>
+        </xsl:map>
+    </xsl:template>
+    
+    <xsl:template match=".[. instance of map(*)][.?type = 'cluster']" mode="score-clusters">
+        <xsl:param name="tok-maps-g1" tunnel="yes" as="map(*)*"/>
+        <xsl:param name="tok-maps-g2" tunnel="yes" as="map(*)*"/>
+        
+        <xsl:variable name="this-map" select="." as="map(*)"/>
+        <!--<xsl:variable name="this-map-as-array" as="array(*)" select="tan:map-to-array(., true())"/>-->
+        
+        <xsl:variable name="these-keys" as="item()*" select="map:keys(.)"/>
+        <xsl:variable name="these-g1-keys" as="xs:integer+"
+            select="$these-keys[. instance of xs:integer]"/>
+        <xsl:variable name="these-g2-cluster-keys" as="xs:string+" select="$these-keys[starts-with(string(.), 'g2-')]"/>
+        
+        
+        <xsl:variable name="these-g1-gram-keys" as="xs:integer+" select="
+                for $i in $these-g1-keys
+                return
+                    if ($this-map($i)[1] instance of map(*)) then
+                        $i
+                    else
+                        ()"/>
+        
+        <!--<xsl:if test="count($these-g1-gram-keys) eq 0">
+            <xsl:message select="'unexpected lack of g1 keys'"/>
+            <xsl:message select="'keys:', $these-keys"/>
+            <xsl:for-each select="sort($these-g1-keys)">
+                <xsl:message select="., $this-map(current())"/>
+            </xsl:for-each>
+        </xsl:if>-->
+        <!--<xsl:variable name="these-g1-gram-keys" as="xs:integer+" select="
+                for $i in $these-g1-keys
+                return
+                    let $j := $this-map($i)
+                    return
+                        if ($j instance of map(*)) then
+                            $i
+                        else
+                            ()"/>-->
+        <xsl:variable name="these-g2-gram-keys" as="array(xs:integer*)" select="
+                array:join(for $i in $these-g2-cluster-keys
+                return
+                    let $j := $this-map($i)
+                    return
+                        [
+                            (for $k in map:keys($j)[. instance of xs:integer]
+                            return
+                                if ($j($k)[1] instance of map(*)) then
+                                    $k
+                                else
+                                    ())
+                        ]
+                )"/>
+        
+        <xsl:variable name="unmatched-g1-token-array" as="array(*)" select="
+                array:join(for $i in $these-g1-keys,
+                    $j in $this-map($i)
+                return
+                    (if ($j instance of xs:string) then
+                        [($i, $j)]
+                    else
+                        ()))"/>
+        <xsl:variable name="unmatched-g2-token-arrays" as="array(*)+" select="
+                for $i in $these-g2-cluster-keys,
+                    $j in $this-map($i)
+                return
+                    array:join(for $k in map:keys($j)[. instance of xs:integer],
+                        $l in $j($k)
+                    return
+                        (if ($l instance of xs:string) then
+                            [($k, $l)]
+                        else
+                            ()))"/>
+        <xsl:variable name="unmatched-g1-strings-simplified" as="xs:string*" select="
+                for $i in (1 to array:size($unmatched-g1-token-array))
+                return
+                    tan:string-base(lower-case($unmatched-g1-token-array($i)[2]))"/>
+        <xsl:variable name="unmatched-token-comparison" as="element()*">
+            <xsl:for-each select="$unmatched-g2-token-arrays">
+                <xsl:variable name="these-strings-simplified" as="xs:string*" select="
+                        for $i in (1 to array:size(current()))
+                        return
+                            tan:string-base(lower-case(.($i)[2]))"/>
+                <xsl:copy-of select="tan:collate-pair-of-sequences($unmatched-g1-strings-simplified, $these-strings-simplified)"/>
+            </xsl:for-each>
+        </xsl:variable>
+        <xsl:variable name="counterpart-positions" as="array(xs:integer*)*" select="
+                for $i in $unmatched-token-comparison
+                return
+                    array:join(for $j in $i/tan:common
+                    return
+                        [(count($j/preceding-sibling::*[not(self::tan:b)]) + 1, count($j/preceding-sibling::*[not(self::tan:a)]) + 1)])"
+        />
+        <xsl:variable name="counterpart-positions-absolute" as="array(xs:integer+)?" select="
+                array:join(for $i in (1 to count($counterpart-positions))
+                return
+                    let $j := $counterpart-positions[$i],
+                        $k := array:size($j)
+                    return
+                        for $m in (1 to $k)
+                        return
+                            let $memb := $j($m)
+                            return
+                                [($unmatched-g1-token-array($memb[1])[1], $unmatched-g2-token-arrays[$i]($memb[2])[1])])"
+        />
+
+        <xsl:variable name="counterpart-g1-to-g2-map" as="map(*)">
+            <xsl:map>
+                <xsl:for-each-group select="1 to array:size($counterpart-positions-absolute)"
+                    group-by="
+                        let $i := .
+                        return
+                            $counterpart-positions-absolute($i)[1]">
+                    <xsl:variable name="these-pos" as="xs:integer+" select="current-group()"/>
+                    <xsl:map-entry key="current-grouping-key()" select="
+                            for $i in $these-pos
+                            return
+                                $counterpart-positions-absolute($i)[2]"/>
+                </xsl:for-each-group> 
+            </xsl:map>
+        </xsl:variable>
+        <xsl:variable name="counterpart-g2-to-g1-map" as="map(*)">
+            <xsl:map>
+                <xsl:for-each-group select="1 to array:size($counterpart-positions-absolute)"
+                    group-by="
+                        let $i := .
+                        return
+                            $counterpart-positions-absolute($i)[2]">
+                    <xsl:variable name="these-pos" as="xs:integer+" select="current-group()"/>
+                    <xsl:map-entry key="current-grouping-key()" select="
+                            for $i in $these-pos
+                            return
+                                $counterpart-positions-absolute($i)[1]"/>
+                </xsl:for-each-group>
+            </xsl:map>
+        </xsl:variable>
+        <!-- The scores for newly added matches is the inversion of the token count per average token count. Common words add little to
+            the score. -->
+        <xsl:variable name="bonus-g1-scores" as="xs:decimal*" select="
+                for $i in $unmatched-token-comparison/tan:common
+                return
+                    (1 div $tok-maps-g1[2]($i)[3])"/>
+        <xsl:variable name="bonus-g2-scores" as="array(xs:decimal*)*">
+            <xsl:for-each select="$unmatched-token-comparison">
+                <xsl:variable name="decimal-sequence" as="xs:decimal*" select="
+                        for $i in tan:common
+                        return
+                            (1 div $tok-maps-g2[2]($i)[3])"/>
+                <xsl:sequence select="array {$decimal-sequence}"/>
+            </xsl:for-each>
+        </xsl:variable>
+        
+        <!-- Invert the ratios, so that rare items score above 1, and common ones below -->
+        <!-- Any given <tok> might have more than one map, reflecting different sources of TAN-A-lm data,
+            so the average is taken. In the future more sophisticated methods of parsing the different data
+            might be taken into account. -->
+        <xsl:variable name="g1-per-medians" as="xs:decimal+" select="
+                for $i in $these-g1-gram-keys
+                return
+                    (1 div avg(for $j in $this-map($i)
+                    return
+                        $j('tok-count-per-median')))"/>
+        <xsl:variable name="g1-per-averages" as="xs:decimal+" select="
+                for $i in $these-g1-gram-keys
+                return
+                    (1 div avg(for $j in $this-map($i)
+                    return
+                        $j('tok-count-per-average')))"/>
+        <xsl:variable name="g1-per-totals" as="xs:decimal+" select="
+                for $i in $these-g1-gram-keys
+                return
+                    (1 div avg(for $j in $this-map($i)
+                    return
+                        $j('tok-count-per-total')))"/>
+        <xsl:variable name="g1-cert-avgs" as="xs:decimal+" select="
+                for $i in $these-g1-gram-keys
+                return
+                    avg(for $j in $this-map($i)
+                    return
+                        $j('cert-avg'))"/>
+        <xsl:variable name="g2-counter" as="xs:integer+" select="1 to count($these-g2-cluster-keys)"/>
+        <xsl:variable name="g2-per-medians" as="array(xs:decimal*)" select="
+                array:join(for $i in $g2-counter
+                return
+                    let $j := $this-map($these-g2-cluster-keys[$i])
+                    return
+                        [
+                            (for $k in $these-g2-gram-keys($i)
+                            return
+                                (1 div avg(for $m in $j($k)
+                                return
+                                    $m('tok-count-per-median'))))
+                        ]
+                )"/>
+        <xsl:variable name="g2-per-averages" as="array(xs:decimal*)" select="
+                array:join(for $i in $g2-counter
+                return
+                    let $j := $this-map($these-g2-cluster-keys[$i])
+                    return
+                        [
+                            (for $k in $these-g2-gram-keys($i)
+                            return
+                                (1 div avg(for $m in $j($k)
+                                return
+                                    $m('tok-count-per-average'))))
+                        ]
+                )"/>
+        <xsl:variable name="g2-per-totals" as="array(xs:decimal*)" select="
+                array:join(for $i in $g2-counter
+                return
+                    let $j := $this-map($these-g2-cluster-keys[$i])
+                    return
+                        [
+                            (for $k in $these-g2-gram-keys($i)
+                            return
+                                (1 div avg(for $m in $j($k)
+                                return
+                                    $m('tok-count-per-total'))))
+                        ]
+                )"/>
+        <xsl:variable name="g2-cert-avgs" as="array(xs:decimal*)" select="
+                array:join(for $i in $g2-counter
+                return
+                    let $j := $this-map($these-g2-cluster-keys[$i])
+                    return
+                        [
+                            (for $k in $these-g2-gram-keys($i)
+                            return
+                                avg(for $m in $j($k)
+                                return
+                                    $m('cert-avg')))
+                        ]
+                )"/>
+        
+        
+        
+        <xsl:map>
+            <xsl:map-entry key="'diagnostics-2'">
+                <g1-gram-keys><xsl:copy-of select="$these-g1-gram-keys"/></g1-gram-keys>
+                <g2-gram-keys><xsl:copy-of select="$these-g2-gram-keys"/></g2-gram-keys>
+                <unmatched-g1-tokens><xsl:copy-of select="tan:array-to-xml($unmatched-g1-token-array)"/></unmatched-g1-tokens>
+                <unmatched-g2-tokens><xsl:copy-of select="tan:array-to-xml($unmatched-g2-token-arrays)"/></unmatched-g2-tokens>
+                <unmatched-token-comparison><xsl:copy-of select="$unmatched-token-comparison"/></unmatched-token-comparison>
+                <counterpart-positions><xsl:copy-of select="tan:array-to-xml($counterpart-positions)"/></counterpart-positions>
+                <counterpart-positions-absolute><xsl:copy-of select="tan:array-to-xml($counterpart-positions-absolute)"/></counterpart-positions-absolute>
+                <!--<tok-maps-g1><xsl:value-of select="map:size($tok-maps-g1[2])"/></tok-maps-g1>-->
+                <bonus-g1-scores><xsl:copy-of select="$bonus-g1-scores"/></bonus-g1-scores>
+                <bonus-g2-scores><xsl:copy-of select="array:flatten($bonus-g2-scores)"/></bonus-g2-scores>
+                <g1-per-medians><xsl:copy-of select="$g1-per-medians"/></g1-per-medians>
+                <g1-per-averages><xsl:copy-of select="$g1-per-averages"/></g1-per-averages>
+                <g1-per-totals><xsl:copy-of select="$g1-per-totals"/></g1-per-totals>
+                <g1-cert-avgs><xsl:copy-of select="$g1-cert-avgs"/></g1-cert-avgs>
+                <g2-per-medians><xsl:copy-of select="array:flatten($g2-per-medians)"/></g2-per-medians>
+                <g2-per-averages><xsl:copy-of select="array:flatten($g2-per-averages)"/></g2-per-averages>
+                <g2-per-totals><xsl:copy-of select="array:flatten($g2-per-totals)"/></g2-per-totals>
+                <g2-cert-avgs><xsl:copy-of select="array:flatten($g2-cert-avgs)"/></g2-cert-avgs>
+            </xsl:map-entry>
+            <xsl:map-entry key="'scores'">
+                <score method="text 1 sum of avg freq"
+                    about="The sum of each text 1 token alias frequency (higher than 1 = less common) adjusted by certainty, supplemented by bonus match frequencies.">
+                    <xsl:sequence select="
+                            sum(for $i in (1 to count($g1-per-averages))
+                            return
+                                $g1-per-averages[$i] * $g1-cert-avgs[$i]) + sum($bonus-g1-scores)"/>
+                </score>
+                <score method="text 2 top sum of avg freq"
+                    about="The top sum of each text 2 cluster's token alias frequency (higher than 1 = less common) adjusted by certainty, supplemented by bonus match frequencies.">
+                    <xsl:sequence select="
+                            max((for $i in $g2-counter
+                            return
+                                let $j := $g2-per-averages($i)
+                                return
+                                    (sum(for $k in (1 to count($j))
+                                    return
+                                        $j[$k] * $g2-cert-avgs($i)[$k])
+                                        + sum($bonus-g2-scores[$i])
+                                        )
+                            ))"/>
+                </score>
+            </xsl:map-entry>
+            <xsl:map-entry key="'counterparts'">
+                <xsl:sequence select="$counterpart-g1-to-g2-map"/>
+                <xsl:sequence select="$counterpart-g2-to-g1-map"/>
+            </xsl:map-entry>
+            <!--<xsl:for-each select="$counterpart-positions">
+                <xsl:variable name="this-pos" as="xs:integer+" select="position()"/>
+                <xsl:variable name="this-g2-token-array" as="array(*)" select="$unmatched-g2-token-arrays[$this-pos]"/>
+                <xsl:variable name="this-array" as="array(xs:integer*)" select="."/>
+                <xsl:if test="exists($unmatched-token-comparison[$this-pos]/tan:common)">
+                    <xsl:map-entry key="'counterparts-g2-' || string($this-pos)">
+                        <xsl:sequence select="
+                                array:join(for $i in (1 to array:size($this-array))
+                                return
+                                    let $j := $this-array($i)
+                                    return
+                                        [($unmatched-g1-token-array($j[1])[1], $this-g2-token-array($j[2])[1])])"
+                        />
+
+                    </xsl:map-entry>
+                </xsl:if>
+            </xsl:for-each>-->
+            <xsl:for-each select="map:keys(.)">
+                <xsl:map-entry key=".">
+                    <xsl:apply-templates select="$this-map(current())" mode="#current"/>
+                </xsl:map-entry>
+            </xsl:for-each>
+        </xsl:map>
+    </xsl:template>
     
     <!-- In redistributing clusters, there may be cases where some defective clustures appear -->
     <xsl:template match="tan:cluster[tan:text[count(tan:tok) lt $target-ngram-n-norm]]" priority="1"
@@ -1724,7 +2987,7 @@
         </xsl:variable>
         
         
-        
+        <!-- Invert the ratios, so that rare items score above 1, and common ones below -->
         <xsl:variable name="g1-per-medians" as="xs:decimal*" select="
                 for $i in $g1-tok-alias-stats
                 return
@@ -1881,43 +3144,124 @@
     
     
     
-    <xsl:variable name="input-tokenization-map" as="map(*)">
-        <xsl:map>
-            <xsl:apply-templates select="$files-tokenized-g1, $files-tokenized-g2"
-                mode="build-tokenization-map"/>
-        </xsl:map>
-    </xsl:variable>
     
-    <xsl:mode name="build-tokenization-map" on-no-match="shallow-skip"/>
-    
-    <xsl:template match="/*" mode="build-tokenization-map">
-        <xsl:map-entry key="@xml:base">
-            <xsl:map>
-                <xsl:for-each-group select="*" group-by="@n">
-                    <xsl:map-entry key="xs:integer(current-grouping-key())">
-                        <xsl:sequence select="current-group()"/>
-                    </xsl:map-entry>
-                </xsl:for-each-group> 
-            </xsl:map>
-        </xsl:map-entry>
-    </xsl:template>
-    
-    
-    
-    
+    <!-- Now that statistics and number-based collation is finished, we can convert the maps to trees -->
     <xsl:variable name="common-output-pass-3" as="document-node()*">
-        <xsl:apply-templates select="$common-output-pass-2" mode="sort-and-fill-out-results"/>
+        <xsl:apply-templates select="$common-output-pass-2-maps" mode="sort-and-fill-out-results"/>
+        <!--<xsl:apply-templates select="$common-output-pass-2" mode="sort-and-fill-out-results"/>-->
     </xsl:variable>
     
     <xsl:mode name="sort-and-fill-out-results" on-no-match="shallow-copy"/>
+    
+    <xsl:template match=".[. instance of map(*)][map:contains(., 'base1')]" mode="sort-and-fill-out-results">
+        <xsl:variable name="this-map" as="map(*)" select="."/>
+        <xsl:variable name="this-cluster-map" as="map(*)" select="$this-map('clusters')"/>
+        <xsl:variable name="b1" as="xs:string" select="$this-map('base1')"/>
+        <xsl:variable name="b2" as="xs:string" select="$this-map('base2')"/>
+        <xsl:variable name="t1-map" as="map(*)" select="$input-tokenization-map($b1)[1]"/>
+        <xsl:variable name="t2-map" as="map(*)" select="$input-tokenization-map($b2)[1]"/>
+        <xsl:document>
+            <ngrams>
+                <xsl:for-each select="('n', 'base1', 'base2', 'src1', 'src2', 'lang')">
+                    <xsl:attribute name="{.}" select="$this-map(current())"/>
+                </xsl:for-each>
+                <xsl:for-each select="map:keys($this-cluster-map)">
+                    <xsl:sort select="let $i := . return
+                        xs:decimal($this-cluster-map($i)('scores')[1])" order="descending"/>
+                    <xsl:variable name="this-key" as="item()" select="."/>
+                    <xsl:apply-templates select="$this-cluster-map($this-key)" mode="#current">
+                        <xsl:with-param name="t1-map" tunnel="yes" select="$t1-map"/>
+                        <xsl:with-param name="t2-map" tunnel="yes" select="$t2-map"/>
+                    </xsl:apply-templates>
+                </xsl:for-each>
+            </ngrams>
+        </xsl:document>
+    </xsl:template>
+    
+    <xsl:template match=".[. instance of map(*)][map:contains(., 'scores')]" mode="sort-and-fill-out-results">
+        <xsl:param name="t1-map" tunnel="yes" as="map(*)"/>
+        <xsl:param name="t2-map" tunnel="yes" as="map(*)"/>
+        
+        <xsl:variable name="this-cluster-map" as="map(*)" select="."/>
+        <xsl:variable name="these-keys" as="item()*" select="map:keys(.)"/>
+        <xsl:variable name="these-g1-text-keys" as="xs:integer+" select="sort($these-keys[. instance of xs:integer])"/>
+        <xsl:variable name="these-counterpart-maps" as="map(*)+" select="$this-cluster-map('counterparts')"/>
+        <xsl:variable name="these-g2-text-passage-keys" as="xs:string+" select="sort($these-keys[. instance of xs:string][starts-with(., 'g2-')])"/>
+        <cluster>
+            <scores>
+                <xsl:copy-of select=".('scores')"/>
+            </scores>
+            <text>
+                <xsl:for-each
+                    select="($these-g1-text-keys[1] - $extra-context-token-count) to ($these-g1-text-keys[last()] + $extra-context-token-count)">
+                    <xsl:variable name="this-t1-key" as="xs:integer" select="."/>
+                    <xsl:variable name="these-tok-items" as="item()*" select="$this-cluster-map($this-t1-key)"/>
+                    <xsl:apply-templates select="$t1-map($this-t1-key)" mode="#current">
+                        <xsl:with-param name="counterparts" tunnel="yes" as="xs:integer*"
+                            select="$these-counterpart-maps[1]($this-t1-key)"/>
+                        <xsl:with-param name="tok-alias-content" as="map(*)*" tunnel="yes"
+                            select="$these-tok-items[. instance of map(*)]"/>
+                    </xsl:apply-templates>
+                </xsl:for-each>
+            </text>
+            <text>
+                <xsl:for-each select="$these-g2-text-passage-keys">
+                    <xsl:variable name="this-g2-passage-key" as="xs:string" select="."/>
+                    <xsl:variable name="this-g2-passage-map" as="map(*)" select="$this-cluster-map($this-g2-passage-key)"/>
+                    <xsl:variable name="these-g2-keys" as="item()*" select="map:keys($this-g2-passage-map)"/>
+                    <xsl:variable name="these-g2-text-keys" as="xs:integer+" select="sort($these-g2-keys[. instance of xs:integer])"/>
+                    <passage>
+                        <xsl:for-each
+                            select="($these-g2-text-keys[1] - $extra-context-token-count) to ($these-g2-text-keys[last()] + $extra-context-token-count)">
+                            <xsl:variable name="this-t2-key" as="xs:integer" select="."/>
+                            <xsl:variable name="these-tok-items" as="item()*" select="$this-g2-passage-map($this-t2-key)"/>
+                            <xsl:apply-templates select="$t2-map($this-t2-key)" mode="#current">
+                                <xsl:with-param name="counterparts" as="xs:integer*" tunnel="yes"
+                                    select="$these-counterpart-maps[2]($this-t2-key)"/>
+                                <xsl:with-param name="tok-alias-content" as="map(*)*" tunnel="yes"
+                                    select="$these-tok-items[. instance of map(*)]"/>
+                            </xsl:apply-templates>
+                        </xsl:for-each>
+                    </passage>
+                    
+                    
+                </xsl:for-each>
+            </text>
+        </cluster>
+    </xsl:template>
+    
+    <xsl:template match="tan:tok" mode="sort-and-fill-out-results">
+        <xsl:param name="counterparts" tunnel="yes" as="xs:integer*"/>
+        <xsl:param name="tok-alias-content" tunnel="yes" as="map(*)*"/>
+        <xsl:copy>
+            <xsl:copy-of select="@*"/>
+            <xsl:for-each select="$tok-alias-content">
+                <alias r="{.('r')}">
+                    <alias-tok-frequency>
+                        <xsl:attribute name="count" select=".('tok-count')"/>
+                        <xsl:attribute name="per-median" select=".('tok-count-per-median')"/>
+                        <xsl:attribute name="per-average" select=".('tok-count-per-average')"/>
+                        <xsl:attribute name="per-total" select=".('tok-count-per-total')"/>
+                    </alias-tok-frequency>
+                </alias>
+                <xsl:for-each select=".('counterpart-ns')">
+                    <counterpart><xsl:value-of select="."/></counterpart>
+                </xsl:for-each>
+            </xsl:for-each>
+            <xsl:for-each select="$counterparts">
+                <counterpart><xsl:value-of select="."/></counterpart>
+            </xsl:for-each>
+            <xsl:apply-templates mode="#current"/>
+        </xsl:copy>
+    </xsl:template>
     
     <xsl:template match="/*" mode="sort-and-fill-out-results">
         <xsl:variable name="b1" as="xs:string" select="@base1"/>
         <xsl:variable name="b2" as="xs:string" select="@base2"/>
         <!--<xsl:variable name="t1-tok" as="document-node()" select="$files-tokenized-g1[*/@xml:base eq $b1]"/>-->
         <!--<xsl:variable name="t2-tok" as="document-node()" select="$files-tokenized-g2[*/@xml:base eq $b2]"/>-->
-        <xsl:variable name="t1-map" as="map(*)" select="$input-tokenization-map($b1)"/>
-        <xsl:variable name="t2-map" as="map(*)" select="$input-tokenization-map($b2)"/>
+        <xsl:variable name="t1-map" as="map(*)" select="$input-tokenization-map($b1)[1]"/>
+        <xsl:variable name="t2-map" as="map(*)" select="$input-tokenization-map($b2)[1]"/>
         
         <xsl:copy>
             <xsl:copy-of select="@*"/>
@@ -1983,13 +3327,19 @@
         </xsl:copy>
     </xsl:template>
     
-    <xsl:template match="tan:text" mode="infuse-div-structures">
+    <xsl:template match="tan:text[not(tan:passage)]" mode="infuse-div-structures">
         <xsl:param name="input-normalized" tunnel="yes" as="document-node()+"/>
-        <xsl:variable name="text-pos" as="xs:integer" select="count(preceding-sibling::tan:text) + 1"/>
-        <xsl:variable name="children" as="element()+" select="*"/>
         <xsl:copy>
-            <xsl:apply-templates select="$input-normalized[$text-pos]" mode="get-div-fragment">
-                <xsl:with-param name="tok-chain" as="element()*" tunnel="yes" select="$children"/>
+            <xsl:apply-templates select="$input-normalized[1]" mode="get-div-fragment">
+                <xsl:with-param name="tok-chain" as="element()*" tunnel="yes" select="*"/>
+            </xsl:apply-templates>
+        </xsl:copy>
+    </xsl:template>
+    <xsl:template match="tan:text/tan:passage" mode="infuse-div-structures">
+        <xsl:param name="input-normalized" tunnel="yes" as="document-node()+"/>
+        <xsl:copy>
+            <xsl:apply-templates select="$input-normalized[2]" mode="get-div-fragment">
+                <xsl:with-param name="tok-chain" as="element()*" tunnel="yes" select="*"/>
             </xsl:apply-templates>
         </xsl:copy>
     </xsl:template>
@@ -2074,47 +3424,6 @@
     
     <!-- Some important functions -->
     
-    <xsl:function name="tan:trim-long-tree" as="item()*">
-        <!-- Input: an XML tree, two integers -->
-        <!-- Output: the tree, anything beyond the shallow-copy point will be shallow-copied
-            and anything beyond the deep skip point will be deep-skipped. Comments will always 
-            indicate how many nodes were shallow-copied or deep-skipped.
-        -->
-        <!-- This function was written to abbreviate diagnostic output of very large files -->
-        <xsl:param name="tree-to-trim" as="item()*"/>
-        <xsl:param name="shallow-copy-point" as="xs:integer"/>
-        <xsl:param name="deep-skip-point" as="xs:integer"/>
-        <xsl:apply-templates select="$tree-to-trim" mode="tan:trim-long-tree">
-            <xsl:with-param name="shallow-copy-point" tunnel="yes" as="xs:integer" select="$shallow-copy-point"/>
-            <xsl:with-param name="deep-skip-point" tunnel="yes" as="xs:integer" select="$deep-skip-point"/>
-        </xsl:apply-templates>
-    </xsl:function>
-    
-    <xsl:mode name="tan:trim-long-tree" on-no-match="shallow-copy"/>
-    
-    <xsl:template match="*" mode="tan:trim-long-tree">
-        <xsl:param name="shallow-copy-point" tunnel="yes" as="xs:integer"/>
-        <xsl:param name="deep-skip-point" tunnel="yes" as="xs:integer"/>
-        <xsl:variable name="children-to-process" as="node()*" select="node()[position() le $shallow-copy-point]"/>
-        <xsl:variable name="children-to-deep-skip" as="node()*" select="node()[position() gt $deep-skip-point]"/>
-        <xsl:variable name="children-to-shallow-copy" as="node()*" select="node() except ($children-to-process | $children-to-deep-skip)"/>
-        <xsl:copy>
-            <xsl:copy-of select="@*"/>
-            <xsl:apply-templates select="$children-to-process" mode="#current"/>
-            <xsl:if test="exists($children-to-shallow-copy)">
-                <xsl:text>&#xa;</xsl:text>
-                <xsl:comment select="'Trimming next ' || string(count($children-to-shallow-copy)) || ' nodes (shallow copy)'"/>
-                <xsl:text>&#xa;</xsl:text>
-                <xsl:copy-of select="tan:shallow-copy($children-to-shallow-copy)"/>
-            </xsl:if>
-            <xsl:if test="exists($children-to-deep-skip)">
-                <xsl:text>&#xa;</xsl:text>
-                <xsl:comment select="'Trimming next ' || string(count($children-to-deep-skip)) || ' nodes (deep skip)'"/>
-            </xsl:if>
-        </xsl:copy>
-    </xsl:template>
-    
-    
     <xsl:function name="tan:integer-clusters" as="xs:integer*">
         <!-- Input: two sequences of integers -->
         <!-- Output: all of the integers from the second parameter, as well as all integers from the first that
@@ -2161,6 +3470,8 @@
         <!--<xsl:sequence select="$integers-to-filter"/>-->
         
     </xsl:function>
+    
+    
     
     <xsl:function name="tan:build-skp-sequence" as="xs:string*">
         <!-- Input: a string -->
@@ -2230,9 +3541,9 @@
         />
         <diagnostics>
             <!--<miru-candidates count="{count($main-input-resolved-uris)}"/>-->
-            <!--<mirus-chosen count="{count($mirus-chosen)}"><xsl:value-of select="$mirus-chosen"/></mirus-chosen>-->
-            <!--<mirus-group-1 count="{count($mirus-g1)}"><xsl:copy-of select="$mirus-g1"/></mirus-group-1>-->
-            <!--<mirus-group-2 count="{count($mirus-g2)}"><xsl:copy-of select="$mirus-g2"/></mirus-group-2>-->
+            <mirus-chosen count="{count($mirus-chosen)}"><xsl:value-of select="$mirus-chosen"/></mirus-chosen>
+            <mirus-group-1 count="{count($mirus-g1)}"><xsl:copy-of select="$mirus-g1"/></mirus-group-1>
+            <mirus-group-2 count="{count($mirus-g2)}"><xsl:copy-of select="$mirus-g2"/></mirus-group-2>
             <!--<g1-resolved><xsl:copy-of select="$files-resolved-g1"/></g1-resolved>-->
             <!--<g2-resolved><xsl:copy-of select="$files-resolved-g2"/></g2-resolved>-->
             <!--<files-with-tan-a-lm-annotations><xsl:copy-of select="$files-with-tan-a-lm-annonations"/></files-with-tan-a-lm-annotations>-->
@@ -2244,33 +3555,41 @@
             <!--<g2-tan-a-lm-exp><xsl:copy-of select="$tan-a-lm-exp"/></g2-tan-a-lm-exp>-->
             <files-tokenized-g1><xsl:copy-of select="tan:trim-long-tree($files-tokenized-g1, 30, 100)"/></files-tokenized-g1>
             <files-tokenized-g2><xsl:copy-of select="tan:trim-long-tree($files-tokenized-g2, 30, 100)"/></files-tokenized-g2>
-            <!--<files-tokenized-special><xsl:copy-of select="$files-tokenized-g2[2]"/></files-tokenized-special>-->
+            <!--<input-tokenization-map><xsl:copy-of select="tan:trim-long-tree(tan:map-to-xml($input-tokenization-map, true()), 20, 100)"/></input-tokenization-map>-->
             <tok-aliases-g1><xsl:copy-of select="tan:trim-long-tree($tok-aliases-g1, 20, 100)"/></tok-aliases-g1>
             <tok-aliases-g2><xsl:copy-of select="tan:trim-long-tree($tok-aliases-g2, 20, 100)"/></tok-aliases-g2>
-            <tok-aliases-cons-g1><xsl:copy-of select="tan:trim-long-tree($tok-aliases-consolidated-g1, 20, 100)"/></tok-aliases-cons-g1>
-            <tok-aliases-cons-g2><xsl:copy-of select="tan:trim-long-tree($tok-aliases-consolidated-g2, 20, 100)"/></tok-aliases-cons-g2>
+            <!--<token-alias-maps-g1><xsl:copy-of select="tan:trim-long-tree(tan:map-to-xml($token-alias-maps-g1, true()), 20, 100)"/></token-alias-maps-g1>-->
+            <!--<token-alias-maps-g2><xsl:copy-of select="tan:trim-long-tree(tan:map-to-xml($token-alias-maps-g2, true()), 20, 100)"/></token-alias-maps-g2>-->
+            <!--<tok-aliases-cons-g1><xsl:copy-of select="tan:trim-long-tree($tok-aliases-consolidated-g1, 20, 100)"/></tok-aliases-cons-g1>-->
+            <!--<tok-aliases-cons-g2><xsl:copy-of select="tan:trim-long-tree($tok-aliases-consolidated-g2, 20, 100)"/></tok-aliases-cons-g2>-->
             <!--<tok-aliases-cons-special><xsl:copy-of select="($tok-aliases-consolidated-g1, $tok-aliases-consolidated-g2)/*/*[@r eq 'μέλλω']"/></tok-aliases-cons-special>-->
+            <!--<all-1gram-maps><xsl:copy-of select="tan:trim-long-tree(tan:map-to-xml($all-1gram-maps, true()), 20, 100)"/></all-1gram-maps>-->
             <!--<all-1grams><xsl:copy-of select="tan:trim-long-tree($all-1grams, 20, 100)"/></all-1grams>-->
             <!--<all-1grams-special><xsl:copy-of select="$all-1grams/*/*/*[@r eq 'μέλλω']"/></all-1grams-special>-->
-            <!--<all-2grams><xsl:copy-of select="tan:trim-long-tree($all-2grams, 20, 100)"/></all-2grams>-->
+            <!--<all-cumulative-ngram-maps><xsl:copy-of select="tan:trim-long-tree(tan:map-to-xml($all-cumulative-ngram-maps, true()), 20, 100)"/></all-cumulative-ngram-maps>-->
             <!--<all-cumulative-ngrams><xsl:copy-of select="tan:trim-long-tree($all-cumulative-ngrams, 20, 100)"/></all-cumulative-ngrams>-->
-            <all-target-ngrams><xsl:copy-of select="$all-target-ngrams"/></all-target-ngrams>
-            <common-output-pass-1><xsl:copy-of select="tan:trim-long-tree($common-output-pass-1, 20, 40)"/></common-output-pass-1>
-            <common-output-pass-2><xsl:copy-of select="tan:trim-long-tree($common-output-pass-2, 20, 40)"/></common-output-pass-2>
-            <common-output-pass-3><xsl:copy-of select="tan:trim-long-tree($common-output-pass-3, 20, 40)"/></common-output-pass-3>
-            <files-norm-and-stamped-g1><xsl:copy-of select="tan:trim-long-tree($files-normalized-and-stamped-g1, 5, 10)"/></files-norm-and-stamped-g1>
-            <files-norm-and-stamped-g2><xsl:copy-of select="tan:trim-long-tree($files-normalized-and-stamped-g2, 5, 10)"/></files-norm-and-stamped-g2>
-            <common-output-pass-4><xsl:copy-of select="tan:trim-long-tree($common-output-pass-4, 20, 40)"/></common-output-pass-4>
-            <common-output-pass-5><xsl:copy-of select="tan:trim-long-tree($common-output-pass-5, 20, 40)"/></common-output-pass-5>
-            <!--<html-output-pass-1><xsl:copy-of select="tan:trim-long-tree($html-output-pass-1, 5, 10)"/></html-output-pass-1>-->
-            <!--<html-output-pass-2><xsl:copy-of select="tan:trim-long-tree($html-output-pass-2, 5, 10)"/></html-output-pass-2>-->
+            <!--<all-target-ngram-maps><xsl:copy-of select="tan:map-to-xml($all-target-ngram-maps, true())"/></all-target-ngram-maps>-->
+            <!--<all-target-ngrams><xsl:copy-of select="$all-target-ngrams"/></all-target-ngrams>-->
+            <!--<common-output-pass-1-maps><xsl:copy-of select="tan:trim-long-tree(tan:map-to-xml($common-output-pass-1-maps, true()), 20, 40)"/></common-output-pass-1-maps>-->
+            <!--<common-output-pass-1><xsl:copy-of select="tan:trim-long-tree($common-output-pass-1, 20, 40)"/></common-output-pass-1>-->
+            <!--<common-output-pass-2-maps><xsl:copy-of select="tan:trim-long-tree(tan:map-to-xml($common-output-pass-2-maps, true()), 20, 40)"/></common-output-pass-2-maps>-->
+            <!--<common-output-pass-2><xsl:copy-of select="tan:trim-long-tree($common-output-pass-2, 20, 40)"/></common-output-pass-2>-->
+            <!--<common-output-pass-3><xsl:copy-of select="tan:trim-long-tree($common-output-pass-3, 20, 40)"/></common-output-pass-3>-->
+            <!--<files-norm-and-stamped-g1><xsl:copy-of select="tan:trim-long-tree($files-normalized-and-stamped-g1, 5, 10)"/></files-norm-and-stamped-g1>-->
+            <!--<files-norm-and-stamped-g2><xsl:copy-of select="tan:trim-long-tree($files-normalized-and-stamped-g2, 5, 10)"/></files-norm-and-stamped-g2>-->
+            <!--<common-output-pass-4><xsl:copy-of select="tan:trim-long-tree($common-output-pass-4, 20, 40)"/></common-output-pass-4>-->
+            <!--<common-output-pass-5><xsl:copy-of select="tan:trim-long-tree($common-output-pass-5, 20, 40)"/></common-output-pass-5>-->
+            <!--<html-output-pass-1><xsl:copy-of select="tan:trim-long-tree($html-output-pass-1, 10, 20)"/></html-output-pass-1>-->
+            <!--<html-output-pass-2><xsl:copy-of select="tan:trim-long-tree($html-output-pass-2, 10, 20)"/></html-output-pass-2>-->
         </diagnostics>
-        <xsl:apply-templates select="$files-with-tan-a-lm-annotations"
-            mode="save-temp-file-and-manifest"/>
-        <xsl:apply-templates select="$tok-aliases-g1, $tok-aliases-g2"
-            mode="save-temp-file-and-manifest"/>
-        <xsl:apply-templates select="$all-cumulative-ngrams"
-            mode="save-temp-file-and-manifest"/>
+        <!--<xsl:apply-templates select="$files-with-tan-a-lm-annotations"
+            mode="save-temp-file-and-manifest"/>-->
+        <!--<xsl:apply-templates select="$tok-aliases-g1, $tok-aliases-g2"
+            mode="save-temp-file-and-manifest"/>-->
+        <!--<xsl:apply-templates select="$all-cumulative-ngram-maps"
+            mode="save-temp-file-and-manifest"/>-->
+        <!--<xsl:apply-templates select="$all-cumulative-ngrams"
+            mode="save-temp-file-and-manifest"/>-->
         
         <!--<xsl:result-document href="{$output-directory-uri-resolved}{$output-base-filename}.html"
             format="html-noindent" use-character-maps="keep-javascript-chars">

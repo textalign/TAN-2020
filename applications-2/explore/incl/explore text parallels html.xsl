@@ -209,7 +209,7 @@
         </td>
     </xsl:template>
     
-    <xsl:template match="*:div | tan:x | tan:tok" mode="results-to-trs">
+    <xsl:template match="*:div | tan:tok" mode="results-to-trs">
         <div class="e-{name(.)}">
             <xsl:apply-templates select="@ref" mode="#current"/>
             <xsl:apply-templates mode="#current"/>
@@ -226,28 +226,57 @@
         </div>
     </xsl:template>
     
-    <xsl:template match="tan:tok[tan:alias]" mode="results-to-trs">
+    <xsl:template match="tan:tok[tan:alias]" priority="1" mode="results-to-trs">
         <xsl:param name="textno" as="xs:integer?" tunnel="yes"
             select="count(ancestor::tan:text/preceding-sibling::tan:text) + 1"/>
         <xsl:variable name="this-n" select="xs:integer(@n)" as="xs:integer"/>
-        <xsl:variable name="other-n" select="xs:integer(ceiling((1 div $this-n) + 0.1))"/>
+        <!-- If 1 then 2; if 2 then 1 --><!-- xs:integer(ceiling((1 div $this-n) + 0.1)) -->
+        <xsl:variable name="other-text-no" select="
+                if ($textno eq 1) then
+                    't2'
+                else
+                    't1'"/>
         <xsl:variable name="those-ns" as="xs:integer*" select="
-                for $i in tan:other-n
+                for $i in (tan:other-n | tan:counterpart)
                 return
                     xs:integer($i)"/>
         <div
-            class="gram t{$textno}-{$this-n} {string-join((for $i in $those-ns return ($other-n || '-' || string($i))), ' ')}">
+            class="gram t{$textno}-{$this-n} {if (count($those-ns) gt 0) then 'counterparts' else ()}">
             <div class="e-tok" onclick="toggleNext(this)">
                 <xsl:value-of select="text()"/>
+
             </div>
             <div class="e-aliases hide">
-                <!--<div class="label">+</div>-->
-                <!--<div class="alias-wrapper hide">
-                    <xsl:apply-templates select="tan:alias" mode="full-html"/>
-                </div>-->
                 <xsl:apply-templates select="tan:alias" mode="full-html"/>
             </div>
         </div>
+    </xsl:template>
+    
+    <xsl:template match="tan:tok[tan:counterpart]" mode="results-to-trs">
+        <xsl:param name="textno" as="xs:integer?" tunnel="yes"
+            select="count(ancestor::tan:text/preceding-sibling::tan:text) + 1"/>
+        <div class="counterparts t{$textno}-{@n}">
+            <xsl:apply-templates mode="#current"/>
+        </div>
+    </xsl:template>
+    
+    <xsl:template match="tan:tok/tan:counterpart" mode="results-to-trs"/>
+    
+    <xsl:template match="tan:x" mode="results-to-trs">
+        <xsl:variable name="next-tok" as="element()?" select="following-sibling::tan:tok[1]"/>
+        <xsl:choose>
+            <xsl:when test="exists(preceding-sibling::tan:tok[1]/tan:counterpart) and 
+                (exists($next-tok/tan:counterpart) or not(exists($next-tok)))">
+                <div class="counterparts e-x">
+                    <xsl:value-of select="."/>
+                </div>
+            </xsl:when>
+            <xsl:otherwise>
+                <div class="e-x">
+                    <xsl:value-of select="."/>
+                </div>
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:template>
     
     

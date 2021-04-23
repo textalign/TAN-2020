@@ -1,6 +1,7 @@
 /* Background */
 
-.label {
+.label,
+.counterparts {
    background-color: lightgray;
 }
 .a-ref {
@@ -22,6 +23,7 @@ th,
 .e-tok,
 .inline,
 .gram,
+.counterparts,
 .a-ref,
 .e-aliases
 {

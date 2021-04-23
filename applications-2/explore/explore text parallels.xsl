@@ -80,31 +80,34 @@
    <xsl:param name="directory-6-uri" select="'../../../../epubs/TLG/xml/gregorius_nazianzenus'" as="xs:string?"/>
    <xsl:param name="directory-7-uri" select="'../../../../epubs/TLG/xml/didymus_caecus'" as="xs:string?"/>
    <xsl:param name="directory-8-uri" select="'../../../library-arithmeticus/evagrius/cpg2458.4'" as="xs:string?"/>
-   <xsl:param name="directory-9-uri" select="'../../../library-arithmeticus/evagrius/cpg2432'" as="xs:string?"/>
+   <xsl:param name="directory-9-uri" select="'../../../library-arithmeticus/evagrius/cpg2455'" as="xs:string?"/>
+   <xsl:param name="directory-10-uri" select="'../../../library-arithmeticus/evagrius/cpg2441'" as="xs:string?"/>
+   <xsl:param name="directory-11-uri" select="'../../../../epubs/TLG/xml/clemens_alexandrinus'" as="xs:string?"/>
    
    <!-- What directory or directories has the main input files? Any relative path will be calculated relative 
         to this application file. Multiple directories may be supplied. Results can be filtered below. -->
    <xsl:param name="tan:main-input-relative-uri-directories" as="xs:string+"
-      select="$directory-7-uri, $directory-9-uri"/>
+      select="$directory-2-uri, $directory-3-uri, $directory-10-uri"/>
    
    <!-- What pattern must each filename match (a regular expression, case-insensitive)? Of the files 
         in the directories chosen, only those whose names match this pattern will be included. A null 
         or empty string means ignore this parameter. -->
-   <xsl:param name="tan:input-filenames-must-match-regex" as="xs:string?" select="'xml'"/>
+   <xsl:param name="tan:input-filenames-must-match-regex" as="xs:string?" select="'xml|docx'"/>
    <!-- nt\.grc.+Copy|gribomont|2441|orat -->
    
    <!-- What pattern must each filename NOT match (a regular expression, case-insensitive)? Of the files 
         in the directories chosen, any whose names match this pattern will be excluded. A null 
         or empty string means ignore this parameter. -->
-   <xsl:param name="tan:input-filenames-must-not-match-regex" as="xs:string?" select="''"/>
+   <xsl:param name="tan:input-filenames-must-not-match-regex" as="xs:string?" select="'Copy'"/>
    
    <!-- What pattern must each filename match for it to be included in group one? A null or
       empty string will include every file. -->
-   <xsl:param name="group-one-filenames-regex" as="xs:string?" select="'2432\.grc'"/>
+   <xsl:param name="group-one-filenames-regex" as="xs:string?" select="'gribomont|2441'"/>
    
    <!-- What pattern must each filename match for it to be included in group two? A null or
       empty string will include every file. -->
-   <xsl:param name="group-two-filenames-regex" as="xs:string?" select="'nt\.grc|orat|in_proverbia'"/>
+   <xsl:param name="group-two-filenames-regex" as="xs:string?" select="'nt\.grc\.sbl-2010\.xml'"/>
+   <!-- nt\.grc\.sbl-2010\.xml -->
    
    <!-- If a particular file does not explicitly declare the language, what should the fallback value 
       be? Expected is an ISO code. -->
@@ -158,6 +161,7 @@
       the aura is 1 or higher.
    -->
    <xsl:param name="ngram-auras" as="xs:integer+" select="2"/>
+   <xsl:param name="ngram-aura-diameters" as="xs:integer+" select="3"/>
    
    <!-- When a single text is prepared for Ngram matching, each token is converted to one or more alias 
       values, to better attract matches in the other text. Those aliases are then consolidated and 
@@ -191,7 +195,7 @@
       0.001 a rather thin cut. If you know something about the language, try using the $skip-token-alias-map
       in combination with a thin cut.
    -->
-   <xsl:param name="cut-most-frequent-aliases-per-ngram" as="xs:double+"
+   <xsl:param name="cut-most-frequent-aliases-per-ngram" as="xs:decimal+"
       select="0.01"/>
    
    <!-- Should most frequent token aliases be cut only if they are frequent in both texts? -->
