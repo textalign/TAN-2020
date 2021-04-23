@@ -7,6 +7,8 @@
    xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="3.0">
 
    <!-- TAN Function Library diff string functions. -->
+   
+   <xsl:variable name="use-new-collate-fns" as="xs:boolean" select="true()"/>
 
    <xsl:function name="tan:vertical-stops" as="xs:double*" visibility="private">
       <!-- Input: a string -->
@@ -84,7 +86,7 @@
                   else
                      1"/>
 
-            <xsl:variable name="diagnostics-on" select="false()"/>
+            <xsl:variable name="diagnostics-on" as="xs:boolean" select="false()"/>
             <xsl:if test="$diagnostics-on">
                <xsl:message select="'Diagnostics on, tan:diff(), giant string branch'"/>
                <xsl:message select="'String a (length ' || string($str-a-len) || '): ' || tan:ellipses($string-a, 40)"/>
@@ -143,8 +145,11 @@
             <xsl:variable name="first-tokenizer-cps" as="xs:integer*" select="for $i in $str-a-b-keys-sorted[. lt 0] return ($i * -1)"/>
             <xsl:variable name="next-tokenizer-cps" as="xs:integer*" select="$str-a-b-keys-sorted[. gt 0]"/>
             
-            <xsl:message select="'first cps:', $first-tokenizer-cps"/>
-            <xsl:message select="'next cps:', $next-tokenizer-cps"/>
+            <xsl:variable name="diagnostics-on" as="xs:boolean" select="false()"/>
+            <xsl:if test="$diagnostics-on">
+               <xsl:message select="'first cps:', $first-tokenizer-cps"/>
+               <xsl:message select="'next cps:', $next-tokenizer-cps"/>
+            </xsl:if>
             
             <xsl:sequence
                select="tan:diff($string-a, $string-b, $snap-to-word, $first-tokenizer-cps, $next-tokenizer-cps, 0)"/>
@@ -473,13 +478,20 @@
                   </xsl:for-each-group>
                </xsl:variable>
 
-               <xsl:variable name="input-core-sequence" as="element()*"
-                  select="tan:collate-pair-of-sequences($input-a-unique-words, $input-b-unique-words)"
+               <xsl:variable name="input-core-sequence" as="element()*" select="
+                     if ($use-new-collate-fns) then
+                        tan:collate-pair-of-sequences($input-a-unique-words, $input-b-unique-words)
+                     else
+                        tan:collate-pair-of-sequences-old($input-a-unique-words, $input-b-unique-words)"
                />
 
 
-               <xsl:variable name="input-core-shared-unique-words-in-same-order"
-                  select="$input-core-sequence[exists(@p1) and exists(@p2)][not(. eq $next-tokenizer-regex)]"/>
+               <xsl:variable name="input-core-shared-unique-words-in-same-order" select="
+                     if ($use-new-collate-fns) then
+                        $input-core-sequence/tan:common[not(. eq $next-tokenizer-regex)]
+                     else
+                        $input-core-sequence[exists(@p1) and exists(@p2)][not(. eq $next-tokenizer-regex)]"
+               />
 
                <xsl:variable name="this-unique-sequence-count" as="xs:integer"
                   select="count($input-core-shared-unique-words-in-same-order)"/>
@@ -585,7 +597,7 @@
                   <xsl:message select="'overlapping tokens (' || string(count($overlapping-tokens)) || ') first three: ', tan:ellipses($overlapping-tokens[position() lt 4], 10)"/>
                   <xsl:message select="'input A unique words (', count($input-a-unique-words), '): ', tan:ellipses($input-a-unique-words, 10)"/>
                   <xsl:message select="'input B unique words (', count($input-b-unique-words), '): ', tan:ellipses($input-b-unique-words, 10)"/>
-                  <xsl:message select="'input core sequence (', count($input-core-sequence), '): ', serialize(tan:trim-long-text($input-core-sequence, 10))"/>
+                  <xsl:message select="'input core sequence (', count($input-core-sequence/*), '): ', serialize(tan:trim-long-text($input-core-sequence, 10))"/>
                   <xsl:message select="
                         'Input core shared unique words in same order (', count($input-core-shared-unique-words-in-same-order), '): ',
                         string-join(for $i in $input-core-shared-unique-words-in-same-order
@@ -786,7 +798,13 @@
             </xsl:if>
             <xsl:choose>
                <xsl:when test="$str-a-chars = $str-b-chars">
-                  <xsl:variable name="best-sequence" as="element()*" select="tan:collate-pair-of-sequences($str-a-chars, $str-b-chars)"/>
+                  
+                  <xsl:variable name="best-sequence" as="element()*" select="
+                        if ($use-new-collate-fns) then
+                           tan:collate-pair-of-sequences($str-a-chars, $str-b-chars)
+                        else
+                           tan:collate-pair-of-sequences-old($str-a-chars, $str-b-chars)"
+                  />
                   <!--<xsl:variable name="best-sequence-as-diff" as="element()*">
                   </xsl:variable>-->
                   <xsl:if test="$out-of-vertical-stops">
@@ -794,8 +812,15 @@
                         select="'Out of vertical stops, and matches remain; ' || $string-lengths-for-messages"
                      />
                   </xsl:if>
-                  <xsl:apply-templates select="$best-sequence"
-                     mode="tan:collated-sequences-to-diff"/>
+                  <xsl:choose>
+                     <xsl:when test="$use-new-collate-fns">
+                        <xsl:copy-of select="$best-sequence/*"/>
+                     </xsl:when>
+                     <xsl:otherwise>
+                        <xsl:apply-templates select="$best-sequence"
+                           mode="tan:collated-sequences-to-diff"/>
+                     </xsl:otherwise>
+                  </xsl:choose>
                   <!--<xsl:copy-of select="$best-sequence-as-diff/*"/>-->
                </xsl:when>
                <xsl:otherwise>

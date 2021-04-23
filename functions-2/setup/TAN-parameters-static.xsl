@@ -1,6 +1,7 @@
 <xsl:stylesheet exclude-result-prefixes="#all" 
    xmlns:xs="http://www.w3.org/2001/XMLSchema"
    xmlns:tan="tag:textalign.net,2015:ns"
+   xmlns:file="http://expath.org/ns/file"
    xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="3.0">
 
    <!-- Core static parameters for the TAN function library. These static parameters may be overwritten, but 
@@ -14,8 +15,11 @@
    -->
    <xsl:param name="tan:validation-mode-on" as="xs:boolean" select="false()" static="yes"/>
    
-   <!-- Are advanced features such as xsl:function/@cache or hiegher order functions supported? False if using Saxon HE; true for Saxon PE and EE. -->
+   <!-- Are advanced features such as xsl:function/@cache or higher order functions supported? False if using Saxon HE; true for Saxon PE and EE. -->
    <xsl:param name="tan:advanced-processing-available" as="xs:boolean" static="yes" select="system-property('xsl:supports-higher-order-functions') eq 'yes'"/>
+   
+   <!-- Are the file (namespace http://expath.org/ns/file) functions available? -->
+   <xsl:param name="tan:file-functions-available" as="xs:boolean" static="yes" select="function-available('file:exists')"/>
    
    <!-- Should diagnostic functions and templates be included? True only for TAN development and testing.  -->
    <xsl:param name="tan:include-diagnostics-components" as="xs:boolean" select="false()" static="yes"/>
