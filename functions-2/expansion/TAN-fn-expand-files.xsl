@@ -1497,14 +1497,14 @@
       />
       <xsl:variable name="these-duplicate-IRIs" select="tan:duplicate-values($these-insertions/tan:IRI)"/>
       <xsl:if test="exists($these-duplicate-IRIs)">
-         <xsl:variable name="this-message-parts" as="xs:string*">
+         <xsl:variable name="message-parts" as="xs:string*">
             <xsl:for-each select="$these-duplicate-IRIs">
                <xsl:variable name="this-dup-iri" select="."/>
                <xsl:variable name="those-vals" select="$these-insertions[tan:IRI = $this-dup-iri]/text()"/>
                <xsl:value-of select="(string-join($those-vals, ', ') || ' redundantly point(s) to a vocabulary item with IRI ' || $this-dup-iri)"/>
             </xsl:for-each> 
          </xsl:variable>
-         <xsl:copy-of select="tan:error('tan21', string-join($this-message-parts, '; '))"/>
+         <xsl:copy-of select="tan:error('tan21', string-join($message-parts, '; '))"/>
       </xsl:if>
       <xsl:for-each select="$these-insertions">
          <xsl:copy>
@@ -1717,6 +1717,7 @@
 
    <xsl:template match="/*" mode="tan:core-expansion-terse" priority="-2">
       <xsl:variable name="this-last-change-agent" select="tan:last-change-agent(root())"/>
+      <xsl:variable name="all-ids" as="xs:string*" select="key('tan:attrs-by-name', ('id', 'xml:id'), .)"/>
       <xsl:copy>
          <xsl:copy-of select="@*"/>
          <xsl:if test="exists($this-last-change-agent/self::tan:algorithm)">
@@ -1732,6 +1733,7 @@
          <xsl:apply-templates mode="#current">
             <xsl:with-param name="is-tan-a-lm" select="(name(.) = 'TAN-A-lm')" tunnel="yes"/>
             <xsl:with-param name="is-for-lang" select="exists(tan:head/tan:for-lang)" tunnel="yes"/>
+            <xsl:with-param name="all-ids" tunnel="yes" select="$all-ids"/>
          </xsl:apply-templates>
       </xsl:copy>
    </xsl:template>
@@ -1822,6 +1824,10 @@
          <xsl:copy-of select="tan:error('tan12')"/>
       </xsl:if>
    </xsl:template>
+   <xsl:template match="tan:feature[@which]/tan:id" priority="1" mode="tan:core-expansion-terse">
+      <!-- Ignore TAN-mor grammatical features -->
+      <xsl:copy-of select="."/>
+   </xsl:template>
 
    <xsl:template match="tan:name" mode="tan:core-expansion-terse">
       <!-- parameters below are populated only in TAN-voc files -->
@@ -1883,6 +1889,14 @@
          </xsl:if>
          <xsl:apply-templates mode="#current"/>
       </xsl:copy>
+   </xsl:template>
+   
+   <xsl:template match="tan:alias/tan:idref" mode="tan:core-expansion-terse">
+      <xsl:param name="all-ids" tunnel="yes" as="xs:string*"/>
+      <xsl:if test="not(. = $all-ids)">
+         <xsl:copy-of select="tan:error('tan22', . || ' is faulty')"/>
+      </xsl:if>
+      <xsl:copy-of select="."/>
    </xsl:template>
 
    <xsl:template match="tan:vocabulary-key" mode="tan:core-expansion-terse">
