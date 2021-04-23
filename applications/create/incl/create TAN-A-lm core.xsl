@@ -7,7 +7,7 @@
     
     <!-- Core application for creating a TAN-A-lm file. -->
     
-    <xsl:import href="../../../functions-2/TAN-function-library.xsl"/>
+    <xsl:import href="../../../functions/TAN-function-library.xsl"/>
     
     <xsl:output indent="yes"/>
     

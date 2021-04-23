@@ -14,7 +14,7 @@
    
    <!--<xsl:include href="../../functions/TAN-A-functions.xsl"/>-->
    <!--<xsl:include href="../../functions/TAN-extra-functions.xsl"/>-->
-   <xsl:include href="../functions-2/TAN-function-library.xsl"/>
+   <xsl:include href="../functions/TAN-function-library.xsl"/>
 
    <xsl:output method="xml" indent="yes"/>
    

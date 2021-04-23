@@ -44,9 +44,9 @@
 
     <!-- PARAMETERS -->
     <!-- Many parameters relevant to this application are to be found at:
-            ../../parameters-2/params-application.xsl
-            ../../parameters-2/params-application-diff.xsl 
-            ../../parameters-2/params-application-language.xsl
+            ../../parameters/params-application.xsl
+            ../../parameters/params-application-diff.xsl 
+            ../../parameters/params-application-language.xsl
             Any parameter in this file that begins "tan:" has a corresponding parameter in one of
         the files above, and will overwrite the default value given there.
             You might want to alter other parameters in the files above for this application.
@@ -116,8 +116,8 @@
     
     <!-- Adjustments to diff/collate input strings -->
     <!-- Additional settings at:
-        ../../parameters-2/params-application-diff.xsl. 
-        ../../parameters-2/params-application-language.xsl 
+        ../../parameters/params-application-diff.xsl. 
+        ../../parameters/params-application-language.xsl 
     -->
     
     <!-- You can make normalizations to the string before it goes through the comparison. The XML output 
@@ -144,7 +144,7 @@
     
     <!-- What additional batch replacements if any should be applied? A batch replacement consists of
         an element with attributes @pattern and @replacement and perhaps attributes @flags and @message.
-        For examples of batch replacements, see ../../parameters-2/params-application-language.xsl.
+        For examples of batch replacements, see ../../parameters/params-application-language.xsl.
         These ad-hoc batch replacements will be applied before any other batch replacements invoked by
         the parameters above.
     -->
@@ -155,7 +155,7 @@
 
 
     <!-- STEP FOUR: ADJUST THE DIFF/COLLATION PROCESS -->
-    <!-- Additional settings at ../../parameters-2/params-application-diff.xsl. -->
+    <!-- Additional settings at ../../parameters/params-application-diff.xsl. -->
     
     <!-- Collation/diff handling -->
     
@@ -166,7 +166,7 @@
     
     <!-- STEP FIVE: ADJUST OUTPUT -->
     
-    <!-- Additional settings at ../../parameters-2/params-application.xsl -->
+    <!-- Additional settings at ../../parameters/params-application.xsl -->
     
     
     <!-- In what directory should the output be saved? -->
@@ -181,13 +181,13 @@
     
     <!-- Statistics -->
     
-    <!-- See ../../parameters-2/params-application-diff.xsl -->
+    <!-- See ../../parameters/params-application-diff.xsl -->
     
     
     
     <!-- HTML output -->
     
-    <!-- Important settings also at ../../parameters-2/params-application-html-output.xsl -->
+    <!-- Important settings also at ../../parameters/params-application-html-output.xsl -->
     
     <!-- In the HTML output, should an attempt be made to convert resultant diffs back to their pre-adjustment 
         forms or not? -->

@@ -6,7 +6,7 @@
    
    <!-- Core application for upgrading a TAN file. -->
    
-   <xsl:import href="../../../functions-2/TAN-function-library.xsl"/>
+   <xsl:import href="../../../functions/TAN-function-library.xsl"/>
    <xsl:output use-character-maps="tan:see-special-chars"/>
    
    <!-- About this stylesheet -->

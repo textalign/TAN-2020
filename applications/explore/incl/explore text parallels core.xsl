@@ -10,7 +10,7 @@
     <!-- Core application for exploring text parallels. -->
 
     <xsl:include href="explore%20text%20parallels%20html.xsl"/>
-    <xsl:import href="../../../functions-2/TAN-function-library.xsl"/>
+    <xsl:import href="../../../functions/TAN-function-library.xsl"/>
     
     <xsl:variable name="output-directory-uri-resolved" as="xs:anyURI"
         select="resolve-uri($output-directory-uri, $calling-stylesheet-uri)"/>

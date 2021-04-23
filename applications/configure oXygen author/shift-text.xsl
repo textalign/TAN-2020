@@ -10,7 +10,7 @@
     3. char, word, clause, or sentence 
     4. 1 or all -->
     <!-- This process assumes a TAN-T file, and that the rules of non-mixed content in divs holds true -->
-    <xsl:include href="../../functions-2/TAN-function-library.xsl"/>
+    <xsl:include href="../../functions/TAN-function-library.xsl"/>
     
     <xsl:template match="*[*:div[not(*:div)][@_shift-text]]">
         <xsl:variable name="first-child-with-attr-_shift-text" select="*[@_shift-text][1]"/>

@@ -9,13 +9,13 @@
     <!-- Secondary output: master catalog files (collection.xml) at schemas/, functions/, and TAN-voc -->
     <!-- The resultant files are important for the function library and validation, which can use fn:collection() only in connection with an XML file listing the XML files available. -->
     <xsl:output indent="yes"/>
-    <xsl:include href="../functions-2/TAN-function-library.xsl"/>
+    <xsl:include href="../functions/TAN-function-library.xsl"/>
     
     <xsl:param name="tan:stylesheet-iri" select="'tag:textalign.net,2015:algorithm:collection-generator'"/>
     <xsl:param name="tan:stylesheet-url" select="static-base-uri()"/>
     <xsl:param name="tan:change-message">Generating new collection.xml files for key TAN directories</xsl:param>
     
-    <xsl:variable name="tan:tan-fl-master-file" as="document-node()" select="doc('../functions-2/TAN-function-library.xsl')"/>
+    <xsl:variable name="tan:tan-fl-master-file" as="document-node()" select="doc('../functions/TAN-function-library.xsl')"/>
     
     <xsl:variable name="tan:function-base-dir" select="tan:uri-directory(base-uri($tan:tan-fl-master-file))"
         as="xs:string"/>
@@ -39,7 +39,7 @@
         select="distinct-values(tan:uri-directory($tan:all-include-or-import-hrefs))[starts-with(., $tan:function-base-dir)]"
         as="xs:string*"/>
     <xsl:variable name="tan:schema-directories" as="xs:string+" select="
-            for $i in ('../schemas-2/', '../schemas-2/incl/')
+            for $i in ('../schemas/', '../schemas/incl/')
             return
                 resolve-uri($i, static-base-uri())"/>
     <xsl:variable name="tan:vocabulary-directories" as="xs:string+" select="

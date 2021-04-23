@@ -2,7 +2,7 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:xs="http://www.w3.org/2001/XMLSchema" 
     xmlns:tan="tag:textalign.net,2015:ns" xmlns:tei="http://www.tei-c.org/ns/1.0" version="3.0">
-    <xsl:import href="../../functions-2/TAN-function-library.xsl"/>
+    <xsl:import href="../../functions/TAN-function-library.xsl"/>
     <xsl:template match="tan:ana">
         <xsl:variable name="detected-langs" as="xs:string*"
             select="

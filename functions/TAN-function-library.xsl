@@ -24,17 +24,17 @@
    <!-- DYNAMIC PARAMETERS -->
    <xsl:import href="setup/TAN-parameters-general.xsl"/>
    <xsl:import href="setup/TAN-parameters-extended.xsl" use-when="not($tan:validation-mode-on)"/>
-   <xsl:import href="../parameters-2/params-application.xsl" use-when="not($tan:validation-mode-on)"/>
-   <xsl:import href="../parameters-2/params-application-diff.xsl"
+   <xsl:import href="../parameters/params-application.xsl" use-when="not($tan:validation-mode-on)"/>
+   <xsl:import href="../parameters/params-application-diff.xsl"
       use-when="not($tan:validation-mode-on)"/>
-   <xsl:import href="../parameters-2/params-application-language.xsl"
+   <xsl:import href="../parameters/params-application-language.xsl"
       use-when="not($tan:validation-mode-on)"/>
-   <xsl:import href="../parameters-2/params-application-search.xsl"
+   <xsl:import href="../parameters/params-application-search.xsl"
       use-when="not($tan:validation-mode-on)"/>
-   <xsl:import href="../parameters-2/params-application-html-output.xsl"
+   <xsl:import href="../parameters/params-application-html-output.xsl"
       use-when="not($tan:validation-mode-on)"/>
-   <xsl:import href="../parameters-2/params-function-diff.xsl"/>
-   <xsl:import href="../parameters-2/params-validation.xsl"/>
+   <xsl:import href="../parameters/params-function-diff.xsl"/>
+   <xsl:import href="../parameters/params-validation.xsl"/>
 
    <!-- GLOBAL VARIABLES -->
    <xsl:include href="setup/TAN-variables-standard.xsl"/>

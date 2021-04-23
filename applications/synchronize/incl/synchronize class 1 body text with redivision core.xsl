@@ -8,7 +8,7 @@
 
    <!-- Core application for synchronizing a class 1 file's text with its redivision. -->
    
-   <xsl:include href="../../../functions-2/TAN-function-library.xsl"/>
+   <xsl:include href="../../../functions/TAN-function-library.xsl"/>
    
    <!-- About this stylesheet -->
 

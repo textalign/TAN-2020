@@ -18,7 +18,7 @@
                 stylesheet is used primarily to generate the documentation, not for core validation,
                 but it may be useful in other contexts.-->
     <xsl:variable name="tan:schema-uri-collection" as="xs:anyURI+"
-        select="uri-collection('../../schemas-2'), uri-collection('../../schemas-2/incl')"/>
+        select="uri-collection('../../schemas'), uri-collection('../../schemas/incl')"/>
     <xsl:variable name="tan:schema-collection" as="document-node()+"
         select="
             for $i in $tan:schema-uri-collection

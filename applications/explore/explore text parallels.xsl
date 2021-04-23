@@ -244,7 +244,7 @@
    <xsl:param name="verify-intermediate-steps-strictly" as="xs:boolean" select="false()"/>
    
    <!-- Note, the temporary directory where intermediate steps is established by $tan:temporary-file-directory
-   in ../../parameters-2/params-application.xsl. Normally you'll want to keep your temporary files in a 
+   in ../../parameters/params-application.xsl. Normally you'll want to keep your temporary files in a 
    central location where you can remember to clear them out. The files that are save there are given 
    filenames associated with the hash value of the file being saved, so overwriting of a temporary file
    is nearly impossible.

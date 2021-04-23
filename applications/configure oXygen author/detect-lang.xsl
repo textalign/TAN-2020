@@ -3,7 +3,7 @@
     xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="tag:textalign.net,2015:ns"
     xmlns:tan="tag:textalign.net,2015:ns" xmlns:tei="http://www.tei-c.org/ns/1.0" version="3.0"
     exclude-result-prefixes="#all">
-    <xsl:import href="../../functions-2/TAN-function-library.xsl"/>
+    <xsl:import href="../../functions/TAN-function-library.xsl"/>
     <xsl:template match="/tan:TAN-A-lm">
         <xsl:variable name="for-langs" select="*/tan:for-lang"/>
         <xsl:variable name="this-src" select="tan:get-1st-doc(tan:head/tan:source)"/>

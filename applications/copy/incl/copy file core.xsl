@@ -10,7 +10,7 @@
         path directly into the bar. If you use the navigation feature you will be required to select a file that you wish 
         to overwrite. -->
 
-    <xsl:import href="../../../functions-2/TAN-function-library.xsl"/>
+    <xsl:import href="../../../functions/TAN-function-library.xsl"/>
     <xsl:output indent="no" use-character-maps="tan:see-special-chars"/>
     
     <xsl:variable name="target-uri-resolved" as="xs:anyURI" select="resolve-uri($target-uri, $tan:doc-uri)"/>

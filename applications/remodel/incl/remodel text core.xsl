@@ -7,7 +7,7 @@
 
     <!-- Core application for remodeling a text. -->
 
-    <xsl:import href="../../../functions-2/TAN-function-library.xsl"/>
+    <xsl:import href="../../../functions/TAN-function-library.xsl"/>
     
 
     <!-- About this stylesheet -->

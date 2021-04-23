@@ -101,7 +101,7 @@
                             </scenarioAssociation>
                             <scenarioAssociation>
                                 <field name="url">
-                                    <String>applications-2/explore/explore%20text%20parallels.xsl</String>
+                                    <String>applications/explore/explore%20text%20parallels.xsl</String>
                                 </field>
                                 <field name="scenarioIds">
                                     <list>
@@ -121,7 +121,7 @@
                             </scenarioAssociation>
                             <scenarioAssociation>
                                 <field name="url">
-                                    <String>applications-2/compare/compare%20texts.xsl</String>
+                                    <String>applications/compare/compare%20texts.xsl</String>
                                 </field>
                                 <field name="scenarioIds">
                                     <list>
@@ -301,7 +301,7 @@
                             </scenarioAssociation>
                             <scenarioAssociation>
                                 <field name="url">
-                                    <String>applications/compare/compare%20TAN%20class%201%20files.xsl</String>
+                                    <String>applications-old/compare/compare%20TAN%20class%201%20files.xsl</String>
                                 </field>
                                 <field name="scenarioIds">
                                     <list>
@@ -521,7 +521,7 @@
                             </scenarioAssociation>
                             <scenarioAssociation>
                                 <field name="url">
-                                    <String>functions-2/maintenance/collection-generator.xsl</String>
+                                    <String>functions/maintenance/collection-generator.xsl</String>
                                 </field>
                                 <field name="scenarioIds">
                                     <list>
@@ -561,7 +561,7 @@
                             </scenarioAssociation>
                             <scenarioAssociation>
                                 <field name="url">
-                                    <String>schemas/TAN-TEI.odd</String>
+                                    <String>schemas-old/TAN-TEI.odd</String>
                                 </field>
                                 <field name="scenarioIds">
                                     <list>
@@ -1670,7 +1670,7 @@
                                     <String></String>
                                 </field>
                                 <field name="inputXSLURL">
-                                    <String>${pdu}/applications-2/calibrate/calibrate%20TAN-A-lm%20certainty.xsl</String>
+                                    <String>${pdu}/applications/calibrate/calibrate%20TAN-A-lm%20certainty.xsl</String>
                                 </field>
                                 <field name="inputXMLURL">
                                     <String>${currentFileURL}</String>
@@ -1753,7 +1753,7 @@
                                     <String></String>
                                 </field>
                                 <field name="inputXSLURL">
-                                    <String>${pdu}/applications/compare/compare%20TAN%20class%201%20files.xsl</String>
+                                    <String>${pdu}/applications-old/compare/compare%20TAN%20class%201%20files.xsl</String>
                                 </field>
                                 <field name="inputXMLURL">
                                     <String>${currentFileURL}</String>
@@ -1909,7 +1909,7 @@
                                     <String></String>
                                 </field>
                                 <field name="inputXSLURL">
-                                    <String>${pdu}/applications/convert/convert%20TAN%202018%20to%20TAN%202020.xsl</String>
+                                    <String>${pdu}/applications-old/convert/convert%20TAN%202018%20to%20TAN%202020.xsl</String>
                                 </field>
                                 <field name="inputXMLURL">
                                     <String>${currentFileURL}</String>
@@ -1992,7 +1992,7 @@
                                     <String></String>
                                 </field>
                                 <field name="inputXSLURL">
-                                    <String>${pdu}/applications/convert/convert%20TAN-TEI%20to%20TAN-T.xsl</String>
+                                    <String>${pdu}/applications-old/convert/convert%20TAN-TEI%20to%20TAN-T.xsl</String>
                                 </field>
                                 <field name="inputXMLURL">
                                     <String>${currentFileURL}</String>
@@ -2075,7 +2075,7 @@
                                     <String></String>
                                 </field>
                                 <field name="inputXSLURL">
-                                    <String>${pdu}/applications/convert/convert%20TEI%20to%20TAN-TEI.xsl</String>
+                                    <String>${pdu}/applications-old/convert/convert%20TEI%20to%20TAN-TEI.xsl</String>
                                 </field>
                                 <field name="inputXMLURL">
                                     <String>${currentFileURL}</String>
@@ -2158,7 +2158,7 @@
                                     <String></String>
                                 </field>
                                 <field name="inputXSLURL">
-                                    <String>${pdu}/applications-2/copy/copy%20file.xsl</String>
+                                    <String>${pdu}/applications/copy/copy%20file.xsl</String>
                                 </field>
                                 <field name="inputXMLURL">
                                     <String>${currentFileURL}</String>
@@ -2314,7 +2314,7 @@
                                     <String></String>
                                 </field>
                                 <field name="inputXSLURL">
-                                    <String>${pdu}/applications/create/create%20catalog%20file.xsl</String>
+                                    <String>${pdu}/applications-old/create/create%20catalog%20file.xsl</String>
                                 </field>
                                 <field name="inputXMLURL">
                                     <String>${currentFileURL}</String>
@@ -2446,7 +2446,7 @@
                                     <String></String>
                                 </field>
                                 <field name="inputXSLURL">
-                                    <String>${pdu}/applications-2/create/create%20TAN-A-lm.xsl</String>
+                                    <String>${pdu}/applications/create/create%20TAN-A-lm.xsl</String>
                                 </field>
                                 <field name="inputXMLURL">
                                     <String>${currentFileURL}</String>
@@ -2529,7 +2529,7 @@
                                     <String></String>
                                 </field>
                                 <field name="inputXSLURL">
-                                    <String>${pdu}/applications/create/create%20catalog%20file.xsl</String>
+                                    <String>${pdu}/applications-old/create/create%20catalog%20file.xsl</String>
                                 </field>
                                 <field name="inputXMLURL">
                                     <String>${currentFileURL}</String>
@@ -2661,7 +2661,7 @@
                                     <String></String>
                                 </field>
                                 <field name="inputXSLURL">
-                                    <String>${pdu}/applications/display/display%20TAN%20as%20HTML.xsl</String>
+                                    <String>${pdu}/applications-old/display/display%20TAN%20as%20HTML.xsl</String>
                                 </field>
                                 <field name="inputXMLURL">
                                     <String>${currentFileURL}</String>
@@ -2744,7 +2744,7 @@
                                     <String></String>
                                 </field>
                                 <field name="inputXSLURL">
-                                    <String>${pdu}/applications/display/display%20merged%20sources%20as%20HTML.xsl</String>
+                                    <String>${pdu}/applications-old/display/display%20merged%20sources%20as%20HTML.xsl</String>
                                 </field>
                                 <field name="inputXMLURL">
                                     <String>${currentFileURL}</String>
@@ -2827,7 +2827,7 @@
                                     <String></String>
                                 </field>
                                 <field name="inputXSLURL">
-                                    <String>${pdu}/applications-2/remodel/remodel%20text.xsl</String>
+                                    <String>${pdu}/applications/remodel/remodel%20text.xsl</String>
                                 </field>
                                 <field name="inputXMLURL">
                                     <String>${currentFileURL}</String>
@@ -2910,7 +2910,7 @@
                                     <String></String>
                                 </field>
                                 <field name="inputXSLURL">
-                                    <String>${pdu}/applications/remodel/remodel%20via%20TAN-T.xsl</String>
+                                    <String>${pdu}/applications-old/remodel/remodel%20via%20TAN-T.xsl</String>
                                 </field>
                                 <field name="inputXMLURL">
                                     <String>${currentFileURL}</String>
@@ -3138,7 +3138,7 @@
                                     <String></String>
                                 </field>
                                 <field name="inputXSLURL">
-                                    <String>${pdu}/applications/remodel/remodel%20via%20TAN-T.xsl</String>
+                                    <String>${pdu}/applications-old/remodel/remodel%20via%20TAN-T.xsl</String>
                                 </field>
                                 <field name="inputXMLURL">
                                     <String>${currentFileURL}</String>
@@ -3221,7 +3221,7 @@
                                     <String></String>
                                 </field>
                                 <field name="inputXSLURL">
-                                    <String>${pdu}/applications/resolve/resolve%20TAN%20file.xsl</String>
+                                    <String>${pdu}/applications-old/resolve/resolve%20TAN%20file.xsl</String>
                                 </field>
                                 <field name="inputXMLURL">
                                     <String>${currentFileURL}</String>
@@ -3304,7 +3304,7 @@
                                     <String></String>
                                 </field>
                                 <field name="inputXSLURL">
-                                    <String>${pdu}/applications/resolve/resolve%20hrefs.xsl</String>
+                                    <String>${pdu}/applications-old/resolve/resolve%20hrefs.xsl</String>
                                 </field>
                                 <field name="inputXMLURL">
                                     <String>${currentFileURL}</String>
@@ -3387,7 +3387,7 @@
                                     <String></String>
                                 </field>
                                 <field name="inputXSLURL">
-                                    <String>${pdu}/applications-2/synchronize/synchronize%20class%201%20body%20text%20with%20redivision.xsl</String>
+                                    <String>${pdu}/applications/synchronize/synchronize%20class%201%20body%20text%20with%20redivision.xsl</String>
                                 </field>
                                 <field name="inputXMLURL">
                                     <String>${currentFileURL}</String>
@@ -3553,7 +3553,7 @@
                                     <String></String>
                                 </field>
                                 <field name="inputXSLURL">
-                                    <String>${pdu}/applications/test/test%20TAN-T(EI).xsl</String>
+                                    <String>${pdu}/applications-old/test/test%20TAN-T(EI).xsl</String>
                                 </field>
                                 <field name="inputXMLURL">
                                     <String>${currentFileURL}</String>
@@ -3636,7 +3636,7 @@
                                     <String></String>
                                 </field>
                                 <field name="inputXSLURL">
-                                    <String>${pdu}/applications-2/merge/merge%20work%20versions.xsl</String>
+                                    <String>${pdu}/applications/merge/merge%20work%20versions.xsl</String>
                                 </field>
                                 <field name="inputXMLURL">
                                     <String>${currentFileURL}</String>
@@ -3719,7 +3719,7 @@
                                     <String></String>
                                 </field>
                                 <field name="inputXSLURL">
-                                    <String>${pdu}/applications/convert/private-convert%20Evagrius%20docx%20to%20TAN.xsl</String>
+                                    <String>${pdu}/applications-old/convert/private-convert%20Evagrius%20docx%20to%20TAN.xsl</String>
                                 </field>
                                 <field name="inputXMLURL">
                                     <String>${currentFileURL}</String>
@@ -4544,7 +4544,7 @@
                         <scenarioAssociation-array>
                             <scenarioAssociation>
                                 <field name="url">
-                                    <String>functions-2/TAN-function-library.xsl</String>
+                                    <String>functions/TAN-function-library.xsl</String>
                                 </field>
                                 <field name="scenarioIds">
                                     <list>
@@ -4662,82 +4662,82 @@
     </meta>
     <projectTree name="tan-dev.xpr">
         <folder masterFiles="true" name="Master Files">
-            <file name="applications/add/add%20new%20TAN-A-lm%20anas%20to%20language%20TAN-A-lm%20collection.xsl"/>
-            <file name="applications/adjust/adjust%20file.xsl"/>
-            <file name="applications/analyze/analyze%20TAN-A%20lexical%20complexity.xsl"/>
-            <file name="applications/analyze/analyze%20TAN-A%20word%20distribution.xsl"/>
-            <file name="applications/augment/augment%20language%20TAN-A-lm%20with%20text%20TAN-A-lm.xsl"/>
-            <file name="applications-2/calibrate/calibrate%20TAN-A-lm%20certainty.xsl"/>
-            <file name="schemas/catalog.tan.rnc"/>
-            <file name="schemas/catalog.tan.rng"/>
-            <file name="schemas/catalog.tan.sch"/>
-            <file name="schemas/collection.rnc"/>
-            <file name="schemas/collection.rng"/>
-            <file name="schemas/collection.sch"/>
-            <file name="applications/compare/compare%20TAN%20class%201%20files.xsl"/>
-            <file name="applications-2/compare/compare%20texts.xsl"/>
-            <file name="applications/convert/convert%20docx%20to%20TAN.xsl"/>
-            <file name="applications/convert/convert%20epub%20to%20TAN.xsl"/>
-            <file name="applications/convert/convert%20TAN%202017%20to%20TAN%202018.xsl"/>
-            <file name="applications/convert/convert%20TAN%202018%20to%20TAN%202020.xsl"/>
-            <file name="applications/convert/convert%20TAN-TEI%20to%20TAN-T.xsl"/>
-            <file name="applications/convert/convert%20TEI%20to%20TAN-TEI.xsl"/>
-            <file name="applications/convert/convert%20text%20TAN-A-lm%20to%20lang%20TAN-A-lm.xsl"/>
-            <file name="applications-2/copy/copy%20file.xsl"/>
-            <file name="applications/copy/copy%20TAN%20file.xsl"/>
-            <file name="applications/create/create%20catalog%20file.xsl"/>
-            <file name="applications-2/create/create%20TAN-A-lm.xsl"/>
-            <file name="applications/display/display%20merged%20sources%20as%20HTML.xsl"/>
-            <file name="applications/display/display%20TAN%20as%20HTML.xsl"/>
-            <file name="applications-2/explore/explore%20text%20parallels.xsl"/>
-            <file name="applications-2/merge/merge%20work%20versions.xsl"/>
+            <file name="applications-old/add/add%20new%20TAN-A-lm%20anas%20to%20language%20TAN-A-lm%20collection.xsl"/>
+            <file name="applications-old/adjust/adjust%20file.xsl"/>
+            <file name="applications-old/analyze/analyze%20TAN-A%20lexical%20complexity.xsl"/>
+            <file name="applications-old/analyze/analyze%20TAN-A%20word%20distribution.xsl"/>
+            <file name="applications-old/augment/augment%20language%20TAN-A-lm%20with%20text%20TAN-A-lm.xsl"/>
+            <file name="applications/calibrate/calibrate%20TAN-A-lm%20certainty.xsl"/>
+            <file name="schemas-old/catalog.tan.rnc"/>
+            <file name="schemas-old/catalog.tan.rng"/>
+            <file name="schemas-old/catalog.tan.sch"/>
+            <file name="schemas-old/collection.rnc"/>
+            <file name="schemas-old/collection.rng"/>
+            <file name="schemas-old/collection.sch"/>
+            <file name="applications-old/compare/compare%20TAN%20class%201%20files.xsl"/>
+            <file name="applications/compare/compare%20texts.xsl"/>
+            <file name="applications-old/convert/convert%20docx%20to%20TAN.xsl"/>
+            <file name="applications-old/convert/convert%20epub%20to%20TAN.xsl"/>
+            <file name="applications-old/convert/convert%20TAN%202017%20to%20TAN%202018.xsl"/>
+            <file name="applications-old/convert/convert%20TAN%202018%20to%20TAN%202020.xsl"/>
+            <file name="applications-old/convert/convert%20TAN-TEI%20to%20TAN-T.xsl"/>
+            <file name="applications-old/convert/convert%20TEI%20to%20TAN-TEI.xsl"/>
+            <file name="applications-old/convert/convert%20text%20TAN-A-lm%20to%20lang%20TAN-A-lm.xsl"/>
+            <file name="applications/copy/copy%20file.xsl"/>
+            <file name="applications-old/copy/copy%20TAN%20file.xsl"/>
+            <file name="applications-old/create/create%20catalog%20file.xsl"/>
+            <file name="applications/create/create%20TAN-A-lm.xsl"/>
+            <file name="applications-old/display/display%20merged%20sources%20as%20HTML.xsl"/>
+            <file name="applications-old/display/display%20TAN%20as%20HTML.xsl"/>
+            <file name="applications/explore/explore%20text%20parallels.xsl"/>
+            <file name="applications/merge/merge%20work%20versions.xsl"/>
             <file name="guidelines/populate/populate%20TAN%20guidelines.xsl"/>
             <file name="maintenance/guidelines/populate%20TAN%20guidelines.xsl"/>
-            <file name="applications/re-sort/re-sort%20XSLT%20stylesheet.xsl"/>
-            <file name="applications-2/remodel/remodel%20text.xsl"/>
-            <file name="applications/remodel/remodel%20via%20TAN-T.xsl"/>
-            <file name="applications/resolve/resolve%20hrefs.xsl"/>
-            <file name="applications/resolve/resolve%20TAN%20file.xsl"/>
-            <file name="applications/subdivide/subdivide%20leaf%20divs.xsl"/>
-            <file name="applications-2/synchronize/synchronize%20class%201%20body%20text%20with%20redivision.xsl"/>
-            <file name="functions/TAN-A-functions.xsl"/>
-            <file name="functions/TAN-A-lm-functions.xsl"/>
-            <file name="schemas/TAN-A-lm.rnc"/>
-            <file name="schemas/TAN-A-lm.rng"/>
-            <file name="schemas/TAN-A-lm.sch"/>
-            <file name="functions/TAN-A-tok-functions.xsl"/>
-            <file name="schemas/TAN-A-tok.rnc"/>
-            <file name="schemas/TAN-A-tok.rng"/>
-            <file name="schemas/TAN-A-tok.sch"/>
-            <file name="schemas/TAN-A.rnc"/>
-            <file name="schemas/TAN-A.rng"/>
-            <file name="schemas/TAN-A.sch"/>
-            <file name="functions-2/TAN-function-library.xsl"/>
-            <file name="functions/TAN-mor-functions.xsl"/>
-            <file name="schemas/TAN-mor.rnc"/>
-            <file name="schemas/TAN-mor.rng"/>
-            <file name="schemas/TAN-mor.sch"/>
-            <file name="functions/TAN-T-functions.xsl"/>
-            <file name="schemas/TAN-T.rnc"/>
-            <file name="schemas/TAN-T.rng"/>
-            <file name="schemas/TAN-T.sch"/>
-            <file name="functions/TAN-TEI-functions.xsl"/>
-            <file name="schemas/TAN-TEI.rnc"/>
-            <file name="schemas/TAN-TEI.rng"/>
-            <file name="schemas/TAN-TEI.sch"/>
-            <file name="functions/TAN-voc-functions.xsl"/>
-            <file name="schemas/TAN-voc.rnc"/>
-            <file name="schemas/TAN-voc.rng"/>
-            <file name="schemas/TAN-voc.sch"/>
-            <file name="applications/test/test%20TAN-A-lm.xsl"/>
-            <file name="applications/test/test%20TAN-A-tok.xsl"/>
-            <file name="applications/test/test%20TAN-A.xsl"/>
-            <file name="applications/test/test%20TAN-mor.xsl"/>
-            <file name="applications/test/test%20TAN-T(EI).xsl"/>
-            <file name="applications/test/test%20TAN-voc.xsl"/>
-            <file name="applications-2/upgrade/ugrade%20TAN%20file.xsl"/>
-            <file name="applications/update/update%20TAN-T%20text%20via%20redivided%20copy.xsl"/>
-            <file name="applications/update/update%20TAN-voc%20via%20TEI%20collection.xsl"/>
+            <file name="applications-old/re-sort/re-sort%20XSLT%20stylesheet.xsl"/>
+            <file name="applications/remodel/remodel%20text.xsl"/>
+            <file name="applications-old/remodel/remodel%20via%20TAN-T.xsl"/>
+            <file name="applications-old/resolve/resolve%20hrefs.xsl"/>
+            <file name="applications-old/resolve/resolve%20TAN%20file.xsl"/>
+            <file name="applications-old/subdivide/subdivide%20leaf%20divs.xsl"/>
+            <file name="applications/synchronize/synchronize%20class%201%20body%20text%20with%20redivision.xsl"/>
+            <file name="functions-old/TAN-A-functions.xsl"/>
+            <file name="functions-old/TAN-A-lm-functions.xsl"/>
+            <file name="schemas-old/TAN-A-lm.rnc"/>
+            <file name="schemas-old/TAN-A-lm.rng"/>
+            <file name="schemas-old/TAN-A-lm.sch"/>
+            <file name="functions-old/TAN-A-tok-functions.xsl"/>
+            <file name="schemas-old/TAN-A-tok.rnc"/>
+            <file name="schemas-old/TAN-A-tok.rng"/>
+            <file name="schemas-old/TAN-A-tok.sch"/>
+            <file name="schemas-old/TAN-A.rnc"/>
+            <file name="schemas-old/TAN-A.rng"/>
+            <file name="schemas-old/TAN-A.sch"/>
+            <file name="functions/TAN-function-library.xsl"/>
+            <file name="functions-old/TAN-mor-functions.xsl"/>
+            <file name="schemas-old/TAN-mor.rnc"/>
+            <file name="schemas-old/TAN-mor.rng"/>
+            <file name="schemas-old/TAN-mor.sch"/>
+            <file name="functions-old/TAN-T-functions.xsl"/>
+            <file name="schemas-old/TAN-T.rnc"/>
+            <file name="schemas-old/TAN-T.rng"/>
+            <file name="schemas-old/TAN-T.sch"/>
+            <file name="functions-old/TAN-TEI-functions.xsl"/>
+            <file name="schemas-old/TAN-TEI.rnc"/>
+            <file name="schemas-old/TAN-TEI.rng"/>
+            <file name="schemas-old/TAN-TEI.sch"/>
+            <file name="functions-old/TAN-voc-functions.xsl"/>
+            <file name="schemas-old/TAN-voc.rnc"/>
+            <file name="schemas-old/TAN-voc.rng"/>
+            <file name="schemas-old/TAN-voc.sch"/>
+            <file name="applications-old/test/test%20TAN-A-lm.xsl"/>
+            <file name="applications-old/test/test%20TAN-A-tok.xsl"/>
+            <file name="applications-old/test/test%20TAN-A.xsl"/>
+            <file name="applications-old/test/test%20TAN-mor.xsl"/>
+            <file name="applications-old/test/test%20TAN-T(EI).xsl"/>
+            <file name="applications-old/test/test%20TAN-voc.xsl"/>
+            <file name="applications/upgrade/ugrade%20TAN%20file.xsl"/>
+            <file name="applications-old/update/update%20TAN-T%20text%20via%20redivided%20copy.xsl"/>
+            <file name="applications-old/update/update%20TAN-voc%20via%20TEI%20collection.xsl"/>
         </folder>
         <folder path="../../epubs/TLG/"/>
         <folder path="../"/>

@@ -113,7 +113,7 @@
    
    <!-- Many of these parameters add, remove, or change content from the output of 
       tan:merge-expanded-docs(). That function has extensive commentary on what happens when one 
-      merges multiple class 1 documents. See ../../functions-2/merging/TAN-fn-merging.xsl
+      merges multiple class 1 documents. See ../../functions/merging/TAN-fn-merging.xsl
          In general, the result has one <head> per merged source, and the <body> consists of a 
       superstructure of <div>s that reconcile all the competing systems. All that remains of 
       the source text are their leaf <div>s, which are placed in the appropriate part of the
@@ -264,8 +264,8 @@
    
    <!-- string differences -->
    <!-- For other related parameters, see:
-      ../../parameters-2/params-function-diff.xsl
-      ../../parameters-2/params-application-diff.xsl -->
+      ../../parameters/params-function-diff.xsl
+      ../../parameters/params-application-diff.xsl -->
    
    <!-- In a group within a leaf merge, tan:diff() and tan:collate() can be turned on. If the versions are 
       close enough to each other, they will be collapsed into a single reading that shows through markup

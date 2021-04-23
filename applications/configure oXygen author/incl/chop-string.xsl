@@ -3,7 +3,7 @@
     xmlns:tan="tag:textalign.net,2015:ns" xmlns:xs="http://www.w3.org/2001/XMLSchema"
     exclude-result-prefixes="#all" version="3.0">
 
-    <xsl:include href="../../../functions-2/TAN-function-library.xsl"/>
+    <xsl:include href="../../../functions/TAN-function-library.xsl"/>
     
     <xsl:param name="chop-at-regex" select="$tan:word-end-regex"/>
     <xsl:param name="keep" as="xs:string" select="'1 - last'"/>

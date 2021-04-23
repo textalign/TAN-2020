@@ -29,7 +29,7 @@
    <xsl:output method="xml" indent="no" use-when="not($output-diagnostics-on)"/>
    <xsl:output method="xml" indent="true" use-when="$output-diagnostics-on"/>
 
-   <xsl:include href="../../functions-2/TAN-function-library.xsl"/>
+   <xsl:include href="../../functions/TAN-function-library.xsl"/>
    <!--<xsl:include href="../../applications/get%20inclusions/rng-to-text.xsl"/>-->
    <xsl:include href="rng-to-text.xsl"/>
    <!--<xsl:include href="../../functions/incl/TAN-core-functions.xsl"/>-->

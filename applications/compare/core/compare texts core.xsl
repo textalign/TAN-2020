@@ -7,7 +7,7 @@
 
     <!-- Core application for comparing texts. -->
     
-    <xsl:include href="../../../functions-2/TAN-function-library.xsl"/>
+    <xsl:include href="../../../functions/TAN-function-library.xsl"/>
     
     <xsl:variable name="output-directory-uri-resolved" as="xs:anyURI"
         select="resolve-uri($output-directory-uri, $calling-stylesheet-uri)"/>

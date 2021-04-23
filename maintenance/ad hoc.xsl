@@ -12,7 +12,7 @@
    
    <xsl:param name="tan:validation-mode-on" static="yes" select="false()"/>
    
-   <xsl:include href="../functions-2/TAN-function-library.xsl"/>
+   <xsl:include href="../functions/TAN-function-library.xsl"/>
    
    <xsl:mode default-mode="#unnamed" on-no-match="shallow-copy"/>
    

@@ -7,7 +7,7 @@
 
     <!-- Core application for calibrating TAN-A-lm files. -->
     
-    <xsl:include href="../../../functions-2/TAN-function-library.xsl"/>
+    <xsl:include href="../../../functions/TAN-function-library.xsl"/>
     
 
     <!-- About this stylesheet -->

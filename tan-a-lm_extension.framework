@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<serialized version="21.0" xml:space="preserve">
+<serialized version="22.1" xml:space="preserve">
 	<serializableOrderedMap>
 		<entry>
 			<String>document.types</String>
@@ -31,7 +31,7 @@
 											<String>authorExtensionDescriptor/actionDescriptors</String>
 										</field>
 										<field name="index">
-											<Integer>81</Integer>
+											<Integer>90</Integer>
 										</field>
 										<field name="value">
 											<action>
@@ -102,7 +102,7 @@
 											<String>authorExtensionDescriptor/actionDescriptors</String>
 										</field>
 										<field name="index">
-											<Integer>82</Integer>
+											<Integer>91</Integer>
 										</field>
 										<field name="value">
 											<action>
@@ -181,7 +181,7 @@
 											<String>authorExtensionDescriptor/actionDescriptors</String>
 										</field>
 										<field name="index">
-											<Integer>83</Integer>
+											<Integer>92</Integer>
 										</field>
 										<field name="value">
 											<action>
@@ -246,7 +246,7 @@ get-lm-data-prelim
 											<String>authorExtensionDescriptor/actionDescriptors</String>
 										</field>
 										<field name="index">
-											<Integer>84</Integer>
+											<Integer>93</Integer>
 										</field>
 										<field name="value">
 											<action>
@@ -316,7 +316,7 @@ get-lm-data-prelim
 											<String>authorExtensionDescriptor/actionDescriptors</String>
 										</field>
 										<field name="index">
-											<Integer>85</Integer>
+											<Integer>94</Integer>
 										</field>
 										<field name="value">
 											<action>
@@ -386,7 +386,7 @@ get-lm-data-prelim
 											<String>authorExtensionDescriptor/actionDescriptors</String>
 										</field>
 										<field name="index">
-											<Integer>86</Integer>
+											<Integer>95</Integer>
 										</field>
 										<field name="value">
 											<action>
@@ -450,7 +450,7 @@ process-link-to
 											<String>authorExtensionDescriptor/actionDescriptors</String>
 										</field>
 										<field name="index">
-											<Integer>87</Integer>
+											<Integer>96</Integer>
 										</field>
 										<field name="value">
 											<action>
@@ -520,7 +520,7 @@ process-link-to
 											<String>authorExtensionDescriptor/actionDescriptors</String>
 										</field>
 										<field name="index">
-											<Integer>88</Integer>
+											<Integer>97</Integer>
 										</field>
 										<field name="value">
 											<action>
@@ -581,48 +581,6 @@ process-link-to
 									</poPatch>
 									<poPatch>
 										<field name="fieldPath">
-											<String>authorExtensionDescriptor/menubarDescriptor/menuEntriesDescriptorList/[5]/menuEntriesDescriptorList</String>
-										</field>
-										<field name="index">
-											<Integer>2</Integer>
-										</field>
-										<field name="value">
-											<menuItem>
-												<field name="actionID">
-													<String>add-source</String>
-												</field>
-											</menuItem>
-										</field>
-										<field name="patchHandling">
-											<String>addIndex</String>
-										</field>
-										<field name="anchor">
-											<null/>
-										</field>
-									</poPatch>
-									<poPatch>
-										<field name="fieldPath">
-											<String>authorExtensionDescriptor/menubarDescriptor/menuEntriesDescriptorList/[5]/menuEntriesDescriptorList</String>
-										</field>
-										<field name="index">
-											<Integer>3</Integer>
-										</field>
-										<field name="value">
-											<menuItem>
-												<field name="actionID">
-													<String>add-morphology</String>
-												</field>
-											</menuItem>
-										</field>
-										<field name="patchHandling">
-											<String>addIndex</String>
-										</field>
-										<field name="anchor">
-											<null/>
-										</field>
-									</poPatch>
-									<poPatch>
-										<field name="fieldPath">
 											<String>authorExtensionDescriptor/menubarDescriptor/menuEntriesDescriptorList/[12]/menuEntriesDescriptorList</String>
 										</field>
 										<field name="index">
@@ -644,7 +602,7 @@ process-link-to
 									</poPatch>
 									<poPatch>
 										<field name="fieldPath">
-											<String>authorExtensionDescriptor/popupMenuDescriptor/menuEntriesDescriptorList/[5]/menuEntriesDescriptorList</String>
+											<String>authorExtensionDescriptor/popupMenuDescriptor/menuEntriesDescriptorList/[6]/menuEntriesDescriptorList</String>
 										</field>
 										<field name="index">
 											<Integer>2</Integer>
@@ -665,7 +623,7 @@ process-link-to
 									</poPatch>
 									<poPatch>
 										<field name="fieldPath">
-											<String>authorExtensionDescriptor/popupMenuDescriptor/menuEntriesDescriptorList/[5]/menuEntriesDescriptorList</String>
+											<String>authorExtensionDescriptor/popupMenuDescriptor/menuEntriesDescriptorList/[6]/menuEntriesDescriptorList</String>
 										</field>
 										<field name="index">
 											<Integer>3</Integer>
@@ -809,6 +767,23 @@ process-link-to
 										</field>
 										<field name="patchHandling">
 											<String>addIndex</String>
+										</field>
+										<field name="anchor">
+											<null/>
+										</field>
+									</poPatch>
+									<poPatch>
+										<field name="fieldPath">
+											<String>defaultValidationScenarios</String>
+										</field>
+										<field name="index">
+											<Integer>-1</Integer>
+										</field>
+										<field name="value">
+											<null/>
+										</field>
+										<field name="patchHandling">
+											<String>set</String>
 										</field>
 										<field name="anchor">
 											<null/>
@@ -5280,11 +5255,11 @@ process-link-to
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
-																<String>(/*/*:head//*:link-to)[1]</String>
+																<String>(/*//*:link-to)[1]</String>
 															</entry>
 															<entry>
 																<String>targetLocation</String>
-																<String>(/*/*:head//*:link-to)[1]</String>
+																<String>(/*//*:link-to)[1]</String>
 															</entry>
 														</serializableOrderedMap>
 													</field>
@@ -5450,6 +5425,464 @@ process-link-to
 											<Boolean>false</Boolean>
 										</field>
 									</action>
+									<action>
+										<field name="id">
+											<String>push-last-clause-all</String>
+										</field>
+										<field name="name">
+											<String>push last clauses to all following siblings</String>
+										</field>
+										<field name="description">
+											<String>Push the last clause in a div to the following sibling; apply to current leaf div and all following siblings</String>
+										</field>
+										<field name="largeIconPath">
+											<String></String>
+										</field>
+										<field name="smallIconPath">
+											<String></String>
+										</field>
+										<field name="accessKey">
+											<String></String>
+										</field>
+										<field name="accelerator">
+											<String>M1 M3 M2 PERIOD</String>
+										</field>
+										<field name="actionModes">
+											<actionMode-array>
+												<actionMode>
+													<field name="xpathCondition">
+														<String>self::*:div[not(*:div)]</String>
+													</field>
+													<field name="argValues">
+														<serializableOrderedMap>
+															<entry>
+																<String>actionIDs</String>
+																<String>push-last-clause-all-stamp
+execute-shift-text
+</String>
+															</entry>
+														</serializableOrderedMap>
+													</field>
+													<field name="operationID">
+														<String>ro.sync.ecss.extensions.commons.operations.ExecuteMultipleActionsOperation</String>
+													</field>
+												</actionMode>
+											</actionMode-array>
+										</field>
+										<field name="enabledInReadOnlyContext">
+											<Boolean>false</Boolean>
+										</field>
+									</action>
+									<action>
+										<field name="id">
+											<String>push-last-clause-all-stamp</String>
+										</field>
+										<field name="name">
+											<String>stamp leaf div to push last clause all</String>
+										</field>
+										<field name="description">
+											<String>Stamp the leaf div with @_shift-text="push last clause all"</String>
+										</field>
+										<field name="largeIconPath">
+											<String></String>
+										</field>
+										<field name="smallIconPath">
+											<String></String>
+										</field>
+										<field name="accessKey">
+											<String></String>
+										</field>
+										<field name="accelerator">
+											<null/>
+										</field>
+										<field name="actionModes">
+											<actionMode-array>
+												<actionMode>
+													<field name="xpathCondition">
+														<String>self::*:div[not(*:div)]</String>
+													</field>
+													<field name="argValues">
+														<serializableOrderedMap>
+															<entry>
+																<String>name</String>
+																<String>_shift-text</String>
+															</entry>
+															<entry>
+																<String>value</String>
+																<String>push last clause all</String>
+															</entry>
+														</serializableOrderedMap>
+													</field>
+													<field name="operationID">
+														<String>ro.sync.ecss.extensions.commons.operations.ChangeAttributeOperation</String>
+													</field>
+												</actionMode>
+											</actionMode-array>
+										</field>
+										<field name="enabledInReadOnlyContext">
+											<Boolean>false</Boolean>
+										</field>
+									</action>
+									<action>
+										<field name="id">
+											<String>execute-shift-text</String>
+										</field>
+										<field name="name">
+											<String>execute shift-text</String>
+										</field>
+										<field name="description">
+											<String>Execute shift-text.xsl on parent of leaf div stamped with @_shift-text</String>
+										</field>
+										<field name="largeIconPath">
+											<String></String>
+										</field>
+										<field name="smallIconPath">
+											<String></String>
+										</field>
+										<field name="accessKey">
+											<String></String>
+										</field>
+										<field name="accelerator">
+											<null/>
+										</field>
+										<field name="actionModes">
+											<actionMode-array>
+												<actionMode>
+													<field name="xpathCondition">
+														<String>@_shift-text</String>
+													</field>
+													<field name="argValues">
+														<serializableOrderedMap>
+															<entry>
+																<String>caretPosition</String>
+																<String>Preserve</String>
+															</entry>
+															<entry>
+																<String>script</String>
+																<String>${pdu}/applications/configure%20oXygen%20author/shift-text.xsl</String>
+															</entry>
+															<entry>
+																<String>sourceLocation</String>
+																<String>parent::*</String>
+															</entry>
+															<entry>
+																<String>targetLocation</String>
+																<String>parent::*</String>
+															</entry>
+														</serializableOrderedMap>
+													</field>
+													<field name="operationID">
+														<String>ro.sync.ecss.extensions.commons.operations.XSLTOperation</String>
+													</field>
+												</actionMode>
+											</actionMode-array>
+										</field>
+										<field name="enabledInReadOnlyContext">
+											<Boolean>false</Boolean>
+										</field>
+									</action>
+									<action>
+										<field name="id">
+											<String>pull-next-clause-all-stamp</String>
+										</field>
+										<field name="name">
+											<String>stamp leaf div to pull next clause all</String>
+										</field>
+										<field name="description">
+											<String>Stamp the leaf div with @_shift-text="pull next clause all"</String>
+										</field>
+										<field name="largeIconPath">
+											<String></String>
+										</field>
+										<field name="smallIconPath">
+											<String></String>
+										</field>
+										<field name="accessKey">
+											<String></String>
+										</field>
+										<field name="accelerator">
+											<null/>
+										</field>
+										<field name="actionModes">
+											<actionMode-array>
+												<actionMode>
+													<field name="xpathCondition">
+														<String>self::*:div[not(*:div)]</String>
+													</field>
+													<field name="argValues">
+														<serializableOrderedMap>
+															<entry>
+																<String>name</String>
+																<String>_shift-text</String>
+															</entry>
+															<entry>
+																<String>value</String>
+																<String>pull next clause all</String>
+															</entry>
+														</serializableOrderedMap>
+													</field>
+													<field name="operationID">
+														<String>ro.sync.ecss.extensions.commons.operations.ChangeAttributeOperation</String>
+													</field>
+												</actionMode>
+											</actionMode-array>
+										</field>
+										<field name="enabledInReadOnlyContext">
+											<Boolean>false</Boolean>
+										</field>
+									</action>
+									<action>
+										<field name="id">
+											<String>pull-next-clause-all</String>
+										</field>
+										<field name="name">
+											<String>pull next clauses from all following siblings</String>
+										</field>
+										<field name="description">
+											<String>Pull the first clause into a div from the next sibling; apply to current leaf div and all following siblings</String>
+										</field>
+										<field name="largeIconPath">
+											<String></String>
+										</field>
+										<field name="smallIconPath">
+											<String></String>
+										</field>
+										<field name="accessKey">
+											<String></String>
+										</field>
+										<field name="accelerator">
+											<String>M1 M3 M2 COMMA</String>
+										</field>
+										<field name="actionModes">
+											<actionMode-array>
+												<actionMode>
+													<field name="xpathCondition">
+														<String>self::*:div[not(*:div)]</String>
+													</field>
+													<field name="argValues">
+														<serializableOrderedMap>
+															<entry>
+																<String>actionIDs</String>
+																<String>pull-next-clause-all-stamp
+execute-shift-text
+</String>
+															</entry>
+														</serializableOrderedMap>
+													</field>
+													<field name="operationID">
+														<String>ro.sync.ecss.extensions.commons.operations.ExecuteMultipleActionsOperation</String>
+													</field>
+												</actionMode>
+											</actionMode-array>
+										</field>
+										<field name="enabledInReadOnlyContext">
+											<Boolean>false</Boolean>
+										</field>
+									</action>
+									<action>
+										<field name="id">
+											<String>add-model</String>
+										</field>
+										<field name="name">
+											<String>Add model</String>
+										</field>
+										<field name="description">
+											<String>Add a model to the &lt;head></String>
+										</field>
+										<field name="largeIconPath">
+											<String></String>
+										</field>
+										<field name="smallIconPath">
+											<String></String>
+										</field>
+										<field name="accessKey">
+											<String></String>
+										</field>
+										<field name="accelerator">
+											<String>M1 M3 M</String>
+										</field>
+										<field name="actionModes">
+											<actionMode-array>
+												<actionMode>
+													<field name="xpathCondition">
+														<String>/(*:TEI | *:TAN-T)/*:head[not(*:model)]</String>
+													</field>
+													<field name="argValues">
+														<serializableOrderedMap>
+															<entry>
+																<String>actionIDs</String>
+																<String>mark-link-to-model
+process-link-to
+</String>
+															</entry>
+														</serializableOrderedMap>
+													</field>
+													<field name="operationID">
+														<String>ro.sync.ecss.extensions.commons.operations.ExecuteMultipleActionsOperation</String>
+													</field>
+												</actionMode>
+											</actionMode-array>
+										</field>
+										<field name="enabledInReadOnlyContext">
+											<Boolean>false</Boolean>
+										</field>
+									</action>
+									<action>
+										<field name="id">
+											<String>mark-link-to-model</String>
+										</field>
+										<field name="name">
+											<String>Mark model for inclusion</String>
+										</field>
+										<field name="description">
+											<String>Insert a &lt;link-to> before &lt;adjustments> or &lt;vocabulary-key>, as the first step in creating a &lt;model> to another file.</String>
+										</field>
+										<field name="largeIconPath">
+											<String></String>
+										</field>
+										<field name="smallIconPath">
+											<String></String>
+										</field>
+										<field name="accessKey">
+											<String></String>
+										</field>
+										<field name="accelerator">
+											<null/>
+										</field>
+										<field name="actionModes">
+											<actionMode-array>
+												<actionMode>
+													<field name="xpathCondition">
+														<String></String>
+													</field>
+													<field name="argValues">
+														<serializableOrderedMap>
+															<entry>
+																<String>fragment</String>
+																<String>&lt;link-to element-name="model" xml:base="${cfdu}/${cfne}">${ask('Link to what model TAN file?', relative_url, 'inclusion.${xpath_eval(name(/*))}.xml')}&lt;/link-to></String>
+															</entry>
+															<entry>
+																<String>insertLocation</String>
+																<String>/*/*:head/(*:adjustments, *:vocabulary-key)[1]</String>
+															</entry>
+															<entry>
+																<String>insertPosition</String>
+																<String>Before</String>
+															</entry>
+														</serializableOrderedMap>
+													</field>
+													<field name="operationID">
+														<String>ro.sync.ecss.extensions.commons.operations.InsertFragmentOperation</String>
+													</field>
+												</actionMode>
+											</actionMode-array>
+										</field>
+										<field name="enabledInReadOnlyContext">
+											<Boolean>false</Boolean>
+										</field>
+									</action>
+									<action>
+										<field name="id">
+											<String>mark-link-to-item-with-location</String>
+										</field>
+										<field name="name">
+											<String>Mark item for inclusion</String>
+										</field>
+										<field name="description">
+											<String>Insert an &lt;item> in the current location, as the first step in creating a &lt;model> to another file.</String>
+										</field>
+										<field name="largeIconPath">
+											<String></String>
+										</field>
+										<field name="smallIconPath">
+											<String></String>
+										</field>
+										<field name="accessKey">
+											<String></String>
+										</field>
+										<field name="accelerator">
+											<null/>
+										</field>
+										<field name="actionModes">
+											<actionMode-array>
+												<actionMode>
+													<field name="xpathCondition">
+														<String></String>
+													</field>
+													<field name="argValues">
+														<serializableOrderedMap>
+															<entry>
+																<String>fragment</String>
+																<String>&lt;link-to element-name="item" xml:base="${cfdu}/${cfne}">${ask('Item pointing to what file?', relative_url, 'inclusion.${xpath_eval(name(/*))}.xml')}&lt;/link-to></String>
+															</entry>
+															<entry>
+																<String>insertLocation</String>
+																<String></String>
+															</entry>
+															<entry>
+																<String>insertPosition</String>
+																<String>Before</String>
+															</entry>
+														</serializableOrderedMap>
+													</field>
+													<field name="operationID">
+														<String>ro.sync.ecss.extensions.commons.operations.InsertFragmentOperation</String>
+													</field>
+												</actionMode>
+											</actionMode-array>
+										</field>
+										<field name="enabledInReadOnlyContext">
+											<Boolean>false</Boolean>
+										</field>
+									</action>
+									<action>
+										<field name="id">
+											<String>add-item-with-location</String>
+										</field>
+										<field name="name">
+											<String>Add item with location</String>
+										</field>
+										<field name="description">
+											<String>Add an item with location in the current location</String>
+										</field>
+										<field name="largeIconPath">
+											<String></String>
+										</field>
+										<field name="smallIconPath">
+											<String></String>
+										</field>
+										<field name="accessKey">
+											<String></String>
+										</field>
+										<field name="accelerator">
+											<String>M1 M3 I</String>
+										</field>
+										<field name="actionModes">
+											<actionMode-array>
+												<actionMode>
+													<field name="xpathCondition">
+														<String>/*:TAN-voc/*:body</String>
+													</field>
+													<field name="argValues">
+														<serializableOrderedMap>
+															<entry>
+																<String>actionIDs</String>
+																<String>mark-link-to-item-with-location
+process-link-to
+</String>
+															</entry>
+														</serializableOrderedMap>
+													</field>
+													<field name="operationID">
+														<String>ro.sync.ecss.extensions.commons.operations.ExecuteMultipleActionsOperation</String>
+													</field>
+												</actionMode>
+											</actionMode-array>
+										</field>
+										<field name="enabledInReadOnlyContext">
+											<Boolean>false</Boolean>
+										</field>
+									</action>
 								</action-array>
 							</field>
 							<field name="menubarDescriptor">
@@ -5492,7 +5925,7 @@ process-link-to
 											</menuItem>
 											<menu>
 												<field name="label">
-													<String>Link</String>
+													<String>LinkYY</String>
 												</field>
 												<field name="accessKey">
 													<String></String>
@@ -5801,6 +6234,11 @@ process-link-to
 										<menuEntry-array>
 											<menuItem>
 												<field name="actionID">
+													<String>push-last-clause-all</String>
+												</field>
+											</menuItem>
+											<menuItem>
+												<field name="actionID">
 													<String>string-base</String>
 												</field>
 											</menuItem>
@@ -6011,6 +6449,11 @@ process-link-to
 												</field>
 												<field name="menuEntriesDescriptorList">
 													<menuEntry-array>
+														<menuItem>
+															<field name="actionID">
+																<String>push-last-clause-all</String>
+															</field>
+														</menuItem>
 														<menuItem>
 															<field name="actionID">
 																<String>push-text-down</String>
@@ -6505,7 +6948,7 @@ process-link-to
 									<String>*</String>
 								</field>
 								<field name="attributeValue">
-									<String>2019</String>
+									<String>2020</String>
 								</field>
 							</documentTypeRule>
 							<documentTypeRule>
@@ -6532,6 +6975,32 @@ process-link-to
 								</field>
 								<field name="attributeValue">
 									<String>*</String>
+								</field>
+							</documentTypeRule>
+							<documentTypeRule>
+								<field name="namespace">
+									<String>*</String>
+								</field>
+								<field name="rootElem">
+									<String>TEI</String>
+								</field>
+								<field name="fileName">
+									<String>*</String>
+								</field>
+								<field name="publicID">
+									<String>*</String>
+								</field>
+								<field name="javaRuleClass">
+									<String></String>
+								</field>
+								<field name="attributeLocalName">
+									<String>TAN-version</String>
+								</field>
+								<field name="attributeNamespace">
+									<String>*</String>
+								</field>
+								<field name="attributeValue">
+									<String>2020</String>
 								</field>
 							</documentTypeRule>
 						</documentTypeRule-array>
@@ -6580,9 +7049,6 @@ process-link-to
 								</field>
 								<field name="openInBrowser">
 									<Boolean>false</Boolean>
-								</field>
-								<field name="outputFile">
-									<null/>
 								</field>
 								<field name="outputResource">
 									<null/>
@@ -6696,6 +7162,50 @@ process-link-to
 													</field>
 													<field name="uri">
 														<String>${framework}/schemas/${xpath_eval(local-name(/*))}.rnc</String>
+													</field>
+												</validationUnitSchema>
+											</field>
+										</validationUnit>
+										<validationUnit>
+											<field name="validationType">
+												<validationUnitType>
+													<field name="validationInputType">
+														<String>text/xml</String>
+													</field>
+												</validationUnitType>
+											</field>
+											<field name="url">
+												<String>${currentFileURL}</String>
+											</field>
+											<field name="validationEngine">
+												<validationEngine>
+													<field name="engineType">
+														<String>&lt;Default engine></String>
+													</field>
+													<field name="allowsAutomaticValidation">
+														<Boolean>true</Boolean>
+													</field>
+												</validationEngine>
+											</field>
+											<field name="allowAutomaticValidation">
+												<Boolean>true</Boolean>
+											</field>
+											<field name="extensions">
+												<null/>
+											</field>
+											<field name="validationSchema">
+												<validationUnitSchema>
+													<field name="dtdSchemaPublicID">
+														<null/>
+													</field>
+													<field name="schematronPhase">
+														<null/>
+													</field>
+													<field name="type">
+														<Integer>7</Integer>
+													</field>
+													<field name="uri">
+														<String>${framework}/schemas/${xpath_eval(local-name(/*))}.sch</String>
 													</field>
 												</validationUnitSchema>
 											</field>

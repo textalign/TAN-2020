@@ -82,7 +82,7 @@
         <!-- Input: a tree fragment that is destined for HTML output -->
         <!-- Output: the same tree fragment, but with all changes applied -->
         <!-- Although this function has only one parameter, it relies extensively upon the
-        global parameters specified at ../../parameters-2/params-application-html-output.xsl -->
+        global parameters specified at ../../parameters/params-application-html-output.xsl -->
         <xsl:param name="tree-to-convert" as="item()*"/>
         <!-- First, wrap element with an @href in an html <a href=""/>, -->
         <xsl:variable name="pass-1" as="item()*">
