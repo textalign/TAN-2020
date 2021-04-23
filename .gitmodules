@@ -17,5 +17,5 @@
 	path = output/js/tablesorter
 	url = https://github.com/Mottie/tablesorter.git
 [submodule "functions-2/regex"]
-	path = functions-2/regex
+	path = functions/regex
 	url = https://github.com/textalign/TAN-regex.git
