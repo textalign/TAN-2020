@@ -823,7 +823,8 @@
       </xsl:attribute>
    </xsl:template>
    
-   <xsl:template match="@m-has-how-many-features" mode="tan:evaluate-conditions">
+   <xsl:template match="@m-has-how-many-features | @m-has-how-many-codes" mode="tan:evaluate-conditions">
+      <!-- @m-has-how-many-features was renamed @m-has-how-many-codes in 2021; preserved for legacy -->
       <xsl:param name="context" tunnel="yes"/>
       <xsl:variable name="this-val" select="tan:expand-numerical-sequence(., 999)"/>
       <xsl:attribute name="{name()}">
@@ -831,7 +832,8 @@
       </xsl:attribute>
    </xsl:template>
    
-   <xsl:template match="@m-has-features" mode="tan:evaluate-conditions">
+   <xsl:template match="@m-has-features | @m-has-codes" mode="tan:evaluate-conditions">
+      <!-- @m-has-features was renamed @m-has-codes in 2021; preserved for legacy -->
       <xsl:param name="context" tunnel="yes"/>
       <xsl:variable name="these-conditions" as="element()*">
          <xsl:analyze-string select="." regex="(\+ )?\S+">

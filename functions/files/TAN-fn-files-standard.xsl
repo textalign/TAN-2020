@@ -90,7 +90,7 @@
          <xsl:variable name="this-element" select="."/>
          <xsl:variable name="this-element-name" select="name(.)"/>
          <xsl:variable name="this-base-uri" select="tan:base-uri(.)"/>
-         <xsl:variable name="this-element-resolved" as="element()?">
+         <xsl:variable name="this-element-resolved" as="element()*">
             <xsl:choose>
                <xsl:when test="exists($this-element//@href)">
                   <xsl:sequence select="$this-element"/>
@@ -108,7 +108,7 @@
          <xsl:variable name="is-master-location" select="$this-element-name = ('master-location')"/>
          <xsl:variable name="is-different-version" select="$this-element-name = ('successor', 'predecessor')"/>
          <xsl:variable name="this-class" select="tan:class-number(.)"/>
-         <xsl:variable name="first-la" select="tan:first-loc-available($this-element-norm)"/>
+         <xsl:variable name="first-la" as="xs:string?" select="tan:first-loc-available($this-element-norm[1])"/>
          <xsl:variable name="this-id" select="root(.)/*/@id"/>
          <xsl:variable name="these-hrefs" select="$this-element-norm//@href"/>
          <xsl:variable name="some-href-is-local"

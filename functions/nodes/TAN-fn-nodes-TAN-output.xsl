@@ -12,7 +12,7 @@
    <xsl:function name="tan:update-TAN-change-log" as="document-node()?" visibility="public">
       <xsl:param name="TAN-file" as="document-node()?"/>
       <xsl:sequence select="tan:update-TAN-change-log($TAN-file, $tan:stylesheet-iri,
-         $tan:stylesheet-name, $tan:stylesheet-url, 'algorithm', 'stylesheet', $tan:change-message)"/>
+         $tan:stylesheet-name, $tan:stylesheet-url, 'algorithm', 'stylesheet', $tan:change-message, $tan:doc-uri)"/>
    </xsl:function>
    
    <xsl:function name="tan:update-TAN-change-log" as="document-node()?" visibility="public">
@@ -29,7 +29,13 @@
       <xsl:param name="agent-type" as="xs:string"/>
       <xsl:param name="agent-responsibility" as="xs:string"/>
       <xsl:param name="change-message" as="xs:string"/>
-      
+      <!-- The source base uri is either the uri that the TAN file is coming from, or the one where
+         it is going. Many times the TAN file that gets passed into this function is the result of
+         a stylesheet's alteration, which means that the original or target base URI has been lost
+         to the static base uri. A re-set source base uri allows us to calculate the relative path
+         of the agent URI against the input or output, as needed. -->
+      <xsl:param name="source-base-uri" as="xs:string"/>
+
       <xsl:variable name="file-is-TAN" select="tan:class-number($TAN-file) gt 0" as="xs:boolean"/>
       <xsl:variable name="file-is-resolved" select="exists($TAN-file/*/tan:resolved)"
          as="xs:boolean"/>
@@ -70,7 +76,6 @@
       <xsl:variable name="iris-to-insert" as="xs:string*"
          select="$agent-IRIs[not(. = $first-matching-internal-vocab-item/tan:IRI)]"/>
       
-      <xsl:variable name="source-base-uri" as="xs:anyURI" select="tan:base-uri($TAN-file)"/>
       
       <xsl:variable name="unexpected-vocabulary-items" as="element()*"
          select="$matching-vocabulary-items[not(name(.) eq $agent-type-resolved)]"/>
@@ -83,7 +88,7 @@
                      xs:integer(replace($i, '\D+', ''))"/>
             <xsl:variable name="new-id" select="$agent-type-resolved || string(max((0, $previously-used-id-numbers)) + 1)" as="xs:string"/>
             <xsl:element name="{$agent-type-resolved}">
-               <xsl:attribute name="id" select="$new-id"/>
+               <xsl:attribute name="xml:id" select="$new-id"/>
                <xsl:for-each select="$agent-IRIs">
                   <IRI>
                      <xsl:value-of select="."/>
@@ -103,7 +108,7 @@
       </xsl:variable>
       
       <xsl:variable name="agent-id" as="xs:string"
-         select="replace(($new-vocabulary-item/@id, $first-matching-vocabulary-item/(tan:id | tan:name))[1], ' ', '_')"
+         select="replace(($new-vocabulary-item/@xml:id, $first-matching-vocabulary-item/(tan:id | tan:name))[1], ' ', '_')"
       />
       
       <xsl:variable name="new-change-message" as="element()">
