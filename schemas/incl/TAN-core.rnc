@@ -491,12 +491,12 @@ element-vocabulary-key =
     element vocabulary-key { ed-stamp?, (element-comment* & voc-key-core & voc-key-non-core) }
 element-where =
     
-    ## identifies a condition that permits the following adjustment actions to be performed.
+    ## identifies a set of conditions that must be met for any actions to be performed or rules to be evaluated.
     
-    ## The condition must be true for each attribute, for at least one value in that attribute.
+    ## For a <where> to be considered true, each attribute must evaluate as true for the target context. That is, multiple attributes are evaluated as intersection operators (and), not union (or).
     
-    ## The sequence of consecutive <where>s is immaterial, although they will be processed in document order. It is advisable to start with <where>s that are most easily processed.
-    element where { ed-stamp?, action-condition-attributes }+
+    ## Sibling <where>s provide alternative conditions. If the first <where> evaluates as true, the condition is considered true. If it does not, then the process is applied again to the second <where>. The sequence of consecutive <where>s is immaterial, although they will be processed in document order. It is advisable to start with <where>s that are most likely to make a match.
+    element where { ed-stamp?, action-condition-attributes }
 # Elements that link to other files
 link-element-companion-version =
     
@@ -652,7 +652,7 @@ voc-element-work =
 action-condition = action-simple-condition | action-complex-condition
 action-simple-condition = action-condition-attributes
 action-condition-attributes = empty
-action-complex-condition = element-where
+action-complex-condition = element-where+
 adjustment-list = element-adjustments*
 adjust-condition = empty
 adjust-core = empty

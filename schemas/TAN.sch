@@ -6,7 +6,7 @@
    <title>Schematron tests for all TAN files.</title>
    <ns prefix="tan" uri="tag:textalign.net,2015:ns"/>
    <xsl:param name="tan:validation-mode-on" as="xs:boolean" select="true()" static="yes"/>
-   <xsl:include href="../functions-2/TAN-function-library.xsl"/>
+   <xsl:include href="../functions/TAN-function-library.xsl"/>
    <phase id="terse" xmlns="http://purl.oclc.org/dsdl/schematron">
       <active pattern="terse-true"/>
       <active pattern="core-tests"/>
@@ -37,7 +37,7 @@
       
       <!-- diagnostics, testing -->
       <rule context="/processing-instruction()[1]">
-         <report test="true()" role="warning">New Schematron tests in effect.</report>
+         <report test="false()" role="warning">New Schematron tests in effect.</report>
       </rule>
       
       <rule context="*">

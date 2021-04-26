@@ -711,17 +711,15 @@
     </element>
   </define>
   <define name="element-where">
-    <oneOrMore>
-      <element name="where">
-        <a:documentation>identifies a condition that permits the following adjustment actions to be performed.</a:documentation>
-        <a:documentation>The condition must be true for each attribute, for at least one value in that attribute.</a:documentation>
-        <a:documentation>The sequence of consecutive &lt;where&gt;s is immaterial, although they will be processed in document order. It is advisable to start with &lt;where&gt;s that are most easily processed.</a:documentation>
-        <optional>
-          <ref name="ed-stamp"/>
-        </optional>
-        <ref name="action-condition-attributes"/>
-      </element>
-    </oneOrMore>
+    <element name="where">
+      <a:documentation>identifies a set of conditions that must be met for any actions to be performed or rules to be evaluated.</a:documentation>
+      <a:documentation>For a &lt;where&gt; to be considered true, each attribute must evaluate as true for the target context. That is, multiple attributes are evaluated as intersection operators (and), not union (or).</a:documentation>
+      <a:documentation>Sibling &lt;where&gt;s provide alternative conditions. If the first &lt;where&gt; evaluates as true, the condition is considered true. If it does not, then the process is applied again to the second &lt;where&gt;. The sequence of consecutive &lt;where&gt;s is immaterial, although they will be processed in document order. It is advisable to start with &lt;where&gt;s that are most likely to make a match.</a:documentation>
+      <optional>
+        <ref name="ed-stamp"/>
+      </optional>
+      <ref name="action-condition-attributes"/>
+    </element>
   </define>
   <!-- Elements that link to other files -->
   <define name="link-element-companion-version">
@@ -953,7 +951,9 @@
     <empty/>
   </define>
   <define name="action-complex-condition">
-    <ref name="element-where"/>
+    <oneOrMore>
+      <ref name="element-where"/>
+    </oneOrMore>
   </define>
   <define name="adjustment-list">
     <zeroOrMore>
