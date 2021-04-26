@@ -46,6 +46,7 @@
     </id>
     <id>
         <element>feature</element>
+        <idrefs attribute="feature"/>
         <idrefs element="feature" attribute="type"/>
         <idrefs element="category" attribute="type"/>
     </id>
@@ -68,7 +69,6 @@
     <id>
         <element>feature</element>
         <idrefs attribute="features"/>
-        <idrefs attribute="m-has-features"/>
     </id>
     <id>
         <element>inclusion</element>

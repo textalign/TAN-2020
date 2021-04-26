@@ -91,7 +91,7 @@
    <xsl:variable name="tan:names-of-attributes-that-may-take-multiple-space-delimited-values" as="xs:string+"
       select="$tan:names-of-attributes-that-take-idrefs, ('n', 'affects-element', 'affects-attribute', 'item-type')"/>
    <xsl:variable name="tan:names-of-attributes-that-permit-keyword-last" select="('pos', 'chars', 'm-has-how-many-features')"/>
-   <xsl:variable name="tan:names-of-attributes-that-are-case-indifferent" as="xs:string+" select="('code', 'n', 'ref', 'affects-element', 'affects-attribute', 'item-type', 'in-lang')"/>
+   <xsl:variable name="tan:names-of-attributes-that-are-case-indifferent" as="xs:string+" select="('n', 'ref', 'affects-element', 'affects-attribute', 'item-type', 'in-lang')"/>
    <xsl:variable name="tan:names-of-elements-that-take-idrefs" as="xs:string+" select="$tan:id-idrefs/tan:id-idrefs/tan:id/tan:idrefs/@element"/>
    <xsl:variable name="tan:names-of-elements-that-take-which" as="xs:string+"
       select="('object', 'unit', 'lexicon', 'license', 'see-also', 'work', 'role', 'source', 'group-type', 'morphology', 'source', 'work', 'verb', 'scriptum', 'relationship', 'person', 'period', 'organization', 'div-type', 'algorithm', 'vocabulary', 'successor', 'source', 'predecessor', 'inclusion', 'companion-version', 'token-definition', 'bitext-relation', 'checksum', 'redivision', 'model', 'annotation', 'version', 'normalization', 'item', 'feature', 'version', 'reuse-type', 'topic', 'place', 'modal', 'subject', 'at-ref')"
