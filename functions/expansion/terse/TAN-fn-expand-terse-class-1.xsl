@@ -154,7 +154,6 @@
       <xsl:variable name="these-adjustments"
          select="$class-2-doc/*/tan:head/tan:adjustments[(tan:src/text(), tan:where/tan:src/text()) = ($this-src-id, $tan:all-selector)]"/>
       
-      <xsl:variable name="div-filters-for-this-source" as="element()*" select="$div-filters[not(tan:src/text()) or (tan:src/text() = $this-src-id)]"/>
       
       <xsl:variable name="n-alias-items"
          select="
@@ -163,6 +162,21 @@
             else
                ()"
       />
+
+      <xsl:variable name="div-filters-for-this-source" as="element()*" select="$div-filters[not(tan:src/text()) or (tan:src/text() = $this-src-id)]"/>
+      <!--<xsl:variable name="div-filters-for-this-source" as="element()*">
+         <xsl:choose>
+            <xsl:when test="exists($n-alias-items)">
+               <xsl:apply-templates select="$div-filters[not(tan:src/text()) or (tan:src/text() = $this-src-id)]" mode="tan:resolve-reference-tree-numerals">
+                  <xsl:with-param name="n-alias-items" tunnel="yes" select="$n-alias-items"/>
+               </xsl:apply-templates>
+            </xsl:when>
+            <xsl:otherwise>
+               <xsl:sequence
+                  select="$div-filters[not(tan:src/text()) or (tan:src/text() = $this-src-id)]"/>
+            </xsl:otherwise>
+         </xsl:choose>
+      </xsl:variable>-->
       
       <xsl:variable name="these-adjustments-adjusted" as="element()*">
          <xsl:choose>
@@ -217,6 +231,7 @@
          <!-- If there are no div filters at all, that's a general request to expand/adjust the entire thing; if there are
             div filters for this source, then the request is to restrict expansion to only those divs in the reference tree. -->
          <xsl:if test="not(exists($div-filters)) or exists($div-filters-for-this-source)">
+
             <xsl:apply-templates mode="#current">
                <xsl:with-param name="adjustment-actions-resolved" tunnel="yes"
                   select="$these-adjustments-adjusted/(tan:skip, tan:rename, tan:equate)"/>
@@ -235,7 +250,7 @@
       <xsl:variable name="divs-with-ref-aliases-rebuilt" as="element()*">
          <xsl:apply-templates select="$divs-with-ref-alias" mode="tan:rebuild-divs-with-ref-aliases"/>
       </xsl:variable>
-      
+
       <body>
          <xsl:copy-of select="@*"/>
          <xsl:apply-templates mode="#current"/>
@@ -450,7 +465,7 @@
             else
                true()]"/>
 
-
+      
       <xsl:variable name="this-n-analyzed" as="element()">
          <analysis>
             <!-- A resolved file's @n is already space- and syntax-normalized -->
@@ -546,20 +561,10 @@
                string-join((tei:* | text()))
             else
                ()"/>
-      <!--<xsl:variable name="this-text" as="xs:string?">
-         <xsl:choose>
-            <xsl:when test="$is-leaf-div and $is-tei">
-               <xsl:value-of select="normalize-space(string-join(tei:*, ''))"/>
-            </xsl:when>
-            <xsl:when test="$is-leaf-div">
-               <xsl:value-of select="normalize-space(string-join(text(), ''))"/>
-            </xsl:when>
-         </xsl:choose>
-      </xsl:variable>-->
+
       <xsl:variable name="text-end-is-fragmentary" as="xs:boolean"
          select="exists(@_removed)"/>
-      <!--<xsl:variable name="text-end-is-fragmentary" as="xs:boolean"
-         select="matches($this-text, $tan:special-end-div-chars-regex)"/>-->
+
       <xsl:variable name="element-with-rest-of-fragment" as="element()?"
          select="
             if ($text-end-is-fragmentary) then
@@ -572,16 +577,7 @@
                string($element-with-rest-of-fragment)
             else
                ()"/>
-      <!--<xsl:variable name="that-text" as="xs:string?">
-         <xsl:choose>
-            <xsl:when test="$is-leaf-div and $is-tei">
-               <xsl:value-of select="normalize-space(string-join($element-with-rest-of-fragment/tei:*, ''))"/>
-            </xsl:when>
-            <xsl:when test="$is-leaf-div">
-               <xsl:value-of select="normalize-space($element-with-rest-of-fragment/text())"/>
-            </xsl:when>
-         </xsl:choose>
-      </xsl:variable>-->
+
       <xsl:variable name="missing-fragment" as="xs:string?">
          <xsl:if test="string-length($that-text) gt 0">
             <xsl:value-of select="tokenize($that-text, ' ')[1]"/>
@@ -594,15 +590,7 @@
             else
                $this-text"
       />
-      <!--<xsl:variable name="this-text-norm"
-         select="
-            if ($text-end-is-fragmentary) then
-               (replace($this-text, $tan:special-end-div-chars-regex, '') || $missing-fragment || ' ')
-            else
-               ($this-text || ' ')"
-      />-->
-      
-      
+
       <xsl:choose>
          <xsl:when test="exists($skip-locators)">
             <!-- Before any other adjustment, we deal with skips, the highest-priority action. -->
@@ -759,6 +747,34 @@
                select="$filters-for-this-div/tan:div"/>
             <xsl:variable name="deep-skip-this-element" select="not(exists($adjustment-actions-resolved)) and $drop-divs and not(exists($filters-for-this-div))"/>
             <xsl:variable name="deep-skip-children" select="not(exists($adjustment-actions-resolved)) and $drop-divs and not(exists($div-filters-to-pass-to-children))"/>
+            
+            <!--<xsl:if test="count(preceding-sibling::*:div) eq 11">
+               <test24b>
+                  <self-shallow><xsl:copy-of select="tan:shallow-copy(.)"/></self-shallow>
+                  <adj-actions-resolved><xsl:copy-of select="$adjustment-actions-resolved"/></adj-actions-resolved>
+                  <parent-orig-refs><xsl:copy-of select="$parent-orig-refs"/></parent-orig-refs>
+                  <parent-new-refs><xsl:copy-of select="$parent-new-refs"/></parent-new-refs>
+                  <div-filters><xsl:copy-of select="$div-filters"/></div-filters>
+                  <drop-divs><xsl:copy-of select="$drop-divs"/></drop-divs>
+                  <use-validation-mode><xsl:copy-of select="$use-validation-mode"/></use-validation-mode>
+                  <these-adjustment-actions><xsl:copy-of select="$these-adjustment-actions"/></these-adjustment-actions>
+                  <this-n-analyzed><xsl:copy-of select="$this-n-analyzed"/></this-n-analyzed>
+                  <equate-n-aliases><xsl:copy-of select="$equate-n-aliases"/></equate-n-aliases>
+                  <these-orig-refs-analyzed><xsl:copy-of select="$these-orig-refs-analyzed"/></these-orig-refs-analyzed>
+                  <adjustment-action-locators><xsl:copy-of select="$these-adjustment-action-locators"/></adjustment-action-locators>
+                  <is-tei><xsl:copy-of select="$is-tei"/></is-tei>
+                  <is-leaf-div><xsl:copy-of select="$is-leaf-div"/></is-leaf-div>
+                  <this-text><xsl:copy-of select="$this-text"/></this-text>
+                  <this-text-norm><xsl:copy-of select="$this-text-norm"/></this-text-norm>
+                  <new-ns><xsl:copy-of select="$new-ns"/></new-ns>
+                  <new-refs><xsl:copy-of select="$new-refs"/></new-refs>
+                  <filters-for-this-div><xsl:copy-of select="$filters-for-this-div"/></filters-for-this-div>
+                  <div-filters-to-pass-to-children><xsl:copy-of select="$div-filters-to-pass-to-children"/></div-filters-to-pass-to-children>
+                  <deep-skip-this-element><xsl:copy-of select="$deep-skip-this-element"/></deep-skip-this-element>
+               </test24b>
+            </xsl:if>-->
+            
+            
             
             <xsl:if test="not($deep-skip-this-element)">
                

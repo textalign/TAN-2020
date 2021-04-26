@@ -164,6 +164,7 @@
       <xsl:variable name="reference-trees" as="element()*">
          <xsl:for-each-group select="$class-2-expansion-pass-2-body//*[(tan:src | tan:work)]"
             group-by="tan:src/text(), tan:work/text()">
+            <xsl:variable name="this-src-or-work-id" as="xs:string" select="current-grouping-key()"/>
             <xsl:variable name="ref-parents" select="current-group()/descendant-or-self::*[tan:ref]"/>
             <xsl:variable name="ref-parents-that-do-not-need-iteration"
                select="$ref-parents[count(tan:ref) eq 1]"/>
@@ -195,14 +196,31 @@
                   </xsl:otherwise>
                </xsl:choose>
             </xsl:variable>
+            <xsl:variable name="target-source-resolved-n-alias-items" as="element()*"
+               select="$dependencies-resolved-plus/*[@src eq $this-src-or-work-id]/tan:head/tan:vocabulary/tan:item[tan:affects-attribute = 'n']"
+            />
+            <xsl:variable name="ref-parents-adjusted-2" as="element()*">
+               <!-- In this second pass, we make sure that the references and ns correspond to the default (first) alias item 
+                  in the given source. -->
+               <xsl:choose>
+                  <xsl:when test="exists($target-source-resolved-n-alias-items)">
+                     <xsl:apply-templates select="$ref-parents-adjusted" mode="tan:resolve-reference-tree-numerals">
+                        <xsl:with-param name="n-alias-items" tunnel="yes" select="$target-source-resolved-n-alias-items"/>
+                     </xsl:apply-templates>
+                  </xsl:when>
+                  <xsl:otherwise>
+                     <xsl:sequence select="$ref-parents-adjusted"/>
+                  </xsl:otherwise>
+               </xsl:choose>
+            </xsl:variable>
             <doc>
                <src>
-                  <xsl:value-of select="current-grouping-key()"/>
+                  <xsl:value-of select="$this-src-or-work-id"/>
                </src>
                <!-- Copy at the root level of the tree any claims that are not tethered to a particular reference -->
                <xsl:copy-of select="current-group()/self::tan:tok[not(tan:ref)]"/>
                <!-- Now build the reference tree -->
-               <xsl:copy-of select="tan:build-parent-ref-tree($ref-parents-adjusted, 1, ())"/>
+               <xsl:copy-of select="tan:build-parent-ref-tree($ref-parents-adjusted-2, 1, ())"/>
             </doc>
          </xsl:for-each-group>
 
@@ -512,7 +530,7 @@
                   <core-terse-pass-1><xsl:copy-of select="$core-terse-expansion-pass-1"/></core-terse-pass-1>
                   <core-terse-pass-2><xsl:copy-of select="$core-terse-expansion-pass-2"/></core-terse-pass-2>
                   <xsl:if test="$this-is-class-2">
-                     <!--<dependencies-resolved><xsl:copy-of select="$dependencies-resolved-plus"/></dependencies-resolved>-->
+                     <dependencies-resolved><xsl:copy-of select="$dependencies-resolved-plus"/></dependencies-resolved>
                      <reference-trees count="{count($reference-trees)}"><xsl:copy-of select="$reference-trees"/></reference-trees>
                      <adjustments-1><xsl:copy-of select="$adjustments-part-1"/></adjustments-1>
                      <adjustments-2><xsl:copy-of select="$adjustments-part-2"/></adjustments-2>
@@ -1238,24 +1256,7 @@
                            </xsl:if>
                            <!-- If tan:vocabulary() finds errors, copy them. -->
                            <xsl:copy-of select="$this-vocabulary/self::tan:error"/>
-                           <!--<xsl:if test="$item-is-erroneous">
-                              <xsl:variable name="this-message"
-                                 select="$this-val || ' matches no id'"/>
-                              <xsl:variable name="this-fix" as="element()?">
-                                 <xsl:if test="string-length($these-target-element-names[1]) gt 0">
-                                    <xsl:element name="{$these-target-element-names[1]}">
-                                       <xsl:attribute name="xml:id" select="$this-val"/>
-                                       <xsl:attribute name="which"/>
-                                    </xsl:element>
-                                 </xsl:if>
-                              </xsl:variable>
-                              <xsl:copy-of
-                                 select="
-                                    if ($this-is-which) then
-                                       tan:error('whi01', $this-message, $this-fix, 'add-vocabulary-key-item')
-                                    else
-                                       tan:error('tan05', $this-message, $this-fix, 'add-vocabulary-key-item')"/>
-                           </xsl:if>-->
+                           
                            <xsl:if
                               test="exists($this-val-without-help-request/@help) or $item-is-erroneous">
                               <xsl:variable name="local-fixes" as="element()*">
@@ -1290,22 +1291,27 @@
                                  </xsl:for-each>
                               </xsl:variable>
                               <xsl:variable name="this-message" select="
-                                    if (exists($this-val-without-help-request/@help)) then
+                                    (if (exists($this-val-without-help-request/@help)) then
                                        'help requested; try: '
                                     else
-                                       ($this-val || ' not found; try (locally): ') || string-join($local-fixes/@*, '; ') || ' or (standard TAN vocabulary): ' ||
-                                       string-join($standard-fixes/@*, '; ')"
-                              />
+                                       ($this-val || ' not found; try (locally): ')) || string-join(distinct-values($local-fixes/@*), '; ') ||
+                                    (if (exists($standard-fixes/@*)) then
+                                       (' or (standard TAN vocabulary): ' ||
+                                       string-join(distinct-values($standard-fixes/@*), '; '))
+                                    else
+                                       ())
+                                    "/>
                               <xsl:choose>
                                  <xsl:when test="exists($this-val-without-help-request/@help)">
                                     <xsl:copy-of
-                                       select="tan:help($this-message, ($local-fixes, $standard-fixes), 'copy-attributes')"/>
+                                       select="tan:help($this-message, tan:distinct-items(($local-fixes, $standard-fixes)), 'copy-attributes')"
+                                    />
                                  </xsl:when>
                                  <xsl:when test="$this-is-which">
-                                    <xsl:copy-of select="tan:error('whi01', $this-message, ($local-fixes, $standard-fixes), 'copy-attributes')"/>
+                                    <xsl:copy-of select="tan:error('whi01', $this-message, tan:distinct-items(($local-fixes, $standard-fixes)), 'copy-attributes')"/>
                                  </xsl:when>
                                  <xsl:otherwise>
-                                    <xsl:copy-of select="tan:error('tan05', $this-message, ($local-fixes, $standard-fixes), 'copy-attributes')"/>
+                                    <xsl:copy-of select="tan:error('tan05', $this-message, tan:distinct-items(($local-fixes, $standard-fixes)), 'copy-attributes')"/>
                                  </xsl:otherwise>
                               </xsl:choose>
                            </xsl:if>
@@ -1674,7 +1680,7 @@
       </xsl:element>
    </xsl:template>
    
-   <xsl:template match="@code | @div-type | @affects-element | @affects-attribute | @item-type | @in-lang" mode="tan:core-expansion-terse-attributes-to-elements">
+   <xsl:template match="@div-type | @affects-element | @affects-attribute | @item-type | @in-lang" mode="tan:core-expansion-terse-attributes-to-elements">
       <xsl:variable name="this-name" select="name(.)"/>
       <xsl:variable name="this-val-parsed" select="tan:help-extracted(.)"/>
       <xsl:variable name="this-q-id" select="generate-id(.)"/>
@@ -1727,7 +1733,7 @@
             <xsl:copy-of select="tan:error('wrn04')"/>
          </xsl:if>
          <xsl:if test="not(@TAN-version = $tan:TAN-version)">
-            <xsl:copy-of select="tan:error('tan20', 'Version of this TAN library is ' || $tan:TAN-version || '; validation results may not be reliable.')"/>
+            <xsl:copy-of select="tan:error('tan20', 'TAN document with version ' || @TAN-version || ' is being processed by TAN library for version ' || $tan:TAN-version || '; validation results may not be reliable.')"/>
          </xsl:if>
          <expanded>terse</expanded>
          <xsl:apply-templates mode="#current">

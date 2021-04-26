@@ -3,6 +3,7 @@
    xmlns:xs="http://www.w3.org/2001/XMLSchema"
    xmlns:tan="tag:textalign.net,2015:ns"
    xmlns:tei="http://www.tei-c.org/ns/1.0"
+   xmlns:map="http://www.w3.org/2005/xpath-functions/map"
    xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="3.0">
 
    <!-- TAN Function Library, terse expansion, class 2 files. -->
@@ -948,158 +949,206 @@
       </xsl:copy>
    </xsl:template>
    
-   <xsl:template match="tan:TAN-A-lm/tan:body" mode="tan:class-2-expansion-terse">
+   <xsl:template match="tan:TAN-A-lm/tan:body" mode="tan:tan-a-lm-expansion-terse">
+      <xsl:param name="dependencies" tunnel="yes" as="document-node()*"/>
+      <xsl:variable name="vocabulary-head" as="element()" select="preceding-sibling::tan:head"/>
       <xsl:variable name="is-lang-specific"
          select="not(../tan:head/tan:source) and ../tan:head/tan:for-lang"/>
+      <xsl:variable name="these-morphology-attrs" as="xs:string*" select="key('tan:attrs-by-name','morphology', .)"/>
+      <xsl:variable name="these-morphology-ids" as="xs:string*" select="
+            for $i in $these-morphology-attrs
+            return
+               tokenize(normalize-space($i), ' ')"/>
+
+      <xsl:variable name="morphology-rule-map" as="map(*)">
+         <!-- This variable contains a map with one map entry per morphology (keyed by id).
+            The corresponding value are all rules for the morphology. -->
+         <xsl:map>
+            <xsl:for-each select="distinct-values($these-morphology-ids)">
+               <xsl:variable name="this-morphology-id" as="xs:string" select="."/>
+               <xsl:variable name="this-morphology" as="document-node()?">
+                  <xsl:choose>
+                     <xsl:when
+                        test="exists($dependencies[tan:TAN-mor/@morphology = $this-morphology-id])">
+                        <xsl:sequence
+                           select="$dependencies[tan:TAN-mor/@morphology = $this-morphology-id]"/>
+                     </xsl:when>
+                     <xsl:otherwise>
+                        <xsl:variable name="this-vocab"
+                           select="tan:vocabulary('morphology', ., $vocabulary-head)"/>
+                        <xsl:variable name="this-tan-mor"
+                           select="$dependencies[tan:TAN-mor/@id = $this-vocab/tan:item/tan:IRI]"/>
+                        <xsl:sequence select="$this-tan-mor[1]"/>
+                     </xsl:otherwise>
+                  </xsl:choose>
+               </xsl:variable>
+               <xsl:variable name="mor-body" as="element()?" select="$this-morphology/tan:TAN-mor/tan:body"/>
+               <xsl:map-entry key=".">
+                  <xsl:sequence select="$mor-body/tan:rule"/>
+               </xsl:map-entry>
+            </xsl:for-each>
+         </xsl:map>
+      </xsl:variable>
+      
+      <xsl:variable name="morphology-code-map" as="map(*)">
+         <!-- This builds map with one map entry per morphology (keyed by id). Each of those
+            map entries contains one map per category (or just one map, if no categories), with
+            one map entry per code, pointing to the vocabulary that it corresponds to. -->
+         <!-- The map we build proceeds: [morphology key]/[integer] -->
+         <xsl:map>
+            <xsl:for-each select="distinct-values($these-morphology-ids)">
+               <xsl:variable name="this-morphology-id" as="xs:string" select="."/>
+               <xsl:variable name="this-morphology" as="document-node()?">
+                  <xsl:choose>
+                     <xsl:when
+                        test="exists($dependencies[tan:TAN-mor/@morphology = $this-morphology-id])">
+                        <xsl:sequence
+                           select="$dependencies[tan:TAN-mor/@morphology = $this-morphology-id]"/>
+                     </xsl:when>
+                     <xsl:otherwise>
+                        <xsl:variable name="this-vocab"
+                           select="tan:vocabulary('morphology', ., $vocabulary-head)"/>
+                        <xsl:variable name="this-tan-mor"
+                           select="$dependencies[tan:TAN-mor/@id = $this-vocab/tan:item/tan:IRI]"/>
+                        <xsl:sequence select="$this-tan-mor[1]"/>
+                     </xsl:otherwise>
+                  </xsl:choose>
+               </xsl:variable>
+               <xsl:variable name="mor-body" as="element()?" select="$this-morphology/tan:TAN-mor/tan:body"/>
+               <xsl:variable name="mor-categories" as="element()*" select="$mor-body/tan:category"/>
+               <xsl:variable name="mor-vocab-head" as="element()?" select="$this-morphology/tan:TAN-mor/tan:head"/>
+
+               <xsl:map-entry key=".">
+                  <xsl:for-each select="
+                        if (exists($mor-categories)) then
+                           $mor-categories
+                        else
+                           $mor-body">
+                     <xsl:variable name="this-code-parent" as="element()" select="."/>
+
+                     <xsl:map>
+                        <xsl:for-each select="$this-code-parent/tan:code">
+                           <xsl:variable name="this-code" as="element()" select="."/>
+                           <xsl:map-entry key="string(text())">
+                              <xsl:copy-of
+                                 select="tan:vocabulary('feature', @feature, $mor-vocab-head)"/>
+                           </xsl:map-entry>
+                        </xsl:for-each>
+                     </xsl:map>
+
+                  </xsl:for-each>
+
+               </xsl:map-entry>
+            </xsl:for-each>
+         </xsl:map>
+      </xsl:variable>
+      
       <xsl:copy>
          <xsl:copy-of select="@*"/>
          <xsl:apply-templates mode="#current">
             <xsl:with-param name="is-lang-specific" tunnel="yes" select="$is-lang-specific"/>
+            <xsl:with-param name="morphology-code-map" tunnel="yes" as="map(*)" select="$morphology-code-map"/>
+            <xsl:with-param name="morphology-rule-map" tunnel="yes" as="map(*)" select="$morphology-rule-map"/>
          </xsl:apply-templates>
       </xsl:copy>
    </xsl:template>
    
-   
    <xsl:template match="tan:m" mode="tan:tan-a-lm-expansion-terse">
-      <xsl:param name="dependencies" tunnel="yes" as="document-node()*"/>
+      <xsl:param name="morphology-code-map" tunnel="yes" as="map(*)"/>
+      <xsl:param name="morphology-rule-map" tunnel="yes" as="map(*)"/>
+      
+      <xsl:variable name="this-m" as="element()" select="."/>
       <xsl:variable name="morphology-ids" select="ancestor-or-self::*[tan:morphology][1]/tan:morphology/text()"/>
-      <xsl:variable name="vocabulary-head" as="element()" select="root(.)/tan:TAN-A-lm/tan:head"/>
-      <xsl:variable name="these-morphologies" as="document-node()*">
-         <xsl:for-each select="$morphology-ids">
-            <xsl:choose>
-               <xsl:when test="exists($dependencies[tan:TAN-mor/@morphology = $morphology-ids])">
-                  <xsl:sequence select="$dependencies[tan:TAN-mor/@morphology = $morphology-ids]"/>
-               </xsl:when>
-               <xsl:otherwise>
-                  <xsl:variable name="this-vocab" select="tan:vocabulary('morphology', ., $vocabulary-head)"/>
-                  <xsl:variable name="this-tan-mor" select="$dependencies[tan:TAN-mor/@id = $this-vocab/tan:item/tan:IRI]"/>
-                  <xsl:sequence select="$this-tan-mor"/>
-               </xsl:otherwise>
-            </xsl:choose>
-         </xsl:for-each>
-      </xsl:variable>
-      <xsl:variable name="this-m" select="."/>
-      <xsl:variable name="these-codes" select="tan:f"/>
-      <xsl:variable name="these-morphology-cat-quantities" select="
-            for $i in $these-morphologies
+      <xsl:variable name="these-morph-code-map-cat-counts" as="xs:integer+" select="
+            for $i in $morphology-ids
             return
-               count($i/tan:TAN-mor/tan:body/tan:category)"/>
-      <xsl:variable name="relevant-rules" select="
-            $these-morphologies/tan:TAN-mor/tan:body/tan:rule[some $i in (self::*, tan:where)
-               satisfies tan:all-conditions-hold($i, $this-m, (), true())]"/>
-      <xsl:variable name="disobeyed-asserts"
+               count($morphology-code-map($i))"/>
+      <xsl:variable name="these-fs" as="element()*" select="tan:f"/>
+      
+      <xsl:variable name="relevant-rules" as="element()*" select="
+            for $i in $morphology-ids
+            return
+               $morphology-rule-map($i)[some $j in (self::*, tan:where)
+                  satisfies tan:all-conditions-hold($j, $this-m, (), true())]"/>
+      <xsl:variable name="disobeyed-asserts" as="element()*"
          select="$relevant-rules/tan:assert[not(tan:all-conditions-hold(., $this-m, (), true()))]"/>
-      <xsl:variable name="disobeyed-reports"
+      <xsl:variable name="disobeyed-reports" as="element()*"
          select="$relevant-rules/tan:report[tan:all-conditions-hold(., $this-m, (), true())]"/>
       
-      <xsl:variable name="diagnostics-on" select="false()"/>
-      <xsl:if test="$diagnostics-on">
-         <xsl:message select="'diagnostics on for tan-a-lm-expansion-terse'"/>
-         <xsl:message select="'this m: ', $this-m"/>
-         <xsl:message select="'these codes: ', $these-codes"/>
-         <xsl:message select="'dependencies: ', tan:shallow-copy($dependencies/*)"/>
-         <xsl:message select="'morphology-ids: ', $morphology-ids"/>
-         <xsl:message select="'these morphologies: ', tan:shallow-copy($these-morphologies/*)"/>
-         <xsl:message select="'morphology category quatities: ', $these-morphology-cat-quantities"/>
-         <xsl:message select="'relevant rules: ', $relevant-rules"/>
-         <xsl:message select="'disobeyed asserts: ', $disobeyed-asserts"/>
-         <xsl:message select="'disobeyed reports: ', $disobeyed-reports"/>
-      </xsl:if>
+      
       
       <xsl:copy>
          <xsl:copy-of select="@*"/>
-         <xsl:if
-            test="$these-morphology-cat-quantities gt 0 and count($these-codes) gt $these-morphology-cat-quantities">
-            <xsl:copy-of
-               select="tan:error('tlm02', ('max ' || $these-morphology-cat-quantities))"/>
-         </xsl:if>
+         <xsl:for-each select="$these-morph-code-map-cat-counts[. gt 1]">
+            <xsl:if test="count($these-fs) gt .">
+               <xsl:copy-of select="tan:error('tlm02', ('max ' || string(.)))"/>
+            </xsl:if>
+         </xsl:for-each>
          <xsl:apply-templates select="($disobeyed-asserts, $disobeyed-reports)"
             mode="tan:element-to-error">
             <xsl:with-param name="error-id" select="'tlm04'"/>
          </xsl:apply-templates>
-         <xsl:choose>
-            <xsl:when test="exists($these-morphologies)">
-               <xsl:apply-templates mode="#current">
-                  <xsl:with-param name="dependencies" select="$these-morphologies" tunnel="yes"/>
-                  <xsl:with-param name="feature-vocabulary"
-                     select="$these-morphologies/tan:TAN-mor/tan:head/(tan:vocabulary | tan:tan-vocabulary | tan:vocabulary-key)/(tan:feature | tan:item[tan:affects-element = 'feature'])"
-                  />
-               </xsl:apply-templates>
-            </xsl:when>
-            <xsl:otherwise>
-               <xsl:message select="'no TAN-mor file found for morphology: ', $morphology-ids"/>
-               <xsl:copy-of select="node()"/>
-            </xsl:otherwise>
-         </xsl:choose>
+         <xsl:apply-templates mode="#current">
+            <xsl:with-param name="morphology-ids" select="$morphology-ids"/>
+         </xsl:apply-templates>
       </xsl:copy>
    </xsl:template>
    
+   
+   
+   
    <xsl:template match="tan:f[text()]" mode="tan:tan-a-lm-expansion-terse">
-      <xsl:param name="dependencies" tunnel="yes" as="document-node()*"/>
-      <xsl:param name="feature-vocabulary" as="element()*"/>
-      <xsl:variable name="this-f" select="."/>
+      <xsl:param name="morphology-code-map" tunnel="yes" as="map(*)"/>
+      <xsl:param name="morphology-ids" as="xs:string*"/>
+
+      <xsl:variable name="this-f" as="xs:string" select="string(.)"/>
       <xsl:variable name="help-requested" select="exists(@help)"/>
       <xsl:variable name="this-pos" select="xs:integer(@n)"/>
-      <xsl:variable name="this-category" select="$dependencies/tan:TAN-mor/tan:body/tan:category[$this-pos]"/>
-      <xsl:variable name="this-id-resolved" select="
-            if (exists($this-category)) then
-               $this-category/tan:feature[@code = $this-f]/@type
-            else
-               $this-f"/>
-      <xsl:variable name="this-voc-item" select="$feature-vocabulary[(@xml:id, tan:id, tan:alias) = $this-id-resolved]"/>
+      
+      <xsl:variable name="these-voc-items" select="
+            for $i in $morphology-ids
+            return
+               let $j := $morphology-code-map($i)
+               return
+                  if (count($j) gt 1) (: it's a categorized morphology :)
+                  then
+                     $j[$this-pos]($this-f)
+                  else
+                     $j($this-f)
+            "/>
       
       <xsl:variable name="diagnostics-on" select="false()"/>
       <xsl:if test="$diagnostics-on">
          <xsl:message select="'diagnostics on for tan-a-lm-expansion-terse'"/>
-         <xsl:message select="'dependencies: ', tan:xml-to-string(tan:shallow-copy($dependencies/*))"/>
-         <xsl:message select="'feature-vocabulary: ', tan:xml-to-string($feature-vocabulary)"/>
          <xsl:message select="'this pos: ', $this-pos"/>
-         <xsl:message select="'this category: ', tan:xml-to-string($this-category)"/>
-         <xsl:message select="'this id resolved: ', $this-id-resolved"/>
-         <xsl:message select="'this voc item: ', tan:xml-to-string($this-voc-item)"/>
+         <xsl:message select="'these voc items: ', $these-voc-items"/>
       </xsl:if>
       
-      <!--<xsl:copy-of select="."/>-->
+      <!-- these errors are set as following siblings of the errant element because we need to tether it as a child 
+         to an element that was in the original. -->
+      <xsl:if test="not(exists($these-voc-items)) or $help-requested = true()">
+         <xsl:variable name="this-message" as="xs:string*">
+            <xsl:value-of select="
+                  (if (not(exists($these-voc-items))) then
+                     ($this-f || ' not found; try: ')
+                  else
+                     ($this-f || ' is valid (= ' || $these-voc-items/tan:name[1] || '); all options: '))
+                     || (for $i in $morphology-ids,
+                        $j in $morphology-code-map($i)[position() = ($this-pos, 1)][1]
+                     return
+                        string-join(($i, map:keys($j)), ', '))"/>
+         </xsl:variable>
+         <xsl:copy-of select="tan:error('tlm03', $this-message)"/>
+      </xsl:if>
       <xsl:copy>
          <xsl:copy-of select="@*"/>
          <xsl:apply-templates mode="#current"/>
          <xsl:if test="$tan:distribute-vocabulary">
-            <xsl:copy-of select="$this-voc-item/self::tan:item"/>
+            <xsl:copy-of select="$these-voc-items/(tan:item | tan:feature)"/>
          </xsl:if>
       </xsl:copy>
-      <!-- these errors are set as following siblings of the errant element because we need to tether it as a child 
-         to an element that was in the original. -->
-      <xsl:if test="not(exists($this-voc-item)) or $help-requested = true()">
-         <xsl:variable name="this-message" as="xs:string*">
-            <xsl:value-of select="
-                  if (not(exists($this-voc-item))) then
-                     ($this-f || ' not found; try: ')
-                  else
-                     ($this-f || ' is valid (= ' || $this-voc-item/tan:name[1] || '); all options: ')"
-            />
-            <xsl:choose>
-               <xsl:when test="exists($this-category)">
-                  <xsl:for-each select="$this-category/tan:feature">
-                     <xsl:variable name="this-id" select="@type"/>
-                     <xsl:value-of
-                        select="@code || ' (' || $feature-vocabulary[tan:id = $this-id]/tan:name[1] || ') '"
-                     />
-                  </xsl:for-each>
-               </xsl:when>
-               <xsl:otherwise>
-                  <xsl:for-each select="$feature-vocabulary">
-                     <xsl:sort select="matches(tan:id[1], tan:escape($this-f))" order="descending"/>
-                     <xsl:value-of select="tan:id[1] || ' (' || tan:name[1] || ') '"/>
-                  </xsl:for-each>
-               </xsl:otherwise>
-            </xsl:choose>
-         </xsl:variable>
-         <xsl:copy-of select="tan:error('tlm03', string-join($this-message, ''))"/>
-      </xsl:if>
    </xsl:template>
    
    
-
-
       
 </xsl:stylesheet>
