@@ -35,7 +35,19 @@
       <xsl:map-entry key="generate-id(.)" select="$lm-count"/>
    </xsl:template>
    
-   <xsl:template match="/tan:TAN-A-lm">
+   <xsl:template match="tan:body/tan:feature[not(node())]">
+      <xsl:variable name="this-xmlid" select="@xml:id"/>
+      <xsl:variable name="this-alias" select="../tan:alias[contains-token(@idrefs, $this-xmlid)]"/>
+      <xsl:variable name="this-code" select="($this-alias/(@id, @xml:id), $this-xmlid)[1]"/>
+      <code xmlns="tag:textalign.net,2015:ns">
+         <xsl:attribute name="feature" select="replace(@which, ' ', '_')"/>
+         <xsl:value-of select="replace($this-code, ' ', '_')"/>
+      </code>
+   </xsl:template>
+   <xsl:template match="tan:body/tan:alias"/>
+   
+   
+   <!--<xsl:template match="/tan:TAN-A-lm">
       <xsl:variable name="duplicate-tok-val-map" as="map(*)">
          <xsl:map>
             <xsl:for-each-group select="descendant::tan:tok" group-by="@val">
@@ -63,9 +75,9 @@
             <xsl:with-param name="duplicate-tok-val-map" tunnel="yes" select="$duplicate-tok-val-map"/>
          </xsl:apply-templates>
       </xsl:copy>
-   </xsl:template>
+   </xsl:template>-->
    
-   <xsl:template match="tan:tok[@val]">
+   <!--<xsl:template match="tan:tok[@val]">
       <xsl:param name="duplicate-tok-val-map" tunnel="yes" as="map(*)?"/>
       <xsl:variable name="this-val" select="@val" as="xs:string"/>
       <xsl:variable name="this-id" as="xs:string" select="generate-id()"/>
@@ -84,6 +96,6 @@
             <xsl:copy-of select="."/>
          </xsl:otherwise>
       </xsl:choose>
-   </xsl:template>
+   </xsl:template>-->
 
 </xsl:stylesheet>

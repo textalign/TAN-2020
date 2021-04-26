@@ -24,11 +24,6 @@
    
    <xsl:param name="tan:include-diagnostics-components" as="xs:boolean" select="true()" static="yes"/>
    
-   <xsl:param name="output-diagnostics-on" as="xs:boolean" select="true()" static="yes"/>
-
-   <xsl:output method="xml" indent="no" use-when="not($output-diagnostics-on)"/>
-   <xsl:output method="xml" indent="true" use-when="$output-diagnostics-on"/>
-
    <xsl:include href="../../functions/TAN-function-library.xsl"/>
    <!--<xsl:include href="../../applications/get%20inclusions/rng-to-text.xsl"/>-->
    <xsl:include href="rng-to-text.xsl"/>
@@ -639,6 +634,11 @@
       </section>
    </xsl:template>
 
+   <xsl:param name="output-diagnostics-on" as="xs:boolean" select="false()" static="yes"/>
+   
+   <xsl:output method="xml" indent="no" use-when="not($output-diagnostics-on)"/>
+   <xsl:output method="xml" indent="true" use-when="$output-diagnostics-on"/>
+   
    <xsl:template match="/*" use-when="$output-diagnostics-on">
       <xsl:variable name="rng-file-picked" select="$tan:rng-collection-without-TEI[4]"/>
       <diagnostics>
