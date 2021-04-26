@@ -10,7 +10,7 @@
     <!-- The resultant files provide support for fn:collection(). -->
     
     <xsl:output indent="yes"/>
-    <xsl:include href="../../functions/incl/TAN-core-functions.xsl"/>
+    <xsl:include href="../../functions-old/incl/TAN-core-functions.xsl"/>
     
     
     <!-- THIS STYLESHEET -->

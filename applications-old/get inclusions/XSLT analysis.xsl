@@ -5,7 +5,7 @@
    <!-- This stylesheet helps other stylesheets interrogate the contents of an XSLT stylesheet -->
 
    <xsl:variable name="component-syntax"
-      select="doc('../../parameters/component%20syntax.xml')"/>
+      select="doc('../../guidelines/populate/component%20syntax.xml')"/>
 
    <xsl:function name="tan:string-representation-of-component" as="xs:string*">
       <!-- 2-param version of the full function, below -->

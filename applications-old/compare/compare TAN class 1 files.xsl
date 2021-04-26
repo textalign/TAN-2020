@@ -5,7 +5,7 @@
     xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tei="http://www.tei-c.org/ns/1.0"
     xmlns:tan="tag:textalign.net,2015:ns" exclude-result-prefixes="#all" version="3.0">
     
-    <xsl:param name="output-diagnostics-on" static="yes" as="xs:boolean" select="false()"/>
+    <xsl:param name="output-diagnostics-on" static="yes" as="xs:boolean" select="true()"/>
     
     <xsl:include href="../get%20inclusions/core-for-TAN-output.xsl"/>
     <xsl:include href="../../functions/TAN-A-functions.xsl"/>
@@ -46,8 +46,9 @@
     <xsl:param name="relative-uri-2" select="'../../../library-arithmeticus/evagrius/cpg2439'"/>
     <xsl:param name="relative-uri-3" select="'../../../library-arithmeticus/bible'"/>
     <xsl:param name="relative-uri-4" select="'file:/e:/joel/google%20drive/clio%20commons/TAN%20library/clio'"/>
+    <xsl:param name="relative-uri-5" select="'../../../library-arithmeticus/test'"/>
     
-    <xsl:param name="main-input-relative-uri-directories" as="xs:string*" select="$relative-uri-2"/>
+    <xsl:param name="main-input-relative-uri-directories" as="xs:string*" select="$relative-uri-5"/>
     
     <!-- In what directory are the class-1 files to be compared? Unless $main-input-resolved-uris has been given values directly, this parameter will be used to get a collection of all files in the directories chosen. -->
     <xsl:param name="main-input-resolved-uri-directories" as="xs:string*"
@@ -69,10 +70,10 @@
     </xsl:param>
     
     <!-- For a main input resolved URI to be used, what pattern (regular expression, case-insensitive) must be matched? Any item in $main-input-resolved-uris not matching this pattern will be excluded. A null or empty string results in this parameter being ignored. -->
-    <xsl:param name="mirus-must-match-regex" as="xs:string?" select="'grc'"/>
+    <xsl:param name="mirus-must-match-regex" as="xs:string?" select="''"/>
 
     <!-- For a main input resolved URI to be used, what pattern (regular expression, case-insensitive) must NOT be matched? Any item in $main-input-resolved-uris matching this pattern will be excluded. A null or empty string results in this parameter being ignored. -->
-    <xsl:param name="mirus-must-not-match-regex" as="xs:string?" select="'14616|1716|Montfaucon'"/>
+    <xsl:param name="mirus-must-not-match-regex" as="xs:string?" select="'14616|1716|Montfaucon|gImage|abbyy'"/>
     
     <xsl:variable name="mirus-chosen"
         select="$main-input-resolved-uris[tan:filename-satisfies-regexes(., $mirus-must-match-regex, $mirus-must-not-match-regex)]"
@@ -96,7 +97,7 @@
     <xsl:param name="ignore-character-component-differences" as="xs:boolean" select="false()"/>
     
     <!-- Should differences between the Greek grave and acute be ignored? -->
-    <xsl:param name="ignore-greek-grave-acute-distinction" as="xs:boolean" select="true()"/>
+    <xsl:param name="ignore-greek-grave-acute-distinction" as="xs:boolean" select="false()"/>
     
     <!-- If Latin (body's @xml:lang = 'lat'), should batch replacement set 1 be used? -->
     <xsl:param name="apply-to-latin-batch-replacement-set-1" as="xs:boolean" select="true()"/>

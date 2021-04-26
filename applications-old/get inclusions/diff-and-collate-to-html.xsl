@@ -89,14 +89,29 @@
     <!-- one row per witness -->
     <xsl:template match="tan:stats/*" mode="diff-and-collate-to-html">
         <xsl:param name="last-wit-idref" tunnel="yes" as="xs:string?"/>
+        <xsl:param name="diff-a-ref" tunnel="yes" as="xs:string?" select="@ref"/>
+        <xsl:param name="diff-b-ref" tunnel="yes" as="xs:string?" select="@ref"/>
         
-        <xsl:variable name="this-ref" select="(@ref, 'aggregate')[1]"/>
+        <xsl:variable name="this-ref" as="xs:string">
+            <xsl:choose>
+                <xsl:when test="@id = 'a' and string-length($diff-a-ref) gt 0">
+                    <xsl:sequence select="$diff-a-ref"/>
+                </xsl:when>
+                <xsl:when test="@id = 'b' and string-length($diff-b-ref) gt 0">
+                    <xsl:sequence select="$diff-b-ref"/>
+                </xsl:when>
+                <xsl:when test="exists(@ref)">
+                    <xsl:sequence select="@ref"></xsl:sequence>
+                </xsl:when>
+                <xsl:otherwise>aggregate</xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
         <xsl:variable name="is-last-witness"
             select="
                 if (string-length($last-wit-idref) gt 0) then
                     ($this-ref = $last-wit-idref)
                 else
-                    (following-sibling::*[1]/(self::tan:collation, self::tan:diff))"
+                    (following-sibling::*[1]/(self::tan:collation | self::tan:diff))"
         />
         <xsl:variable name="is-summary" select="self::tan:collation or self::tan:diff"/>
         <xsl:if test="$is-summary">
@@ -147,6 +162,8 @@
                 <div>
                     <xsl:value-of select="$this-ref"/>
                 </div>
+                <!-- Do not perform the following if it is the last row of the table, a summary of
+                the collation/diff. -->
                 <xsl:if test="not(self::tan:collation) and not(self::tan:diff)">
                     <div>
                         <xsl:attribute name="class"
@@ -593,6 +610,9 @@ div.selectAll(".venn-circle path").style("fill-opacity", .6);
 
     <xsl:template match="*" mode="diff-and-collate-to-html">
         <xsl:param name="last-wit-idref" tunnel="yes"/>
+        <xsl:param name="diff-a-ref" tunnel="yes" as="xs:string?" select="@ref"/>
+        <xsl:param name="diff-b-ref" tunnel="yes" as="xs:string?" select="@ref"/>
+        
         <xsl:variable name="these-ws" select="tan:wit/@ref"/>
         <xsl:variable name="this-w-count" select="ancestor::tan:group/@count"/>
         <xsl:variable name="these-w-class-vals"
@@ -609,13 +629,23 @@ div.selectAll(".venn-circle path").style("fill-opacity", .6);
                 else
                     ()"
         />
-        <xsl:variable name="this-special-class-val"
+        <!--<xsl:variable name="this-special-class-val"
             select="
                 if (($these-ws = $last-wit-idref) or self::tan:b) then
                     ' a-last a-other'
                 else
                     ()"
-        />
+        />-->
+        <xsl:variable name="this-special-class-val" as="xs:string*">
+            <!-- If a diff, we add last and other if the diff-a or diff-b reference has been marked as last;
+            if there is no match, then diff-b is the default last/other item. -->
+            <!-- If a collation, we add last and other only if there is a witness marked as the last. -->
+            <xsl:if test="(self::tan:a and $diff-a-ref = $last-wit-idref)
+                or (self::tan:b and (string-length($diff-a-ref) lt 1))
+                or ($these-ws = $last-wit-idref)">
+                <xsl:value-of select="' a-last a-other'"/>
+            </xsl:if>
+        </xsl:variable>
         <xsl:element name="div" namespace="http://www.w3.org/1999/xhtml">
             <xsl:attribute name="class" select="'e-' || name(.) || $these-w-class-vals || $this-base-class-val || $this-special-class-val"/>
             

@@ -17,7 +17,7 @@
     where you might be publishing a parallel edition, or using one in for study or teaching. -->
     
     <!-- Should output be diverted to diagnostics (master default template in this stylesheet)? -->
-    <xsl:param name="ad-hoc-diag-on" as="xs:string?" static="yes"/>
+    <xsl:param name="ad-hoc-diag-on" as="xs:string?" static="yes" select="''"/>
     <xsl:param name="output-diagnostics-on" as="xs:boolean" static="yes" select="string-length($ad-hoc-diag-on) gt 0"/>
     
     <xsl:import href="../../parameters/application-diff-parameters.xsl"/>
@@ -96,6 +96,8 @@
     <xsl:param name="tei-note-signal-default" as="xs:string?">n</xsl:param>
     <!-- What replacement character should mark a TEI <add>? -->
     <xsl:param name="tei-add-signal-default" as="xs:string?">+</xsl:param>
+    <!-- What batch replacements should be applied to claim components? Batch replacements are a series of elements with @pattern, @replacement, and perhaps @flags, imitating fn:replace(). -->
+    <xsl:param name="claim-component-batch-replacements" as="element()*"/>
 
     <!-- Parameters for input pass 3 (i.e., after merging) -->
     <!-- Many of these parameters add or remove content. Many of these things can also be accomplished in any CSS or JavaScript attached to the output. -->
@@ -109,7 +111,7 @@
     <!-- Should any <ref> that is a child of a <div> that is a version be suppressed? -->
     <xsl:param name="suppress-version-refs" as="xs:boolean?" select="true()"/>
     <!-- Should any <n> that is a child of <div> be suppressed? -->
-    <xsl:param name="suppress-ns" as="xs:boolean?" select="true()"/>
+    <xsl:param name="suppress-ns" as="xs:boolean?" select="false()"/>
     <!-- Should a <display-n> be added to a <div>, reflecting either the original n (if present) or the calculated n? -->
     <xsl:param name="add-display-n" as="xs:boolean" select="true()"/>
     <!-- Should the most common value for @type (div type) be added to a display n? -->
@@ -211,7 +213,7 @@
     
     <!-- Get rid of comments -->
     <xsl:template match="comment()" mode="core-expansion-ad-hoc-pre-pass dependency-adjustments-pass-1"/>
-
+    
     <!-- Group the TAN-A sources by work. Currently only the first source's work group will be processed. We do not use TAN-A/head/vocabulary-key/work 
     because the latter is built upon a generous view of allowing aliases to determine several different works in one fell swoop, but that might be
     more than the current user wants, namely, choosing to group works according to selective alias(es). -->
@@ -792,34 +794,6 @@
         </xsl:if>
         
         <xsl:if test="not($skip-this-div)">
-            <!-- Commented-out code is the result of refining tan:merge-tan-docs(), which as of 2020 requires that each numerical value of
-            @n be atomized and sorted. That is, the functionality this app tried to provide has now been moved upstream to tan:merge-tan-docs() -->
-            <!--<xsl:variable name="ns-that-are-integers" select="tan:n[. castable as xs:integer]"/>-->
-            <!--<xsl:variable name="ns-that-are-strings" select="tan:n except $ns-that-are-integers"/>-->
-            <!--<xsl:variable name="distinct-integer-ns" as="element()*">
-                <xsl:for-each-group select="$ns-that-are-integers" group-by=".">
-                    <xsl:copy-of select="current-group()[1]"/>
-                </xsl:for-each-group>
-            </xsl:variable>-->
-            <!--<xsl:variable name="distinct-string-ns" as="element()*">
-                <xsl:for-each-group select="$ns-that-are-strings" group-by=".">
-                    <xsl:copy-of select="current-group()[1]"/>
-                </xsl:for-each-group>
-            </xsl:variable>-->
-            <!--<xsl:variable name="distinct-string-ns" select="tan:distinct-items($ns-that-are-strings)"/>-->
-            <!--<xsl:variable name="rebuilt-integer-sequence"
-                select="tan:integers-to-sequence($distinct-integer-ns)"/>-->
-            <!--<xsl:variable name="n-pattern" as="element()+">
-                <!-\- The idea is that a <div> or a cluster of <div>s might attract many values of @n. They will be either
-                calculable as integers or not. Those that are should be treated as distinct ns. Those that are not should be
-                treated as synonyms for the same <div> or cluster of <div>s. Those string-based synonyms should be
-                associated with the first integer value (if any) as the primary group of <n>s. -\->
-                <primary-ns xmlns="tag:textalign.net,2015:ns">
-                    <xsl:copy-of select="$distinct-string-ns"/>
-                    <xsl:copy-of select="$distinct-integer-ns[1]"/>
-                </primary-ns>
-                <xsl:copy-of select="$distinct-integer-ns[position() gt 1]"/>
-            </xsl:variable>-->
             <xsl:variable name="pre-div-elements-except-n" select="* except (tan:n | tan:div)"/>
             <xsl:variable name="class-2-ref-anchors" select="$children-divs/tan:ref[@q][not(text())]"/>
             <xsl:variable name="class-2-ref-anchors-to-move-here" as="element()*">
@@ -834,26 +808,9 @@
                     else
                         ()" as="element()*"/>
             
-            <xsl:if test="$diagnostics-on">
-                <!--<xsl:message select="'n pattern: ', $n-pattern"/>-->
-            </xsl:if>
-            
             <xsl:copy>
                 <xsl:copy-of select="@*"/>
                 <xsl:attribute name="class" select="$version-wrapper-class-name"/>
-                <!-- We eliminate duplication of elements -->
-                <!--<xsl:for-each-group select="$pre-div-elements-except-n" group-by="name(.)">
-                    <xsl:for-each-group select="current-group()" group-by=".">
-                        <xsl:copy-of select="current-group()[1]"/>
-                        <!-\-<xsl:apply-templates select="current-group()[1]" mode="input-pass-3-adjust-pre-div-elements"/>-\->
-                    </xsl:for-each-group>
-                </xsl:for-each-group>-->
-                <!--<xsl:copy-of select="$n-pattern"/>-->
-                <!--<xsl:if test="not($rebuilt-integer-sequence = tan:n)">
-                    <n class="rebuilt" xmlns="tag:textalign.net,2015:ns">
-                        <xsl:value-of select="$rebuilt-integer-sequence"/>
-                    </n>
-                </xsl:if>-->
                 
                 <xsl:apply-templates select="node() except $children-divs" mode="#current">
                     <xsl:with-param name="most-common-div-type" tunnel="yes" select="$most-common-div-type"/>
@@ -1548,22 +1505,38 @@
                 </xsl:if>
                 <xsl:for-each-group
                     select="* except ($originating-claim-component, $comparable-claim-components)"
-                    group-by="name(.)">
+                    group-by="
+                    (: If we're dealing with a claim component that is a text reference, group by source :)
+                        if (exists(@src) or exists(@work) or exists(@scriptum)) then
+                            string-join((@src, @work, @scriptum, name(.)), ' ')
+                        else
+                            name(.)">
                     <xsl:sort
                         select="(index-of($annotation-sequence, current-grouping-key()), 99)[1]"/>
                     <xsl:variable name="this-component-name" select="current-grouping-key()"/>
-                    <xsl:variable name="matching-claim-attribute" select="$this-claim/@*[name(.) = $this-component-name]"/>
+                    <xsl:variable name="matching-claim-attribute"
+                        select="$this-claim/@*[name(.) = $this-component-name]"/>
                     <xsl:variable name="label-strings" as="xs:string*">
                         <xsl:for-each select="current-group()">
-                            <xsl:value-of select="string-join(((@work, @src, @scriptum)[1], @ref), ' ')"/>
+                            <xsl:choose>
+                                <xsl:when test="position() eq 1">
+                                    <xsl:value-of
+                                        select="string-join(((@work, @src, @scriptum)[1], @ref), ' ')"/>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:value-of select="@ref"/>
+                                </xsl:otherwise>
+                            </xsl:choose>
                         </xsl:for-each>
                     </xsl:variable>
                     <xsl:variable name="this-label" as="xs:string?">
                         <xsl:choose>
                             <xsl:when test="exists($matching-claim-attribute)">
-                                <xsl:value-of select="replace($matching-claim-attribute, '[_-]', ' ')"/>
+                                <xsl:value-of
+                                    select="replace($matching-claim-attribute, '[_-]', ' ')"/>
                             </xsl:when>
-                            <xsl:when test="exists(current-group()[@*]) and not(exists(current-group()/@attr))">
+                            <xsl:when
+                                test="exists(current-group()[@*]) and not(exists(current-group()/@attr))">
                                 <xsl:value-of select="tan:commas-and-ands($label-strings)"/>
                             </xsl:when>
                             <xsl:otherwise>
@@ -1571,22 +1544,23 @@
                             </xsl:otherwise>
                         </xsl:choose>
                     </xsl:variable>
-                    <xsl:variable name="there-are-multiple-refs" select="count(current-group()//tan:ref) gt 1"/>
+                    <xsl:variable name="there-are-multiple-refs"
+                        select="count(current-group()//tan:ref) gt 1"/>
                     <xsl:variable name="these-refs" select="current-group()/tan:ref[@q]"/>
-                    
+
                     <div class="{$this-component-name}">
                         <div class="label">
-                            <xsl:value-of select="$this-label"/>
+                            <xsl:value-of
+                                select="tan:batch-replace($this-label, $claim-component-batch-replacements)"
+                            />
                         </div>
                         <xsl:if test="exists($these-refs)">
-                            <xsl:variable name="these-classes" as="xs:string*"
-                                select="
+                            <xsl:variable name="these-classes" as="xs:string*" select="
                                     ('ref',
                                     (if ($table-layout-fixed) then
                                         'layout-fixed'
                                     else
-                                        ()))"
-                            />
+                                        ()))"/>
                             <table class="{string-join($these-classes, ' ')}">
                                 <tbody>
                                     <tr>
@@ -1601,7 +1575,8 @@
                                                   mode="tan-to-html-pass-1"/>
                                             </xsl:variable>
                                             <xsl:variable name="this-src" select="@src"/>
-                                            <xsl:variable name="this-lang" select="tan:body/@xml:lang"/>
+                                            <xsl:variable name="this-lang"
+                                                select="tan:body/@xml:lang"/>
                                             <xsl:if test="exists($these-anchors)">
                                                 <td class="src--{$this-src}">
                                                   <div class="label">
@@ -1619,15 +1594,17 @@
                                 </tbody>
                             </table>
                         </xsl:if>
-                        <xsl:apply-templates select="current-group()/* except $these-refs" mode="#current">
-                            <xsl:with-param name="retain-ref-label" tunnel="yes" select="$there-are-multiple-refs"/>
+                        <xsl:apply-templates select="current-group()/* except $these-refs"
+                            mode="#current">
+                            <xsl:with-param name="retain-ref-label" tunnel="yes"
+                                select="$there-are-multiple-refs"/>
                         </xsl:apply-templates>
                     </div>
                 </xsl:for-each-group>
             </xsl:copy>
         </xsl:variable>
         <!-- The material hasn't had any HTML formatting, and the context document into which it 
-            is being inserted, has had pass 1 already, so we need to run pass 1 on the new material. -->
+            is being inserted has had pass 1 already, so we need to run pass 1 on the new material. -->
         <xsl:apply-templates select="$this-claim-resolved" mode="tan-to-html-pass-1"/>
     </xsl:template>
     
@@ -1828,7 +1805,7 @@
                             <xsl:apply-templates select="tan:display-n | tan:n | tan:ref"
                                 mode="#current"/>
                         </td>
-                        <xsl:apply-templates select="$these-divs-diffed" mode="#current"/>
+                        <xsl:apply-templates select="$these-divs-diffed" mode="tan-to-html-pass-2-build-version-table"/>
                     </tr>
                     <!-- Dec 2020 delete, relic of @n handling -->
                     <!--<xsl:apply-templates select="$n-pattern"
@@ -1859,29 +1836,15 @@
         </xsl:copy>
     </xsl:template>
     
-    <!-- Dec. 2020: retired the following -->
-    <xsl:template match="tan:primary-ns | tan:n" mode="tan-to-html-pass-2-html-tables-tr-old">
-        <xsl:param name="div-versions" as="element()*" tunnel="yes"/>
-        <xsl:variable name="these-ns" select="descendant-or-self::tan:n"/>
-        <xsl:variable name="these-refs" select="../tan:ref"/>
-        <!-- It is important that only the first n matches, otherwise you get a primary <div> lumped in with a continuation. -->
-        <xsl:variable name="these-div-versions" select="$div-versions[(tan:n[1] = $these-ns) or contains-token(@class, 'consolidated')]"/>
-        <tr>
-            <td class="label">
-                <xsl:for-each select="$these-refs, $these-ns">
-                    <div class="{name(.)}">
-                        <xsl:value-of select="text()"/>
-                    </div>
-                </xsl:for-each>
-            </td>
-            <xsl:apply-templates select="$these-div-versions" mode="tan-to-html-pass-2-html-tables"/>
-        </tr>
+    <!-- We're in the process of building the <td>s of a <tr>, so skip until we get the version that we need (see below) -->
+    <xsl:template match="node()" mode="tan-to-html-pass-2-build-version-table">
+        <xsl:apply-templates mode="#current"/>
     </xsl:template>
     
     <!-- Build a version wrapper. This template is for the leaf divs. -->
     <xsl:template
         match="*:div[tokenize(@class, ' ') = ('version', 'filler', 'consolidated')]"
-        mode="tan-to-html-pass-2-html-tables">
+        mode="tan-to-html-pass-2-build-version-table">
         <!--<xsl:variable name="is-continuation" select="tokenize(@class, ' ') = 'continuation'"/>-->
         <xsl:variable name="these-srcs" select="ancestor-or-self::*[tan:src][1]/tan:src"/>
         <xsl:variable name="these-src-qualifiers" select="@src-qualifier" as="xs:string*"/>
