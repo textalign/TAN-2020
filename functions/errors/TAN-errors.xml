@@ -295,12 +295,11 @@
     </group>
     
     <!-- TAN-mor ERRORS -->
-    <group affects-attribute="type" affects-element="category feature">
+    <group affects-attribute="feature" affects-element="category code">
         <error xml:id="tmo01"><rule>Features may not be repeated in a categorized code scheme.</rule></error>
-        <error xml:id="tmo03"><rule>Codes in categorized features may not be keyed to aliases. @type must point to a single feature id.</rule></error>
     </group>
-    <group affects-attribute="code" affects-element="feature">
-        <error xml:id="tmo02"><rule>Codes for features must be case-indifferently unique within a given category.</rule></error>
+    <group affects-attribute="feature" affects-element="code">
+        <error xml:id="tmo02"><rule>Codes for features must be case-indifferently unique.</rule></error>
     </group>
     
     <!-- catalog.tan.xml ERRORS -->

@@ -6269,7 +6269,7 @@ process-link-to
 									<String>*</String>
 								</field>
 								<field name="attributeValue">
-									<String>2020</String>
+									<String>202?</String>
 								</field>
 							</documentTypeRule>
 							<documentTypeRule>
@@ -6321,7 +6321,7 @@ process-link-to
 									<String>*</String>
 								</field>
 								<field name="attributeValue">
-									<String>2020</String>
+									<String>202?</String>
 								</field>
 							</documentTypeRule>
 						</documentTypeRule-array>
@@ -6538,7 +6538,7 @@ process-link-to
 														<Integer>7</Integer>
 													</field>
 													<field name="uri">
-														<String>${framework}/schemas/${xpath_eval(local-name(/*))}.sch</String>
+														<String>${framework}/schemas/TAN.sch</String>
 													</field>
 												</validationUnitSchema>
 											</field>
@@ -6552,124 +6552,12 @@ process-link-to
 									<String>TAN schematron</String>
 								</field>
 							</validationScenario>
-							<validationScenario>
-								<field name="pairs">
-									<list>
-										<validationUnit>
-											<field name="validationType">
-												<validationUnitType>
-													<field name="validationInputType">
-														<String>text/xml</String>
-													</field>
-												</validationUnitType>
-											</field>
-											<field name="url">
-												<String>${currentFileURL}</String>
-											</field>
-											<field name="validationEngine">
-												<validationEngine>
-													<field name="engineType">
-														<String>&lt;Default engine></String>
-													</field>
-													<field name="allowsAutomaticValidation">
-														<Boolean>true</Boolean>
-													</field>
-												</validationEngine>
-											</field>
-											<field name="allowAutomaticValidation">
-												<Boolean>true</Boolean>
-											</field>
-											<field name="extensions">
-												<null/>
-											</field>
-											<field name="validationSchema">
-												<validationUnitSchema>
-													<field name="dtdSchemaPublicID">
-														<null/>
-													</field>
-													<field name="schematronPhase">
-														<null/>
-													</field>
-													<field name="type">
-														<Integer>7</Integer>
-													</field>
-													<field name="uri">
-														<String>${framework}/schemas/TAN.sch</String>
-													</field>
-												</validationUnitSchema>
-											</field>
-										</validationUnit>
-									</list>
-								</field>
-								<field name="type">
-									<String>Validation_scenario</String>
-								</field>
-								<field name="name">
-									<String>TAN schematron new</String>
-								</field>
-							</validationScenario>
-							<validationScenario>
-								<field name="pairs">
-									<list>
-										<validationUnit>
-											<field name="validationType">
-												<validationUnitType>
-													<field name="validationInputType">
-														<String>text/xml</String>
-													</field>
-												</validationUnitType>
-											</field>
-											<field name="url">
-												<String>${currentFileURL}</String>
-											</field>
-											<field name="validationEngine">
-												<validationEngine>
-													<field name="engineType">
-														<String>&lt;Default engine></String>
-													</field>
-													<field name="allowsAutomaticValidation">
-														<Boolean>true</Boolean>
-													</field>
-												</validationEngine>
-											</field>
-											<field name="allowAutomaticValidation">
-												<Boolean>true</Boolean>
-											</field>
-											<field name="extensions">
-												<null/>
-											</field>
-											<field name="validationSchema">
-												<validationUnitSchema>
-													<field name="dtdSchemaPublicID">
-														<null/>
-													</field>
-													<field name="schematronPhase">
-														<null/>
-													</field>
-													<field name="type">
-														<Integer>3</Integer>
-													</field>
-													<field name="uri">
-														<String>${framework}/schemas/${xpath_eval(local-name(/*))}.rnc</String>
-													</field>
-												</validationUnitSchema>
-											</field>
-										</validationUnit>
-									</list>
-								</field>
-								<field name="type">
-									<String>Validation_scenario</String>
-								</field>
-								<field name="name">
-									<String>TAN rnc new</String>
-								</field>
-							</validationScenario>
 						</validationScenario-array>
 					</field>
 					<field name="defaultValidationScenarios">
 						<list>
-							<String>TAN schematron new</String>
-							<String>TAN rnc new</String>
+							<String>TAN rnc</String>
+							<String>TAN schematron</String>
 						</list>
 					</field>
 					<field name="defaultTransformationScenarios">
