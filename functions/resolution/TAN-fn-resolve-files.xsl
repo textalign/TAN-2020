@@ -323,14 +323,17 @@
                      </filter>
                   </xsl:for-each-group> 
                </xsl:for-each-group>
-               <!-- Detritus from older system; delete when certain not needed for reconciling
-               @n aliases from class 2 sources -->
-               <!--<xsl:if test="$this-is-class-1-source-for-class-2-file">
+               <!-- We add all possible n-vocabulary items for class-1 sources of class-2 files, because an
+                  adjustment action might push a particular <div> into a value of @n not anticipated by the 
+                  source. Plus, some class-1 sources are so large, it's not worth fetching every value of @n
+                  from the body to filter out the vocabulary.
+               -->
+               <xsl:if test="$this-is-class-1-source-for-class-2-file">
                   <filter type="vocabulary">
                      <attribute-name>n</attribute-name>
                      <name norm="">*</name>
                   </filter>
-               </xsl:if>-->
+               </xsl:if>
             </xsl:variable>
 
 
