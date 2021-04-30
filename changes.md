@@ -17,6 +17,7 @@ Below are listed significant changes that have been made since version 2020. See
 * Function library now subject to development schemas that check for best practices and other desiderata.
 * The inclusions that populate the applications folder are being liquidated. They either go into the official TAN function library, or they are moved to the specific application. 
 * New error tan22
+* Removed `@help`
 
 ### Class 1
 
@@ -28,9 +29,16 @@ Below are listed significant changes that have been made since version 2020. See
 * Fix: adjustment reference systems are converted into the target source file's preferred @n system before application.
 * Class-1 sources now fetch all @n aliases, so that the host class 2 file can use synonyms. The concept here is that a class 2 file is a kind of extension of a class 1 file, which means that the former should be able to access the terminology of the latter.
 * Deleted error code rea03 (superceded by cl219)
+* TAN-A-lm morphological codes now evaluated via maps. 
+* Removed element `div-ref`.
+* In TAN-A claim, with `@scriptum` in an `object` or `subject`, removed `@work` and `@version` as extra filtering attributes.
 
 ### Class 3
-* TAN-mor error added: tmo03
+
+* TAN-mor `@m-has-features` and `@m-has-how-many-features` changed to `*-codes`.
+* `features` now moved out of vocabulary-key into body as `code`. In `category` each `feature` is now a `code`. This brings the format into conformity with all other TAN files' use of `vocabulary-key`.
+* `code` can now take zero or more `desc`s and must take one `val`. That's because this is the one place where general grammatical terms can be brought to bear upon a specific language and the designated codes. 
+* tmo01 removed (features allowed multiple codes, individually or in combination) 
 
 #### Adjustments
 * Permitted reassignments to be given priority values, so they can be placed in a target div in a requested order.
