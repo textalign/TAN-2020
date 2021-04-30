@@ -16,10 +16,19 @@
         <xsl:variable name="example-elements" as="element()*"
             select="
                 (if ($is-attribute = true()) then
-                    $ex-collection[$include-catalog-examples or not(matches(base-uri(.), 'catalog'))]//@*[name(.) = $element-or-attribute-name]/..
+                    $ex-collection[$include-catalog-examples or not(matches(base-uri(.), 'catalog|Copy'))]//*[@*[name(.) = $element-or-attribute-name]]
                 else
-                    $ex-collection[$include-catalog-examples or not(matches(base-uri(.), 'catalog'))]//tan:*[name(.) = $element-or-attribute-name])[position() le $max-examples]"
+                    $ex-collection[$include-catalog-examples or not(matches(base-uri(.), 'catalog|Copy'))]//tan:*[name(.) = $element-or-attribute-name])[position() le $max-examples]"
         />
+        
+        <xsl:if test="not(exists($example-elements))">
+            <xsl:message select="
+                    (if ($is-attribute) then
+                        'attribute '
+                    else
+                        'element ') || $element-or-attribute-name || ' lacks any examples.'"/>
+        </xsl:if>
+        
         <xsl:for-each-group select="$example-elements" group-by="root(.)">
             <xsl:variable name="text" select="tan:element-to-example-text(current-group())"/>
             <xsl:variable name="text-to-emphasize"

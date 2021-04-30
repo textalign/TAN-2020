@@ -22,6 +22,9 @@
    <!-- Secondary output: the appendix sections of the Guidelines, converting major parts of TAN to docbook format (see end of this file) -->
    <!-- This process takes about 25 seconds. -->
    
+   <!-- This stylesheet and its components are pretty messy, reflecting several years of development. Because
+      it is not intended for mass consumption, I haven't tried to clean or streamline the code. -->
+   
    <xsl:param name="tan:include-diagnostics-components" as="xs:boolean" select="true()" static="yes"/>
    
    <xsl:include href="../../functions/TAN-function-library.xsl"/>
@@ -63,13 +66,6 @@
    <xsl:variable name="sequence-of-sections" as="element()">
       <!-- Filters and arranges the function files into sequence sequence and hierarchy the documentation should follow. -->
       <sec n="TAN-core">
-         <sec n="TAN-parameters"/>
-         <sec n="TAN-core-resolve"/>
-         <sec n="TAN-core-expand"/>
-         <sec n="TAN-core-errors"/>
-         <sec n="TAN-core-string"/>
-         <sec n="TAN-core-3-0"/>
-         <sec n="regex-ext-tan"/>
          <sec n="TAN-class-1">
             <sec n="TAN-T"/>
          </sec>
@@ -82,13 +78,6 @@
             <sec n="TAN-voc"/>
             <sec n="TAN-mor"/>
             <sec n="catalog.tan"/>
-         </sec>
-         <sec n="TAN-extra">
-            <sec n="TAN-function"/>
-            <sec n="TAN-schema"/>
-            <sec n="TAN-language"/>
-            <sec n="TAN-search"/>
-            <sec n="TAN-A-lm-extra"/>
          </sec>
       </sec>
    </xsl:variable>
@@ -393,7 +382,8 @@
          <xsl:when test="exists($what-this-depends-on-pass-2)">
             <para>
                <xsl:text>Relies upon </xsl:text>
-               <!-- Group by normalized values, i.e., regardless of whether the code has matching parens or an abandoned opening paren -->
+               <!-- Group by normalized values, i.e., regardless of whether the code has matching parens or an 
+                  abandoned opening paren -->
                <xsl:for-each-group select="$what-this-depends-on-pass-2" group-by="replace(., '[\(\)]+', '')">
                   <xsl:sort/>
                   <xsl:if test="position() gt 1">
@@ -412,7 +402,7 @@
    </xsl:function>
    
    
-   <xsl:mode name="complete-parentheses" on-no-match="shallow-skip"/>
+   <xsl:mode name="complete-parentheses" on-no-match="shallow-copy"/>
    
    <xsl:template match="docbook:code/text()[ends-with(., '(')]" mode="complete-parentheses">
       <xsl:value-of select=". || ')'"/>
@@ -543,7 +533,7 @@
             some $i in $these-base-uris
                satisfies matches($i, 'catalog')"
       />
-      
+
       <section xml:id="{$this-node-type || '-' || replace($this-node-name,':','')}">
          <title>
             <code>
@@ -620,12 +610,13 @@
             </para>
          </xsl:if>
          <xsl:choose>
-            <xsl:when test="$this-node-type = 'element'">
+            <xsl:when test="$this-node-name = ('doc', 'collection')"/>
+            <xsl:when test="$this-node-type eq 'element'">
                <xsl:apply-templates mode="context-errors-to-docbook"
                   select="$tan:errors//tan:group[tokenize(@affects-element, '\s+') = $this-node-name]/tan:*"/>
                <xsl:copy-of select="tan:examples($this-node-name, false(), $catalog-is-of-interest)"/>
             </xsl:when>
-            <xsl:when test="$this-node-type = 'attribute'">
+            <xsl:when test="$this-node-type eq 'attribute'">
                <xsl:apply-templates mode="context-errors-to-docbook"
                   select="$tan:errors//tan:group[tokenize(@affects-attribute, '\s+') = $this-node-name]/tan:*"/>
                <xsl:copy-of select="tan:examples($this-node-name, true(), $catalog-is-of-interest)"/>
@@ -778,7 +769,8 @@
                subdirectory <code>applications</code>.</para>
             <xsl:copy-of select="$chapter-caveat"/>
             <xsl:for-each-group
-               select="($function-library-keys, $function-library-functions, $function-library-variables, $function-library-templates)"
+               select="($function-library-keys, $function-library-functions, 
+               $function-library-variables, $function-library-templates)"
                group-by="
                   if (exists(@name)) then
                      substring(replace(@name, '^\w+:', ''), 1, 1)
@@ -812,9 +804,12 @@
 </xsl:text>
             </xsl:for-each-group>
             
-            <!-- First, group according to place in the TAN hierarchy the variables, keys, functions, and named templates, which are all unique and so can take an id; because template modes spread out across components, they need to be handled outside the TAN hierarchical structure -->
+            <!-- First, group according to place in the TAN hierarchy the variables, keys, functions, and named templates, 
+               which are all unique and so can take an id; because template modes spread out across components, they need 
+               to be handled outside the TAN hierarchical structure -->
             <xsl:for-each-group group-by="replace(tan:cfn(.), '-functions', '')"
-               select="($function-library-keys, $function-library-functions[not(@name = $names-of-functions-to-append)], $function-library-variables-unique, $function-library-templates[@name])">
+               select="($function-library-keys, $function-library-functions[not(@name = $names-of-functions-to-append)], 
+               $function-library-variables-unique, $function-library-templates[@name])">
                <xsl:sort
                   select="count($sequence-of-sections//*[@n = current-grouping-key()]/(preceding::*, ancestor-or-self::*))"
                />
@@ -837,7 +832,8 @@
                            <xsl:value-of select="tan:title-case($this-type-of-component) || 's'"/>
                         </title>
                         <xsl:for-each-group select="current-group()" group-by="@name">
-                           <!-- This is a group of variables, keys, functions, or named templates that share the same name (grouping is mainly for functions) -->
+                           <!-- This is a group of variables, keys, functions, or named templates that share the same 
+                              name (grouping is mainly for functions) -->
                            <xsl:sort select="lower-case(@name)"/>
                            <xsl:variable name="what-depends-on-this"
                               select="tan:xslt-dependencies(current-grouping-key(), $this-type-of-component, false(), $tan:all-functions)[name() = ('xsl:function', 'xsl:variable', 'xsl:template', 'xsl:key')]"/>

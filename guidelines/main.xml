@@ -6284,6 +6284,15 @@ tag:bbrb@example.org,1995-04-01:pos-grc</programlisting>
                   perhaps recombining them in a master file via <code><link
                         linkend="element-inclusion">&lt;inclusion></link></code> (see <xref
                      linkend="inclusions-and-vocabularies"/>).</para>
+               <para>Applications can be written to convert TAN-A-lm <code><link linkend="element-m"
+                        >&lt;m&gt;</link></code> data from one morphological system to another. This
+                  is a two-step process facilitated by the functions <code><link
+                        linkend="function-morphological-code-conversion-maps"
+                        >tan:morphological-code-conversion-maps</link>(</code>) and <code><link
+                        linkend="function-convert-morphological-codes"
+                        >tan:convert-morphological-codes</link>(</code>). See documentation in these
+                  guidelines or in
+                  <code>functions/language/TAN-fn-language-extended.xsl</code>.</para>
                <para>
                   <example>
                      <title>Examples of TAN-A-lm data</title>
@@ -6481,19 +6490,6 @@ tag:bbrb@example.org,1995-04-01:pos-grc</programlisting>
                         linkend="element-file-resp">&lt;file-resp&gt;</link></code>.</para>
                <para>A language declaration is made in the header: one or more <code><link
                         linkend="element-for-lang">&lt;for-lang></link></code>s.</para>
-               <para>TAN has a standard vocabulary file for grammatical features:
-                     <code>vocabularies/features.TAN-voc.xml</code>. This vocabulary file encodes
-                  746 vocabulary items corresponding to core grammatical features declared in the
-                  OLiA Reference Model for Morphology, Morphosyntax and Syntax (<link
-                     xlink:href="http://purl.org/olia/olia.owl"/>). See <xref
-                     linkend="vocabularies-features"/>.</para>
-               <para>If you wish to incorporate into your codes characters that are not allowed in
-                        <code><link linkend="attribute-xmlid">@xml:id</link></code>, e.g.,
-                     <code>$</code> or <code>:</code>, you should create an <code><link
-                        linkend="element-alias">&lt;alias&gt;</link></code>, whose <code><link
-                        linkend="attribute-id">@id</link></code> allows such values. <code><link
-                        linkend="element-alias">&lt;alias&gt;</link></code> of course can be used to
-                  assign multiple grammatical features to a single id.</para>
             </section>
             <section>
                <title>Data (<code><link linkend="element-body">&lt;body></link></code>)</title>
@@ -6555,15 +6551,31 @@ tag:bbrb@example.org,1995-04-01:pos-grc</programlisting>
                <para><code><link linkend="element-report">&lt;report></link></code> has the same
                   effect, but the test looks for the opposite boolean value: the error and message
                   will be returned only if the test proves true.</para>
-               <para>After the rules come a structure declaration (if relying upon structured
-                  codes): zero or more <code><link linkend="element-category"
-                     >&lt;category></link></code>s . Each one sorts <link linkend="element-feature"
-                        ><code>&lt;feature></code></link>s into groups, assigning them <code><link
-                        linkend="attribute-code">@code</link></code> values that are unique within
-                  the <code><link linkend="element-category">&lt;category></link></code>. Sequence
+               <para>Mixed with the rules are codes, either categorized or not. </para>
+               <para>If categorized, there are zero or more <code><link linkend="element-category"
+                        >&lt;category></link></code>s . Each one sorts <link linkend="element-code"
+                        ><code>&lt;code></code></link>s into groups, assigning them <link
+                     linkend="element-val"><code>&lt;val></code></link> that are unique within the
+                        <code><link linkend="element-category">&lt;category></link></code>. Sequence
                   is important. The first <code><link linkend="element-category"
                         >&lt;category></link></code> defines the features allowed in the first code
                   position, the second in the second, and so forth.</para>
+               <para>If not categorized, then there are simply one or more <link
+                     linkend="element-code"><code>&lt;code></code></link>s. Each <link
+                     linkend="element-code"><code>&lt;code></code></link> has a <code><link
+                        linkend="attribute-feature">@feature</link></code> that points to one or
+                  more vocabulary items for a grammatical feature, either by IDref or by name. </para>
+               <para>TAN has a standard vocabulary file for grammatical features:
+                     <code>vocabularies/features.TAN-voc.xml</code>. This vocabulary file encodes
+                  746 grammatical features declared in the OLiA Reference Model for Morphology,
+                  Morphosyntax and Syntax (<link xlink:href="http://purl.org/olia/olia.owl"/>). See
+                     <xref linkend="vocabularies-features"/>.</para>
+               <para><link linkend="element-code"><code>&lt;code></code></link> must have a <link
+                     linkend="element-val"><code>&lt;val></code></link>, which contains the actual
+                  code used, and it may take one or more <code><link linkend="element-desc"
+                        >&lt;desc&gt;</link></code>s, to explain how the grammatical features should
+                  be interpreted for a given language. This is the ideal place to provide
+                  examples.</para>
                <para>In addition to examples below, see sample TAN-mor files in the
                      <code>examples</code> directory.</para>
                <para>
@@ -6584,16 +6596,16 @@ tag:bbrb@example.org,1995-04-01:pos-grc</programlisting>
       pronoun (p).&lt;/assert>
 &lt;/rule>
 . . . . . .
-&lt;code feature="accusative">accusative&lt;/code>
-&lt;code feature="nominative">nominative&lt;/code>
-&lt;code feature="case_dative">dative&lt;/code>
-&lt;code feature="case_genitive">genitive&lt;/code>
-&lt;code feature="case_vocative">vocative&lt;/code>
+&lt;code feature="accusative">&lt;val>accusative&lt;/val>&lt;/code>
+&lt;code feature="nominative">&lt;val>nominative&lt;/val>&lt;/code>
+&lt;code feature="case_dative">&lt;val>dative&lt;/val>&lt;/code>
+&lt;code feature="case_genitive">&lt;val>genitive&lt;/val>&lt;/code>
+&lt;code feature="case_vocative">&lt;val>vocative&lt;/val>&lt;/code>
 . . . . . .
 &lt;category feature="feature_person">
-   &lt;code feature="first">1&lt;/code>
-   &lt;code feature="second">2&lt;/code>
-   &lt;code feature="third">3&lt;/code>
+   &lt;code feature="first">&lt;val>1&lt;/val>&lt;/code>
+   &lt;code feature="second">&lt;val>2&lt;/val>&lt;/code>
+   &lt;code feature="third">&lt;val>3&lt;/val>&lt;/code>
 &lt;/category></programlisting>
                   </example>
                </para>
