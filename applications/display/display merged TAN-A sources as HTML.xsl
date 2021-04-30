@@ -349,7 +349,7 @@
    <!-- The main engine for the application is in this file, and in other files it links to. Feel free to 
       explore, but make alterations only if you know what you are doing. If you make changes, make a copy 
       of the original file first. -->
-   <xsl:include href="incl/merge%20work%20versions%20core.xsl"/>
+   <xsl:include href="incl/display%20merged%20TAN-A%20sources%20as%20HTML%20core.xsl"/>
    <!-- Please don't change the following variable. It helps the application figure out where your directories
     are. -->
    <xsl:variable name="calling-stylesheet-uri" as="xs:anyURI" select="static-base-uri()"/>
