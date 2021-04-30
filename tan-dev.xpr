@@ -4846,9 +4846,9 @@
             <file name="applications/copy/copy%20file.xsl"/>
             <file name="applications/create/create%20catalog%20file.xsl"/>
             <file name="applications/create/create%20TAN-A-lm.xsl"/>
+            <file name="applications/display/display%20merged%20TAN-A%20sources%20as%20HTML.xsl"/>
             <file name="applications-old/display/display%20TAN%20as%20HTML.xsl"/>
             <file name="applications/explore/explore%20text%20parallels.xsl"/>
-            <file name="applications/merge/merge%20work%20versions.xsl"/>
             <file name="guidelines/populate/populate%20TAN%20guidelines.xsl"/>
             <file name="maintenance/guidelines/populate%20TAN%20guidelines.xsl"/>
             <file name="applications/remodel/remodel%20text.xsl"/>
