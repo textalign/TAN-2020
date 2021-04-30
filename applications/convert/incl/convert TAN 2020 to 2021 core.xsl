@@ -89,7 +89,9 @@
                     @type"/>
         <code>
             <xsl:attribute name="feature" select="$feature-value"/>
-            <xsl:value-of select="@code"/>
+            <val>
+                <xsl:value-of select="@code"/>
+            </val>
         </code>
     </xsl:template>
     
@@ -103,7 +105,9 @@
         <xsl:variable name="this-code" select="($this-alias/(@id, @xml:id), $this-xmlid)[1]"/>
         <code>
             <xsl:attribute name="feature" select="replace(@which, ' ', '_')"/>
-            <xsl:value-of select="$this-code"/>
+            <val>
+                <xsl:value-of select="$this-code"/>
+            </val>
         </code>
     </xsl:template>
     

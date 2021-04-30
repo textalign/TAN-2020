@@ -61,6 +61,229 @@
                         <scenarioAssociation-array>
                             <scenarioAssociation>
                                 <field name="url">
+                                    <String>examples/gomme.1989.ring-o-roses.xml</String>
+                                </field>
+                                <field name="scenarioIds">
+                                    <list>
+                                        <String>Test TAN Function Library</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioTypes">
+                                    <list>
+                                        <String>XSL</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioStorageLocations">
+                                    <list>
+                                        <Byte>2</Byte>
+                                    </list>
+                                </field>
+                            </scenarioAssociation>
+                            <scenarioAssociation>
+                                <field name="url">
+                                    <String>applications/explore/explore%20text%20parallels.xsl</String>
+                                </field>
+                                <field name="scenarioIds">
+                                    <list>
+                                        <String>Run XSLT against itself</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioTypes">
+                                    <list>
+                                        <String>XML</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioStorageLocations">
+                                    <list>
+                                        <Byte>2</Byte>
+                                    </list>
+                                </field>
+                            </scenarioAssociation>
+                            <scenarioAssociation>
+                                <field name="url">
+                                    <String>applications/compare/compare%20texts.xsl</String>
+                                </field>
+                                <field name="scenarioIds">
+                                    <list>
+                                        <String>Run XSLT against itself</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioTypes">
+                                    <list>
+                                        <String>XML</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioStorageLocations">
+                                    <list>
+                                        <Byte>2</Byte>
+                                    </list>
+                                </field>
+                            </scenarioAssociation>
+                            <scenarioAssociation>
+                                <field name="url">
+                                    <String>maintenance/guidelines/populate%20TAN%20guidelines.xsl</String>
+                                </field>
+                                <field name="scenarioIds">
+                                    <list>
+                                        <String>Run XSLT against itself</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioTypes">
+                                    <list>
+                                        <String>XML</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioStorageLocations">
+                                    <list>
+                                        <Byte>2</Byte>
+                                    </list>
+                                </field>
+                            </scenarioAssociation>
+                            <scenarioAssociation>
+                                <field name="url">
+                                    <String>examples/TAN-A/ar.cat.TAN-A.claims.xml</String>
+                                </field>
+                                <field name="scenarioIds">
+                                    <list>
+                                        <String>Display merged TAN-A sources as html</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioTypes">
+                                    <list>
+                                        <String>XSL</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioStorageLocations">
+                                    <list>
+                                        <Byte>2</Byte>
+                                    </list>
+                                </field>
+                            </scenarioAssociation>
+                            <scenarioAssociation>
+                                <field name="url">
+                                    <String>examples/TAN-A/ringoroses.div.1.xml</String>
+                                </field>
+                                <field name="scenarioIds">
+                                    <list>
+                                        <String>app: merge work versions as html</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioTypes">
+                                    <list>
+                                        <String>XSL</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioStorageLocations">
+                                    <list>
+                                        <Byte>2</Byte>
+                                    </list>
+                                </field>
+                            </scenarioAssociation>
+                            <scenarioAssociation>
+                                <field name="url">
+                                    <String>tests/errors/error-test-5.tan-a-lm.xml</String>
+                                </field>
+                                <field name="scenarioIds">
+                                    <list>
+                                        <String>Test TAN Function Library</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioTypes">
+                                    <list>
+                                        <String>XSL</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioStorageLocations">
+                                    <list>
+                                        <Byte>2</Byte>
+                                    </list>
+                                </field>
+                            </scenarioAssociation>
+                            <scenarioAssociation>
+                                <field name="url">
+                                    <String>tests/test%20TAN%20function%20library.xsl</String>
+                                </field>
+                                <field name="scenarioIds">
+                                    <list>
+                                        <String>Run XSLT against itself</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioTypes">
+                                    <list>
+                                        <String>XML</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioStorageLocations">
+                                    <list>
+                                        <Byte>2</Byte>
+                                    </list>
+                                </field>
+                            </scenarioAssociation>
+                            <scenarioAssociation>
+                                <field name="url">
+                                    <String>tests/errors/error-test-4.tan-tei.xml</String>
+                                </field>
+                                <field name="scenarioIds">
+                                    <list>
+                                        <String>Test TAN Function Library</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioTypes">
+                                    <list>
+                                        <String>XSL</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioStorageLocations">
+                                    <list>
+                                        <Byte>2</Byte>
+                                    </list>
+                                </field>
+                            </scenarioAssociation>
+                            <scenarioAssociation>
+                                <field name="url">
+                                    <String>tests/errors/error-test-3.tan-a.xml</String>
+                                </field>
+                                <field name="scenarioIds">
+                                    <list>
+                                        <String>Test TAN Function Library</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioTypes">
+                                    <list>
+                                        <String>XSL</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioStorageLocations">
+                                    <list>
+                                        <Byte>2</Byte>
+                                    </list>
+                                </field>
+                            </scenarioAssociation>
+                            <scenarioAssociation>
+                                <field name="url">
+                                    <String>schemas/TAN-TEI.odd</String>
+                                </field>
+                                <field name="scenarioIds">
+                                    <list>
+                                        <String>TAN-TEI ODD to RELAX NG Compact</String>
+                                        <String>TAN-TEI ODD to RELAX NG XML</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioTypes">
+                                    <list>
+                                        <String>ANT</String>
+                                        <String>ANT</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioStorageLocations">
+                                    <list>
+                                        <Byte>2</Byte>
+                                        <Byte>2</Byte>
+                                    </list>
+                                </field>
+                            </scenarioAssociation>
+                            <scenarioAssociation>
+                                <field name="url">
                                     <String>../library-arithmeticus/evagrius/make-catalog.tan.xml</String>
                                 </field>
                                 <field name="scenarioIds">
@@ -124,66 +347,6 @@
                             </scenarioAssociation>
                             <scenarioAssociation>
                                 <field name="url">
-                                    <String>applications/explore/explore%20text%20parallels.xsl</String>
-                                </field>
-                                <field name="scenarioIds">
-                                    <list>
-                                        <String>Run XSLT against itself</String>
-                                    </list>
-                                </field>
-                                <field name="scenarioTypes">
-                                    <list>
-                                        <String>XML</String>
-                                    </list>
-                                </field>
-                                <field name="scenarioStorageLocations">
-                                    <list>
-                                        <Byte>2</Byte>
-                                    </list>
-                                </field>
-                            </scenarioAssociation>
-                            <scenarioAssociation>
-                                <field name="url">
-                                    <String>maintenance/guidelines/populate%20TAN%20guidelines.xsl</String>
-                                </field>
-                                <field name="scenarioIds">
-                                    <list>
-                                        <String>Run XSLT against itself</String>
-                                    </list>
-                                </field>
-                                <field name="scenarioTypes">
-                                    <list>
-                                        <String>XML</String>
-                                    </list>
-                                </field>
-                                <field name="scenarioStorageLocations">
-                                    <list>
-                                        <Byte>2</Byte>
-                                    </list>
-                                </field>
-                            </scenarioAssociation>
-                            <scenarioAssociation>
-                                <field name="url">
-                                    <String>applications/compare/compare%20texts.xsl</String>
-                                </field>
-                                <field name="scenarioIds">
-                                    <list>
-                                        <String>Run XSLT against itself</String>
-                                    </list>
-                                </field>
-                                <field name="scenarioTypes">
-                                    <list>
-                                        <String>XML</String>
-                                    </list>
-                                </field>
-                                <field name="scenarioStorageLocations">
-                                    <list>
-                                        <Byte>2</Byte>
-                                    </list>
-                                </field>
-                            </scenarioAssociation>
-                            <scenarioAssociation>
-                                <field name="url">
                                     <String>../library-lm/grc/grc.perseus.readable.tan-mor.xml</String>
                                 </field>
                                 <field name="scenarioIds">
@@ -229,26 +392,6 @@
                                 <field name="scenarioIds">
                                     <list>
                                         <String>Test TAN Function Library</String>
-                                    </list>
-                                </field>
-                                <field name="scenarioTypes">
-                                    <list>
-                                        <String>XSL</String>
-                                    </list>
-                                </field>
-                                <field name="scenarioStorageLocations">
-                                    <list>
-                                        <Byte>2</Byte>
-                                    </list>
-                                </field>
-                            </scenarioAssociation>
-                            <scenarioAssociation>
-                                <field name="url">
-                                    <String>examples/TAN-A/ar.cat.TAN-A.claims.xml</String>
-                                </field>
-                                <field name="scenarioIds">
-                                    <list>
-                                        <String>Display merged TAN-A sources as html</String>
                                     </list>
                                 </field>
                                 <field name="scenarioTypes">
@@ -354,26 +497,6 @@
                                 <field name="scenarioTypes">
                                     <list>
                                         <String>XSL</String>
-                                    </list>
-                                </field>
-                                <field name="scenarioStorageLocations">
-                                    <list>
-                                        <Byte>2</Byte>
-                                    </list>
-                                </field>
-                            </scenarioAssociation>
-                            <scenarioAssociation>
-                                <field name="url">
-                                    <String>tests/test%20TAN%20function%20library.xsl</String>
-                                </field>
-                                <field name="scenarioIds">
-                                    <list>
-                                        <String>Run XSLT against itself</String>
-                                    </list>
-                                </field>
-                                <field name="scenarioTypes">
-                                    <list>
-                                        <String>XML</String>
                                     </list>
                                 </field>
                                 <field name="scenarioStorageLocations">
@@ -544,26 +667,6 @@
                             </scenarioAssociation>
                             <scenarioAssociation>
                                 <field name="url">
-                                    <String>examples/TAN-A/ringoroses.div.1.xml</String>
-                                </field>
-                                <field name="scenarioIds">
-                                    <list>
-                                        <String>app: merge work versions as html</String>
-                                    </list>
-                                </field>
-                                <field name="scenarioTypes">
-                                    <list>
-                                        <String>XSL</String>
-                                    </list>
-                                </field>
-                                <field name="scenarioStorageLocations">
-                                    <list>
-                                        <Byte>2</Byte>
-                                    </list>
-                                </field>
-                            </scenarioAssociation>
-                            <scenarioAssociation>
-                                <field name="url">
                                     <String>applications-old/compare/compare%20TAN%20class%201%20files.xsl</String>
                                 </field>
                                 <field name="scenarioIds">
@@ -669,46 +772,6 @@
                                 <field name="scenarioIds">
                                     <list>
                                         <String>Synchronize class 1 body text with redivision</String>
-                                    </list>
-                                </field>
-                                <field name="scenarioTypes">
-                                    <list>
-                                        <String>XSL</String>
-                                    </list>
-                                </field>
-                                <field name="scenarioStorageLocations">
-                                    <list>
-                                        <Byte>2</Byte>
-                                    </list>
-                                </field>
-                            </scenarioAssociation>
-                            <scenarioAssociation>
-                                <field name="url">
-                                    <String>tests/errors/error-test-4.tan-tei.xml</String>
-                                </field>
-                                <field name="scenarioIds">
-                                    <list>
-                                        <String>Test TAN Function Library</String>
-                                    </list>
-                                </field>
-                                <field name="scenarioTypes">
-                                    <list>
-                                        <String>XSL</String>
-                                    </list>
-                                </field>
-                                <field name="scenarioStorageLocations">
-                                    <list>
-                                        <Byte>2</Byte>
-                                    </list>
-                                </field>
-                            </scenarioAssociation>
-                            <scenarioAssociation>
-                                <field name="url">
-                                    <String>tests/errors/error-test-3.tan-a.xml</String>
-                                </field>
-                                <field name="scenarioIds">
-                                    <list>
-                                        <String>Test TAN Function Library</String>
                                     </list>
                                 </field>
                                 <field name="scenarioTypes">
@@ -4638,7 +4701,6 @@
     <projectTree name="tan-dev.xpr">
         <folder masterFiles="true" name="Master Files">
             <file name="applications-old/add/add%20new%20TAN-A-lm%20anas%20to%20language%20TAN-A-lm%20collection.xsl"/>
-            <file name="applications-old/adjust/adjust%20file.xsl"/>
             <file name="applications-old/analyze/analyze%20TAN-A%20lexical%20complexity.xsl"/>
             <file name="applications-old/analyze/analyze%20TAN-A%20word%20distribution.xsl"/>
             <file name="applications-old/augment/augment%20language%20TAN-A-lm%20with%20text%20TAN-A-lm.xsl"/>
@@ -4649,30 +4711,19 @@
             <file name="schemas/catalog.tan.rng"/>
             <file name="schemas/collection.rnc"/>
             <file name="schemas/collection.rng"/>
-            <file name="applications-old/compare/compare%20TAN%20class%201%20files.xsl"/>
             <file name="applications/compare/compare%20texts.xsl"/>
-            <file name="applications-old/convert/convert%20docx%20to%20TAN.xsl"/>
             <file name="applications-old/convert/convert%20epub%20to%20TAN.xsl"/>
-            <file name="applications-old/convert/convert%20TAN%202017%20to%20TAN%202018.xsl"/>
-            <file name="applications-old/convert/convert%20TAN%202018%20to%20TAN%202020.xsl"/>
-            <file name="applications-old/convert/convert%20TAN-TEI%20to%20TAN-T.xsl"/>
             <file name="applications-old/convert/convert%20TEI%20to%20TAN-TEI.xsl"/>
             <file name="applications-old/convert/convert%20text%20TAN-A-lm%20to%20lang%20TAN-A-lm.xsl"/>
             <file name="applications/copy/copy%20file.xsl"/>
-            <file name="applications-old/copy/copy%20TAN%20file.xsl"/>
             <file name="applications/create/create%20catalog%20file.xsl"/>
             <file name="applications/create/create%20TAN-A-lm.xsl"/>
-            <file name="applications-old/display/display%20merged%20sources%20as%20HTML.xsl"/>
             <file name="applications-old/display/display%20TAN%20as%20HTML.xsl"/>
             <file name="applications/explore/explore%20text%20parallels.xsl"/>
             <file name="applications/merge/merge%20work%20versions.xsl"/>
             <file name="guidelines/populate/populate%20TAN%20guidelines.xsl"/>
             <file name="maintenance/guidelines/populate%20TAN%20guidelines.xsl"/>
-            <file name="applications-old/re-sort/re-sort%20XSLT%20stylesheet.xsl"/>
             <file name="applications/remodel/remodel%20text.xsl"/>
-            <file name="applications-old/remodel/remodel%20via%20TAN-T.xsl"/>
-            <file name="applications-old/resolve/resolve%20hrefs.xsl"/>
-            <file name="applications-old/resolve/resolve%20TAN%20file.xsl"/>
             <file name="applications-old/subdivide/subdivide%20leaf%20divs.xsl"/>
             <file name="applications/synchronize/synchronize%20class%201%20body%20text%20with%20redivision.xsl"/>
             <file name="schemas/TAN-A-lm.rnc"/>
@@ -4691,9 +4742,9 @@
             <file name="schemas/TAN-voc.rnc"/>
             <file name="schemas/TAN-voc.rng"/>
             <file name="schemas/TAN.sch"/>
-            <file name="applications/upgrade/ugrade%20TAN%20file.xsl"/>
             <file name="applications-old/update/update%20TAN-T%20text%20via%20redivided%20copy.xsl"/>
             <file name="applications-old/update/update%20TAN-voc%20via%20TEI%20collection.xsl"/>
+            <file name="applications/upgrade/upgrade%20TAN%20file.xsl"/>
         </folder>
         <folder path="../../epubs/TLG/"/>
         <folder path="../"/>
