@@ -5,7 +5,7 @@
          xmlns="http://relaxng.org/ns/structure/1.0"
          datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes"
          ns="http://www.tei-c.org/ns/1.0"><!--
-Schema generated from ODD source 2021-02-13T12:28:56Z. .
+Schema generated from ODD source 2021-04-29T14:21:52Z. .
 TEI Edition: Version 4.1.0. Last updated on
 	19th August 2020, revision b414ba550
 TEI Edition Location: https://www.tei-c.org/Vault/P5/Version 4.1.0/
@@ -128,12 +128,6 @@ TEI Edition Location: https://www.tei-c.org/Vault/P5/Version 4.1.0/
                <data type="string">
                   <param name="pattern">[smixq]+</param>
                </data>
-            </attribute>
-         </define>
-         <define name="attr-help">
-            <attribute name="help">
-               <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">requests help on the context element. This attribute is equivalent to the help requested string, ???, but is useful in cases where the string cannot be placed (e.g., elements with no content or few attributes)</a:documentation>
-               <empty/>
             </attribute>
          </define>
          <define name="attr-href">
@@ -663,17 +657,15 @@ TEI Edition Location: https://www.tei-c.org/Vault/P5/Version 4.1.0/
             </element>
          </define>
          <define name="element-where">
-            <oneOrMore>
-               <element name="where">
-                  <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">identifies a condition that permits the following adjustment actions to be performed.</a:documentation>
-                  <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">The condition must be true for each attribute, for at least one value in that attribute.</a:documentation>
-                  <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">The sequence of consecutive &lt;where&gt;s is immaterial, although they will be processed in document order. It is advisable to start with &lt;where&gt;s that are most easily processed.</a:documentation>
-                  <optional>
-                     <ref name="ed-stamp"/>
-                  </optional>
-                  <ref name="action-condition-attributes"/>
-               </element>
-            </oneOrMore>
+            <element name="where">
+               <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">identifies a set of conditions that must be met for any actions to be performed or rules to be evaluated.</a:documentation>
+               <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">For a &lt;where&gt; to be considered true, each attribute must evaluate as true for the target context. That is, multiple attributes are evaluated as intersection operators (and), not union (or).</a:documentation>
+               <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">Sibling &lt;where&gt;s provide alternative conditions. If the first &lt;where&gt; evaluates as true, the condition is considered true. If it does not, then the process is applied again to the second &lt;where&gt;. The sequence of consecutive &lt;where&gt;s is immaterial, although they will be processed in document order. It is advisable to start with &lt;where&gt;s that are most likely to make a match.</a:documentation>
+               <optional>
+                  <ref name="ed-stamp"/>
+               </optional>
+               <ref name="action-condition-attributes"/>
+            </element>
          </define>
          <define name="link-element-companion-version">
             <element name="companion-version">
@@ -1131,9 +1123,6 @@ TEI Edition Location: https://www.tei-c.org/Vault/P5/Version 4.1.0/
          </define>
          <define name="inclusion">
             <ref name="ptr-attr-include"/>
-            <optional>
-               <ref name="attr-help"/>
-            </optional>
          </define>
          <define name="metadata-human-readable">
             <oneOrMore>
@@ -17689,7 +17678,7 @@ Sample values include: 1] homeoteleuton; 2] homeoarchy; 3] paleographicConfusion
          <attribute name="TAN-version">
             <a:documentation xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0">A TAN version number is required</a:documentation>
             <data type="string">
-               <param name="pattern">2020</param>
+               <param name="pattern">2021</param>
             </data>
          </attribute>
          <optional>

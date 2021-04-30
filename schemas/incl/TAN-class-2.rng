@@ -247,17 +247,6 @@
       </choice>
     </element>
   </define>
-  <define name="element-div-ref">
-    <element name="div-ref">
-      <a:documentation>refers to one or more &lt;div&gt;s.</a:documentation>
-      <a:documentation>&lt;div-ref&gt;s are expanded against @src/@work and @ref. That is, a &lt;div-ref&gt; points to every div of every source cited.</a:documentation>
-      <a:documentation>The sequence of consecutive &lt;div-ref&gt;s is important, because they will be processed in document order. The effect of one &lt;div-ref&gt; may affect the results of subsequent ones.</a:documentation>
-      <optional>
-        <ref name="ed-stamp"/>
-      </optional>
-      <ref name="attr-ref-many"/>
-    </element>
-  </define>
   <define name="element-from-tok-no-ref">
     <element name="from-tok">
       <a:documentation>points to a single token that is the start of a range of tokens to be selected from a source, but without @ref.</a:documentation>

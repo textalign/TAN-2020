@@ -91,12 +91,6 @@
       <a:documentation> Multiple values of @verb are interpreted to mean "and", resulting in distribution of the claim. E.g., verb="X Y" means the claim is true for verb X and verb Y. Any claim with multiple verbs must observe the constraints of each verb.</a:documentation>
     </attribute>
   </define>
-  <define name="ptr-attr-version">
-    <attribute name="version">
-      <a:documentation>points via idrefs to one or more versions of a work-version referred to by a &lt;subject&gt; or &lt;object&gt;.</a:documentation>
-      <a:documentation>Multiple values of @version are interpreted to mean "and", resulting in distribution of the claim. E.g., version="X Y" means the claim is true for both version X and version Y.</a:documentation>
-    </attribute>
-  </define>
   <define name="ptr-attr-work">
     <attribute name="work">
       <a:documentation>refers via idrefs to one or more works. The ensuing claim(s) will be considerd to be true of any sources that share the same work.</a:documentation>
@@ -388,17 +382,9 @@
       </choice>
     </oneOrMore>
   </define>
+  <!-- A region of a scriptum can be constrained through nested divs, pointing to the region of the scriptum intended. -->
   <define name="scriptum-reference">
-    <choice>
-      <ref name="ptr-attr-scriptum"/>
-      <ref name="ptr-attr-which"/>
-    </choice>
-    <optional>
-      <ref name="ptr-attr-work"/>
-      <optional>
-        <ref name="ptr-attr-version"/>
-      </optional>
-    </optional>
+    <ref name="ptr-attr-scriptum"/>
     <zeroOrMore>
       <ref name="element-div"/>
     </zeroOrMore>

@@ -121,12 +121,6 @@
       </data>
     </attribute>
   </define>
-  <define name="attr-help">
-    <attribute name="help">
-      <a:documentation>requests help on the context element. This attribute is equivalent to the help requested string, ???, but is useful in cases where the string cannot be placed (e.g., elements with no content or few attributes)</a:documentation>
-      <empty/>
-    </attribute>
-  </define>
   <define name="attr-href">
     <attribute name="href">
       <a:documentation>points to the location of a file. In some contexts, this attribute is permitted only as a temporary measure, to assist editing via Schematron Quick Fixes.</a:documentation>
@@ -1289,9 +1283,6 @@
   </define>
   <define name="inclusion">
     <ref name="ptr-attr-include"/>
-    <optional>
-      <ref name="attr-help"/>
-    </optional>
   </define>
   <define name="metadata-human-readable">
     <oneOrMore>

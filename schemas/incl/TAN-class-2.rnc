@@ -162,14 +162,6 @@ adj-element-skip =
           (attr-ref-many
            | (attr-n | ptr-attr-div-type | (attr-n & ptr-attr-div-type)))))
    }
-element-div-ref =
-   
-   ## refers to one or more <div>s.
-   
-   ## <div-ref>s are expanded against @src/@work and @ref. That is, a <div-ref> points to every div of every source cited.
-   
-   ## The sequence of consecutive <div-ref>s is important, because they will be processed in document order. The effect of one <div-ref> may affect the results of subsequent ones.
-   element div-ref { ed-stamp?, attr-ref-many }
 element-from-tok-no-ref =
    
    ## points to a single token that is the start of a range of tokens to be selected from a source, but without @ref.

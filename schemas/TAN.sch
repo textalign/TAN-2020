@@ -98,6 +98,7 @@
          <let name="self-deletions" value="$these-fixes[@type = 'delete-self']"/>
          <let name="vocabulary-key-item" value="$these-fixes[@type = 'add-vocabulary-key-item']"/>
          <let name="link-element" value="$these-fixes[@type = 'add-link-element']"/>
+         <let name="which-expansions" value="$these-fixes[@type = 'expand-which']"/>
 
          <let name="preceding-node" value="preceding-sibling::node()[1]"/>
          <let name="preceding-comment"
@@ -381,6 +382,19 @@
                   />
                </sqf:add>
             </sqf:fix>
+            
+            <sqf:fix id="expand-which" use-for-each="$which-expansions">
+               <sqf:description>
+                  <sqf:title>Replace @which with IRI + name pattern for <value-of select="$sqf:current/tan:name[1]"/></sqf:title>
+               </sqf:description>
+               <sqf:delete match="@which"/>
+               <sqf:add position="first-child">
+                  <xsl:copy-of
+                     select="tan:copy-indentation($sqf:current, .)/node()"
+                  />
+               </sqf:add>
+            </sqf:fix>
+            
          </sqf:group>
 
       </rule>

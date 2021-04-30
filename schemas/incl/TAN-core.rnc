@@ -102,10 +102,6 @@ attr-flags-for-functions =
     attribute flags {
         xsd:string { pattern = "[smixq]+" }
     }
-attr-help =
-    
-    ## requests help on the context element. This attribute is equivalent to the help requested string, ???, but is useful in cases where the string cannot be placed (e.g., elements with no content or few attributes)
-    attribute help { empty }
 attr-href =
     
     ## points to the location of a file. In some contexts, this attribute is permitted only as a temporary measure, to assist editing via Schematron Quick Fixes.
@@ -732,7 +728,7 @@ extra-verb-attrs = empty
 group-attributes = group-attributes-core, group-attributes-non-core
 group-attributes-core = ptr-attr-type?, attr-n?
 group-attributes-non-core = empty
-inclusion = ptr-attr-include, attr-help?
+inclusion = ptr-attr-include
 metadata-human-readable = element-name+, element-desc*
 metadata-human-readable-attributes = ed-stamp?, attr-lang-xml?
 networked-files = networked-files-core & networked-files-non-core

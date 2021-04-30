@@ -36,15 +36,6 @@
     </define>
   </include>
   <!-- ATTRIBUTES -->
-  <define name="attr-code">
-    <attribute name="code">
-      <a:documentation>contains a string that serves as an identifier for &lt;feature&gt;.</a:documentation>
-      <data type="string">
-        <a:documentation>The hyphen is reserved for "not applicable"; spaces and (),| reserved for @feature-test expressions</a:documentation>
-        <param name="pattern">[^\-\+\s]|[^\+\s]+</param>
-      </data>
-    </attribute>
-  </define>
   <define name="cond-attr-m-matches">
     <attribute name="m-matches">
       <a:documentation>takes a regular expression. The condition is true only if an &lt;m&gt; matches the pattern. </a:documentation>
@@ -111,7 +102,8 @@ The order of consecutive &lt;category&gt;s is important, dictating the sequence 
   </define>
   <define name="element-code">
     <element name="code">
-      <a:documentation>attaches a grammatical feature to a code, and makes it available to a TAN-A-lm file.</a:documentation>
+      <a:documentation>attaches a grammatical feature to a code, and makes it available to a TAN-A-lm file. </a:documentation>
+      <a:documentation>Because vocabulary item for a grammatical feature is language-agnostic, and because a TAN-mor code is language-specific, guidance to the editor of a TAN-A-lm file may be important. Ihildren &lt;desc&gt;s can be used to provide examples or other guidance.</a:documentation>
       <optional>
         <ref name="ed-stamp"/>
       </optional>
@@ -119,10 +111,12 @@ The order of consecutive &lt;category&gt;s is important, dictating the sequence 
         <ref name="inclusion"/>
         <group>
           <ref name="ptr-attr-feature"/>
-          <data type="string">
-            <a:documentation>The hyphen is reserved for "not applicable"; spaces and (),| reserved for @feature-test expressions</a:documentation>
-            <param name="pattern">[^\-\+\s]|[^\+\s]+</param>
-          </data>
+          <interleave>
+            <zeroOrMore>
+              <ref name="element-desc"/>
+            </zeroOrMore>
+            <ref name="element-val"/>
+          </interleave>
         </group>
       </choice>
     </element>
@@ -153,6 +147,15 @@ The order of consecutive &lt;category&gt;s is important, dictating the sequence 
           </oneOrMore>
         </group>
       </choice>
+    </element>
+  </define>
+  <define name="element-val">
+    <element name="val">
+      <a:documentation>contains the expected value for a morphological code</a:documentation>
+      <data type="string">
+        <a:documentation>The hyphen is reserved for "not applicable"; spaces and (),| reserved for @feature-test expressions</a:documentation>
+        <param name="pattern">[^\-\+\s]|[^\+\s]+</param>
+      </data>
     </element>
   </define>
   <define name="voc-element-feature">

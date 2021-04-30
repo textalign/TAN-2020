@@ -15,14 +15,6 @@ include "incl/TAN-class-3.rnc" {
       cond-attr-m-has-how-many-codes?
 }
 # ATTRIBUTES
-attr-code =
-   
-   ## contains a string that serves as an identifier for <feature>.
-   attribute code {
-      
-      ## The hyphen is reserved for "not applicable"; spaces and (),| reserved for @feature-test expressions
-      xsd:string { pattern = "[^\-\+\s]|[^\+\s]+" }
-   }
 cond-attr-m-matches =
    
    ## takes a regular expression. The condition is true only if an <m> matches the pattern. 
@@ -68,14 +60,13 @@ element-category =
    }
 element-code =
    
-   ## attaches a grammatical feature to a code, and makes it available to a TAN-A-lm file.
+   ## attaches a grammatical feature to a code, and makes it available to a TAN-A-lm file. 
+   
+   ## Because vocabulary item for a grammatical feature is language-agnostic, and because a TAN-mor code is language-specific, guidance to the editor of a TAN-A-lm file may be important. Ihildren <desc>s can be used to provide examples or other guidance.
    element code {
       ed-stamp?,
       (inclusion
-       | (ptr-attr-feature, 
-             ## The hyphen is reserved for "not applicable"; spaces and (),| reserved for @feature-test expressions
-
-       xsd:string { pattern = "[^\-\+\s]|[^\+\s]+" }))
+       | (ptr-attr-feature, (element-desc* & element-val)))
    }
 element-report =
    
@@ -92,6 +83,14 @@ element-rule =
       ed-stamp?,
       (inclusion
        | (action-condition, (element-assert | element-report)+))
+   }
+element-val =
+   
+   ## contains the expected value for a morphological code
+   element val {
+      
+      ## The hyphen is reserved for "not applicable"; spaces and (),| reserved for @feature-test expressions
+      xsd:string { pattern = "[^\-\+\s]|[^\+\s]+" }
    }
 voc-element-feature =
    

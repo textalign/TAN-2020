@@ -9,7 +9,7 @@ namespace teix = "http://www.tei-c.org/ns/Examples"
 namespace xi = "http://www.w3.org/2001/XInclude"
 namespace xlink = "http://www.w3.org/1999/xlink"
 
-# Schema generated from ODD source 2021-02-13T12:28:44Z. .
+# Schema generated from ODD source 2021-04-29T14:21:39Z. .
 # TEI Edition: Version 4.1.0. Last updated on
 #	19th August 2020, revision b414ba550
 # TEI Edition Location: https://www.tei-c.org/Vault/P5/Version 4.1.0/
@@ -118,10 +118,6 @@ div {
       attribute flags {
         xsd:string { pattern = "[smixq]+" }
       }
-    attr-help =
-      
-      ## requests help on the context element. This attribute is equivalent to the help requested string, ???, but is useful in cases where the string cannot be placed (e.g., elements with no content or few attributes)
-      attribute help { empty }
     attr-href =
       
       ## points to the location of a file. In some contexts, this attribute is permitted only as a temporary measure, to assist editing via Schematron Quick Fixes.
@@ -473,12 +469,12 @@ div {
       }
     element-where =
       
-      ## identifies a condition that permits the following adjustment actions to be performed.
+      ## identifies a set of conditions that must be met for any actions to be performed or rules to be evaluated.
       
-      ## The condition must be true for each attribute, for at least one value in that attribute.
+      ## For a <where> to be considered true, each attribute must evaluate as true for the target context. That is, multiple attributes are evaluated as intersection operators (and), not union (or).
       
-      ## The sequence of consecutive <where>s is immaterial, although they will be processed in document order. It is advisable to start with <where>s that are most easily processed.
-      element where { ed-stamp?, action-condition-attributes }+
+      ## Sibling <where>s provide alternative conditions. If the first <where> evaluates as true, the condition is considered true. If it does not, then the process is applied again to the second <where>. The sequence of consecutive <where>s is immaterial, although they will be processed in document order. It is advisable to start with <where>s that are most likely to make a match.
+      element where { ed-stamp?, action-condition-attributes }
     link-element-companion-version =
       
       ## identifies a file closely associated with the current one.
@@ -688,7 +684,7 @@ div {
     group-attributes = group-attributes-core, group-attributes-non-core
     group-attributes-core = ptr-attr-type?, attr-n?
     group-attributes-non-core = empty
-    inclusion = ptr-attr-include, attr-help?
+    inclusion = ptr-attr-include
     metadata-human-readable = element-name+, element-desc*
     metadata-human-readable-attributes = ed-stamp?, attr-lang-xml?
     networked-files = networked-files-core & networked-files-non-core
@@ -12386,7 +12382,7 @@ TEI =
     
     ## A TAN version number is required
     attribute TAN-version {
-      xsd:string { pattern = "2020" }
+      xsd:string { pattern = "2021" }
     },
     
     ## specifies the version number of the TEI Guidelines against which this document is valid.
