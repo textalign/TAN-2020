@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-model href="../../schemas/TAN-A-lm.rnc" type="application/relax-ng-compact-syntax"?>
-<?xml-model href="../../schemas/TAN-A-lm.sch" phase="normal" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-model href="../../schemas/TAN.sch" phase="normal" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <!-- wrn04 -->
-<TAN-A-lm xmlns="tag:textalign.net,2015:ns" id="tag:textalign.net,2015:error-test-5" TAN-version="2020">
+<TAN-A-lm xmlns="tag:textalign.net,2015:ns" id="tag:textalign.net,2015:error-test-5" TAN-version="2021">
     <head>
         <name>Error test tan-a-lm</name>
         <license which="by_4.0" licensor="park"/>
@@ -13,7 +13,7 @@
             <location href="error-test-1.tan-t.xml" accessed-when="2019-01-07"/>
         </source>
         <vocabulary-key>
-            <!-- wrn03 -->
+            <!-- wrn03 wrn02 wrn07 -->
             <morphology xml:id="morph">
                 <IRI>tag:textalign.net,2015:error-test-6</IRI>
                 <name>test morphology</name>

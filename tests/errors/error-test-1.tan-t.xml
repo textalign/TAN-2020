@@ -16,6 +16,8 @@
             <IRI>urn:myname:1234567</IRI>
             <name>English version of RRoR</name>
         </version>
+        <!-- cl120 -->
+        <reference-system type="logical" scriptum="scr01"/>
         <!-- inc04 lnk01 lnk07 -->
         <inclusion xml:id="bad-inc">
             <IRI>tag:some-iri</IRI>
@@ -55,6 +57,7 @@
             <name>Bad model</name>
             <location href="error-test-2.tan-voc.xml" accessed-when="2019-01-01"/>
         </model>
+        
         <!-- wrn02 whi02 loc02 tan11 wrn03 wrn05 inc05 -->
         <vocabulary>
             <!-- tan10 -->
@@ -105,11 +108,18 @@
             <alias id="loop1" idrefs="loop2"/>
             <!-- tan14 -->
             <alias id="loop2" idrefs="loop1"/>
+            <!-- tan22 -->
+            <alias id="special" idrefs="notanidref"/>
             <!-- tan03 -->
             <person xml:id="park">
                 <IRI>tag:parkj@textalign.net,2015:self</IRI>
                 <name>Jenny Park</name>
             </person>
+            <scriptum xml:id="scr01">
+                <!-- tan09 -->
+                <IRI>http://lccn.loc.gov/12032709</IRI>
+                <name>Kate Greenaway, Mother Goose, New York, G. Routledge and sons [1881]</name>
+            </scriptum>
             <!-- inc02 -->
             <person include="bad-inc"/>
             <!-- loc04 -->
@@ -143,11 +153,13 @@
     <body xml:lang="eng">
         <!-- tan04 tan21 cl109 cl118 -->
         <div type="doubleline line" n="1">unnormalized unicode: ό</div>
+        <!-- cl109 cl118 (from the @ref-alias below) -->
         <div type="line" n="2">A pocket full of posies;</div>
         <div type="line" n="3">Hush! Hush! Hush! Hush!</div>
         <!-- cl109 cl118 -->
         <div type="line" n="1">
-            <div type="part" n="a">We're all tumbled down.</div>
+            <!-- cl119 -->
+            <div type="part" ref-alias="2" n="a">We're all tumbled down.</div>
         </div>
         <!-- cl110 -->
         <div type="line" n="5"> </div>

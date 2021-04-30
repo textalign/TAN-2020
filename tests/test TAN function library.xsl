@@ -11,6 +11,7 @@
    <!-- This stylesheet allows users to quickly test a TAN file or components of the TAN library. Alter as you like. -->
    
    <xsl:param name="tan:validation-mode-on" static="yes" select="false()"/>
+   <xsl:param name="tan:distribute-vocabulary" select="false()"/>
    
    <!--<xsl:include href="../../functions/TAN-A-functions.xsl"/>-->
    <!--<xsl:include href="../../functions/TAN-extra-functions.xsl"/>-->
@@ -34,10 +35,10 @@
       <xsl:apply-templates mode="tan:build-namespace-map"/>
    </xsl:variable>
    
-   <!-- reserve as predefined two xsl:item-types bound to specially reserved signatures; I'm guessing at the syntax that will be used for default values within the proposed tuple(*) -->
-<xsl:item-type name="map:entry" as="tuple(type as xs:QName select xs:QName('map:tuple'), key as xs:anyAtomicType, value as item()*)"/>
-<xsl:item-type name="array:member" as="tuple(type as xs:QName select xs:QName('array:tuple'), pos as xs:integer, member as item()*)"/>
-   <!-- If in a template the context is a map or array then the default @select value is as below -->
+   <!--<!-\- reserve as predefined two xsl:item-types bound to specially reserved signatures; I'm guessing at the syntax that will be used for default values within the proposed tuple(*) -\->
+   <xsl:item-type name="map:entry" as="tuple(type as xs:QName select xs:QName('map:tuple'), key as xs:anyAtomicType, value as item()*)"/>
+   <xsl:item-type name="array:member" as="tuple(type as xs:QName select xs:QName('array:tuple'), pos as xs:integer, member as item()*)"/>
+   <!-\- If in a template the context is a map or array then the default @select value is as below -\->
    <xsl:template match=".[. instance of map(*)]">
       <xsl:apply-templates select="
             map:for-each(., function ($k, $v) {
@@ -58,21 +59,21 @@
                   'member': .($i)
                }" mode="#current"/>
    </xsl:template>
-   <!-- Maps and arrays would not by default have that type, only entries/members processed in an apply-templates action, or through explicit casting of a map to the type -->
+   <!-\- Maps and arrays would not by default have that type, only entries/members processed in an apply-templates action, or through explicit casting of a map to the type -\->
    <xsl:template match="type(map:entry)">
-      <!-- sequence constructor -->
+      <!-\- sequence constructor -\->
       <key>{?key}</key>
       <value>
          <xsl:apply-templates select="?value" mode="#current"/>
       </value>
    </xsl:template>
    <xsl:template match="type(array:member)">
-      <!-- sequence constructor -->
+      <!-\- sequence constructor -\->
       <pos>{?pos}</pos>
       <member>
          <xsl:apply-templates select="?member" mode="#current"/>
       </member>
-   </xsl:template>
+   </xsl:template>-->
    
    
    <xsl:function name="tan:array-test" as="item()*" visibility="public">
@@ -87,7 +88,7 @@
       
       <xsl:message select="'size start', array:size($start-array)"/>
       <xsl:message select="'size next', array:size($added-array)"/>
-      <xsl:message select="'new array', tan:array-to-xml($added-array)"/>
+      <!--<xsl:message select="'new array', tan:array-to-xml($added-array)"/>-->
       
       <!--<xsl:sequence select="array:subarray($master-array, 1)"/>-->
       <!--<xsl:sequence select="array:subarray(array:append([(1, 2), 3], 4), 1)"/>-->
@@ -168,8 +169,8 @@
          </xsl:map-entry>
       </xsl:map>
    </xsl:variable>
-   <xsl:variable name="s-map-to-xml" as="element()" select="tan:map-to-xml($sample-map)"/>
-   <xsl:variable name="s-back-to-map" as="map(*)" select="tan:xml-to-map($s-map-to-xml)"/>
+   <!--<xsl:variable name="s-map-to-xml" as="element()" select="tan:map-to-xml($sample-map)"/>
+   <xsl:variable name="s-back-to-map" as="map(*)" select="tan:xml-to-map($s-map-to-xml)"/>-->
    
    <xsl:variable name="test-int-seq" as="xs:integer+" select="1 to 10000000"/>
    <xsl:variable name="test-str-seq" as="xs:string+" select="
@@ -201,7 +202,7 @@
    <xsl:variable name="array-test2" as="array(*)" select="array {$sequence-a, ''}"/>
    <xsl:variable name="array-test3" as="array(*)" select="[$sequence-a, [$sequence-a], ()]"/>
    <!--<xsl:variable name="array-test3" as="array(*)" select="array{1, 2, 3}"/>-->
-   <xsl:variable name="array-test-to-array" as="array(*)" select="tan:xml-to-array($array-test)"/>
+   <!--<xsl:variable name="array-test-to-array" as="array(*)" select="tan:xml-to-array($array-test)"/>-->
    
    <!--<xsl:variable name="las" select="tan:array-test([1, 3, 2])"/>-->
    
@@ -237,9 +238,9 @@
    <xsl:variable name="test-collation" as="element()" select="tan:collate-pair-of-sequences(tokenize($test-string-a, '\W+'),
       tokenize($test-string-b, '\W+'))"/>
    
-   <xsl:variable name="morpheus-searches" select="for $i in tokenize($test-string-a, ' ')
+   <!--<xsl:variable name="morpheus-searches" select="for $i in tokenize($test-string-a, ' ')
       return
-      tan:search-morpheus($i)"/>
+      tan:search-morpheus($i)"/>-->
    
    <xsl:variable name="tan-mor-1-uri" as="xs:string" select="'../../library-lm/grc/grc.perseus.tan-mor.xml'"/>
    <xsl:variable name="tan-mor-2-uri" as="xs:string" select="'../../library-lm/grc/grc.perseus.readable.tan-mor.xml'"/>
@@ -256,7 +257,7 @@
    <xsl:variable name="tan-mor-4-resolved" as="document-node()"
       select="tan:resolve-doc(doc(resolve-uri($tan-mor-4-uri, static-base-uri())))"/>
    
-   <xsl:variable name="mor-1-to-2-maps" as="map(*)*" select="tan:morphological-code-conversion-maps($tan-mor-1-resolved, $tan-mor-2-resolved)"/>
+   <!--<xsl:variable name="mor-1-to-2-maps" as="map(*)*" select="tan:morphological-code-conversion-maps($tan-mor-1-resolved, $tan-mor-2-resolved)"/>
    <xsl:variable name="mor-2-to-1-maps" as="map(*)*" select="tan:morphological-code-conversion-maps($tan-mor-2-resolved, $tan-mor-1-resolved)"/>
    <xsl:variable name="mor-1-to-3-maps" as="map(*)*" select="tan:morphological-code-conversion-maps($tan-mor-1-resolved, $tan-mor-3-resolved)"/>
    <xsl:variable name="mor-1-to-4-maps" as="map(*)*" select="tan:morphological-code-conversion-maps($tan-mor-1-resolved, $tan-mor-4-resolved)"/>
@@ -270,24 +271,24 @@
    <xsl:variable name="tan-a-lm-to-mor3" as="document-node()" select="tan:convert-morphological-codes($tan-a-lm-doc, 'perseus-dik', $mor-1-to-3-maps)"/>
    <xsl:variable name="tan-a-lm-to-mor2-then-mor4" as="document-node()" select="tan:convert-morphological-codes($tan-a-lm-to-mor2, 'perseus-dik', $mor-2-to-4-maps)"/>
    
-   <xsl:variable name="tan-a-lm-to-mor4" as="document-node()" select="tan:convert-morphological-codes($tan-a-lm-doc, 'perseus-dik', $mor-1-to-4-maps)"/>
+   <xsl:variable name="tan-a-lm-to-mor4" as="document-node()" select="tan:convert-morphological-codes($tan-a-lm-doc, 'perseus-dik', $mor-1-to-4-maps)"/>-->
    
    
    <xsl:template match="/">
       <xsl:variable name="values" select="(1,2,3,4,5)" as="xs:double+"/>
       
       <test>
-         <mor4-res><xsl:copy-of select="$tan-mor-4-resolved"/></mor4-res>
-         <mor4-exp><xsl:copy-of select="tan:expand-doc($tan-mor-4-resolved, 'terse', true())"/></mor4-exp>
+         <!--<mor4-res><xsl:copy-of select="$tan-mor-4-resolved"/></mor4-res>-->
+         <!--<mor4-exp><xsl:copy-of select="tan:expand-doc($tan-mor-4-resolved, 'terse', true())"/></mor4-exp>-->
          <!--<tan-a-mor-1-resolved><xsl:copy-of select="$tan-a-mor-1-resolved"/></tan-a-mor-1-resolved>-->
          <!--<tan-a-mor-2-resolved><xsl:copy-of select="$tan-a-mor-2-resolved"/></tan-a-mor-2-resolved>-->
          <!--<mor-1-to-mor-2-maps><xsl:copy-of select="tan:map-to-xml($mor-1-to-2-maps)"/></mor-1-to-mor-2-maps>-->
          <!--<mor-1-to-mor-3-maps><xsl:copy-of select="tan:map-to-xml($mor-1-to-3-maps)"/></mor-1-to-mor-3-maps>-->
-         <mor-1-to-mor-4-maps><xsl:copy-of select="tan:map-to-xml($mor-1-to-4-maps)"/></mor-1-to-mor-4-maps>
+         <!--<mor-1-to-mor-4-maps><xsl:copy-of select="tan:map-to-xml($mor-1-to-4-maps)"/></mor-1-to-mor-4-maps>-->
          <!--<mor-2-to-mor-1-maps><xsl:copy-of select="tan:map-to-xml($mor-2-to-1-maps)"/></mor-2-to-mor-1-maps>-->
          <!--<mor-2-to-mor-4-maps><xsl:copy-of select="tan:map-to-xml($mor-2-to-4-maps)"/></mor-2-to-mor-4-maps>-->
          <!--<tan-a-lm-to-mor3><xsl:copy-of select="$tan-a-lm-to-mor3"/></tan-a-lm-to-mor3>-->
-         <tan-a-lm-to-mor4><xsl:copy-of select="$tan-a-lm-to-mor4"/></tan-a-lm-to-mor4>
+         <!--<tan-a-lm-to-mor4><xsl:copy-of select="$tan-a-lm-to-mor4"/></tan-a-lm-to-mor4>-->
          <!--<tan-a-lm-to-mor2-then-mor4><xsl:copy-of select="$tan-a-lm-to-mor2-then-mor4"/></tan-a-lm-to-mor2-then-mor4>-->
          <!--<tan-a-lm-to-mor2><xsl:copy-of select="$tan-a-lm-to-mor2"/></tan-a-lm-to-mor2>-->
          <!--<tan-a-lm-back-to-mor1><xsl:copy-of select="$tan-a-lm-back-to-mor1"/></tan-a-lm-back-to-mor1>-->
@@ -391,9 +392,10 @@
          <!--<html-test><xsl:copy-of select="tan:convert-to-html(/, true())"/></html-test>-->
          <!--<tree-to-seq><xsl:sequence select="$test-tree-seq"/></tree-to-seq>-->
          <!--<seq-to-tree><xsl:copy-of select="$test-tree-restored"/></seq-to-tree>-->
-         <!--<self-resolved><xsl:copy-of select="$tan:self-resolved"/></self-resolved>-->
+         <self-resolved><xsl:copy-of select="$tan:self-resolved"/></self-resolved>
+         <model><xsl:copy-of select="$tan:model-resolved"/></model>
          <!--<sources-resolved count="{count($tan:sources-resolved)}"><xsl:copy-of select="$tan:sources-resolved"/></sources-resolved>-->
-         <!--<self-expanded count="{count($tan:self-expanded)}"><xsl:copy-of select="$tan:self-expanded"/></self-expanded>-->
+         <self-expanded count="{count($tan:self-expanded)}"><xsl:copy-of select="$tan:self-expanded"/></self-expanded>
          
          <!--<model-res><xsl:copy-of select="$tan:model-resolved"/></model-res>-->
          <!--<href><xsl:copy-of select="tan:revise-hrefs(/, 'http://www.w3.org/2001/XMLSchema', 'http://www.w3.org/2001/XMLSchema2')"/></href>-->

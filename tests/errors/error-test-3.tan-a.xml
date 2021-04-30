@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-model href="../../schemas/TAN-A.rnc" type="application/relax-ng-compact-syntax"?>
-<?xml-model href="../../schemas/TAN-A.sch" type="application/xml" phase="verbose" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-model href="../../schemas/TAN.sch" type="application/xml" phase="verbose" schematypens="http://purl.oclc.org/dsdl/schematron"?>
 <!-- this test file primed for verbose validation -->
 <!-- verbose: cat01 cat04 cat07 
     cat03 (because error test 4 has a bogus id in catalog.tan.xml) wrn04
     lnk05 (from catalog)
 -->
-<TAN-A xmlns="tag:textalign.net,2015:ns" id="tag:textalign.net,2015:error-test" TAN-version="2020">
+<TAN-A xmlns="tag:textalign.net,2015:ns" id="tag:textalign.net,2015:error-test" TAN-version="2021">
     <head>
         <name>Error test tan-a</name>
         <!-- tan15 wrn01 -->
