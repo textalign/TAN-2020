@@ -1152,10 +1152,14 @@
                <xsl:choose>
                   <xsl:when
                      test="string-length($exclude-from-count-elements-whose-names-match) gt 0 and matches(name(.), $exclude-from-count-elements-whose-names-match)"
-                  />
+                  >
+                     <xsl:copy-of select="."/>
+                  </xsl:when>
                   <xsl:when
                      test="string-length($exclude-from-count-elements-whose-names-do-not-match) gt 0 and not(matches(name(.), $exclude-from-count-elements-whose-names-do-not-match))"
-                  />
+                  >
+                     <xsl:copy-of select="."/>
+                  </xsl:when>
                   <xsl:otherwise>
                      <xsl:copy>
                         <xsl:copy-of select="@*"/>

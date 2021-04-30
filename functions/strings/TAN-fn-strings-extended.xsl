@@ -254,8 +254,10 @@
    
    <xsl:function name="tan:title-case" as="xs:string*" visibility="public">
       <!-- Input: a sequence of strings -->
-      <!-- Output: each string set in title case, following the conventions of English (one of the only languages that bother with title-case) -->
-      <!-- According to Chicago rules of title casing, the first and last words are always capitalized, and interior words are capitalzied unless they are a preposition or article -->
+      <!-- Output: each string set in title case, following the conventions of English (one of the only 
+         languages that bother with title-case) -->
+      <!-- According to Chicago rules of title casing, the first and last words are always capitalized, 
+         and interior words are capitalized unless they are a preposition or article -->
       <xsl:param name="string-to-convert" as="xs:string*"/>
       <xsl:for-each select="$string-to-convert">
          <xsl:variable name="pass-1" as="element()">

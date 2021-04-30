@@ -1948,24 +1948,27 @@
                </overlaps>
             </xsl:variable>
             
-            <xsl:variable name="overlaps-split-2" as="element()">
+            <!-- Commenting out Apr 2021, pending further investigation when the split needs to be
+               recalibrated. This does not work when the differences between a and b are significant,
+               esp. at the beginning. -->
+            <!--<xsl:variable name="overlaps-split-2" as="element()">
                <xsl:apply-templates select="$overlaps-split-1" mode="tan:split-diff-components-2">
                   <xsl:with-param name="split-models" tunnel="yes" as="element()*"
                      select="$overlaps-split-1/(tan:first | tan:last)"/>
                   <xsl:with-param name="chop-at-regex" tunnel="yes" as="xs:string"
                      select="$chop-regex-adjusted"/>
                </xsl:apply-templates>
-            </xsl:variable>
+            </xsl:variable>-->
             
-            <xsl:variable name="overlaps-to-keep" select="$overlaps-split-2/tan:first/*[text()]" as="element()*"/>
-            <xsl:variable name="overlaps-to-push" select="$overlaps-split-2/tan:last/*[text()]" as="element()*"/>
+            <xsl:variable name="overlaps-to-keep" select="$overlaps-split-1/tan:first/*[text()]" as="element()*"/>
+            <xsl:variable name="overlaps-to-push" select="$overlaps-split-1/tan:last/*[text()]" as="element()*"/>
             
             <!-- new diff remnant -->
             <xsl:variable name="new-diff-remnant" as="element()?">
                <xsl:if test="exists($diff-elements-not-of-interest) or exists($overlaps-to-push)">
                   <diff>
-                     <xsl:sequence select="$overlaps-to-push"/>
-                     <xsl:sequence select="$diff-elements-not-of-interest"/>
+                     <xsl:copy-of select="$overlaps-to-push"/>
+                     <xsl:copy-of select="$diff-elements-not-of-interest"/>
                   </diff>
                </xsl:if>
             </xsl:variable>
@@ -1976,10 +1979,11 @@
                <xsl:message select="'Iteration', position()"/>
                <xsl:message select="'This, next chop points: ', ., $next-chop-point"/>
                <xsl:message select="'Diff remnant:', $diff-remnant"/>
-               <xsl:message select="'Overlaps pass 1:', $overlaps-split-1"/>
-               <xsl:message select="'Overlaps pass 2:', $overlaps-split-2"/>
+               <xsl:message select="'Overlaps split 1:', $overlaps-split-1"/>
+               <!--<xsl:message select="'Overlaps split 2:', $overlaps-split-2"/>-->
                <xsl:message select="'Overlaps to keep:', $overlaps-to-keep"/>
                <xsl:message select="'Overlaps to push:', $overlaps-to-push"/>
+               <xsl:message select="'New diff remnant:', $new-diff-remnant"/>
             </xsl:if>
             
             
@@ -1993,8 +1997,8 @@
                <xsl:when test="exists($diff-elements-of-interest) or exists($overlaps-to-keep)">
                   <xsl:map-entry key=".">
                      <diff>
-                        <xsl:sequence select="$nonoverlapping-diff-elements-of-interest"/>
-                        <xsl:sequence select="$overlaps-to-keep"/>
+                        <xsl:copy-of select="$nonoverlapping-diff-elements-of-interest"/>
+                        <xsl:copy-of select="$overlaps-to-keep"/>
                      </diff>
                   </xsl:map-entry>
                </xsl:when>
@@ -2072,6 +2076,10 @@
       
    </xsl:template>
    
+   
+   <xsl:template match="tan:first | tan:last" mode="tan:split-diff-components-2">
+      <xsl:apply-templates mode="#current"/>
+   </xsl:template>
    
    <xsl:template match="tan:a | tan:b" mode="tan:split-diff-components-2">
       <xsl:param name="split-models" tunnel="yes" as="element()*"/>

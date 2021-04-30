@@ -597,7 +597,7 @@
    </xsl:template>
    
    
-   <xsl:function name="tan:convert-morphological-codes" as="document-node()?">
+   <xsl:function name="tan:convert-morphological-codes" as="document-node()?" visibility="public">
       <!-- Input: a TAN-A-lm file, a sequence of strings, maps that are the result of tan:morphological-code-conversion-maps() -->
       <!-- Output: the TAN-A-lm file, with relevant <m> codes converted. This will be applied only to <m> whose closest
          @morphology is one of the strings from the second parameter, and codes will be converted from the source to the 

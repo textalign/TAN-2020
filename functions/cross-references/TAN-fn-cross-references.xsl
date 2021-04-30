@@ -29,7 +29,8 @@
    
    <xsl:function name="tan:target-element-names" as="xs:string*" visibility="private">
       <!-- Input: any strings, attributes, or elements -->
-      <!-- Output: the names of the elements pointed to, if the name or the value of the input is the name of an element or attribute that takes idrefs -->
+      <!-- Output: the names of the elements pointed to, if the name or the value of the 
+         input is the name of an element or attribute that takes idrefs -->
       <xsl:param name="items" as="item()*"/>
       <xsl:for-each select="$items">
          <xsl:variable name="this-item" select="."/>
