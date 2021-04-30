@@ -12,7 +12,7 @@
    <xsl:template match="tan:TAN-mor/tan:body" mode="tan:dependency-adjustments-pass-1 tan:core-expansion-terse">
 
       <xsl:variable name="this-head" as="element()" select="preceding-sibling::tan:head"/>
-      <xsl:variable name="duplicate-features" as="xs:string*">
+      <!--<xsl:variable name="duplicate-features" as="xs:string*">
          <xsl:for-each-group select="descendant::tan:feature" group-by="tan:vocabulary('feature', ., $this-head)/*/tan:IRI[1]">
             <xsl:if test="count(current-group()) gt 1">
                <xsl:copy-of select="
@@ -21,10 +21,10 @@
                         string($i)"/>
             </xsl:if>
          </xsl:for-each-group> 
-      </xsl:variable>
+      </xsl:variable>-->
       
       <xsl:variable name="these-codes" as="xs:string*" select="
-            for $i in tan:code/text()
+            for $i in tan:code/tan:val/text()
             return
                normalize-space(lower-case($i))"/>
       <xsl:variable name="duplicate-codes" select="tan:duplicate-values($these-codes)"/>
@@ -32,7 +32,7 @@
       <xsl:copy>
          <xsl:copy-of select="@*"/>
          <xsl:apply-templates mode="#current">
-            <xsl:with-param name="duplicate-features" select="$duplicate-features" tunnel="yes"/>
+            <!--<xsl:with-param name="duplicate-features" select="$duplicate-features" tunnel="yes"/>-->
             <xsl:with-param name="duplicate-codes" select="$duplicate-codes" tunnel="yes"/>
          </xsl:apply-templates>
       </xsl:copy>
@@ -40,7 +40,7 @@
    
    <xsl:template match="tan:category" mode="tan:dependency-adjustments-pass-1 tan:core-expansion-terse">
       <xsl:variable name="these-codes" as="xs:string*" select="
-            for $i in tan:code/text()
+            for $i in tan:code/tan:val/text()
             return
                normalize-space(lower-case($i))"/>
       <xsl:variable name="duplicate-codes" select="tan:duplicate-values($these-codes)"/>
@@ -53,7 +53,7 @@
    </xsl:template>
    
    
-   <xsl:template match="tan:category/tan:code | tan:body/tan:code" mode="tan:dependency-adjustments-pass-1 tan:core-expansion-terse">
+   <xsl:template match="tan:category/tan:code/tan:val | tan:body/tan:code/tan:val" mode="tan:dependency-adjustments-pass-1 tan:core-expansion-terse">
       <xsl:param name="duplicate-codes" tunnel="yes"/>
       <xsl:copy>
          <xsl:copy-of select="@*"/>
@@ -64,17 +64,17 @@
       </xsl:copy>
    </xsl:template>
    
-   <xsl:template match="tan:code/text()" mode="tan:dependency-adjustments-pass-1 tan:core-expansion-terse">
+   <xsl:template match="tan:code/tan:val/text()" mode="tan:dependency-adjustments-pass-1 tan:core-expansion-terse">
       <xsl:value-of select="normalize-space(lower-case(.))"/>
    </xsl:template>
 
-   <xsl:template match="tan:feature" mode="tan:dependency-adjustments-pass-1 tan:core-expansion-terse">
+   <!--<xsl:template match="tan:feature" mode="tan:dependency-adjustments-pass-1 tan:core-expansion-terse">
       <xsl:param name="duplicate-features" tunnel="yes"/>
       <xsl:if test=". = $duplicate-features">
          <xsl:copy-of select="tan:error('tmo01', (. || ' is repeated'))"/>
       </xsl:if>
       <xsl:copy-of select="."/>
-   </xsl:template>
+   </xsl:template>-->
    
    <xsl:template match="tan:TAN-mor" mode="tan:mark-dependencies-pass-1 tan:mark-dependencies-pass-2">
       <xsl:copy-of select="."/>

@@ -278,6 +278,7 @@
          <xsl:apply-templates select="$this-div" mode="tan:rebuild-div-chain">
             <xsl:with-param name="divs-to-model" as="element()+" select="$div-chain"/>
             <xsl:with-param name="n-components" as="xs:string+" select="$these-n-vals"/>
+            <xsl:with-param name="ref-alias-errors" tunnel="yes" as="element()*" select="$ref-alias-errors"/>
          </xsl:apply-templates>
       </xsl:for-each-group>
 
@@ -286,8 +287,9 @@
    <xsl:mode name="tan:rebuild-div-chain" on-no-match="shallow-copy"/>
    
    <xsl:template match="*:div" mode="tan:rebuild-div-chain">
-      <xsl:param name="divs-to-model" as="element()+"/>
-      <xsl:param name="n-components" as="xs:string+"/>
+      <xsl:param name="divs-to-model" as="element()*"/>
+      <xsl:param name="n-components" as="xs:string*"/>
+      <xsl:param name="ref-alias-errors" tunnel="yes" as="element()*"/>
 
       <xsl:choose>
          <xsl:when test="count($divs-to-model) gt 1">
@@ -295,8 +297,8 @@
                <xsl:copy-of select="$divs-to-model[1]/@type"/>
                <xsl:attribute name="n" select="$n-components[1]"/>
                <xsl:apply-templates select="." mode="#current">
-                  <xsl:with-param name="divs-to-model" as="element()+" select="tail($divs-to-model)"/>
-                  <xsl:with-param name="n-components" as="xs:string+" select="tail($n-components)"/>
+                  <xsl:with-param name="divs-to-model" as="element()*" select="tail($divs-to-model)"/>
+                  <xsl:with-param name="n-components" as="xs:string*" select="tail($n-components)"/>
                </xsl:apply-templates>
             </xsl:copy>
          </xsl:when>
@@ -305,6 +307,7 @@
                <xsl:copy-of select="@* except @n"/>
                <xsl:attribute name="n" select="$n-components[1]"/>
                <xsl:attribute name="alias-copy" select="true()"/>
+               <xsl:copy-of select="$ref-alias-errors"/>
                <xsl:copy-of select="node()"/>
             </xsl:copy>
          </xsl:otherwise>

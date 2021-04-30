@@ -1027,13 +1027,13 @@
                      <xsl:variable name="this-code-parent" as="element()" select="."/>
 
                      <xsl:map>
-                        <xsl:for-each select="$this-code-parent/tan:code">
-                           <xsl:variable name="this-code" as="element()" select="."/>
-                           <xsl:map-entry key="string(text())">
+                        <xsl:for-each-group select="$this-code-parent/tan:code" group-by="lower-case(string(tan:val/text()))">
+                           <xsl:map-entry key="current-grouping-key()">
                               <xsl:copy-of
-                                 select="tan:vocabulary('feature', @feature, $mor-vocab-head)"/>
+                                 select="tan:vocabulary('feature', current-group()/@feature, $mor-vocab-head)"/>
+                              <xsl:copy-of select="current-group()/tan:desc"/>
                            </xsl:map-entry>
-                        </xsl:for-each>
+                        </xsl:for-each-group>
                      </xsl:map>
 
                   </xsl:for-each>
@@ -1104,39 +1104,49 @@
       <xsl:variable name="this-f" as="xs:string" select="string(.)"/>
       <xsl:variable name="help-requested" select="exists(@help)"/>
       <xsl:variable name="this-pos" select="xs:integer(@n)"/>
-      
-      <xsl:variable name="these-voc-items" select="
+
+      <xsl:variable name="these-voc-and-desc-items" as="element()*" select="
             for $i in $morphology-ids
             return
-               let $j := $morphology-code-map($i)
-               return
-                  if (count($j) gt 1) (: it's a categorized morphology :)
-                  then
-                     $j[$this-pos]($this-f)
+               let $j := $morphology-code-map($i),
+                  $k := count($j), (: if count is greather than one, it's a categorized morphology :)
+                  $m := (if ($k gt 1) then
+                     min(($this-pos, $k))
                   else
-                     $j($this-f)
+                     $k)
+               return
+                  $j[$m]($this-f)
             "/>
       
       <xsl:variable name="diagnostics-on" select="false()"/>
       <xsl:if test="$diagnostics-on">
          <xsl:message select="'diagnostics on for tan-a-lm-expansion-terse'"/>
          <xsl:message select="'this pos: ', $this-pos"/>
-         <xsl:message select="'these voc items: ', $these-voc-items"/>
+         <xsl:message select="'these voc items: ', $these-voc-and-desc-items"/>
       </xsl:if>
       
       <!-- these errors are set as following siblings of the errant element because we need to tether it as a child 
          to an element that was in the original. -->
-      <xsl:if test="not(exists($these-voc-items)) or $help-requested = true()">
+      <xsl:if test="not(exists($these-voc-and-desc-items)) or $help-requested = true()">
          <xsl:variable name="this-message" as="xs:string*">
-            <xsl:value-of select="
-                  (if (not(exists($these-voc-items))) then
-                     ($this-f || ' not found; try: ')
-                  else
-                     ($this-f || ' is valid (= ' || $these-voc-items/tan:name[1] || '); all options: '))
-                     || (for $i in $morphology-ids,
-                        $j in $morphology-code-map($i)[position() = ($this-pos, 1)][1]
-                     return
-                        string-join(($i, map:keys($j)), ', '))"/>
+            <xsl:choose>
+               <xsl:when test="$help-requested eq true() and exists($these-voc-and-desc-items)">
+                  <xsl:value-of select="
+                        $this-f || ': ' || (if (exists($these-voc-and-desc-items/self::tan:desc)) then
+                           string-join($these-voc-and-desc-items/self::tan:desc, '; ')
+                        else
+                           string-join($these-voc-and-desc-items/(tan:name | tan:desc), ', '))"
+                  />
+               </xsl:when>
+               <xsl:otherwise>
+                  <xsl:value-of select="
+                        ($this-f || ' not found; try: ') || (for $i in $morphology-ids,
+                           $j in $morphology-code-map($i)[position() = ($this-pos, 1)][1]
+                        return
+                           string-join(($i, map:keys($j)), ', '))"/>
+                  
+               </xsl:otherwise>
+            </xsl:choose>
          </xsl:variable>
          <xsl:copy-of select="tan:error('tlm03', $this-message)"/>
       </xsl:if>
@@ -1144,7 +1154,7 @@
          <xsl:copy-of select="@*"/>
          <xsl:apply-templates mode="#current"/>
          <xsl:if test="$tan:distribute-vocabulary">
-            <xsl:copy-of select="$these-voc-items/(tan:item | tan:feature)"/>
+            <xsl:copy-of select="$these-voc-and-desc-items/(tan:item | tan:feature)"/>
          </xsl:if>
       </xsl:copy>
    </xsl:template>

@@ -58,7 +58,7 @@
       <xsl:param name="target-phase" as="xs:string"/>
       <xsl:param name="use-validation-mode" as="xs:boolean"/>
 
-      <xsl:variable name="this-doc-id" select="$tan-doc/*/@id" as="xs:string"/>
+      <xsl:variable name="this-doc-id" select="$tan-doc/*/@id" as="xs:string?"/>
       <xsl:variable name="this-class-number" select="tan:class-number($tan-doc)" as="xs:integer"/>
       <xsl:variable name="this-tan-type" select="tan:tan-type($tan-doc)" as="xs:string?"/>
       <xsl:variable name="this-is-class-2" select="$this-class-number eq 2" as="xs:boolean"/>
@@ -638,6 +638,8 @@
                               <xsl:apply-templates select="$class-1-verbose-expansion-pass-2"
                                  mode="tan:class-1-expansion-verbose-pass-3"/>
                            </xsl:variable>
+                           <!--<xsl:sequence select="$class-1-verbose-expansion-pass-1"/>-->
+                           <!--<xsl:sequence select="$class-1-verbose-expansion-pass-2"/>-->
                            <xsl:sequence select="$class-1-verbose-expansion-pass-3"/>
                         </xsl:when>
                         
@@ -1123,12 +1125,15 @@
                   (' ' || name(..))
                else
                   ()))">
-            <xsl:variable name="grouping-keys" select="tokenize(current-grouping-key(), ' ')"/>
-            <xsl:variable name="this-attr-name" select="$grouping-keys[1]"/>
-            <xsl:variable name="this-parent-name" select="$grouping-keys[2]"/>
-            <xsl:variable name="this-is-which" select="$this-attr-name eq 'which'"/>
-            <xsl:variable name="these-target-element-names"
-               select="tan:target-element-names(($this-parent-name, $this-attr-name)[1])"/>
+            <xsl:variable name="grouping-keys" as="xs:string+" select="tokenize(current-grouping-key(), ' ')"/>
+            <xsl:variable name="this-attr-name" as="xs:string" select="$grouping-keys[1]"/>
+            <xsl:variable name="this-parent-name" as="xs:string?" select="$grouping-keys[2]"/>
+            <xsl:variable name="this-is-which" as="xs:boolean" select="$this-attr-name eq 'which'"/>
+            <xsl:variable name="these-target-element-names" select="
+                  if ($this-is-which) then
+                     $this-parent-name
+                  else
+                     tan:target-element-names($this-attr-name)"/>
             
             <!-- Group 2: by inclusion -->
             <xsl:for-each-group select="current-group()"
@@ -1179,9 +1184,9 @@
                            tan:normalize-name(.)
                         else
                            tokenize(normalize-space(.), ' ')">
-                     <xsl:variable name="this-val" select="current-grouping-key()"/>
-                     <xsl:variable name="this-is-joker" select="$this-val = '*'"/>
-                     <xsl:variable name="these-vals"
+                     <xsl:variable name="this-val" as="xs:string" select="current-grouping-key()"/>
+                     <xsl:variable name="this-is-joker" as="xs:boolean" select="$this-val eq '*'"/>
+                     <xsl:variable name="these-vals" as="xs:string*"
                         select="
                            if (not($this-is-which)) then
                               tokenize(normalize-space(.), ' ')
@@ -1194,8 +1199,17 @@
 
                      <xsl:variable name="this-val-without-help-request"
                         select="tan:help-extracted($this-val)"/>
-                     <xsl:variable name="this-val-name-normalized"
-                        select="tan:normalize-name($this-val-without-help-request)"/>
+                     <xsl:variable name="this-val-name-normalized" select="
+                           if ($this-is-which) then
+                              $this-val
+                           else
+                              tan:normalize-name($this-val-without-help-request)"
+                     />
+                     <xsl:variable name="help-requested" as="xs:boolean" select="
+                           if ($this-is-which) then
+                              (matches(., $tan:help-trigger-regex))
+                           else
+                              exists($this-val-without-help-request/@help)"/>
                      
 
                      <xsl:variable name="this-vocabulary"
@@ -1230,7 +1244,9 @@
 
                      <xsl:variable name="diagnostics-on" select="false()"/>
                      <xsl:if test="$diagnostics-on">
+                        <xsl:message select="'this parent name: ' || $this-parent-name"/>
                         <xsl:message select="'val (without help request): ' || $this-val-without-help-request"/>
+                        <xsl:message select="'These target element names:', $these-target-element-names"/>
                         <xsl:message select="'Vocabulary nodes (no inclusions)', $these-appropriate-vocabulary-nodes-without-inclusions"/>
                         <xsl:message select="'This vocabulary:', $this-vocabulary"/>
                      </xsl:if>
@@ -1258,7 +1274,7 @@
                            <xsl:copy-of select="$this-vocabulary/self::tan:error"/>
                            
                            <xsl:if
-                              test="exists($this-val-without-help-request/@help) or $item-is-erroneous">
+                              test="$help-requested or $item-is-erroneous">
                               <xsl:variable name="local-fixes" as="element()*">
                                  <xsl:for-each select="$all-locally-permissible-vocabulary-items/*[*]">
                                     <xsl:sort select="matches(string(.), $this-val-esc, 'i')"/>
@@ -1291,7 +1307,7 @@
                                  </xsl:for-each>
                               </xsl:variable>
                               <xsl:variable name="this-message" select="
-                                    (if (exists($this-val-without-help-request/@help)) then
+                                    (if ($help-requested) then
                                        'help requested; try: '
                                     else
                                        ($this-val || ' not found; try (locally): ')) || string-join(distinct-values($local-fixes/@*), '; ') ||
@@ -1302,10 +1318,18 @@
                                        ())
                                     "/>
                               <xsl:choose>
-                                 <xsl:when test="exists($this-val-without-help-request/@help)">
+                                 <xsl:when test="$help-requested">
                                     <xsl:copy-of
                                        select="tan:help($this-message, tan:distinct-items(($local-fixes, $standard-fixes)), 'copy-attributes')"
                                     />
+                                    <xsl:if test="$this-is-which">
+                                       <xsl:for-each select="$this-item-vocabulary">
+                                          <xsl:variable name="this-iri-name-pattern" as="element()*">
+                                             <xsl:copy-of select="tan:IRI, tan:name[not(@norm)], tan:desc, tan:location"/>
+                                          </xsl:variable>
+                                          <xsl:copy-of select="tan:help((), $this-iri-name-pattern, 'expand-which')"/>
+                                       </xsl:for-each>
+                                    </xsl:if>
                                  </xsl:when>
                                  <xsl:when test="$this-is-which">
                                     <xsl:copy-of select="tan:error('whi01', $this-message, tan:distinct-items(($local-fixes, $standard-fixes)), 'copy-attributes')"/>
@@ -1512,6 +1536,7 @@
          </xsl:variable>
          <xsl:copy-of select="tan:error('tan21', string-join($message-parts, '; '))"/>
       </xsl:if>
+      
       <xsl:for-each select="$these-insertions">
          <xsl:copy>
             <xsl:copy-of select="@*"/>

@@ -211,6 +211,7 @@
                   <element n="{tan:n[last()]}"/>
                </xsl:for-each>
             </xsl:variable>
+            
             <xsl:if test="$diagnostics-on">
                <xsl:message select="'unused siblings in the model: ', $unmatched-model-non-leaf-siblings-in-model"/>
             </xsl:if>
@@ -227,16 +228,22 @@
                select="tan:string-to-numerals($opening-text, true(), true(), ())"/>
             <xsl:variable name="opening-text-replacement"
                select="string-join($opening-text-analyzed/text(), '')"/>
-            <xsl:if test="($opening-text-analyzed/self::tan:tok)[1] = tan:n">
-               <xsl:copy-of
-                  select="tan:error('cl115', 'opening seems to duplicate @n ', concat($opening-text-replacement, substring($this-text, $go-up-to + 1)), 'replace-text')"
-               />
-            </xsl:if>
+
             <xsl:if test="$diagnostics-on">
                <xsl:message select="'opening text: ', $opening-text"/>
                <xsl:message select="'opening text analyzed: ', $opening-text-analyzed"/>
                <xsl:message select="'opening text as numerals: ', $opening-text-as-numerals"/>
                <xsl:message select="'opening text replacement: ', $opening-text-replacement"/>
+               <xsl:message select="'first ota tok:', ($opening-text-analyzed/self::tan:tok)[1]"/>
+               
+                  
+               
+            </xsl:if>
+            <xsl:if test="($opening-text-analyzed/self::tan:tok)[1] = tan:n">
+               <xsl:copy-of
+                  select="tan:error('cl115', 'opening seems to duplicate @n ', 
+                  $opening-text-replacement || substring($this-text, $go-up-to + 1), 'replace-text')"
+               />
             </xsl:if>
             <xsl:for-each select="tan:ref[tan:n]">
                <xsl:variable name="n-qty" select="count(tan:n)"/>
