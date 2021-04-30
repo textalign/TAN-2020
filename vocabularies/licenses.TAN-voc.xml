@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-model href="../schemas/TAN-voc.rnc" type="application/relax-ng-compact-syntax"?>
 <?xml-model href="../schemas/TAN-voc.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
-<TAN-voc xmlns="tag:textalign.net,2015:ns" TAN-version="2020" id="tag:textalign.net,2015:tan-voc:rights">
+<TAN-voc xmlns="tag:textalign.net,2015:ns" TAN-version="2021" id="tag:textalign.net,2015:tan-voc:rights">
    <head>
       <name>TAN keywords for types of rights</name>
       <desc>This file depends largely upon the vocabulary of Creative Commons</desc>

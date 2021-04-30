@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-model href="../schemas/TAN-voc.rnc" type="application/relax-ng-compact-syntax"?>
 <?xml-model href="../schemas/TAN-voc.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
-<TAN-voc xmlns="tag:textalign.net,2015:ns" TAN-version="2020" id="tag:textalign.net,2015:tan-voc:vocabularies">
+<TAN-voc xmlns="tag:textalign.net,2015:ns" TAN-version="2021" id="tag:textalign.net,2015:tan-voc:vocabularies">
     <head>
         <name>TAN vocabulary items for extra vocabularies</name>
         <master-location href="http://textalign.net/release/TAN-2020/vocabularies/vocabularies.TAN-voc.xml"/>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-model href="../schemas/TAN-voc.rnc" type="application/relax-ng-compact-syntax"?>
 <?xml-model href="../schemas/TAN-voc.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
-<TAN-voc xmlns="tag:textalign.net,2015:ns" TAN-version="2020" id="tag:textalign.net,2015:tan-voc:features">
+<TAN-voc xmlns="tag:textalign.net,2015:ns" TAN-version="2021" id="tag:textalign.net,2015:tan-voc:features">
     <head>
         <name>TAN keywords for features</name>
         <desc>This file contains in TAN-voc format the core vocabulary adopted by OLiA for parts of

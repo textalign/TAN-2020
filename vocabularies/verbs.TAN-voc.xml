@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-model href="../schemas/TAN-voc.rnc" type="application/relax-ng-compact-syntax"?>
 <?xml-model href="../schemas/TAN-voc.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
-<TAN-voc xmlns="tag:textalign.net,2015:ns" TAN-version="2020"
+<TAN-voc xmlns="tag:textalign.net,2015:ns" TAN-version="2021"
     id="tag:textalign.net,2015:tan-voc:verbs">
     <head>
         <name>TAN keywords for verbs</name>
@@ -24,6 +24,18 @@
     <body affects-element="verb">
         <comment when="2019-09-02" who="kalvesmaki">Unless otherwise specified, all verbs are assumed to be asymmetrical and
             intransitive, and to make no implications about the chronological priority of the subject relative to the object.</comment>
+        <!-- general authorship -->
+        <item>
+            <IRI>http://rdaregistry.info/Elements/u/P60663</IRI>
+            <IRI>tag:textalign.net,2015:verb:writes</IRI>
+            <name>is author of</name>
+            <name>writes</name>
+            <name>wrote</name>
+            <constraints>
+                <subject status="required" item-type="person"/>
+                <object status="required" item-type="work version"/>
+            </constraints>
+        </item>
         <!-- apparatus criticus -->
         <group type="textual_subject">
             <comment when="2019-08-30" who="kalvesmaki">Verbs in this group are meant to represent

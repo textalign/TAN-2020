@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-model href="../schemas/TAN-voc.rnc" type="application/relax-ng-compact-syntax"?>
 <?xml-model href="../schemas/TAN-voc.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
-<TAN-voc xmlns="tag:textalign.net,2015:ns" TAN-version="2020" id="tag:textalign.net,2015:tan-voc:tokenizations">
+<TAN-voc xmlns="tag:textalign.net,2015:ns" TAN-version="2021" id="tag:textalign.net,2015:tan-voc:tokenizations">
     <head>
         <name>TAN keywords for types of token definitions</name>
         <desc>Definitive list of key terms used to name standard token definitions.</desc>
