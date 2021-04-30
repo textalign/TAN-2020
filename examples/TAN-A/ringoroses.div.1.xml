@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--<?xml-model href="../../schemas/TAN-A.rnc" type="application/relax-ng-compact-syntax"?>
-<?xml-model href="../../schemas/TAN-A.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>-->
-<!--<?xml-model href="http://textalign.net/release/TAN-2020/schemas/TAN-A.rnc" type="application/relax-ng-compact-syntax"?>
-<?xml-model href="http://textalign.net/release/TAN-2020/schemas/TAN-A.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>-->
-<TAN-A xmlns="tag:textalign.net,2015:ns" TAN-version="2020" id="tag:parkj@textalign.net,2015:ring01-TAN-A-ring02">
+<?xml-model href="../../schemas/TAN-A.rnc" type="application/relax-ng-compact-syntax"?>
+<?xml-model href="../../schemas/TAN.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<TAN-A xmlns="tag:textalign.net,2015:ns" TAN-version="2021" id="tag:parkj@textalign.net,2015:ring01-TAN-A-ring02">
     <head>
         <name>div-based alignment of multiple versions of Ring o Roses</name>
         <master-location href="http://textalign.net/release/TAN-2020/examples/TAN-A/ringoroses.div.1.xml"/>
@@ -88,5 +86,6 @@
         <claim verb="lacks_text" subject="böhme">
             <at-ref src="eng-uk" ref="1"/>
         </claim>
+        <claim subject="ger" verb="translates" object="eng-uk" in-lang="deu"/>
     </body>
 </TAN-A>

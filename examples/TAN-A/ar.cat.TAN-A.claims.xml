@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-model href="../../schemas/TAN-A.rnc" type="application/relax-ng-compact-syntax"?>
-<?xml-model href="../../schemas/TAN-A.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
-<!--<?xml-model href="http://textalign.net/release/TAN-2020/schemas/TAN-A.rnc" type="application/relax-ng-compact-syntax"?>
-<?xml-model href="http://textalign.net/release/TAN-2020/schemas/TAN-A.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>-->
-<TAN-A xmlns="tag:textalign.net,2015:ns" TAN-version="2020" id="tag:parkj@textalign.net,2015:ar.cat.tan-a:claims">
+<?xml-model href="../../schemas/TAN.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<TAN-A xmlns="tag:textalign.net,2015:ns" TAN-version="2021" id="tag:parkj@textalign.net,2015:ar.cat.tan-a:claims">
     <head>
         <name>Comments and claims on Aristotle's Categories</name>
         <master-location href="http://textalign.net/release/TAN-2020/examples/TAN-A/ar.cat.tan-a.claims.xml"/>
@@ -37,6 +35,9 @@
                 <name>Stylesheet to create a TAN file.</name>
                 <location href="../../applications/convert/convert%20TAN%202018%20to%20TAN%202020.xsl" accessed-when="2018-08-05T01:05:10.039-04:00"/>
             </algorithm>
+            
+            <work xml:id="cat" which="Aristotle, Categories"/>
+            
             <person xml:id="andronicus">
                 <IRI>https://inpho.cogs.indiana.edu/thinker/2532</IRI>
                 <IRI>http://dbpedia.org/resource/Andronicus_of_Rhodes</IRI>
@@ -86,29 +87,29 @@
                 <IRI>http://syriaca.org/work/122</IRI>
                 <name>George, Bishop of the Arabs</name>
             </person>
-            <work xml:id="Δ">
+            <version xml:id="Δ">
                 <IRI>tag:textalign.net,2015:work:aristotle:categories:translation:armenian</IRI>
                 <name>Anonymous Armenian translation</name>
                 <desc>5th-c. translation once ascribed to a translator named David.</desc>
-            </work>
-            <work xml:id="Λ">
+            </version>
+            <version xml:id="Λ">
                 <IRI>tag:textalign.net,2015:work:aristotle:categories:translation:latin</IRI>
                 <name>Latin translation of Aristotle's Categories by Anicius Manlius Severinus
                     Boëthius</name>
-            </work>
-            <work xml:id="Ρ">
+            </version>
+            <version xml:id="Ρ">
                 <IRI>tag:textalign.net,2015:work:aristotle:categories:translation:syriac:sergius</IRI>
                 <name>Syriac translation of Aristotle's Categories by Sergius of Reshaina</name>
-            </work>
-            <work xml:id="Ι">
+            </version>
+            <version xml:id="Ι">
                 <IRI>tag:textalign.net,2015:work:aristotle:categories:translation:syriac:jacob</IRI>
                 <name>Syriac translation of Aristotle's Categories by Jacob of Edessa</name>
-            </work>
-            <work xml:id="Γ">
+            </version>
+            <version xml:id="Γ">
                 <IRI>tag:textalign.net,2015:work:aristotle:categories:translation:syriac:george</IRI>
                 <name>Syriac translation of Aristotle's Categories by George, Bishop of the
                     Arabs</name>
-            </work>
+            </version>
             <scriptum xml:id="n">
                 <IRI>tag:parkj@textalign.net,2015:scriptum:ita:milan:ambrosianus:L-93</IRI>
                 <name>Ambrosianus L 93</name>
@@ -165,6 +166,23 @@
                 </constraints>
             </verb>
             
+            <verb xml:id="has-length">
+                <IRI>tag:parkj@textalign.net,2015:verb:scriptum-has-length</IRI>
+                <name>has length</name>
+                <desc>This verb is used to describe the how many pages or folios a scriptum
+                    is.</desc>
+                <constraints>
+                    <subject status="required" item-type="scriptum"/>
+                    <object status="required" content-datatype="integer"
+                        content-lexical-constraint="\d+"/>
+                </constraints>
+            </verb>
+            
+            <unit xml:id="folio">
+                <IRI>http://dbpedia.org/resource/Folio</IRI>
+                <name>folio</name>
+            </unit>
+            
             <modal which="possibly" xml:id="perhaps"/>
             <person xml:id="park">
                 <IRI>tag:parkj@textalign.net,2015:self</IRI>
@@ -187,6 +205,10 @@
                     to ninth, depending upon the context. Late antiquity tends to be later than you
                     think.</desc>
             </period>
+            <place xml:id="pavia">
+                <IRI>http://dbpedia.org/resource/Pavia</IRI>
+                <name>Pavia</name>
+            </place>
         </vocabulary-key>
         <file-resp who="park"/>
         <resp who="xslt1" roles="stylesheet"/>
@@ -211,14 +233,14 @@
             of these texts shows that Porphyry claimed not that Andronicus and Boethus omitted the
             text, or relied on sources that had omitted it, but that they observed that there were
             manuscripts that had done so.</comment>
-        <claim subject="andronicus boethus" adverb="perhaps" verb="om" xml:id="cl1a2a">
+        <claim subject="andronicus boethus" adverb="perhaps" verb="om" xml:id="cl1a2a" claim-when="2017-03-10" claimant="park">
             <at-ref src="grc" ref="1 a 2">
                 <tok pos="3-4"/>
             </at-ref>
         </claim>
         <claim subject="δ π" verb="shows" object="cl1a2a"/>
         
-        <claim subject="comm-omnes" verb="attests">
+        <claim subject="comm-omnes" verb="attests" period="late_antiquity">
             <object src="grc" ref="1 a 2">
                 <tok pos="3-4"/>
             </object>
@@ -255,10 +277,16 @@
             </object>
         </claim>
         
-        <!-- example of a general claims -->
+        <!-- examples of a general claims -->
         <claim verb="refers-to">
             <subject src="grc" ref="1 b 25"/>
             <object work="grc" ref="1 a 16"/>
+        </claim>
+        <claim subject="boethius" verb="wrote" object="Λ" where="Pavia"/>
+        
+        <!-- example of scriptum claim -->
+        <claim subject="n" verb="has_length">
+            <object units="folio">160</object>
         </claim>
     </body>
 </TAN-A>

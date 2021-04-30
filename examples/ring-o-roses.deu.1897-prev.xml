@@ -27,11 +27,11 @@
             allen Landen deutscher Zunge, gesammelt, geordnet und mit Angabe der Quellen. Leipzig,
             1897.</name>
       </source>
-      <predecessor>
+      <successor>
          <IRI>tag:hans@beispiel.com,2014:ringel</IRI>
          <name>TAN Transkription, Ringelreihen mit Riederfallen</name>
-         <location accessed-when="2021-04-29T11:46:36.281-04:00" href="ring-o-roses.deu.1897-prev.xml"/>
-      </predecessor>
+         <location accessed-when="2021-04-29T11:46:04.656-04:00" href="ring-o-roses.deu.1897.xml"/>
+      </successor>
       
       <adjustments>
          <normalization>
@@ -73,6 +73,9 @@
          <div n="a" type="Zeile">Ringel, Ringel, Reihe!</div>
          <div n="b" type="Zeile">Sind der Kinder dreie,</div>
          <div n="c" type="Zeile">Sitzen auf dem Holderbuch,</div>
-         <div n="e" type="Zeile">Schreien alle: husch, husch, husch!</div></div>
+         <div n="d" type="Zeile">Schreien alle: husch, husch, husch!</div></div>
    </body>
+   <tail>
+      <!-- müssen überarbeitet werden -->
+   </tail>
 </TAN-T>

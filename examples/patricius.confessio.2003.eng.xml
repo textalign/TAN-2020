@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-model href="../schemas/TAN-TEI.rnc" type="application/relax-ng-compact-syntax"?>
-<?xml-model href="../schemas/TAN-TEI.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
-<!--<?xml-model href="http://textalign.net/release/TAN-2020/schemas/TAN-TEI.rnc" type="application/relax-ng-compact-syntax"?>
-<?xml-model href="http://textalign.net/release/TAN-2020/schemas/TAN-TEI.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>-->
-<TEI xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:tan="tag:textalign.net,2015:ns" xmlns:math="http://www.w3.org/1998/Math/MathML" xmlns="http://www.tei-c.org/ns/1.0" TAN-version="2020" id="tag:parkj@textalign.net,2015:patricius.confession.2003.eng">
+<?xml-model href="../schemas/TAN.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<TEI xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" 
+   xmlns:tan="tag:textalign.net,2015:ns" xmlns:math="http://www.w3.org/1998/Math/MathML" 
+   xmlns="http://www.tei-c.org/ns/1.0" TAN-version="2021" 
+   id="tag:parkj@textalign.net,2015:patricius.confession.2003.eng">
    <teiHeader>
       <fileDesc>
          <titleStmt>

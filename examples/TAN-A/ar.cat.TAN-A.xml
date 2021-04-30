@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-model href="../../schemas/TAN-A.rnc" type="application/relax-ng-compact-syntax"?>
-<?xml-model href="../../schemas/TAN-A.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
-<!--<?xml-model href="http://textalign.net/release/TAN-2020/schemas/TAN-A.rnc" type="application/relax-ng-compact-syntax"?>
-<?xml-model href="http://textalign.net/release/TAN-2020/schemas/TAN-A.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>-->
-<TAN-A xmlns="tag:textalign.net,2015:ns" TAN-version="2020" id="tag:parkj@textalign.net,2015:ar.cat.tan-a">
+<?xml-model href="../../schemas/TAN.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<TAN-A xmlns="tag:textalign.net,2015:ns" TAN-version="2021" id="tag:parkj@textalign.net,2015:ar.cat.tan-a">
     <head>
         <name>Alignment of Aristotle's Categories</name>
         <master-location href="http://textalign.net/release/TAN-2020/examples/TAN-A/ar.cat.tan-a.xml"/>
@@ -15,6 +13,7 @@
                 the source. </desc>
         </license>
         <numerals priority="letters"/>
+        <token-definition src="fra" pattern="\S+"/>
         <source xml:id="grc">
             <IRI>tag:kalvesmaki.com,2014:tan-t:ar.cat.grc.1949.minio-paluello:semantic-refs</IRI>
             <name>Categories, Aristotle, Greek text by Minio-Paluello</name>
@@ -30,9 +29,24 @@
             <name>Categories, Aristotle, English translation by E. M. Edghill</name>
             <location href="../ar.cat.eng.1926.edghill.ref-logical.xml" accessed-when="2016-07-08T15:18:25.573-04:00"/>
         </source>
+        <companion-version>
+            <IRI>tag:parkj@textalign.net,2015:ar.cat.tan-a:claims</IRI>
+            <name>Comments and claims on Aristotle's Categories</name>
+            <location accessed-when="2021-04-29T11:41:57.716-04:00" href="ar.cat.TAN-A.claims.xml"/>
+        </companion-version>
+        
         <adjustments src="fra">
+            <skip div-type="summ" shallow="false"/>
             <equate n="ti title"/>
+            <reassign>
+                <passage ref="5 4 7 2">
+                    <from-tok val=":" pos="1"/>
+                    <through-tok val=":" pos="1"/>
+                </passage>
+                <to ref="5 4 7 1"/>
+            </reassign>
         </adjustments>
+        
         <vocabulary-key>
             <algorithm xml:id="xslt2">
                 <IRI>tag:textalign.net,2015:stylesheet:convert-tan2018-to-tan2020</IRI>

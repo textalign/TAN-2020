@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-model href="../schemas/TAN-T.rnc" type="application/relax-ng-compact-syntax"?>
-<?xml-model href="../schemas/TAN-T.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
-<!--<?xml-model href="http://textalign.net/release/TAN-2020/schemas/TAN-T.rnc" type="application/relax-ng-compact-syntax"?>
-<?xml-model href="http://textalign.net/release/TAN-2020/schemas/TAN-T.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>-->
-<TAN-T xmlns="tag:textalign.net,2015:ns" TAN-version="2020" id="tag:parkj@textalign.net,2015:ring02">
+<?xml-model href="../schemas/TAN.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<TAN-T xmlns="tag:textalign.net,2015:ns" TAN-version="2021" id="tag:parkj@textalign.net,2015:ring02">
    <head>
       <name>TAN transcription of Ring around the Rosie</name>
       <master-location href="http://textalign.net/release/TAN-2020/examples/ring-o-roses.eng.1987.xml"/>
@@ -36,7 +34,7 @@
          <IRI>tag:parkj@textalign.net,2015:ring04</IRI>
          <name>TAN transcription of 1790 version of Ring around the Rosie reported by Newell in
             1883</name>
-         <location href="ring-o-roses.eng.1957.xml" accessed-when="2017-11-21T08:28:27.168-05:00"/>
+         <location accessed-when="2021-04-27-04:00" href="ring-o-roses.eng.1951.xml"/>
       </model>
       <adjustments>
          <normalization which="no hyphens"/>

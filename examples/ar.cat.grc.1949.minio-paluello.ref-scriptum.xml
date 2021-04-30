@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-model href="../schemas/TAN-T.rnc" type="application/relax-ng-compact-syntax"?>
-<?xml-model href="../schemas/TAN-T.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
-<!--<?xml-model href="http://textalign.net/release/TAN-2020/schemas/TAN-T.rnc" type="application/relax-ng-compact-syntax"?>
-<?xml-model href="http://textalign.net/release/TAN-2020/schemas/TAN-T.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>-->
-<TAN-T xmlns="tag:textalign.net,2015:ns" id="tag:kalvesmaki.com,2014:tan-t:ar.cat.grc.1949.minio-paluello:object-refs" TAN-version="2020">
+<?xml-model href="../schemas/TAN.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<TAN-T xmlns="tag:textalign.net,2015:ns" id="tag:kalvesmaki.com,2014:tan-t:ar.cat.grc.1949.minio-paluello:object-refs" TAN-version="2021">
     <head>
         <name>Categories, Aristotle, Greek text edited in 1949 by Minio-Paluello, native scriptum-based reference system</name>
         <master-location href="https://raw.githubusercontent.com/textalign/TAN-2020/master/examples/ar.cat.grc.1949.minio-paluello.ref-scriptum.xml"/>
@@ -19,7 +17,7 @@
             <IRI>tag:textalign.net,2015:work:aristotle:categories</IRI>
             <name>Aristotle, Categories</name>
         </work>
-        <reference-system type="material" wf-ready="true"/>
+        <reference-system type="material" wf-ready="true" scriptum="bekker"/>
         <source>
             <IRI>http://lccn.loc.gov/50036648</IRI>
             <name>L. Minio-Paluello, Aristotelis categoriae et liber de interpretatione. Oxford,
@@ -31,6 +29,12 @@
                 references</name>
             <location href="ar.cat.grc.1949.minio-paluello.ref-logical.xml" accessed-when="2015-09-11-04:00"/>
         </redivision>
+        <annotation>
+            <IRI>tag:parkj@textalign.net,2015:ar.cat.tan-a:claims</IRI>
+            <name>Comments and claims on Aristotle's Categories</name>
+            <location accessed-when="2021-04-29T11:29:58.992-04:00" href="TAN-A/ar.cat.TAN-A.claims.xml"/>
+        </annotation>
+        
         <adjustments>
             <normalization>
                 <IRI>tag:textalign.net,2015:normalization:hyphens-discretionary-removed</IRI>

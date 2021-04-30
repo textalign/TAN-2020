@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-model href="../../TAN-2020/schemas/TAN-T.rnc" type="application/relax-ng-compact-syntax"?>
-<?xml-model href="../../TAN-2020/schemas/TAN-T.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
-<TAN-T xmlns="tag:textalign.net,2015:ns" TAN-version="2020" id="tag:parkj@textalign.net,2015:bible:matthew:sermon-on-the-mount">
+<?xml-model href="../schemas/TAN-T.rnc" type="application/relax-ng-compact-syntax"?>
+<?xml-model href="../schemas/TAN.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<TAN-T xmlns="tag:textalign.net,2015:ns" TAN-version="2021" id="tag:parkj@textalign.net,2015:bible:matthew:sermon-on-the-mount">
    <head>
       <name>Sermon on the Mount, King James Version of the Bible, 1760 edition</name>
       <master-location href="https://raw.githubusercontent.com/textalign/TAN-2020/master/examples/sermon-on-the-mount.eng.kjv.1760.xml"/>
@@ -20,7 +20,6 @@
       <source which="kjv 1760"/>
       <inclusion xml:id="lords-prayer">
          <IRI>tag:parkj@textalign.net,2015:bible:matthew:lords-prayer</IRI>
-         <!--<IRI>tag:parkj@textalign.net,2015:bible:matthew</IRI>-->
          <name>Matthew's version of the Lord's Prayer, King James Version of the Bible, 1760
             edition</name>
          <location accessed-when="2019-10-09T02:32:50.973-04:00" href="lords-prayer.eng.kjv.1760.xml"/>

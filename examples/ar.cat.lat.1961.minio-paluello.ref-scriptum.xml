@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-model href="../schemas/TAN-T.rnc" type="application/relax-ng-compact-syntax"?>
-<?xml-model href="../schemas/TAN-T.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
-<!--<?xml-model href="http://textalign.net/release/TAN-2020/schemas/TAN-T.rnc" type="application/relax-ng-compact-syntax"?>
-<?xml-model href="http://textalign.net/release/TAN-2020/schemas/TAN-T.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>-->
-<TAN-T xmlns="tag:textalign.net,2015:ns" id="tag:kalvesmaki.com,2014:tan-t:ar.cat.lat.1961.a.minio-paluello:object-refs" TAN-version="2020">
+<?xml-model href="../schemas/TAN.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<TAN-T xmlns="tag:textalign.net,2015:ns" id="tag:kalvesmaki.com,2014:tan-t:ar.cat.lat.1961.a.minio-paluello:object-refs" TAN-version="2021">
    <head>
       <name>Categories, Aristotle, Latin translation by Boethius, first recension, edited by
          Minio-Paluello</name>
@@ -93,7 +91,9 @@
          schemas.</change>
       <change who="xslt2" when="2018-08-06T15:44:43.225-04:00">Converted from 2018 to 2019
          schemas.</change>
-      <to-do/>
+      <to-do>
+         <comment when="2020-04-25" who="kalvesmaki">Text needs to be proofread</comment>
+      </to-do>
    </head>
     <body xml:lang="lat">
    <div type="p" n="5">
@@ -181,7 +181,7 @@
       <div type="l" n="23">Quare et nomen et ratio praedicabitur de subiecto. Eorum vero</div>
       <div type="l" n="24">quae sunt in subiecto, in pluribus quidem neque nomen de</div>
       <div type="l" n="25">subiecto neque ratio praedicatur, in quibusdam vero nomen</div>
-      <div type="l" n="26">quidem nihil prohibet praedicari, rationem vero impossi bile est ;</div>
+      <div type="l" n="26">quidem nihil prohibet praedicari, rationem vero impossibile est ;</div>
    </div>
    <div type="p" n="8">
       <div type="l" n="1">ut album, cum in subiecto sit corpore, praedicatur de subiecto</div>

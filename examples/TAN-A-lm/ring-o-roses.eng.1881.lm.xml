@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-model href="../../schemas/TAN-A-lm.rnc" type="application/relax-ng-compact-syntax"?>
-<?xml-model href="../../schemas/TAN-A-lm.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
-<TAN-A-lm xmlns="tag:textalign.net,2015:ns" TAN-version="2020" id="tag:parkj@textalign.net,2015:ring01-lm">
+<?xml-model href="../../schemas/TAN.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<TAN-A-lm xmlns="tag:textalign.net,2015:ns" TAN-version="2021" id="tag:parkj@textalign.net,2015:ring01-lm">
     <head>
         <name>Part-of-speech analysis of 1881 version of Ring a Ring o' Roses</name>
         <master-location href="http://textalign.net/release/TAN-2020/examples/TAN-A-lm/ring-o-roses.eng.1881.lm.xml"/>
@@ -56,7 +56,9 @@
     </head>
     <body lexicon="english" morphology="penn" claimant="xslt2">
         <ana>
-            <tok ref="1" pos="1 - last-1"/>
+            <group>
+                <tok ref="1" pos="1 - last-1"/>
+            </group>
             <lm>
                 <l>ring-a-ring-a-rose</l>
                 <m>NNS</m>

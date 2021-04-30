@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-model href="../../TAN-2020/schemas/TAN-T.rnc" type="application/relax-ng-compact-syntax"?>
-<?xml-model href="../../TAN-2020/schemas/TAN-T.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
-<TAN-T xmlns="tag:textalign.net,2015:ns" TAN-version="2020"
+<?xml-model href="../schemas/TAN-T.rnc" type="application/relax-ng-compact-syntax"?>
+<?xml-model href="../schemas/TAN.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<TAN-T xmlns="tag:textalign.net,2015:ns" TAN-version="2021"
    id="tag:parkj@textalign.net,2015:bible:matthew:lords-prayer">
    <head>
       <name>Matthew's version of the Lord's Prayer, King James Version of the Bible, 1760

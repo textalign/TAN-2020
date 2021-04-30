@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-model href="../../schemas/TAN-voc.rnc" type="application/relax-ng-compact-syntax"?>
-<?xml-model href="../../schemas/TAN-voc.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
-<TAN-voc xmlns="tag:textalign.net,2015:ns" TAN-version="2020" id="tag:parkj@textalign.net,2015:TAN-key:ar.cat">
+<?xml-model href="../../schemas/TAN.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<TAN-voc xmlns="tag:textalign.net,2015:ns" TAN-version="2021" id="tag:parkj@textalign.net,2015:TAN-key:ar.cat">
     <head>
         <name>Keywords for Aristotle's Categories</name>
         <master-location href="https://raw.githubusercontent.com/textalign/TAN-2020/master/examples/TAN-voc/ar.cat.TAN-voc.xml"/>
@@ -37,6 +37,11 @@
         <to-do/>
     </head>
     <body affects-element="work">
+        <item>
+            <IRI>http://dbpedia.org/resource/Categories_(Aristotle)</IRI>
+            <name xml:lang="fra">Aristote, Catégories</name>
+            <name xml:lang="eng">Aristotle, Categories</name>
+        </item>
         <item>
             <IRI>tag:parkj@textalign.net,2015:work:porphyry:on-aristotles-categories</IRI>
             <name xml:lang="lat">Commentarium graecum Porphyrii</name>

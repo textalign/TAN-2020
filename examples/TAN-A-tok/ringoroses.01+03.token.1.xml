@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-model href="../../schemas/TAN-A-tok.rnc" type="application/relax-ng-compact-syntax"?>
-<?xml-model href="../../schemas/TAN-A-tok.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
-<!--<?xml-model href="http://textalign.net/release/TAN-2020/schemas/TAN-A-tok.rnc" type="application/relax-ng-compact-syntax"?>
-<?xml-model href="http://textalign.net/release/TAN-2020/schemas/TAN-A-tok.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>-->
-<TAN-A-tok xmlns="tag:textalign.net,2015:ns" TAN-version="2020" id="tag:parkj@textalign.net,2015:TAN-A-tok,ring01+ring03">
+<?xml-model href="../../schemas/TAN.sch" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<TAN-A-tok xmlns="tag:textalign.net,2015:ns" TAN-version="2021" id="tag:parkj@textalign.net,2015:TAN-A-tok,ring01+ring03">
     <head>
         <name>token-based alignment of two versions of Ring o Roses</name>
         <master-location href="http://textalign.net/release/TAN-2020/examples/TAN-A-tok/ringoroses.01+03.token.1.xml"/>
@@ -94,7 +92,7 @@
             <tok src="ger" ref="1" pos="2"/>
         </align>
         <align>
-            <tok src="eng" ref="1" pos="5" cert="0.3"/>
+            <tok src="eng" ref="1" pos="5" cert="0.3" cert2="0.2"/>
             <tok src="ger" ref="1" pos="3" cert="0.3"/>
         </align>
     </body>
