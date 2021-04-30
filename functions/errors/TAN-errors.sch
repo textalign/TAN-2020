@@ -2,14 +2,15 @@
 <sch:schema xmlns:sch="http://purl.oclc.org/dsdl/schematron" xmlns:tan="tag:textalign.net,2015:ns"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform" queryBinding="xslt2"
     xmlns:sqf="http://www.schematron-quickfix.com/validator/process">
-    <xsl:include href="../../functions/incl/TAN-core-functions.xsl"/>
-    <xsl:include href="../../functions/TAN-extra-functions.xsl"/>
+    <xsl:param name="tan:validation-mode-on" as="xs:boolean" select="true()" static="yes"/>    
+    <xsl:param name="tan:include-diagnostics-components" as="xs:boolean" select="true()" static="yes"/>    
+    <xsl:include href="../TAN-function-library.xsl"/>
+
     <!-- This file checks for problems in TAN-errors.xml -->
-    <!--<xsl:param name="validation-phase" select="'terse'"/>-->
+
     <sch:title>Tests on the TAN error registry</sch:title>
     <sch:ns prefix="tan" uri="tag:textalign.net,2015:ns"/>
     <sch:ns uri="http://www.w3.org/1999/XSL/Transform" prefix="xsl"/>
-    <xsl:param name="is-validation" select="true()"/>    
     <sch:phase id="missing-and-strays">
         <sch:active pattern="mark-missing"/>
         <sch:active pattern="mark-strays"/>
@@ -39,6 +40,11 @@
     <!--<sch:phase id="xslt">
         <sch:active pattern="mark-unsupported-error-calls"/>
     </sch:phase>-->
+    
+    <xsl:variable name="error-tests" as="document-node()*"
+        select="collection('../../tests/errors/?select=error-test*.xml')"/>
+    <xsl:variable name="error-markers" select="$error-tests//comment()[matches(., '\w\w\w\d\d')]"/>
+    
     <sch:pattern id="checked-in-terse-template" is-a="identify-phases">
         <sch:param name="mode-name" value="'terse'"/>
     </sch:pattern>
@@ -78,10 +84,10 @@
         </sch:rule>
     </sch:pattern>
     <sch:pattern id="mark-strays">
-        <sch:let name="supported-error-codes" value="$errors//@xml:id"/>
+        <sch:let name="supported-error-codes" value="$tan:errors//@xml:id"/>
         <sch:rule context="/*">
             <sch:let name="error-calls"
-                value="$all-functions//xsl:copy-of/@select[matches(., 'tan:error\(.[a-z]+\d+')]"/>
+                value="$tan:all-functions//xsl:copy-of/@select[matches(., 'tan:error\(.[a-z]+\d+')]"/>
             <sch:let name="error-codes-invocations"
                 value="
                     for $i in $error-calls
