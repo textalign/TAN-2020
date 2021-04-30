@@ -456,7 +456,7 @@
    
    
    
-   <xsl:function name="tan:get-namespace-map" as="map(*)">
+   <xsl:function name="tan:get-namespace-map" as="map(*)" visibility="public">
       <!-- Input: any XML tree fragment -->
       <!-- Output: a map with two entries per namespace, one with the key as the prefix and value
       of the URI, the other with the two items reversed. -->
@@ -506,7 +506,7 @@
    </xsl:template>
    
    
-   <xsl:function name="tan:get-ref" as="xs:string*">
+   <xsl:function name="tan:get-ref" as="xs:string*" visibility="public">
       <!-- Input: any element -->
       <!-- Output: every possible combination of @n values from the self-and-ancestor nodes,
       string-joined by the hierarchy separator. -->
@@ -588,7 +588,7 @@
    </xsl:template>
    
    
-   <xsl:function name="tan:trim-long-tree" as="item()*">
+   <xsl:function name="tan:trim-long-tree" as="item()*" visibility="public">
       <!-- Input: an XML tree, two integers -->
       <!-- Output: the tree, anything beyond the shallow-copy point will be shallow-copied
             and anything beyond the deep skip point will be deep-skipped. Comments will always 

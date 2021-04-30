@@ -65,7 +65,7 @@
    </xsl:function>
    
    
-   <xsl:function name="tan:integer-groups" as="array(xs:integer+)?">
+   <xsl:function name="tan:integer-groups" as="array(xs:integer+)?" visibility="public">
       <!-- Input: any integers -->
       <!-- Output: an array, with each member containing a sequence of integers that are collectively contiguous -->
       <!-- Array members and their contents will be sorted; duplicates will be ignored -->

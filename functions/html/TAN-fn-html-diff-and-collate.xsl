@@ -19,7 +19,7 @@
     -->
 
 
-    <xsl:function name="tan:diff-or-collate-to-html" as="item()*">
+    <xsl:function name="tan:diff-or-collate-to-html" as="item()*" visibility="public">
         <!-- Input: the results of tan:diff() or tan:collate(), ideally when given
         wrapped by <group> along with statistics; perhaps a string; perhaps a tree 
         structure (see below) -->

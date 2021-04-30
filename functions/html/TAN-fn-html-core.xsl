@@ -387,7 +387,7 @@
     </xsl:template>
     
     
-    <xsl:function name="tan:parse-a-hrefs" as="item()*">
+    <xsl:function name="tan:parse-a-hrefs" as="item()*" visibility="public">
         <!-- Input: a string -->
         <!-- Output: a sequence mixing text nodes and elements, with elements
             being HTML <a href=""/> wrappers for URIs.

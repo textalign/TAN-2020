@@ -442,7 +442,7 @@
    </xsl:template>
 
    
-   <xsl:function name="tan:map-to-array" as="array(*)?">
+   <xsl:function name="tan:map-to-array" as="array(*)?" visibility="public">
       <!-- Input: a map; a boolean -->
       <!-- Output: the map as an array, one member of the array per map entry, with the first item in the member
          constituting the key and its second items onward the values. If the boolean is true, then the keys will
@@ -469,7 +469,7 @@
    </xsl:function>
    
 
-   <xsl:function name="tan:map-entries" as="item()*">
+   <xsl:function name="tan:map-entries" as="map(*)*" visibility="public">
       <!-- One-param version of the full one below -->
       <xsl:param name="source-map" as="map(*)*"/>
       <xsl:for-each select="$source-map">
@@ -480,10 +480,9 @@
       </xsl:for-each>
    </xsl:function>
    
-   <xsl:function name="tan:map-entries" as="item()*">
+   <xsl:function name="tan:map-entries" as="map(*)*" visibility="public">
       <!-- Input: a map -->
-      <!-- Output: an array, one member per map entry. The head of each array member is the key, and what 
-         follows is the value of the map entry. -->
+      <!-- Output: one singleton map per map entry. -->
       <!-- This function was written to support templates or functions that use predicates to restrict a
          particular map's entries to only select ones. -->
       <xsl:param name="source-map" as="map(*)*"/>

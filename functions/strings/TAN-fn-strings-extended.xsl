@@ -232,9 +232,10 @@
    
    
    
-   <xsl:function name="tan:normalize-unicode" as="item()*">
+   <xsl:function name="tan:normalize-unicode" as="item()*" visibility="public">
       <!-- Input: any items -->
       <!-- Output: the same items, but with all unicode normalized -->
+      <!-- This is a surrogate to fn:normalize-unicode(), extending functionality to any item -->
       <xsl:param name="input" as="item()*"/>
       <xsl:apply-templates select="$input" mode="tan:normalize-unicode"/>
    </xsl:function>
@@ -243,6 +244,9 @@
    <xsl:mode name="tan:normalize-unicode" on-no-match="shallow-copy"/>
    
    <xsl:template match="text()" mode="tan:normalize-unicode">
+      <xsl:value-of select="normalize-unicode(.)"/>
+   </xsl:template>
+   <xsl:template match=".[. instance of xs:string]" mode="tan:normalize-unicode">
       <xsl:value-of select="normalize-unicode(.)"/>
    </xsl:template>
    

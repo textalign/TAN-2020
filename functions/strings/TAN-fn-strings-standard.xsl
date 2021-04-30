@@ -745,7 +745,7 @@
    
    
    
-   <xsl:function name="tan:substring-before" as="xs:string">
+   <xsl:function name="tan:substring-before" as="xs:string" visibility="public">
       <!-- Input: two strings; a boolean -->
       <!-- Output: if the last parameter is true:
             the substring of the value of $arg1 that precedes in the value of $arg1 the first occurrence of the value $arg2 .
@@ -766,7 +766,7 @@
       </xsl:choose>
    </xsl:function>
 
-   <xsl:function name="tan:substring-after" as="xs:string">
+   <xsl:function name="tan:substring-after" as="xs:string" visibility="public">
       <!-- Input: two strings; a boolean -->
       <!-- Output: if the last parameter is true:
             the substring of the value of $arg1 that follows in the value of $arg1 the first occurrence of the value of $arg2 .

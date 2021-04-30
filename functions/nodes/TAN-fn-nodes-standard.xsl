@@ -1223,7 +1223,7 @@
    
    
    
-   <xsl:function name="tan:add-attributes" as="element()*">
+   <xsl:function name="tan:add-attributes" as="element()*" visibility="public">
       <!-- Input: a sequence of elements; a sequence of attributes -->
       <!-- Output: each element with a copy of the attributes -->
       <!-- This function helps simplify code where one wishes merely to return a copy of an element with perhaps
@@ -1363,7 +1363,7 @@
    
    
    
-   <xsl:function name="tan:strip-outer-indentation" as="item()*">
+   <xsl:function name="tan:strip-outer-indentation" as="item()*" visibility="public">
       <!-- Input: any XML fragment -->
       <!-- Output: the same, but without outer indentation -->
       <xsl:param name="tree-fragment" as="item()*"/>
@@ -1629,7 +1629,7 @@
    
    
    
-   <xsl:function name="tan:chop-tree" as="map(xs:integer, item()*)">
+   <xsl:function name="tan:chop-tree" as="map(xs:integer, item()*)" visibility="public">
       <!-- Input: any XML fragment; a sequence of integers -->
       <!-- Output: a map, with the XML fragment chopped into portions supplied by the integers, interpreted
          as string positions at which to chop the tree. Thus, each map entry has a key of an integer and 

@@ -11,7 +11,7 @@
 
    <!-- TAN Function Library docx functions. -->
    
-   <xsl:function name="tan:docx-to-text" as="xs:string?">
+   <xsl:function name="tan:docx-to-text" as="xs:string?" visibility="public">
       <!-- Input: docx component as document nodes -->
       <!-- Output: the string value of the component -->
       <xsl:param name="docx-component" as="item()*"/>

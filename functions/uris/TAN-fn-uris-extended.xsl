@@ -141,7 +141,7 @@
    </xsl:function>
    
    
-   <xsl:function name="tan:relativize-hrefs" as="item()*">
+   <xsl:function name="tan:relativize-hrefs" as="item()*" visibility="public">
       <!-- Input: any items; a resolved base uri (target) -->
       <!-- Output: the items, with links in standard attributes such as @href changed so as
          to be relative to the target base uri. -->

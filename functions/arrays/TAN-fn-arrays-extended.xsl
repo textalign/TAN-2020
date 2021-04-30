@@ -90,7 +90,7 @@
    </xsl:function>
    
    
-   <xsl:function name="tan:array-to-map" as="map(*)?">
+   <xsl:function name="tan:array-to-map" as="map(*)?" visibility="public">
       <!-- Input: an array; a boolean -->
       <!-- Output: a map; if the boolean is true and the first item in each member of the array
          is uniquely distinct from all other first items then those first items become the key
@@ -150,7 +150,7 @@
    </xsl:template>
    
    
-   <xsl:function name="tan:array-permutations" as="array(*)">
+   <xsl:function name="tan:array-permutations" as="array(*)" visibility="public">
       <!-- Input: any array -->
       <!-- Output: an array whose members are sequences representing the permutations of each item in each member in the 
          input array. -->
