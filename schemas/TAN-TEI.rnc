@@ -9,7 +9,7 @@ namespace teix = "http://www.tei-c.org/ns/Examples"
 namespace xi = "http://www.w3.org/2001/XInclude"
 namespace xlink = "http://www.w3.org/1999/xlink"
 
-# Schema generated from ODD source 2021-04-29T14:21:39Z. .
+# Schema generated from ODD source 2021-05-07T13:00:00Z. .
 # TEI Edition: Version 4.1.0. Last updated on
 #	19th August 2020, revision b414ba550
 # TEI Edition Location: https://www.tei-c.org/Vault/P5/Version 4.1.0/
@@ -401,8 +401,11 @@ div {
       ## If <numerals> is not present, any ambiguous numerical values are assumed to be Roman.
       element numerals {
         
+        ## lists strings that should not be interpreted as numerics; this is most commonly used in rare cases where a string label for @n or @ref might be interpreted as a Roman numeral or a letter numeral
+        attribute exceptions { text }?,
+        
         ## specifies whether roman numerals should have interpretive priority over letter numerals. For example, should "c" be interpreted as 3 or 100? Default is roman.
-        attribute priority { "letters" | "roman" }
+        attribute priority { "letters" | "roman" }?
       }
     element-object-constraint =
       

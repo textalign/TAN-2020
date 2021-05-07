@@ -567,13 +567,20 @@
     <element name="numerals">
       <a:documentation>specifies how nonarabic numerals should be interpreted, as letter numerals or as Roman numerals.</a:documentation>
       <a:documentation>If &lt;numerals&gt; is not present, any ambiguous numerical values are assumed to be Roman.</a:documentation>
-      <attribute name="priority">
-        <a:documentation>specifies whether roman numerals should have interpretive priority over letter numerals. For example, should "c" be interpreted as 3 or 100? Default is roman.</a:documentation>
-        <choice>
-          <value>letters</value>
-          <value>roman</value>
-        </choice>
-      </attribute>
+      <optional>
+        <attribute name="exceptions">
+          <a:documentation>lists strings that should not be interpreted as numerics; this is most commonly used in rare cases where a string label for @n or @ref might be interpreted as a Roman numeral or a letter numeral</a:documentation>
+        </attribute>
+      </optional>
+      <optional>
+        <attribute name="priority">
+          <a:documentation>specifies whether roman numerals should have interpretive priority over letter numerals. For example, should "c" be interpreted as 3 or 100? Default is roman.</a:documentation>
+          <choice>
+            <value>letters</value>
+            <value>roman</value>
+          </choice>
+        </attribute>
+      </optional>
     </element>
   </define>
   <define name="element-object-constraint">
