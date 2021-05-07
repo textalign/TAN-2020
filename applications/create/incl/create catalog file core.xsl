@@ -36,7 +36,10 @@
                 'catalog.xml'"/>
     <xsl:variable name="target-base-relative-uri" select="tan:cfn(/)" as="xs:string"/>
     <xsl:variable name="target-base-resolved-uri" select="resolve-uri($target-base-relative-uri, base-uri(/*))" as="xs:string"/>
-    <xsl:variable name="target-base-directory" select="replace($target-base-resolved-uri, '[^/]+$', '')"/>
+    <!-- We add one more / to the base directory, to trick the processor into thinking that the URI 
+        for a catalog has not been read, even if it has. Without this extra touch, the processor will
+        warn that the file has already been read. -->
+    <xsl:variable name="target-base-directory" select="replace($target-base-resolved-uri, '[^/]+$', '/')"/>
     <xsl:variable name="target-url-resolved" select="resolve-uri($catalog-file-name,$target-base-resolved-uri)"/>
     
     <xsl:variable name="rnc-schema-uri-relative-to-this-stylesheet" as="xs:string"
@@ -64,13 +67,10 @@
     <xsl:variable name="output-pass-1" as="document-node()">
         <xsl:document>
             <xsl:if test="$tan-only">
-                <xsl:text>&#xa;</xsl:text>
                 <xsl:processing-instruction name="xml-model"><xsl:text>href ="</xsl:text><xsl:value-of select="tan:uri-relative-to($rnc-schema-uri-relative-to-this-stylesheet, $target-base-resolved-uri)"/><xsl:text>" type="application/relax-ng-compact-syntax"</xsl:text></xsl:processing-instruction>
-                <xsl:text>&#xa;</xsl:text>
                 <xsl:processing-instruction name="xml-model"><xsl:text>href ="</xsl:text><xsl:value-of select="tan:uri-relative-to($sch-schema-uri-relative-to-this-stylesheet, $target-base-resolved-uri)"/><xsl:text>" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"</xsl:text></xsl:processing-instruction>
             </xsl:if>
-            <xsl:text>&#xa;</xsl:text>
-            <collection stable="true" _target-uri="{$target-base-directory || $catalog-file-name}">
+            <collection stable="true" _target-format="xml-indent" _target-uri="{$target-base-directory || $catalog-file-name}">
                 <xsl:attribute name="metadata-resolved" select="$include-fully-resolved-metadata"/>
                 <xsl:message select="'Creating catalog file by searching for files in this directory: ', $target-base-directory"/>
                 <xsl:message select="'Metadata should be fully resolved? ', $include-fully-resolved-metadata"/>
@@ -78,6 +78,8 @@
                 <xsl:if test="string-length($exclude-filenames-that-match-what-pattern) gt 0">
                     <xsl:message select="'Excluding filenames that match this pattern: ', $exclude-filenames-that-match-what-pattern"/>
                 </xsl:if>
+                <xsl:message select="string(count($discovered-uri-collection)) || ' URIs found'"/>
+
                 <xsl:apply-templates select="$discovered-uri-collection" mode="uri-collection-to-doc"
                 />
             </collection>

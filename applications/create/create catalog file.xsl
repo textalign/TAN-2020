@@ -42,7 +42,7 @@
         that you include /\. because that pattern will ignore hidden files and directories, such as those used
         in Git or other version control managers. -->
     <xsl:param name="exclude-filenames-that-match-what-pattern" as="xs:string?"
-        select="'private-|temp-|/\.'"/>
+        select="'private-|archive|transformations|temp-|/\.'"/>
     
     <!-- Do you wish to index deeply? If true, then the catolog file will look in subdirectories for 
         candidate documents. -->
