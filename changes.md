@@ -18,6 +18,7 @@ Below are listed significant changes that have been made since version 2020. See
 * The inclusions that populate the applications folder are being liquidated. They either go into the official TAN function library, or they are moved to the specific application. 
 * New error tan22
 * Removed `@help`
+* Added `@exceptions` in `numerals`, to prevent specific `@ref` and `@n` values from being interpreted as numerals.
 
 ### Class 1
 
