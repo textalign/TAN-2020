@@ -27,10 +27,14 @@
             <comment who="kalvesmaki" when="2021-03-10">Annotations need a lot of work. They should
                 be placed into the merge early. In fact, the whole workflow needs to be revised,
                 with most structural work done before attempting to convert to HTML.</comment>
-            <comment who="kalvesmaki" when="2020-07-28">Develop output option using nested HTML divs, to parallel the existing output that uses HTML tables</comment>
-            <comment who="kalvesmaki" when="2020-09-23">Integrate diff/collate into cells, on both the global and local level.</comment>
-            <comment who="kalvesmaki" when="2020-09-23">Support in the css bar clicking source id labels on and off.</comment>
-            <comment who="kalvesmaki" when="2020-09-23">Add labels for divs higher than version wrappers.</comment>
+            <comment who="kalvesmaki" when="2020-07-28">Develop output option using nested HTML
+                divs, to parallel the existing output that uses HTML tables</comment>
+            <comment who="kalvesmaki" when="2020-09-23">Integrate diff/collate into cells, on both
+                the global and local level.</comment>
+            <comment who="kalvesmaki" when="2020-09-23">Support in the css bar clicking source id
+                labels on and off.</comment>
+            <comment who="kalvesmaki" when="2020-09-23">Add labels for divs higher than version
+                wrappers.</comment>
         </to-do>
     </xsl:param>
     <xsl:param name="tan:change-message" select="'Converted merged TAN-A sources to HTML'"/>
@@ -1633,7 +1637,19 @@
     
     <!-- End of annotation builder -->
 
-    <!-- Build a version wrapper -->
+
+
+    <!-- Build a version wrapper, adjust HTML content -->
+    
+    <xsl:template match="tan:div" priority="1" mode="tan-to-html-prepass-2-html-tables">
+        <xsl:variable name="context-refs" as="xs:string*" select="tan:ref/text()"/>
+        <xsl:variable name="these-insertions-before" as="element()*" select="$ad-hoc-insertions[@before-ref = $context-refs]"/>
+        <xsl:variable name="these-insertions-after" as="element()*" select="$ad-hoc-insertions[@after-ref = $context-refs]"/>
+        <xsl:copy-of select="$these-insertions-before/node()"/>
+        <xsl:next-match/>
+        <xsl:copy-of select="$these-insertions-after/node()"/>
+    </xsl:template>
+    
     <!-- For table-based comparison of versions, here begins the creation of the table that wraps merge leaves. A merge leaf
         is identified as one that contains at least one #version. Many times what is enclosed will be mostly or all #versions,
         but there may be versions that are further subdivided. Non-leaf merge fragments have to be grouped into the version, 

@@ -252,6 +252,17 @@
       that the element in question will actually be hidden. That is up to the CSS -->
    <xsl:param name="elements-to-be-given-class-hidden-regex" as="xs:string?"/>
    
+   <!-- What special insertions if any should be made into the output HTML? Expected are a series of 
+      elements with attributes @before-ref or @after-ref. Anything inside those elements will be inserted 
+      either before or after a <div> with a matching reference. Ideally, what's inside should be HTML, 
+      but it doesn't have to be. -->
+   <xsl:param name="ad-hoc-insertions" as="element()*">
+      <tan:insertion before-ref="2">
+         <h2>Chapter...</h2>
+      </tan:insertion>
+   </xsl:param>
+   
+   
    <!-- When converting the merge to HTML, the process is a simple, straightforward conversion until reaching
       a place in the merge superstructure where the next level deeper has one or more versions. At that point
       we have a leaf merge, which will certain have leaf divs from one or more versions, but may include some
