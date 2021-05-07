@@ -520,7 +520,7 @@
 
       <xsl:for-each select="tokenize($seq-string-normalized, $primary-tokenization-pattern)">
          <xsl:choose>
-            <xsl:when test="$attribute-name = ('pos', 'chars', 'm-has-how-many-features')">
+            <xsl:when test="$attribute-name = $tan:names-of-attributes-that-permit-keyword-last">
                <!-- These are attributes that allow data picker items or sequences, which have keywords "last" etc. -->
                <xsl:choose>
                   <xsl:when test=". = ('all', '*')">
@@ -562,25 +562,38 @@
       <xsl:param name="name-of-attribute" as="xs:string?"/>
       <xsl:param name="expand-ranges" as="xs:boolean"/>
       <xsl:sequence
-         select="tan:analyze-sequence($sequence-string, $name-of-attribute, $expand-ranges, true())"
+         select="tan:analyze-sequence($sequence-string, $name-of-attribute, $expand-ranges, true(), ())"
       />
    </xsl:function>
    
    <xsl:function name="tan:analyze-sequence" as="element()" visibility="private">
-      <!-- Input: any string representing a sequence; the name of the attribute that held the sequence (default 'ref'); should ranges should be expanded?; are ambiguous numerals roman? -->
-      <!-- Output: <analysis> with an expansion of the sequence placed in children elements that have the name of the second parameter (with @attr); those children have @from or @to if part of a range. -->
-      <!-- If a sequence has a numerical value no numerals other than Arabic should be used. That means @pos and @chars in their original state, but also if @n, then it needs to have been normalized to Arabic numerals before entering this function -->
-      <!-- The exception is @ref, which cannot be accurately converted to Arabic numerals before being studied in the context of a class 1 source -->
-      <!-- This function expands only those @refs that are situated within an <adjustments>, which needs to be calculated before being applied to a class 1 source. -->
-      <!-- If this function is asked to expand ranges within a @ref sequence, it will do so under the strict assumption that all ranges consist of numerically calculable sibling @ns that share the same mother reference. -->
+      <!-- Input: any string representing a sequence; the name of the attribute that held the sequence 
+         (default 'ref'); should ranges should be expanded?; are ambiguous numerals roman?; a sequence
+         of strings that should not be interpreted as numerals -->
+      <!-- Output: <analysis> with an expansion of the sequence placed in children elements that have 
+         the name of the second parameter (with @attr); those children have @from or @to if part of 
+         a range. -->
+      <!-- If a sequence has a numerical value no numerals other than Arabic should be used. That means 
+         @pos and @chars in their original state, but also if @n, then it needs to have been normalized 
+         to Arabic numerals before entering this function -->
+      <!-- The exception is @ref, which cannot be accurately converted to Arabic numerals before being 
+         studied in the context of a class 1 source -->
+      <!-- This function expands only those @refs that are situated within an <adjustments>, which needs 
+         to be calculated before being applied to a class 1 source. -->
+      <!-- If this function is asked to expand ranges within a @ref sequence, it will do so under the 
+         strict assumption that all ranges consist of numerically calculable sibling @ns that share 
+         the same mother reference. -->
       <!-- Matt 1 4-7 is ok. These are not: Matt-Mark, Matt 1:3-Matt 2, Matt 1:3-4:7 -->
-      <!-- If a request for help is detected, the flag will be removed and @help will be inserted in the appropriate child element. -->
-      <!-- If ranges are requested to be expanded, it is expected to apply only to integers, and will not operate on values of 'max' or 'last' -->
+      <!-- If a request for help is detected, the flag will be removed and @help will be inserted in 
+         the appropriate child element. -->
+      <!-- If ranges are requested to be expanded, it is expected to apply only to integers, and will 
+         not operate on values of 'max' or 'last' -->
       <!-- This function normalizes input numerals and strings. -->
       <xsl:param name="sequence-string" as="xs:string?"/>
       <xsl:param name="name-of-attribute" as="xs:string?"/>
       <xsl:param name="expand-ranges" as="xs:boolean"/>
       <xsl:param name="ambig-is-roman" as="xs:boolean?"/>
+      <xsl:param name="numeral-exceptions" as="xs:string*"/>
       <xsl:variable name="attribute-name"
          select="
             if (string-length($name-of-attribute) lt 1) then
@@ -617,7 +630,7 @@
                            <xsl:for-each select="$these-ns">
                               <xsl:variable name="this-val-checked" select="tan:help-extracted(.)"/>
                               <xsl:variable name="this-atom-val" select="$this-val-checked/text()"/>
-                              <xsl:variable name="this-atom-val-norm" select="tan:string-to-numerals(lower-case($this-atom-val), $ambig-is-roman, false(), ())"/>
+                              <xsl:variable name="this-atom-val-norm" select="tan:string-to-numerals(lower-case($this-atom-val), $ambig-is-roman, false(), (), $numeral-exceptions)"/>
                               <n>
                                  <xsl:if test="not($this-atom-val eq $this-atom-val-norm)">
                                     <xsl:attribute name="orig" select="$this-atom-val"/>
@@ -628,7 +641,7 @@
                            </xsl:for-each>
                         </xsl:when>
                         <xsl:otherwise>
-                           <xsl:variable name="this-val-norm" select="tan:string-to-numerals(lower-case($this-val), $ambig-is-roman, false(), ())"/>
+                           <xsl:variable name="this-val-norm" select="tan:string-to-numerals(lower-case($this-val), $ambig-is-roman, false(), (), $numeral-exceptions)"/>
                            <xsl:if test="not($this-val eq $this-val-norm)">
                               <xsl:attribute name="orig" select="$this-val"/>
                            </xsl:if>
@@ -667,6 +680,7 @@
       
       <xsl:apply-templates select="$pass-2" mode="tan:check-and-expand-ranges">
          <xsl:with-param name="ambig-is-roman" select="$ambig-is-roman" tunnel="yes"/>
+         <xsl:with-param name="numeral-exceptions" select="$numeral-exceptions" tunnel="yes"/>
          <xsl:with-param name="expand-ranges" select="$expand-ranges" tunnel="yes"/>
       </xsl:apply-templates>
    </xsl:function>
@@ -714,7 +728,9 @@
    
    <xsl:template match="tan:ref[@from][tan:n]" priority="1" mode="tan:check-and-expand-ranges">
       <xsl:param name="ambig-is-roman" as="xs:boolean" tunnel="yes"/>
+      <xsl:param name="numeral-exceptions" as="xs:string*" tunnel="yes"/>
       <xsl:param name="expand-ranges" tunnel="yes" as="xs:boolean"/>
+      
       <xsl:variable name="this-from" select="."/>
       <xsl:variable name="this-last-n" select="tan:n[last()]"/>
       <xsl:variable name="these-preceding-ns" select="tan:n except $this-last-n"/>
@@ -723,9 +739,9 @@
       <xsl:variable name="these-to-preceding-ns" select="$this-to/(tan:n except $this-to-last-n)"/>
       <xsl:variable name="element-name" select="name(.)"/>
       <xsl:variable name="first-value"
-         select="tan:string-to-numerals(lower-case($this-last-n), $ambig-is-roman, false(), ())"/>
+         select="tan:string-to-numerals(lower-case($this-last-n), $ambig-is-roman, false(), (), $numeral-exceptions)"/>
       <xsl:variable name="last-value"
-         select="tan:string-to-numerals(lower-case($this-to-last-n), $ambig-is-roman, false(), ())"/>
+         select="tan:string-to-numerals(lower-case($this-to-last-n), $ambig-is-roman, false(), (), $numeral-exceptions)"/>
       <xsl:variable name="first-is-arabic" select="$first-value castable as xs:integer"/>
       <xsl:variable name="last-is-arabic" select="$last-value castable as xs:integer"/>
       <xsl:variable name="first-is-compound" select="matches($first-value, '^\d+#\d+$')"/>
@@ -993,13 +1009,11 @@
             <xsl:variable name="this-last-norm" as="xs:string+">
                <xsl:analyze-string select="." regex="last-?(\d*)">
                   <xsl:matching-substring>
-                     <xsl:variable name="number-to-subtract"
-                        select="
-                        if (string-length(regex-group(1)) gt 0) then
-                        number(regex-group(1))
-                        else
-                        0"
-                     />
+                     <xsl:variable name="number-to-subtract" select="
+                           if (string-length(regex-group(1)) gt 0) then
+                              number(regex-group(1))
+                           else
+                              0"/>
                      <xsl:value-of select="string(($max - $number-to-subtract))"/>
                   </xsl:matching-substring>
                   <xsl:non-matching-substring>

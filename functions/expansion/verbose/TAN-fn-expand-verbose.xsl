@@ -223,9 +223,9 @@
             <xsl:variable name="go-up-to" select="20"/>
             <xsl:variable name="opening-text" select="substring($this-text, 1, $go-up-to)"/>
             <xsl:variable name="opening-text-analyzed"
-               select="tan:analyze-numbers-in-string($opening-text, true(), ())"/>
+               select="tan:analyze-numbers-in-string($opening-text, true(), (), ())"/>
             <xsl:variable name="opening-text-as-numerals"
-               select="tan:string-to-numerals($opening-text, true(), true(), ())"/>
+               select="tan:string-to-numerals($opening-text, true(), true(), (), ())"/>
             <xsl:variable name="opening-text-replacement"
                select="string-join($opening-text-analyzed/text(), '')"/>
 

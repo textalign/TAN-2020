@@ -48,7 +48,7 @@
    <xsl:template match="tan:rename/tan:by" mode="tan:core-expansion-terse">
       <xsl:variable name="these-ns" select="../tan:n, ../tan:ref/tan:n[last()]"/>
       <xsl:variable name="these-n-types" select="for $i in $these-ns return 
-         tan:analyze-numbers-in-string($i, true(), ())"/>
+         tan:analyze-numbers-in-string($i, true(), (), ())"/>
       <xsl:if test="exists($these-n-types/@non-number)">
          <xsl:copy-of select="tan:error('cl213')"/>
       </xsl:if>

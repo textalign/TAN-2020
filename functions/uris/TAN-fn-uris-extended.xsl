@@ -200,5 +200,22 @@
                ."/>
    </xsl:template>
    
-
+   <xsl:function name="tan:doc-available" as="xs:boolean" visibility="public">
+      <!-- Input: a string -->
+      <!-- Output: true if an XML document is available at the URI, false otherwise -->
+      <!-- This is a surrogate function to fn:doc-available, and behaves exactly the same, but avoids the possibility
+         of read conflicts, so a file can be overwritten. -->
+      <!-- An alternative to this is to make sure that when writing a secondary result document the last / is doubled;
+         the string will not be recognized as a duplicate of what was read. -->
+      <xsl:param name="uri" as="xs:string?"/>
+      <xsl:variable name="doc-available-transform-map" as="map(*)" select="
+            map {
+               'stylesheet-location': 'TAN-fn-uris-read-incognito.xsl',
+               'initial-function': QName('tag:textalign.net,2015:ns', 'doc-available'),
+               'function-params': array {$uri}
+            }"/>
+      <xsl:variable name="result-map" as="map(*)" select="transform($doc-available-transform-map)"/>
+      <xsl:sequence select="xs:boolean($result-map('output'))"/>
+   </xsl:function>
+   
 </xsl:stylesheet>

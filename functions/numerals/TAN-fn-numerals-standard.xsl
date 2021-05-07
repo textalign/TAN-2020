@@ -93,18 +93,21 @@
    <xsl:function name="tan:string-to-numerals" as="xs:string*" visibility="public">
       <!-- one-parameter version of the function below -->
       <xsl:param name="string-to-analyze" as="xs:string?"/>
-      <xsl:sequence select="tan:string-to-numerals($string-to-analyze, true(), false(), ())"/>
+      <xsl:sequence select="tan:string-to-numerals($string-to-analyze, true(), false(), (), ())"/>
    </xsl:function>
    <xsl:function name="tan:string-to-numerals" as="xs:string*" visibility="public">
-      <!-- Input: a string thought to contain numerals of some type (e.g., Roman); a boolean indicating whether ambiguous letters should be treated as Roman numerals or letter numerals; a boolean indicating whether only numeral matches should be returned -->
+      <!-- Input: a string thought to contain numerals of some type (e.g., Roman); a boolean indicating 
+         whether ambiguous letters should be treated as Roman numerals or letter numerals; a boolean 
+         indicating whether only numeral matches should be returned -->
       <!-- Output: the string with parts that look like numerals converted to Arabic numerals -->
       <!-- Does not take into account requests for help -->
       <xsl:param name="string-to-analyze" as="xs:string?"/>
       <xsl:param name="ambig-is-roman" as="xs:boolean?"/>
       <xsl:param name="return-only-numerals" as="xs:boolean?"/>
       <xsl:param name="n-alias-items" as="element()*"/>
+      <xsl:param name="numeral-exceptions" as="xs:string*"/>
       <xsl:variable name="string-analyzed"
-         select="tan:analyze-numbers-in-string($string-to-analyze, $ambig-is-roman, $n-alias-items)"/>
+         select="tan:analyze-numbers-in-string($string-to-analyze, $ambig-is-roman, $n-alias-items, $numeral-exceptions)"/>
       <xsl:choose>
          <xsl:when test="$return-only-numerals">
             <xsl:sequence select="$string-analyzed/self::tan:tok[@number]"/>
@@ -120,6 +123,7 @@
       <xsl:param name="string-to-analyze" as="xs:string"/>
       <xsl:param name="ambig-is-roman" as="xs:boolean?"/>
       <xsl:param name="n-alias-items" as="element()*"/>
+      <xsl:param name="numeral-exceptions" as="xs:string*"/>
       <xsl:variable name="string-parsed" as="element()*">
          <xsl:analyze-string select="$string-to-analyze" regex="[\w_]+">
             <xsl:matching-substring>
@@ -137,6 +141,7 @@
       <xsl:apply-templates select="$string-parsed" mode="tan:string-to-numerals">
          <xsl:with-param name="ambig-is-roman" select="($ambig-is-roman, true())[1]"/>
          <xsl:with-param name="n-alias-items" select="$n-alias-items"/>
+         <xsl:with-param name="numeral-exceptions" select="$numeral-exceptions"/>
       </xsl:apply-templates>
    </xsl:function>
    
@@ -144,6 +149,7 @@
    
    <xsl:template match="tan:tok" mode="tan:string-to-numerals">
       <xsl:param name="ambig-is-roman" as="xs:boolean" select="true()"/>
+      <xsl:param name="numeral-exceptions" as="xs:string*"/>
       <xsl:param name="n-alias-items" as="element()*"/>
       <xsl:variable name="this-tok" select="."/>
       <xsl:variable name="these-alias-matches" select="$n-alias-items[tan:name = $this-tok]"/>
@@ -152,6 +158,10 @@
             <xsl:when test="exists($these-alias-matches)">
                <xsl:attribute name="non-number"/>
                <xsl:value-of select="replace($these-alias-matches[1]/tan:name[1], '\s', '_')"/>
+            </xsl:when>
+            <xsl:when test=". = $numeral-exceptions">
+               <xsl:attribute name="non-number"/>
+               <xsl:value-of select="."/>
             </xsl:when>
             <xsl:when test=". castable as xs:integer">
                <xsl:attribute name="number" select="$tan:n-type[2]"/>

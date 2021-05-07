@@ -1220,7 +1220,13 @@
    <!-- Resolving, step 5 templates -->
    
    <xsl:template match="/*" priority="1" mode="tan:resolve-numerals">
-      <xsl:variable name="ambig-is-roman" select="not(tan:head/tan:numerals/@priority = 'letters')"/>
+      <xsl:variable name="numerals-element" as="element()?" select="tan:head/tan:numerals"/>
+      <xsl:variable name="ambig-is-roman" as="xs:boolean" select="not($numerals-element/@priority = 'letters')"/>
+      <xsl:variable name="numeral-exceptions" as="xs:string*" select="
+            if (exists($numerals-element/@exceptions)) then
+               tokenize(normalize-space(lower-case($numerals-element/@exceptions)), ' ')
+            else
+               ()"/>
       <xsl:variable name="n-alias-items"
          select="tan:head/tan:vocabulary/tan:item[tan:affects-attribute = 'n']"/>
       <xsl:variable name="n-alias-constraints" select="tan:head/tan:n-alias"/>
@@ -1234,6 +1240,7 @@
          <resolved>numerals</resolved>
          <xsl:apply-templates mode="#current">
             <xsl:with-param name="ambig-is-roman" select="$ambig-is-roman" tunnel="yes"/>
+            <xsl:with-param name="numeral-exceptions" select="$numeral-exceptions" tunnel="yes"/>
             <xsl:with-param name="n-alias-items" select="$n-alias-items" tunnel="yes"/>
             <xsl:with-param name="n-alias-div-type-constraints"
                select="$n-alias-div-type-constraints" tunnel="yes"/>
@@ -1247,6 +1254,7 @@
    
    <xsl:template match="*:div[@n]" mode="tan:resolve-numerals">
       <xsl:param name="ambig-is-roman" as="xs:boolean?" tunnel="yes" select="true()"/>
+      <xsl:param name="numeral-exceptions" as="xs:string*" tunnel="yes"/>
       <xsl:param name="n-alias-items" as="element()*" tunnel="yes"/>
       <xsl:param name="n-alias-div-type-constraints" as="xs:string*" tunnel="yes"/>
       
@@ -1264,14 +1272,14 @@
          select="
             for $i in $these-n-vals
             return
-               tan:string-to-numerals(lower-case($i), $ambig-is-roman, false(), $n-aliases-to-process)"/>
+               tan:string-to-numerals(lower-case($i), $ambig-is-roman, false(), $n-aliases-to-process, $numeral-exceptions)"/>
       <xsl:variable name="n-val-rebuilt" select="string-join($vals-normalized, ' ')"/>
       
       <xsl:variable name="these-ref-alias-vals" select="tokenize(normalize-space(@ref-alias), ' ')" as="xs:string*"/>
       <xsl:variable name="ref-alias-vals-normalized" as="xs:string*" select="
             for $i in $these-ref-alias-vals
             return
-               tan:string-to-numerals(lower-case($i), $ambig-is-roman, false(), $n-aliases-to-process)"
+               tan:string-to-numerals(lower-case($i), $ambig-is-roman, false(), $n-aliases-to-process, $numeral-exceptions)"
       />
       
       <xsl:variable name="diagnostics-on" select="false()"/>
@@ -1311,16 +1319,18 @@
       <!-- This part of resolve numerals handles class 2 references that have already been expanded from attributes to elements. -->
       <!-- Because class-2 @ref and @n are never tethered to a div type, we cannot enforce the constraints in the source class-1 file's <n-alias> -->
       <xsl:param name="ambig-is-roman" as="xs:boolean?" tunnel="yes" select="true()"/>
+      <xsl:param name="numeral-exceptions" as="xs:string*" tunnel="yes"/>
       <xsl:param name="n-alias-items" as="element()*" tunnel="yes"/>
       <xsl:variable name="this-element-name" select="name(.)"/>
       <xsl:variable name="val-normalized"
-         select="tan:string-to-numerals(lower-case(text()), $ambig-is-roman, false(), $n-alias-items)"/>
+         select="tan:string-to-numerals(lower-case(text()), $ambig-is-roman, false(), $n-alias-items, $numeral-exceptions)"/>
       
       <xsl:variable name="diagnostics-on" select="false()"/>
       <xsl:if test="$diagnostics-on">
          <xsl:message select="'diagnostics on, template mode resolve-numerals, for: ', ."/>
          <xsl:message select="'ambig #s are roman: ', $ambig-is-roman"/>
          <xsl:message select="'Qty n aliases: ', count($n-alias-items)"/>
+         <xsl:message select="'Numeral exceptions: ' || string-join($numeral-exceptions, ', ')"/>
       </xsl:if>
       
       <xsl:copy>

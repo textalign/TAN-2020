@@ -531,19 +531,19 @@
                   <core-terse-pass-2><xsl:copy-of select="$core-terse-expansion-pass-2"/></core-terse-pass-2>
                   <xsl:if test="$this-is-class-2">
                      <dependencies-resolved><xsl:copy-of select="$dependencies-resolved-plus"/></dependencies-resolved>
-                     <reference-trees count="{count($reference-trees)}"><xsl:copy-of select="$reference-trees"/></reference-trees>
-                     <adjustments-1><xsl:copy-of select="$adjustments-part-1"/></adjustments-1>
-                     <adjustments-2><xsl:copy-of select="$adjustments-part-2"/></adjustments-2>
-                     <make-adjustments-pass-1><xsl:value-of select="$make-adjustments-pass-1"/></make-adjustments-pass-1>
-                     <div-filters><xsl:copy-of select="$div-filters"/></div-filters>
-                     <dep-adjusted-1a><xsl:copy-of select="$dependencies-adjusted-pass-1a"/></dep-adjusted-1a>
-                     <dep-adj-1-divs-to-reset><xsl:copy-of select="$adjustment-pass-1a-dependency-divs-to-reset"/></dep-adj-1-divs-to-reset>
-                     <dep-adj-1-divs-with-attr-frag-from count="{count($adjustment-pass-1a-divs-with-attr-frag-from)}"><xsl:value-of select="$adjustment-pass-1a-divs-with-attr-frag-from"/></dep-adj-1-divs-with-attr-frag-from>
+                     <!--<reference-trees count="{count($reference-trees)}"><xsl:copy-of select="$reference-trees"/></reference-trees>-->
+                     <!--<adjustments-1><xsl:copy-of select="$adjustments-part-1"/></adjustments-1>-->
+                     <!--<adjustments-2><xsl:copy-of select="$adjustments-part-2"/></adjustments-2>-->
+                     <!--<make-adjustments-pass-1><xsl:value-of select="$make-adjustments-pass-1"/></make-adjustments-pass-1>-->
+                     <!--<div-filters><xsl:copy-of select="$div-filters"/></div-filters>-->
+                     <!--<dep-adjusted-1a><xsl:copy-of select="$dependencies-adjusted-pass-1a"/></dep-adjusted-1a>-->
+                     <!--<dep-adj-1-divs-to-reset><xsl:copy-of select="$adjustment-pass-1a-dependency-divs-to-reset"/></dep-adj-1-divs-to-reset>-->
+                     <!--<dep-adj-1-divs-with-attr-frag-from count="{count($adjustment-pass-1a-divs-with-attr-frag-from)}"><xsl:value-of select="$adjustment-pass-1a-divs-with-attr-frag-from"/></dep-adj-1-divs-with-attr-frag-from>-->
                      <!--<dep-adjusted-1b><xsl:copy-of select="$dependencies-adjusted-pass-1b"/></dep-adjusted-1b>-->
                      <!--<dep-adjusted-2a><xsl:copy-of select="$dependencies-adjusted-pass-2a"/></dep-adjusted-2a>-->
                      <!--<dep-adjusted-2b><xsl:copy-of select="$dependencies-adjusted-pass-2b"/></dep-adjusted-2b>-->
-                     <dep-marked-1><xsl:copy-of select="$dependencies-marked-pass-1"/></dep-marked-1>
-                     <dep-marked-2><xsl:copy-of select="$dependencies-marked-pass-2"/></dep-marked-2>
+                     <!--<dep-marked-1><xsl:copy-of select="$dependencies-marked-pass-1"/></dep-marked-1>-->
+                     <!--<dep-marked-2><xsl:copy-of select="$dependencies-marked-pass-2"/></dep-marked-2>-->
                      <!--<dep-stripped><xsl:copy-of select="$dependencies-stripped-to-markers"/></dep-stripped>-->
                   </xsl:if>
                   <!--<core-terse-pass-3><xsl:copy-of select="$core-terse-expansion-pass-3"/></core-terse-pass-3>-->
@@ -1107,7 +1107,13 @@
    <xsl:template match="/*" priority="1" mode="tan:core-expansion-terse-attributes">
       <xsl:param name="use-validation-mode" tunnel="yes" select="$tan:validation-mode-on"/>
       
-      <xsl:variable name="ambig-is-roman" select="not(tan:head/tan:numerals/@priority = 'letters')"/>
+      <xsl:variable name="numeral-element" as="element()?" select="tan:head/tan:numerals"/>
+      <xsl:variable name="ambig-is-roman" as="xs:boolean" select="not($numeral-element/@priority = 'letters')"/>
+      <xsl:variable name="numeral-exceptions" as="xs:string*" select="
+            if (exists($numeral-element/@exceptions)) then
+               tokenize(normalize-space(lower-case($numeral-element/@exceptions)), ' ')
+            else
+               ()"/>
       <xsl:variable name="vocabulary-nodes" select="tan:head, self::tan:TAN-A/tan:body, self::tan:TAN-voc/tan:body"/>
       <xsl:variable name="this-is-class-2" select="starts-with(name(.), 'TAN-A')"/>
       
@@ -1468,6 +1474,7 @@
          <xsl:copy-of select="@*"/>
          <xsl:apply-templates mode="#current">
             <xsl:with-param name="ambig-is-roman" select="$ambig-is-roman" tunnel="yes"/>
+            <xsl:with-param name="numeral-exceptions" select="$numeral-exceptions" tunnel="yes"/>
             <xsl:with-param name="vocabulary-nodes" select="$vocabulary-nodes"
                tunnel="yes"/>
             <xsl:with-param name="insertions" tunnel="yes" as="element()*"
@@ -1656,11 +1663,12 @@
    <xsl:template match="@ref | @pos | @chars | tan:equate/@n | tan:skip/@n | tan:rename/@n" mode="tan:core-expansion-terse-attributes-to-elements">
       <!-- gets converted to one element per atomic value -->
       <xsl:param name="ambig-is-roman" as="xs:boolean?" tunnel="yes"/>
+      <xsl:param name="numeral-exceptions" as="xs:string*" tunnel="yes"/>
       <xsl:param name="try-to-expand-ranges" as="xs:boolean" tunnel="yes" select="false()"/>
       <!-- analysis of class-2 file attributes that point to source class-1 files -->
       <xsl:variable name="this-name" select="name(.)"/>
       <xsl:variable name="this-val-analyzed"
-         select="tan:analyze-sequence(., $this-name, $try-to-expand-ranges, $ambig-is-roman)"/>
+         select="tan:analyze-sequence(., $this-name, $try-to-expand-ranges, $ambig-is-roman, $numeral-exceptions)"/>
       <xsl:variable name="this-attr-converted-to-elements"
          select="tan:stamp-q-id($this-val-analyzed/*, true())"/>
       <xsl:copy-of select="$this-attr-converted-to-elements"/>
@@ -1676,8 +1684,9 @@
    <xsl:template match="*[@ref]/@new" mode="tan:core-expansion-terse-attributes-to-elements">
       <!-- gets converted to one element per atomic value -->
       <xsl:param name="ambig-is-roman" as="xs:boolean?" tunnel="yes"/>
+      <xsl:param name="numeral-exceptions" as="xs:string*" tunnel="yes"/>
       <xsl:variable name="this-val-analyzed"
-         select="tan:analyze-sequence(., 'ref', true(), $ambig-is-roman)"/>
+         select="tan:analyze-sequence(., 'ref', true(), $ambig-is-roman, $numeral-exceptions)"/>
       <xsl:variable name="this-attr-converted-to-elements"
          select="tan:stamp-q-id($this-val-analyzed/*, true())"/>
       <new q="{generate-id(.)}">
@@ -1687,8 +1696,9 @@
    <xsl:template match="*[@n]/@new" mode="tan:core-expansion-terse-attributes-to-elements">
       <!-- gets converted to one element per atomic value -->
       <xsl:param name="ambig-is-roman" as="xs:boolean?" tunnel="yes"/>
+      <xsl:param name="numeral-exceptions" as="xs:string*" tunnel="yes"/>
       <xsl:variable name="this-val-analyzed"
-         select="tan:analyze-sequence(., 'n', true(), $ambig-is-roman)"/>
+         select="tan:analyze-sequence(., 'n', true(), $ambig-is-roman, $numeral-exceptions)"/>
       <xsl:variable name="this-attr-converted-to-elements"
          select="tan:stamp-q-id($this-val-analyzed/*, true())"/>
       <new q="{generate-id(.)}">
