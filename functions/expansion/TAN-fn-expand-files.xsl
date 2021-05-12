@@ -1383,8 +1383,8 @@
 
                            </xsl:element>
                            
-                           <!-- Introduced this extra measure Sept 2020 because aliases were not being expanded. -->
-                           <!-- We don't expand work aliases, because sources need to be queried before that can be effectively done. -->
+                           <!-- This clause expands aliases. -->
+                           <!-- We don't expand work aliases, because sources need to be queried first. -->
                            <xsl:if test="not($this-attr-name = 'work')">
                               <xsl:for-each select="$vocab-items-pointed-to-by-alias">
                                  <xsl:element name="{$this-attr-name}">

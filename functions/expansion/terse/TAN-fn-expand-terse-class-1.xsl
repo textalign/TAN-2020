@@ -751,8 +751,10 @@
             <xsl:variable name="deep-skip-this-element" select="not(exists($adjustment-actions-resolved)) and $drop-divs and not(exists($filters-for-this-div))"/>
             <xsl:variable name="deep-skip-children" select="not(exists($adjustment-actions-resolved)) and $drop-divs and not(exists($div-filters-to-pass-to-children))"/>
             
-            <!--<xsl:if test="count(preceding-sibling::*:div) eq 11">
-               <test24b>
+            <xsl:variable name="output-diagnostics-on" as="xs:boolean" select="false()"/>
+            
+            <xsl:if test="$output-diagnostics-on">
+               <diagnostics-for-dependency-adjustments-pass-1>
                   <self-shallow><xsl:copy-of select="tan:shallow-copy(.)"/></self-shallow>
                   <adj-actions-resolved><xsl:copy-of select="$adjustment-actions-resolved"/></adj-actions-resolved>
                   <parent-orig-refs><xsl:copy-of select="$parent-orig-refs"/></parent-orig-refs>
@@ -774,10 +776,8 @@
                   <filters-for-this-div><xsl:copy-of select="$filters-for-this-div"/></filters-for-this-div>
                   <div-filters-to-pass-to-children><xsl:copy-of select="$div-filters-to-pass-to-children"/></div-filters-to-pass-to-children>
                   <deep-skip-this-element><xsl:copy-of select="$deep-skip-this-element"/></deep-skip-this-element>
-               </test24b>
-            </xsl:if>-->
-            
-            
+               </diagnostics-for-dependency-adjustments-pass-1>
+            </xsl:if>
             
             <xsl:if test="not($deep-skip-this-element)">
                
@@ -1518,67 +1518,6 @@
                   
                </div>
             </xsl:for-each-group> 
-            
-            <!--<xsl:for-each-group select="$text-tokenized-and-marked/*" group-by="tan:reassign/@q">
-               <xsl:variable name="do-not-reassign" select="current-grouping-key() = 'none'"/>
-               <xsl:variable name="this-group-pos" select="position()"/>
-               <div>
-                  <xsl:copy-of select="$this-div/@*"/>
-                  
-                  <!-\- copy additional attributes followed by or non-text nodes -\->
-                  <xsl:choose>
-                     <xsl:when test="$do-not-reassign">
-                        <xsl:copy-of select="$this-div/(* except (tan:tok, tan:non-tok))"/>
-                     </xsl:when>
-                     <xsl:otherwise>
-                        <xsl:variable name="this-reassign-q-val" select="current-grouping-key()"/>
-                        <xsl:variable name="this-actionable-passage" select="$actionable-passages[parent::tan:reassign[@q = $this-reassign-q-val]]"/>
-                        <xsl:variable name="this-reassign"
-                           select="$this-actionable-passage/parent::tan:reassign"/>
-                        
-                        <xsl:copy-of select="$this-reassign/@priority"/>
-                        
-                        <xsl:apply-templates select="$this-actionable-passage" mode="#current"/>
-                        
-                        <xsl:copy-of select="$this-reassign/tan:to/tan:ref/tan:n[last()]"/>
-                        
-                        <xsl:for-each select="$this-reassign/tan:to/tan:ref">
-                           <xsl:copy>
-                              <xsl:copy-of select="@*"/>
-                              <xsl:attribute name="reset"/>
-                              <xsl:copy-of select="node()"/>
-                           </xsl:copy>
-                        </xsl:for-each>
-
-                     </xsl:otherwise>
-                  </xsl:choose>
-                  
-                  <!-\- If this is the first group, we mark all the errors -\->
-                  <xsl:if test="$this-group-pos = 1">
-                     <!-\- shallow-copy the <ref>s that successfully hit, for validation
-                     Nov 2020: I don't think we need this because of the <ref reset=""/> stamp just above -\->
-                     <!-\-<xsl:for-each select="$reassigns-with-passages-expanded/tan:passage/tan:ref">
-                        <xsl:copy>
-                           <xsl:copy-of select="@*"/>
-                        </xsl:copy>
-                     </xsl:for-each>-\->
-                     <xsl:copy-of
-                        select="tan:imprint-adjustment-locator($passages-with-faulty-locators/*)"/>
-                     <xsl:copy-of
-                        select="tan:imprint-adjustment-locator($overlapping-passages, tan:error('rea02'))"
-                     />
-                     <xsl:if test="exists($previous-ref-renames) and exists($actionable-passages)">
-                        <xsl:copy-of
-                           select="tan:imprint-adjustment-locator(($previous-ref-renames/*, $actionable-passages), tan:error('rea03'))"
-                        />
-                     </xsl:if>
-                  </xsl:if>
-
-                  <!-\- Process the tokenized text nodes -\->
-                  <xsl:apply-templates select="current-group()" mode="unmark-tokens"/>
-
-               </div>
-            </xsl:for-each-group>-->
          </xsl:otherwise>
       </xsl:choose>
    </xsl:template>
@@ -2419,11 +2358,6 @@
          </xsl:for-each>
       </xsl:variable>
       
-      <!--<test28a>
-         <insertions-to-process><xsl:copy-of select="$insertions-to-process"/></insertions-to-process>
-         <new-insertions-to-be-applied><xsl:copy-of select="$new-insertions-to-be-applied"/></new-insertions-to-be-applied>
-         <new-insertions-revised><xsl:copy-of select="$new-insertions-revised"/></new-insertions-revised>
-      </test28a>-->
       <xsl:copy>
          <xsl:copy-of select="@*"/>
          <xsl:copy-of select="$nodes-to-insert"/>
@@ -2443,19 +2377,6 @@
             
             <xsl:choose>
                <xsl:when test="not(exists($this-q))">
-                  <xsl:copy-of select="."/>
-               </xsl:when>
-               <!-- testing -->
-               <xsl:when test="true() and false()">
-                  <test28a>
-                     <new-ins-froms><xsl:copy-of select="$these-new-insertion-froms"/></new-ins-froms>
-                     <new-ins-tos><xsl:copy-of select="$these-new-insertion-tos"/></new-ins-tos>
-                     <start-insertions-to-end><xsl:copy-of select="$these-starting-insertions-to-end"/></start-insertions-to-end>
-                     <end-insertions-to-start><xsl:copy-of select="$these-ending-insertions-to-start"/></end-insertions-to-start>
-                     <nodes-to-insert><xsl:copy-of select="($starting-insertions except $these-starting-insertions-to-end)/tan:what/node(),
-                        $ending-insertions/tan:what/node(),
-                        ($insertions-to-place except $these-new-insertion-tos)/tan:what/node()"/></nodes-to-insert>
-                  </test28a>
                   <xsl:copy-of select="."/>
                </xsl:when>
                <xsl:otherwise>

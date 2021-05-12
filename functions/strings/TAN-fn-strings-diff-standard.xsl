@@ -8,8 +8,6 @@
 
    <!-- TAN Function Library diff string functions. -->
    
-   <xsl:variable name="use-new-collate-fns" as="xs:boolean" select="true()"/>
-
    <xsl:function name="tan:vertical-stops" as="xs:double*" visibility="private">
       <!-- Input: a string -->
       <!-- Output: percentages of the string that should be followed in tan:diff-outer-loop() -->
@@ -478,20 +476,13 @@
                   </xsl:for-each-group>
                </xsl:variable>
 
-               <xsl:variable name="input-core-sequence" as="element()*" select="
-                     if ($use-new-collate-fns) then
-                        tan:collate-pair-of-sequences($input-a-unique-words, $input-b-unique-words)
-                     else
-                        tan:collate-pair-of-sequences-old($input-a-unique-words, $input-b-unique-words)"
+               <xsl:variable name="input-core-sequence" as="element()*"
+                  select="tan:collate-pair-of-sequences($input-a-unique-words, $input-b-unique-words)"
                />
 
 
-               <xsl:variable name="input-core-shared-unique-words-in-same-order" select="
-                     if ($use-new-collate-fns) then
-                        $input-core-sequence/tan:common[not(. eq $next-tokenizer-regex)]
-                     else
-                        $input-core-sequence[exists(@p1) and exists(@p2)][not(. eq $next-tokenizer-regex)]"
-               />
+               <xsl:variable name="input-core-shared-unique-words-in-same-order"
+                  select="$input-core-sequence/tan:common[not(. eq $next-tokenizer-regex)]"/>
 
                <xsl:variable name="this-unique-sequence-count" as="xs:integer"
                   select="count($input-core-shared-unique-words-in-same-order)"/>
@@ -799,29 +790,16 @@
             <xsl:choose>
                <xsl:when test="$str-a-chars = $str-b-chars">
                   
-                  <xsl:variable name="best-sequence" as="element()*" select="
-                        if ($use-new-collate-fns) then
-                           tan:collate-pair-of-sequences($str-a-chars, $str-b-chars)
-                        else
-                           tan:collate-pair-of-sequences-old($str-a-chars, $str-b-chars)"
-                  />
-                  <!--<xsl:variable name="best-sequence-as-diff" as="element()*">
-                  </xsl:variable>-->
+                  <xsl:variable name="best-sequence" as="element()*"
+                     select="tan:collate-pair-of-sequences($str-a-chars, $str-b-chars)"/>
+                  
                   <xsl:if test="$out-of-vertical-stops">
                      <xsl:message
                         select="'Out of vertical stops, and matches remain; ' || $string-lengths-for-messages"
                      />
                   </xsl:if>
-                  <xsl:choose>
-                     <xsl:when test="$use-new-collate-fns">
-                        <xsl:copy-of select="$best-sequence/*"/>
-                     </xsl:when>
-                     <xsl:otherwise>
-                        <xsl:apply-templates select="$best-sequence"
-                           mode="tan:collated-sequences-to-diff"/>
-                     </xsl:otherwise>
-                  </xsl:choose>
-                  <!--<xsl:copy-of select="$best-sequence-as-diff/*"/>-->
+                  <xsl:apply-templates select="$best-sequence" mode="tan:collated-sequences-to-diff"
+                  />
                </xsl:when>
                <xsl:otherwise>
                   <a>

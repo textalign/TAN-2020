@@ -574,22 +574,6 @@ div.selectAll(".venn-circle path").style("fill-opacity", .6);
         <xsl:param name="last-wit-idref" tunnel="yes" as="xs:string?"
             select="(tan:witness[last()]/@id, 'b')[1]"/>
         
-        <!--<xsl:variable name="primary-witness" as="element()" select="
-                if (self::tan:diff) then
-                    ../tan:stats/tan:witness[1]
-                else
-                    ../tan:stats/tan:witness[last()]"/>-->
-        <!--<xsl:variable name="diff-b-file-base-uri" select="../tan:stats/tan:witness[2]/tan:uri"
-            as="element()?"/>-->
-        <!--<xsl:variable name="primary-file-base-uri" select="$primary-witness/tan:uri" as="element()?"/>-->
-
-        <!--<xsl:variable name="primary-file-idref" select="$primary-witness/@ref" as="xs:string"/>-->
-        <!--<xsl:variable name="primary-prepped-file" as="document-node()"
-            select="($main-input-files-non-mixed)[*/@xml:base eq $primary-file-base-uri]"/>-->
-        <!--<xsl:variable name="diff-b-prepped-file" as="document-node()"
-            select="($main-input-files-non-mixed)[*/@xml:base eq $diff-b-file-base-uri]"/>-->
-
-        <!--<xsl:variable name="first-class-1-doc-analyzed" select="tan:stamp-class-1-tree-with-text-data($first-class-1-doc)"/>-->
         <xsl:variable name="primary-tree-analyzed" as="element()*"
             select="tan:stamp-tree-with-text-data($primary-version-tree, true())"/>
 
@@ -601,26 +585,7 @@ div.selectAll(".venn-circle path").style("fill-opacity", .6);
             This next variable allows us to inject the results of the tan/diff with the pre-altered
             form of the primary string. If it's a diff we can do the same with the parts that are
             exclusively <b>. -->
-        <!--<xsl:variable name="this-diff-or-collation-revised" as="element()">
-            <xsl:choose>
-                <xsl:when test="$replace-diff-results-with-pre-alteration-forms and self::tan:diff">
-                    <xsl:copy-of select="
-                            tan:stamp-diff-with-text-data(tan:replace-diff(
-                            string($primary-prepped-file),
-                            string($diff-b-prepped-file),
-                            .))"/>
-                </xsl:when>
-
-                <xsl:when test="$replace-diff-results-with-pre-alteration-forms">
-                    <xsl:sequence select="
-                            tan:replace-collation(string($primary-prepped-file),
-                            $primary-file-idref, .)"/>
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:sequence select="."/>
-                </xsl:otherwise>
-            </xsl:choose>
-        </xsl:variable>-->
+        
         <xsl:variable name="this-diff-or-collation-stamped" as="element()" select="
                 if (self::tan:diff)
                 then
@@ -731,8 +696,6 @@ div.selectAll(".venn-circle path").style("fill-opacity", .6);
                                     </xsl:copy>
                                 </xsl:for-each>
                             </xsl:if>
-                            <!-- $last-diff-element-of-interest-with-this-witness/preceding-sibling::*, $fragment-to-keep,
-                                $last-diff-element-of-interest-with-this-witness/(following-sibling::* except $diff-elements-not-of-interest) -->
                             <xsl:for-each select="
                                     $last-diff-element-of-interest-with-this-witness/preceding-sibling::*, $fragment-to-keep">
                                 <xsl:copy>
@@ -858,8 +821,6 @@ div.selectAll(".venn-circle path").style("fill-opacity", .6);
 
         <xsl:variable name="primary-file-adjusted"
             select="tan:prepare-to-convert-to-html($primary-version-tree)" as="element()*"/>
-        <!--<xsl:variable name="primary-file-adjusted"
-            select="tan:prepare-to-convert-to-html($primary-prepped-file)" as="document-node()"/>-->
 
         <xsl:variable name="witness-ids" as="xs:string*" select="tan:witness/@id"/>
 
@@ -874,15 +835,6 @@ div.selectAll(".venn-circle path").style("fill-opacity", .6);
             <xsl:message select="'Leaf elements infused: ', $leaf-element-replacements"/>
             <xsl:message select="'Primary file adjusted: ', $primary-file-adjusted"/>
         </xsl:if>
-
-        <!--<test03>
-            <!-\-<ppf><xsl:copy-of select="$primary-prepped-file"/></ppf>-\->
-            <!-\-<ppfa><xsl:copy-of select="$primary-prepped-file-analyzed"/></ppfa>-\->
-            <split-collation-where><xsl:copy-of select="$split-collation-where"/></split-collation-where>
-            <!-\-<diff-or-collation-revised><xsl:copy-of select="$this-diff-or-collation-revised"/></diff-or-collation-revised>-\->
-            <!-\-<lei><xsl:copy-of select="$leaf-elements-infused"/></lei>-\->
-            <!-\-<pfa><xsl:copy-of select="$primary-file-adjusted"/></pfa>-\->
-        </test03>-->
 
         <h2 xmlns="http://www.w3.org/1999/xhtml">Comparison</h2>
         <xsl:copy>

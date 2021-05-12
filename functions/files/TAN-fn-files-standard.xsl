@@ -35,44 +35,6 @@
       <!--<xsl:value-of select="tan:first-loc-available-loop($element-with-href-in-self-or-descendants//@href, 0)"/>-->
    </xsl:function>
    
-   <!-- March 2021: the following can be deleted, after enough testing has occurred. -->
-   <xsl:function name="tan:first-loc-available-loop" as="xs:string?" visibility="private">
-      <xsl:param name="href-attributes" as="attribute()*"/>
-      <xsl:param name="loop-counter" as="xs:integer"/>
-      <xsl:choose>
-         <xsl:when test="$loop-counter gt $tan:loop-tolerance">
-            <xsl:message select="'loop tolerance exceeded in tan:first-loc-available()'"/>
-         </xsl:when>
-         <xsl:when test="not(exists($href-attributes))"/>
-         <xsl:otherwise>
-            <xsl:variable name="this-href-attribute" select="$href-attributes[1]"/>
-            <xsl:variable name="this-href-is-local" select="tan:url-is-local($this-href-attribute)"/>
-            <xsl:variable name="this-href-fetches-something" select="
-                  if ($this-href-is-local or $tan:internet-available)
-                  then
-                     doc-available($this-href-attribute)
-                  else
-                     false()"/>
-            <xsl:variable name="diagnostics-on" select="false()"/>
-            <xsl:if test="$diagnostics-on">
-               <xsl:message select="'diagnostics on for tan:first-loc-available-loop(), loop #', $loop-counter"/>
-               <xsl:message select="'this href attribute: ', $this-href-attribute"/>
-               <xsl:message select="'this href is local? ', $this-href-is-local"/>
-               <xsl:message select="'internet available? ', $tan:internet-available"/>
-               <xsl:message select="'doc available? ', doc-available($this-href-attribute)"/>
-               <xsl:message select="'this href fetches something? ', $this-href-fetches-something"/>
-            </xsl:if>
-            <xsl:choose>
-               <xsl:when test="$this-href-fetches-something">
-                  <xsl:value-of select="$this-href-attribute"/>
-               </xsl:when>
-               <xsl:otherwise>
-                  <xsl:value-of select="tan:first-loc-available-loop($href-attributes[position() gt 1], ($loop-counter + 1))"/>
-               </xsl:otherwise>
-            </xsl:choose>
-         </xsl:otherwise>
-      </xsl:choose>
-   </xsl:function>
    
    <xsl:function name="tan:url-is-local" as="xs:boolean" visibility="public">
       <xsl:param name="url-to-test" as="xs:string?"/>

@@ -21,7 +21,7 @@
    
 
    <xsl:function name="tan:replace-collation" as="element()?" visibility="public">
-      <!-- Input: two strings; the output of tan:collate() (2020 version only, for XSLT 3.0) -->
+      <!-- Input: two strings; the output of tan:collate() -->
       <!-- Output: the output, but an attempt is made to change every <c> and every <u> with the chosen witness 
          id (param 2) into the original string form (param 1). -->
       <!-- This is a companion function to tan:replace-diff(), but it has some inherent limitations. Diffs of 3 or

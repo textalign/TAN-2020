@@ -83,8 +83,8 @@
       because the cleanup process itself invokes tan:collate() and one does not want to get into an endless 
       loop because of a mishmash of differences that can never be reconciled or brought closer together. -->
       <!-- This version of tan:collate was written in XSLT 3.0 to take advantage of xsl:iterate, and has an
-      arity of 3 and 5 parameters to distinguish it from its XSLT 2.0 predecessors, which used a different approach 
-      to collation. Tests comparing the two versions of tan:collate() may be profitable. -->
+      arity of 3, 5, or 6 parameters, unlike its XSLT 2.0 predecessors, which also applied a different approach 
+      to collation. -->
       <!-- Changes in output from previous version of tan:collate():
           - @w is now <wit> with @ref and @pos
           - the text node of <u> or <c> is now wrapped in <txt>

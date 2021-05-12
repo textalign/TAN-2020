@@ -58,6 +58,7 @@
    <xsl:function name="tan:insert-as-first-child" as="item()*" visibility="public">
       <!-- Input: items to be changed; items to be inserted; strings representing the names of the elements that should receive the insertion -->
       <!-- Output: the first items, with the second items inserted in the appropriate place -->
+      <!-- This function allows the deep insertion of content -->
       <xsl:param name="items-to-be-changed" as="item()*"/>
       <xsl:param name="items-to-insert-as-first-child" as="item()*"/>
       <xsl:param name="names-of-elements-to-receive-action" as="xs:string*"/>
@@ -70,9 +71,11 @@
    </xsl:function>
    
    <xsl:function name="tan:insert-as-last-child" as="item()*" visibility="public">
-      <!-- Input: items to be changed; items to be inserted; strings representing the names of the elements that should receive the insertion -->
+      <!-- Input: items to be changed; items to be inserted; strings representing the names of 
+         the elements that should receive the insertion -->
       <!-- Output: the first items, with the second items inserted in the appropriate place -->
-      <!-- This function was written in service to a 2019 version of tan:vocabulary(), to allow deeply nested vocabulary items to receive select insertions -->
+      <!-- This function allows the deep insertion of content -->
+      <!-- This function was first written to aid a 2019 version of tan:vocabulary() -->
       <xsl:param name="items-to-be-changed" as="item()*"/>
       <xsl:param name="items-to-insert-as-last-child" as="item()*"/>
       <xsl:param name="names-of-elements-to-receive-action" as="xs:string*"/>

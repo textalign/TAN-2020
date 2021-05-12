@@ -20,8 +20,7 @@
       </xsl:apply-templates>
    </xsl:function>
    
-   <!-- As of July 2020, merging is not defined for class 2 or class 3 files. When they are developed, some of the
-   templates in TAN-class-1-functions.xsl may migrate here. -->
+   <!-- Currently, merging is not defined for class 2 or class 3 files. -->
    
    <xsl:mode name="tan:merge-tan-docs" on-no-match="shallow-copy"/>
    
