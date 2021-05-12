@@ -79,27 +79,20 @@
                   $this-checked-for-errors//(tan:fatal, tan:error, tan:warning)[not(@xml:id = $tan:errors-to-squelch)]
                else
                   ()"/>
+         
+         <!-- SQF FIX CONTAINERS -->
          <let name="these-fixes"
             value="($this-checked-for-errors/(self::*, *[@attr])/tan:fix, $relevant-items/tan:fix)"/>
          <let name="self-replacements" value="$these-fixes[@type = 'replace-self']"/>
-         <let name="self-and-next-sibling-replacements"
-            value="$these-fixes[@type = 'replace-self-and-next-sibling']"/>
-         <let name="self-and-next-leaf-div-replacements"
-            value="$these-fixes[@type = 'replace-self-and-next-leaf-divs']"/>
          <let name="text-replacements" value="$these-fixes[@type = 'replace-text']"/>
          <let name="content-to-prepend" value="$these-fixes[@type = 'prepend-content']"/>
          <let name="content-to-append" value="$these-fixes[@type = 'append-content']"/>
-         <let name="content-to-copy-after" value="$these-fixes[@type = 'copy-after']"/>
          <let name="attributes-to-copy" value="$these-fixes[@type = 'copy-attributes']"/>
-         <let name="elements-to-copy-elsewhere"
-            value="$these-fixes[@type = 'copy-element-after-last-of-type']"/>
-         <let name="replacement-children" value="$these-fixes[@type = 'replace-children']"/>
          <let name="replacement-attributes" value="$these-fixes[@type = 'replace-attributes']"/>
          <let name="self-deletions" value="$these-fixes[@type = 'delete-self']"/>
-         <let name="vocabulary-key-item" value="$these-fixes[@type = 'add-vocabulary-key-item']"/>
-         <let name="link-element" value="$these-fixes[@type = 'add-link-element']"/>
          <let name="which-expansions" value="$these-fixes[@type = 'expand-which']"/>
 
+         <!-- For diagnostic tests, where reported errors are actually successes -->
          <let name="preceding-node" value="preceding-sibling::node()[1]"/>
          <let name="preceding-comment"
             value="($preceding-node/self::comment(), $preceding-node/preceding-sibling::node()[1]/self::comment())[1]"/>
@@ -135,8 +128,6 @@
             sqf:fix="tan-sqf">
             <value-of select="$help-offered/tan:message"/>
          </report>
-         <!--<assert test="exists($this-checked-for-errors)"><value-of select="$this-q-ref"/> doesn't
-         match; other @q values of <value-of select="$this-name"/>: <value-of select="string-join($self-expanded//*[name() = $this-name]/@q, ', ')"/></assert>-->
 
          <report test="$tan:doc-is-error-test and exists($intended-codes-missing)">Expected: <value-of
                select="
@@ -160,57 +151,6 @@
                <!--<sqf:replace select="$self-replacements[1]/node()"/>-->
                <sqf:replace
                   select="tan:copy-indentation($self-replacements[1], .)/(node() except node()[1]/self::text())"
-               />
-            </sqf:fix>
-            <sqf:fix id="replace-self-and-next-sibling"
-               use-when="exists($self-and-next-sibling-replacements)">
-               <sqf:description>
-                  <sqf:title>Replace self and next sibling with: <value-of
-                        select="tan:xml-to-string($self-replacements[1]/node()[position() lt 3])"
-                     /></sqf:title>
-               </sqf:description>
-               <sqf:replace select="$self-and-next-sibling-replacements/node()[1]"/>
-               <sqf:replace match="following-sibling::node()[1]"
-                  select="$self-and-next-sibling-replacements/node()[2]"/>
-            </sqf:fix>
-            <sqf:fix id="replace-self-leaf-div"
-               use-when="exists($self-and-next-leaf-div-replacements/*)">
-               <sqf:description>
-                  <sqf:title>Replace self leaf div</sqf:title>
-               </sqf:description>
-               <sqf:replace select="$self-and-next-leaf-div-replacements/*[1]" match="self::*"/>
-            </sqf:fix>
-            <sqf:fix id="replace-self-and-next-leaf-div"
-               use-when="count($self-and-next-leaf-div-replacements/*) gt 1">
-               <sqf:description>
-                  <sqf:title>Replace self and next leaf div</sqf:title>
-               </sqf:description>
-               <let name="leaf-divs" value="following::tan:div[not(tan:div)]"/>
-               <sqf:replace select="$self-and-next-leaf-div-replacements/*[1]" match="self::*"/>
-               <sqf:replace select="$self-and-next-leaf-div-replacements/*[2]" match="$leaf-divs[1]"
-               />
-            </sqf:fix>
-            <sqf:fix id="replace-self-and-next-2-leaf-divs"
-               use-when="count($self-and-next-leaf-div-replacements/*) gt 2">
-               <sqf:description>
-                  <sqf:title>Replace self and next two leaf divs</sqf:title>
-               </sqf:description>
-               <let name="leaf-divs" value="following::tan:div[not(tan:div)]"/>
-               <sqf:replace select="$self-and-next-leaf-div-replacements/*[1]" match="self::*"/>
-               <sqf:replace select="$self-and-next-leaf-div-replacements/*[2]" match="$leaf-divs[1]"/>
-               <sqf:replace select="$self-and-next-leaf-div-replacements/*[3]" match="$leaf-divs[2]"
-               />
-            </sqf:fix>
-            <sqf:fix id="replace-self-and-next-3-leaf-divs"
-               use-when="count($self-and-next-leaf-div-replacements/*) gt 3">
-               <sqf:description>
-                  <sqf:title>Replace self and next three leaf divs</sqf:title>
-               </sqf:description>
-               <let name="leaf-divs" value="following::tan:div[not(tan:div)]"/>
-               <sqf:replace select="$self-and-next-leaf-div-replacements/*[1]" match="self::*"/>
-               <sqf:replace select="$self-and-next-leaf-div-replacements/*[2]" match="$leaf-divs[1]"/>
-               <sqf:replace select="$self-and-next-leaf-div-replacements/*[3]" match="$leaf-divs[2]"/>
-               <sqf:replace select="$self-and-next-leaf-div-replacements/*[4]" match="$leaf-divs[3]"
                />
             </sqf:fix>
             <sqf:fix id="replace-text" use-when="exists($text-replacements)">
@@ -247,13 +187,6 @@
                </sqf:description>
                <sqf:add position="last-child" select="$content-to-append/node()"/>
             </sqf:fix>
-            <sqf:fix id="copy-after" use-when="exists($content-to-copy-after)">
-               <sqf:description>
-                  <sqf:title>Copy content after this element: <value-of
-                        select="tan:xml-to-string($content-to-copy-after/node())"/></sqf:title>
-               </sqf:description>
-               <sqf:add position="after" select="$content-to-copy-after/node()"/>
-            </sqf:fix>
             <sqf:fix id="copy-attributes" use-for-each="$attributes-to-copy/*">
                <sqf:description>
                   <sqf:title>Insert <value-of
@@ -267,42 +200,6 @@
                   </xsl:copy>
                </sqf:replace>
             </sqf:fix>
-
-            <sqf:fix id="copy-element-after-last-of-type"
-               use-when="exists($elements-to-copy-elsewhere)">
-               <sqf:description>
-                  <sqf:title>Copy as last of its type the following element: <value-of
-                        select="tan:xml-to-string($elements-to-copy-elsewhere/*)"/>
-                  </sqf:title>
-                  <sqf:p>Element will be added after the last occurrence of <value-of
-                        select="name($elements-to-copy-elsewhere[1]/*[1])"/></sqf:p>
-               </sqf:description>
-               <sqf:add match="(//*[name(.) = name($elements-to-copy-elsewhere[1]/*[1])])[last()]"
-                  position="after">
-                  <xsl:text>&#xA;</xsl:text>
-                  <xsl:copy-of select="$elements-to-copy-elsewhere[1]/*"/>
-               </sqf:add>
-            </sqf:fix>
-
-            <sqf:fix id="replace-first-child" use-when="exists($replacement-children)">
-               <sqf:description>
-                  <sqf:title>Replace <value-of select="name($replacement-children[1]/*[1])"/> with
-                        <value-of select="tan:xml-to-string($replacement-children[1]/*[1])"
-                     /></sqf:title>
-               </sqf:description>
-               <sqf:replace match="*[name(.) = name($replacement-children[1]/*[1])][1]"
-                  select="$replacement-children[1]/*[1]"/>
-            </sqf:fix>
-            <sqf:fix id="replace-second-child" use-when="exists($replacement-children/*[2])">
-               <sqf:description>
-                  <sqf:title>Replace <value-of select="name($replacement-children[1]/*[2])"/> with
-                        <value-of select="tan:xml-to-string($replacement-children[1]/*[2])"
-                     /></sqf:title>
-               </sqf:description>
-               <sqf:replace match="*[name(.) = name($replacement-children[1]/*[2])][1]"
-                  select="$replacement-children[1]/*[2]"/>
-            </sqf:fix>
-
             <sqf:fix id="add-master-location"
                use-when="exists($these-fixes[@type = 'add-master-location'])">
                <sqf:description>
@@ -360,29 +257,6 @@
                <sqf:replace match="." target="when-accessed" node-type="attribute"
                   use-when="@when-accessed" select="current-dateTime()"/>
             </sqf:fix>
-
-            <sqf:fix id="vocabulary-key-item" use-when="exists($vocabulary-key-item)">
-               <sqf:description>
-                  <sqf:title>Add new item to the end of vocabulary-key</sqf:title>
-               </sqf:description>
-               <sqf:add position="last-child" match="root()/*/tan:head/tan:vocabulary-key">
-                  <xsl:copy-of
-                     select="tan:copy-indentation($vocabulary-key-item, .)/(node() except node()[1]/self::text())"
-                  />
-               </sqf:add>
-            </sqf:fix>
-
-            <sqf:fix id="link-element" use-when="exists($link-element)">
-               <sqf:description>
-                  <sqf:title>Add new linking element just before vocabulary-key</sqf:title>
-               </sqf:description>
-               <sqf:add position="before" match="root()/*/tan:head/tan:vocabulary-key">
-                  <xsl:copy-of
-                     select="tan:copy-indentation($link-element, .)/(node() except node()[1]/self::text())"
-                  />
-               </sqf:add>
-            </sqf:fix>
-            
             <sqf:fix id="expand-which" use-for-each="$which-expansions">
                <sqf:description>
                   <sqf:title>Replace @which with IRI + name pattern for <value-of select="$sqf:current/tan:name[1]"/></sqf:title>
