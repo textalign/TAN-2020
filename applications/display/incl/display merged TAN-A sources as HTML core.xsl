@@ -45,7 +45,7 @@
     <xsl:variable name="primary-color-array-size" select="array:size($primary-color-array)"/>
     
     <xsl:variable name="output-directory-uri-resolved" as="xs:anyURI"
-        select="resolve-uri($output-directory-uri, $calling-stylesheet-uri)"/>
+        select="tan:uri-directory(resolve-uri($output-directory-uri, $calling-stylesheet-uri))"/>
     
 
     <!-- The application -->
