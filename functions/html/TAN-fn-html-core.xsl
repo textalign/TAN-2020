@@ -248,8 +248,8 @@
         placed inside the @class as a value: e-[NAME] for elements and a-[NAME] for attributes. In addition,
         if the element or attribute is in a namespace, the namespace is included as a class value, 
         ns-[NAMESPACE PREFIX]. Comments and processing instructions are preserved intact. -->
-        <!-- Any element already in the HTML namespace will be left as-is, with processing continuing on its 
-        descendants. -->
+        <!-- Any element already in the HTML namespace will be left as-is, with templates continued to
+            be applied to its descendants. -->
         <!-- Some attributes are handled specially:
             Every @xml:* is retained, but with only the local name, no prefix.
             Every attribute in an html element is retained as-is.

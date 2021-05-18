@@ -50,14 +50,18 @@
    <xsl:function name="tan:uri-directory" as="xs:string*" visibility="public">
       <!-- Input: any URIs, as strings -->
       <!-- Output: the file path -->
-      <!-- NB, this function does not assume any URIs have been resolved; its only action is syntactic, ensuring 
-         that the URI is reduced to the directory path of each input URI -->
+      <!-- NB, this function does not assume any URIs have been resolved; its only 
+         action is syntactic, ensuring that each URI specifies a directory path, i.e.,
+         has a trailing slash. -->
       <xsl:param name="uris" as="xs:string*"/>
       <xsl:for-each select="$uris">
          <xsl:choose>
             <xsl:when test="matches(., '/')">
                <xsl:value-of select="replace(., '(.*/)[^/]+$', '$1')"/>
             </xsl:when>
+            <!-- If the directory uri does not have slashes, it is the name of a 
+               local file, so the actual directory is the present working directory,
+               represented by '.' -->
             <xsl:otherwise>.</xsl:otherwise>
          </xsl:choose>
       </xsl:for-each>

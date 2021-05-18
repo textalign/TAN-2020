@@ -55,12 +55,17 @@
    -->
    <xsl:param name="tan:diff-horizontal-pass-frequency-rate" as="xs:decimal" select="0.5"/>
    
-   <!-- At what point is the shortest string so long that it would be better pre-process via tokenization? 
+   <!-- Note, tan:diff() runs in logorithmic time, so the larger the strings, the faster the operation per character.
+      One does not preprocess the strings to make the algorithm faster; rather, it is done to perhaps improve memory 
+      management. -->
+   
+   <!-- At what point is the shortest string so long that it would be better to pre-process via tokenization? 
       This preprocessing is best when applied to large strings that are rather alike. -->
    <xsl:param name="tan:diff-preprocess-via-tokenization-trigger-point" as="xs:integer" select="3000000"/>
    
    <!-- What is the size of the smallest string permitted before preprocessing the input via segmentation? 
-      If both strings are larger than this value, they will be pushed to tan:giant-diff() and cut into segments. 3000000 -->
+      If both strings are larger than this value, they will be pushed to tan:giant-diff() and cut into segments.
+   -->
    <xsl:param name="tan:diff-preprocess-via-segmentation-trigger-point" as="xs:integer" select="2000000"/>
    
    <!-- When segmenting enormous strings to be fed through giant diff, what is the maximum size allowed for any

@@ -17,7 +17,7 @@
    <!--<xsl:include href="../../functions/TAN-extra-functions.xsl"/>-->
    <xsl:include href="../functions/TAN-function-library.xsl"/>
 
-   <xsl:output method="xml" indent="yes"/>
+   <xsl:output method="xml" indent="no"/>
    
    <xsl:param name="tan:change-message">Assorted tests on the TAN Function Library</xsl:param>
    <xsl:param name="tan:stylesheet-iri">tag:textalign.net,2015:algorithm:tan-library-test</xsl:param>
@@ -278,6 +278,12 @@
       <xsl:variable name="values" select="(1,2,3,4,5)" as="xs:double+"/>
       
       <test>
+         <!--<xsl:variable name="target-uri" as="xs:anyURI?" select="resolve-uri('test2.xml', static-base-uri())"/>-->
+         <!--<doc-av><xsl:copy-of select="tan:doc-available($target-uri)"/></doc-av>-->
+         <!--<xsl:result-document href="{$target-uri}">
+            <test></test>
+         </xsl:result-document>-->
+         <!--<uri-collection><xsl:copy-of select="tan:uri-collection(tan:uri-directory(static-base-uri()))"/></uri-collection>-->
          <!--<mor4-res><xsl:copy-of select="$tan-mor-4-resolved"/></mor4-res>-->
          <!--<mor4-exp><xsl:copy-of select="tan:expand-doc($tan-mor-4-resolved, 'terse', true())"/></mor4-exp>-->
          <!--<tan-a-mor-1-resolved><xsl:copy-of select="$tan-a-mor-1-resolved"/></tan-a-mor-1-resolved>-->
@@ -393,10 +399,9 @@
          <!--<tree-to-seq><xsl:sequence select="$test-tree-seq"/></tree-to-seq>-->
          <!--<seq-to-tree><xsl:copy-of select="$test-tree-restored"/></seq-to-tree>-->
          <self-resolved><xsl:copy-of select="$tan:self-resolved"/></self-resolved>
-         <model><xsl:copy-of select="$tan:model-resolved"/></model>
+         <!--<model><xsl:copy-of select="$tan:model-resolved"/></model>-->
          <!--<sources-resolved count="{count($tan:sources-resolved)}"><xsl:copy-of select="$tan:sources-resolved"/></sources-resolved>-->
          <self-expanded count="{count($tan:self-expanded)}"><xsl:copy-of select="$tan:self-expanded"/></self-expanded>
-         
          <!--<model-res><xsl:copy-of select="$tan:model-resolved"/></model-res>-->
          <!--<href><xsl:copy-of select="tan:revise-hrefs(/, 'http://www.w3.org/2001/XMLSchema', 'http://www.w3.org/2001/XMLSchema2')"/></href>-->
          <!--<targ-el-names><xsl:copy-of select="tan:target-element-names($test-el/@which)"/></targ-el-names>-->

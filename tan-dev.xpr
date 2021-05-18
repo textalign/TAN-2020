@@ -61,27 +61,7 @@
                         <scenarioAssociation-array>
                             <scenarioAssociation>
                                 <field name="url">
-                                    <String>../library-arithmeticus/bible/TAN-A/nt-quotes-from-ot.TAN-A.xml</String>
-                                </field>
-                                <field name="scenarioIds">
-                                    <list>
-                                        <String>Test TAN Function Library</String>
-                                    </list>
-                                </field>
-                                <field name="scenarioTypes">
-                                    <list>
-                                        <String>XSL</String>
-                                    </list>
-                                </field>
-                                <field name="scenarioStorageLocations">
-                                    <list>
-                                        <Byte>2</Byte>
-                                    </list>
-                                </field>
-                            </scenarioAssociation>
-                            <scenarioAssociation>
-                                <field name="url">
-                                    <String>../library-arithmeticus/bible/lxx.grc.rahlfs.xml</String>
+                                    <String>../library-arithmeticus/evagrius/cpg2430/cpg2430.grc.1971.guillaumonts.xml</String>
                                 </field>
                                 <field name="scenarioIds">
                                     <list>
@@ -181,6 +161,109 @@
                             </scenarioAssociation>
                             <scenarioAssociation>
                                 <field name="url">
+                                    <String>../library-arithmeticus/evagrius/make-catalog.tan.xml</String>
+                                </field>
+                                <field name="scenarioIds">
+                                    <list>
+                                        <String>Create TAN catalog file</String>
+                                        <String>Create general catalog file</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioTypes">
+                                    <list>
+                                        <String>XSL</String>
+                                        <String>XSL</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioStorageLocations">
+                                    <list>
+                                        <Byte>2</Byte>
+                                        <Byte>2</Byte>
+                                    </list>
+                                </field>
+                            </scenarioAssociation>
+                            <scenarioAssociation>
+                                <field name="url">
+                                    <String>examples/ar.cat.eng.1926.edghill.ref-logical.xml</String>
+                                </field>
+                                <field name="scenarioIds">
+                                    <list>
+                                        <String>Display TAN as html</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioTypes">
+                                    <list>
+                                        <String>XSL</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioStorageLocations">
+                                    <list>
+                                        <Byte>2</Byte>
+                                    </list>
+                                </field>
+                            </scenarioAssociation>
+                            <scenarioAssociation>
+                                <field name="url">
+                                    <String>../library-arithmeticus/bible/lxx.grc.rahlfs.xml</String>
+                                </field>
+                                <field name="scenarioIds">
+                                    <list>
+                                        <String>Test TAN Function Library</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioTypes">
+                                    <list>
+                                        <String>XSL</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioStorageLocations">
+                                    <list>
+                                        <Byte>2</Byte>
+                                    </list>
+                                </field>
+                            </scenarioAssociation>
+                            <scenarioAssociation>
+                                <field name="url">
+                                    <String>../library-arithmeticus/bible/TAN-voc/bible.tan-voc.xml</String>
+                                </field>
+                                <field name="scenarioIds">
+                                    <list>
+                                        <String>Test TAN Function Library</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioTypes">
+                                    <list>
+                                        <String>XSL</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioStorageLocations">
+                                    <list>
+                                        <Byte>2</Byte>
+                                    </list>
+                                </field>
+                            </scenarioAssociation>
+                            <scenarioAssociation>
+                                <field name="url">
+                                    <String>../library-arithmeticus/bible/TAN-A/nt-quotes-from-ot.TAN-A.xml</String>
+                                </field>
+                                <field name="scenarioIds">
+                                    <list>
+                                        <String>Test TAN Function Library</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioTypes">
+                                    <list>
+                                        <String>XSL</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioStorageLocations">
+                                    <list>
+                                        <Byte>2</Byte>
+                                    </list>
+                                </field>
+                            </scenarioAssociation>
+                            <scenarioAssociation>
+                                <field name="url">
                                     <String>../../finances/crypto/crypto.xsl</String>
                                 </field>
                                 <field name="scenarioIds">
@@ -226,26 +309,6 @@
                                 <field name="scenarioIds">
                                     <list>
                                         <String>Convert 2020 TAN to 2021 TAN</String>
-                                    </list>
-                                </field>
-                                <field name="scenarioTypes">
-                                    <list>
-                                        <String>XSL</String>
-                                    </list>
-                                </field>
-                                <field name="scenarioStorageLocations">
-                                    <list>
-                                        <Byte>2</Byte>
-                                    </list>
-                                </field>
-                            </scenarioAssociation>
-                            <scenarioAssociation>
-                                <field name="url">
-                                    <String>examples/ar.cat.eng.1926.edghill.ref-logical.xml</String>
-                                </field>
-                                <field name="scenarioIds">
-                                    <list>
-                                        <String>Create TAN catalog file</String>
                                     </list>
                                 </field>
                                 <field name="scenarioTypes">
@@ -464,29 +527,6 @@
                             </scenarioAssociation>
                             <scenarioAssociation>
                                 <field name="url">
-                                    <String>../library-arithmeticus/evagrius/make-catalog.tan.xml</String>
-                                </field>
-                                <field name="scenarioIds">
-                                    <list>
-                                        <String>Create TAN catalog file</String>
-                                        <String>Create general catalog file</String>
-                                    </list>
-                                </field>
-                                <field name="scenarioTypes">
-                                    <list>
-                                        <String>XSL</String>
-                                        <String>XSL</String>
-                                    </list>
-                                </field>
-                                <field name="scenarioStorageLocations">
-                                    <list>
-                                        <Byte>2</Byte>
-                                        <Byte>2</Byte>
-                                    </list>
-                                </field>
-                            </scenarioAssociation>
-                            <scenarioAssociation>
-                                <field name="url">
                                     <String>../library-arithmeticus/make-catalog.tan.xml</String>
                                 </field>
                                 <field name="scenarioIds">
@@ -668,26 +708,6 @@
                             <scenarioAssociation>
                                 <field name="url">
                                     <String>../library-arithmeticus/bible/TAN-A-tok/private-nt.grc-syr.selections.TAN-A-tok.xml</String>
-                                </field>
-                                <field name="scenarioIds">
-                                    <list>
-                                        <String>Test TAN Function Library</String>
-                                    </list>
-                                </field>
-                                <field name="scenarioTypes">
-                                    <list>
-                                        <String>XSL</String>
-                                    </list>
-                                </field>
-                                <field name="scenarioStorageLocations">
-                                    <list>
-                                        <Byte>2</Byte>
-                                    </list>
-                                </field>
-                            </scenarioAssociation>
-                            <scenarioAssociation>
-                                <field name="url">
-                                    <String>../library-arithmeticus/bible/TAN-voc/bible.tan-voc.xml</String>
                                 </field>
                                 <field name="scenarioIds">
                                     <list>
@@ -2882,7 +2902,7 @@
                                     <String></String>
                                 </field>
                                 <field name="inputXSLURL">
-                                    <String>${pdu}/applications-old/display/display%20TAN%20as%20HTML.xsl</String>
+                                    <String>${pdu}/applications/display/display%20TAN%20as%20HTML.xsl</String>
                                 </field>
                                 <field name="inputXMLURL">
                                     <String>${currentFileURL}</String>
@@ -5115,6 +5135,7 @@
             <file name="applications/create/create%20TAN-A-lm.xsl"/>
             <file name="applications/display/display%20merged%20TAN-A%20sources%20as%20HTML.xsl"/>
             <file name="applications-old/display/display%20TAN%20as%20HTML.xsl"/>
+            <file name="applications/display/display%20TAN%20as%20HTML.xsl"/>
             <file name="applications/explore/explore%20text%20parallels.xsl"/>
             <file name="guidelines/populate/populate%20TAN%20guidelines.xsl"/>
             <file name="maintenance/guidelines/populate%20TAN%20guidelines.xsl"/>
@@ -5156,5 +5177,6 @@
         <folder path="schemas/"/>
         <folder path="templates/"/>
         <folder path="vocabularies/"/>
+        <folder path="../../../Google%20Drive/CLIO%20commons/TAN%20library/"/>
     </projectTree>
 </project>

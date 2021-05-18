@@ -250,11 +250,23 @@
       <xsl:variable name="divs-with-ref-aliases-rebuilt" as="element()*">
          <xsl:apply-templates select="$divs-with-ref-alias" mode="tan:rebuild-divs-with-ref-aliases"/>
       </xsl:variable>
+      
+      <xsl:variable name="anchor-reference" as="element()?">
+         <xsl:if test="self::tei:*">
+            <anchors>
+               <xsl:apply-templates select="." mode="tan:build-anchor-reference"/>
+            </anchors>
+         </xsl:if>
+      </xsl:variable>
 
       <body>
          <xsl:copy-of select="@*"/>
-         <xsl:apply-templates mode="#current"/>
-         <xsl:apply-templates select="$divs-with-ref-aliases-rebuilt" mode="#current"/>
+         <xsl:apply-templates mode="#current">
+            <xsl:with-param name="anchor-reference" as="element()?" tunnel="yes" select="$anchor-reference"/>
+         </xsl:apply-templates>
+         <xsl:apply-templates select="$divs-with-ref-aliases-rebuilt" mode="#current">
+            <xsl:with-param name="anchor-reference" as="element()?" tunnel="yes" select="$anchor-reference"/>
+         </xsl:apply-templates>
       </body>
    </xsl:template>
    
@@ -827,9 +839,13 @@
    </xsl:template>
 
    
-   <xsl:mode name="tan:selective-shallow-skip" on-no-match="shallow-copy"/>
+   <xsl:mode name="tan:build-anchor-reference" on-no-match="text-only-copy"/>
+   
+   <xsl:template match="tei:lb | tei:pb | tei:cb | tei:milestone" mode="tan:build-anchor-reference">
+      <xsl:copy-of select="."/>
+   </xsl:template>
 
-   <xsl:template match="* | comment() | processing-instruction()" mode="tan:selective-shallow-skip">
+   <!--<xsl:template match="* | comment() | processing-instruction()" mode="tan:build-anchor-reference">
       <xsl:param name="nodes-to-deep-copy" tunnel="yes" as="node()*"/>
       <xsl:param name="nodes-to-deep-skip" tunnel="yes" as="node()*"/>
       <xsl:choose>
@@ -848,22 +864,32 @@
             <xsl:apply-templates mode="#current"/>
          </xsl:otherwise>
       </xsl:choose>
-   </xsl:template>
+   </xsl:template>-->
    
    <xsl:template match="tei:lb | tei:pb | tei:cb"
       mode="tan:core-expansion-terse tan:dependency-adjustments-pass-1">
+      <xsl:param name="anchor-reference" tunnel="yes" as="element()"/>
+      
       <xsl:variable name="leaf-div" select="ancestor::tei:div[1]"/>
-      <xsl:variable name="this-element" select="."/>
-      <xsl:variable name="div-text-pass-1" as="element()">
+      <!--<xsl:variable name="this-element" select="." as="element()"/>-->
+      <xsl:variable name="this-q" as="attribute()" select="@q"/>
+      <xsl:variable name="this-anchor-counterpart" as="element()"
+         select="$anchor-reference/*[@q eq $this-q]"/>
+      <!--<xsl:variable name="div-text-pass-1" as="element()">
          <text>
-            <xsl:apply-templates select="$leaf-div" mode="tan:selective-shallow-skip">
+            <xsl:apply-templates select="$leaf-div" mode="tan:build-anchor-reference">
                <xsl:with-param name="nodes-to-deep-copy" tunnel="yes" select="$this-element"/>
                <xsl:with-param name="nodes-to-deep-skip" tunnel="yes" select="$leaf-div/tan:type"/>
             </xsl:apply-templates>
          </text>
-      </xsl:variable>
-      <xsl:variable name="prev-text-joined" select="$div-text-pass-1/text()[1]"/>
-      <xsl:variable name="next-text-joined" select="$div-text-pass-1/text()[2]"/>
+      </xsl:variable>-->
+      <!--<xsl:variable name="prev-text-joined" select="$div-text-pass-1/text()[1]"/>-->
+      <!--<xsl:variable name="next-text-joined" select="$div-text-pass-1/text()[2]"/>-->
+      <xsl:variable name="prev-text-joined" as="xs:string?"
+         select="string-join($this-anchor-counterpart/preceding-sibling::text())"/>
+      <xsl:variable name="next-text-joined" as="xs:string?"
+         select="string-join($this-anchor-counterpart/following-sibling::text())"/>
+      
       <xsl:variable name="break-mark-check" as="element()?">
          <xsl:if test="string-length($prev-text-joined) gt 0">
             <xsl:analyze-string select="$prev-text-joined" regex="{$tan:break-marker-regex}\s*$"
