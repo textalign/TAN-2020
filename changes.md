@@ -111,6 +111,7 @@ Altered:
 * `tan:strip-outer-indentation()`
 * `tan:map-to-xml()`. Output is typed, better keyed to how it is presented in the XSLT specs.
 * `tan:collate-pair-of-sequences()`. Better handling via maps.
+* `tan:ellipses()`. Added 3- and 4-arity versions, to support mid-string ellipses, and an elision character count
 
 ## Languages
 

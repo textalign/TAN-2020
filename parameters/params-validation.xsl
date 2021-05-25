@@ -28,4 +28,13 @@
    <!-- If an item is invalid, what is the maximum number of suggestions that should be offered? -->
    <xsl:param name="tan:help-suggestions-maximum" select="50"/>
    
+   <!-- If providing textual context in an error or help, what is the maximum number of characters that 
+      should be returned? If a text has more characters than this number, then it will be truncated, with
+      the omitted text replaced by ellipses. -->
+   <xsl:param name="tan:validation-context-string-length-max" as="xs:integer" select="50"/>
+   
+   <!-- Should any elided text (see above) be replaced with a number indicating how many characters have 
+      been elided? -->
+   <xsl:param name="tan:validation-context-supply-length-of-elision" as="xs:boolean" select="true()"/>
+   
 </xsl:stylesheet>

@@ -469,21 +469,79 @@
    </xsl:function>
    
    <xsl:function name="tan:ellipses" as="xs:string*" visibility="public">
-      <!-- Input: any sequence of strings; an integer -->
-      <!-- Output: the sequence of strings, but with any substring beyond the requested length replaced by ellipses -->
+      <!-- 2-arity version of the fuller one, below -->
       <xsl:param name="strings-to-truncate" as="xs:string*"/>
       <xsl:param name="string-length-to-retain" as="xs:integer"/>
+      <xsl:sequence select="tan:ellipses($strings-to-truncate, $string-length-to-retain, 0)"/>
+   </xsl:function>
+
+   <xsl:function name="tan:ellipses" as="xs:string*" visibility="public">
+      <!-- 3-arity version of the fuller one, below -->
+      <xsl:param name="strings-to-truncate" as="xs:string*"/>
+      <xsl:param name="string-length-to-retain" as="xs:integer"/>
+      <xsl:param name="terminal-string-length-to-retain" as="xs:integer"/>
+      <xsl:sequence
+         select="tan:ellipses($strings-to-truncate, $string-length-to-retain, $terminal-string-length-to-retain, $tan:validation-context-supply-length-of-elision)"
+      />
+   </xsl:function>
+   
+   <xsl:function name="tan:ellipses" as="xs:string*">
+      <!-- Input: any sequence of strings; two integers; a boolean -->
+      <!-- Output: the sequence of strings, but with any initial substring beyond the first requested length and 
+         any terminal substring beyond the last requested length replaced by ellipses. If the boolean is true, then
+         two sets of ellipses will be provided, surrounding in square brackets the number of characters removed. -->
+      <!-- If the elision is less than the length of the replacement, then no elision will take place. -->
+      <!-- Examples: 
+         "abcd", 1, 1, false > "a…d"
+         "abcd", 1, 1, true > "abcd"
+         "abcdefghijk", 1, 1, true > "a…[9]…k"
+      -->
+      <xsl:param name="strings-to-truncate" as="xs:string*"/>
+      <xsl:param name="initial-string-length-to-retain" as="xs:integer"/>
+      <xsl:param name="terminal-string-length-to-retain" as="xs:integer"/>
+      <xsl:param name="indicate-number-of-characters-elided" as="xs:boolean"/>
+      
+      <xsl:variable name="total-string-length-to-retain" as="xs:integer"
+         select="$initial-string-length-to-retain + $terminal-string-length-to-retain"/>
       <xsl:for-each select="$strings-to-truncate">
+         <xsl:variable name="this-string-length" as="xs:integer" select="string-length(.)"/>
+         <xsl:variable name="amount-to-truncate" as="xs:integer"
+            select="$this-string-length - ($initial-string-length-to-retain + $terminal-string-length-to-retain)"
+         />
+         <xsl:variable name="truncation-insertion" as="xs:string" select="
+               if ($indicate-number-of-characters-elided) then
+                  ('…[' || string($amount-to-truncate) || ']…')
+               else
+                  ('…')"/>
          <xsl:choose>
-            <xsl:when test="string-length(.) lt $string-length-to-retain">
-               <xsl:value-of select="."/>
+            <xsl:when test="$amount-to-truncate gt string-length($truncation-insertion)">
+               <xsl:value-of select="substring(., 1, $initial-string-length-to-retain) || $truncation-insertion || 
+                  substring(., $this-string-length - $terminal-string-length-to-retain)"/>
             </xsl:when>
             <xsl:otherwise>
-               <xsl:value-of select="substring(., 1, $string-length-to-retain) || '...'"/>
+               <xsl:value-of select="."/>
             </xsl:otherwise>
          </xsl:choose>
       </xsl:for-each>
+      
    </xsl:function>
+   
+   
+   <!-- This mode allows one to use apply templates to truncate the text nodes in a tree. This can be quite useful
+      for diagnostic output, or, in the case of the validation routine, trimming the results of tan:diff(). -->
+   <xsl:mode name="tan:ellipses" on-no-match="shallow-copy"/>
+   
+   <xsl:template match="text()" mode="tan:ellipses">
+      <xsl:param name="initial-string-length-to-retain" as="xs:integer" tunnel="yes"
+         select="$tan:validation-context-string-length-max"/>
+      <xsl:param name="terminal-string-length-to-retain" as="xs:integer" tunnel="yes"
+         select="$tan:validation-context-string-length-max"/>
+      <xsl:param name="indicate-number-of-characters-elided" as="xs:boolean" tunnel="yes"
+         select="$tan:validation-context-supply-length-of-elision"/>
+      <xsl:value-of
+         select="tan:ellipses(., $initial-string-length-to-retain, $terminal-string-length-to-retain, $indicate-number-of-characters-elided)"
+      />
+   </xsl:template>
    
    
    <xsl:function name="tan:common-start-string" as="xs:string?" visibility="public">
