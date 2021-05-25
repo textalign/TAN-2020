@@ -92,14 +92,15 @@
       <xsl:param name="loop-counter" as="xs:integer"/>
       
       <xsl:variable name="this-doc-id" select="$TAN-document/*/@id"/>
-      <xsl:variable name="this-doc-base-uri" select="tan:base-uri($TAN-document)"/>
-      <xsl:variable name="this-is-collection-document" select="$TAN-document/collection"/>
+      <xsl:variable name="this-doc-base-uri" as="xs:anyURI" select="tan:base-uri($TAN-document)"/>
+      <xsl:variable name="this-is-collection-document" as="xs:boolean" select="exists($TAN-document/collection)"/>
       <xsl:variable name="this-is-class-1-source-for-class-2-file" as="xs:boolean" select="
             some $i in $attributes-to-add-to-root-element
                satisfies name($i) eq 'src'"/>
       
       <xsl:choose>
-         <xsl:when test="exists($TAN-document/*) and not(namespace-uri($TAN-document/*) = ($tan:TAN-namespace, $tan:TEI-namespace)) and not($this-is-collection-document)">
+         <xsl:when test="(exists($TAN-document/*) and not(namespace-uri($TAN-document/*) = ($tan:TAN-namespace, $tan:TEI-namespace))) 
+            or $this-is-collection-document">
             <xsl:sequence select="$TAN-document"/>
          </xsl:when>
          <xsl:when test="$loop-counter gt $tan:loop-tolerance">

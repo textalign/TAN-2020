@@ -1070,6 +1070,7 @@
    <!-- CORE EXPANSION TERSE -->
    
    <xsl:mode name="tan:core-expansion-terse-attributes" on-no-match="shallow-copy"/>
+   <xsl:mode name="tan:core-expansion-prep-for-attr-query" on-no-match="shallow-copy"/>
    <xsl:mode name="tan:core-expansion-terse-attributes-to-elements" on-no-match="shallow-copy"/>
    <xsl:mode name="tan:remove-inclusions" on-no-match="shallow-copy"/>
    <xsl:mode name="tan:core-expansion-terse" on-no-match="shallow-copy"/>
@@ -1095,6 +1096,10 @@
       <xsl:copy-of select="."/>
    </xsl:template>
    
+   <!-- We ignore TEI attributes that are not tethered to the TAN vocabulary system -->
+   <xsl:template match="tei:teiHeader | tan:tail | tei:div[not(tei:div)]/node()"
+      mode="tan:core-expansion-prep-for-attr-query"/>
+   
    
 
    <xsl:template match="comment()" mode="tan:core-expansion-terse-attributes">
@@ -1117,8 +1122,14 @@
       <xsl:variable name="vocabulary-nodes" select="tan:head, self::tan:TAN-A/tan:body, self::tan:TAN-voc/tan:body"/>
       <xsl:variable name="this-is-class-2" select="starts-with(name(.), 'TAN-A')"/>
       
+      <xsl:variable name="this-doc-prepped-for-attr-query" as="document-node()">
+         <xsl:document>
+            <xsl:apply-templates select="." mode="tan:core-expansion-prep-for-attr-query"/>
+         </xsl:document>
+      </xsl:variable>
+      
       <xsl:variable name="these-pointing-attrs"
-         select="key('tan:attrs-by-name', ($tan:names-of-attributes-that-take-idrefs, 'which'), .)"/>
+         select="key('tan:attrs-by-name', ($tan:names-of-attributes-that-take-idrefs, 'which'), $this-doc-prepped-for-attr-query)"/>
 
       <!-- Master check of @which and attributes that point to vocabulary items -->
       <xsl:variable name="all-descendant-insertions" as="element()*">
@@ -1495,7 +1506,7 @@
       </xsl:copy>
    </xsl:template>
    
-   <xsl:template match="tan:head/tan:vocabulary[tan:location] | tan:head/tan:tan-vocabulary"
+   <xsl:template match="tan:head/tan:vocabulary[tan:location] | tan:head/tan:tan-vocabulary | tei:div[not(tei:div)]/tei:*"
       priority="1"
       mode="tan:core-expansion-terse-attributes">
       <xsl:copy-of select="."/>
@@ -2080,35 +2091,32 @@
       <xsl:copy>
          <xsl:copy-of select="@*"/>
          <expanded>verbose</expanded>
-         <xsl:choose>
-            <xsl:when test="exists($this-local-catalog)">
-               <xsl:variable name="this-local-catalog-resolved"
-                  select="tan:resolve-doc($this-local-catalog)"/>
-               <xsl:variable name="this-local-catalog-expanded"
-                  select="tan:expand-doc($this-local-catalog-resolved)"/>
-               <xsl:variable name="this-local-catalog-errors"
-                  select="$this-local-catalog-expanded//(tan:error, tan:warning)"/>
-               <xsl:variable name="this-local-collection"
-                  select="
-                     for $i in $this-local-catalog
-                     return
-                        tan:collection($i)"/>
-               <xsl:if test="not(@id = $this-local-catalog/collection/doc/@id)">
-                  <xsl:copy-of select="tan:error('cat06')"/>
-               </xsl:if>
-               <xsl:if test="exists($this-local-catalog-errors)">
-                  <xsl:copy-of select="tan:error('cat07')"/>
-                  <xsl:apply-templates select="$this-local-catalog-errors" mode="tan:prepend-error-message">
-                     <xsl:with-param name="message-to-prepend" tunnel="yes" as="xs:string" 
-                        select="'[From local catalog] '"/>
-                  </xsl:apply-templates>
-               </xsl:if>
-               <xsl:apply-templates mode="#current"/>
-            </xsl:when>
-            <xsl:otherwise>
-               <xsl:apply-templates mode="#current"/>
-            </xsl:otherwise>
-         </xsl:choose>
+         <xsl:if test="exists($this-local-catalog)">
+            <xsl:variable name="this-local-catalog-resolved"
+               select="tan:resolve-doc($this-local-catalog)"/>
+            <xsl:variable name="this-local-catalog-expanded"
+               select="tan:expand-doc($this-local-catalog-resolved)"/>
+            <xsl:variable name="this-local-catalog-errors" as="element()*"
+               select="$this-local-catalog-expanded//(tan:error | tan:warning)"/>
+            <xsl:variable name="this-local-collection"
+               select="
+                  for $i in $this-local-catalog
+                  return
+                     tan:collection($i)"/>
+            <xsl:if test="not(@id = $this-local-catalog/collection/doc/@id)">
+               <xsl:copy-of select="tan:error('cat06')"/>
+            </xsl:if>
+            <xsl:if test="exists($this-local-catalog-errors)">
+               <xsl:copy-of select="tan:error('cat07', string(count($this-local-catalog-errors/self::tan:warning)) || ' warnings and ' ||
+                  string(count($this-local-catalog-errors/self::tan:error)) || ' errors detected in catalog ' || base-uri($this-local-catalog))"/>
+               <xsl:apply-templates select="$this-local-catalog-errors" mode="tan:prepend-error-message">
+                  <xsl:with-param name="message-to-prepend" tunnel="yes" as="xs:string" 
+                     select="'[From local catalog] '"/>
+               </xsl:apply-templates>
+            </xsl:if>
+         </xsl:if>
+         
+         <xsl:apply-templates mode="#current"/>
       </xsl:copy>
    </xsl:template>
    

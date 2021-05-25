@@ -307,10 +307,13 @@
             <xsl:variable name="this-diff-stripped" as="element()*">
                <xsl:apply-templates mode="tan:strip-attributes"/>
             </xsl:variable>
+            <xsl:variable name="this-diff-truncated" as="element()*">
+               <xsl:apply-templates select="$this-diff-stripped" mode="tan:ellipses"/>
+            </xsl:variable>
             <xsl:if test="exists(tan:a) or exists(tan:b)">
                <xsl:copy-of
                   select="tan:error('cl104', 'Differs with redivision #' || $rediv-number || ' (a = text here alone; b = text in redivision alone; common = shared text): '
-                  || tan:xml-to-string($this-diff-stripped), $this-replacement-text, 'replace-text')"
+                  || tan:xml-to-string($this-diff-truncated), $this-replacement-text, 'replace-text')"
                />
                
             </xsl:if>
