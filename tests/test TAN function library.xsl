@@ -17,13 +17,13 @@
    <!--<xsl:include href="../../functions/TAN-extra-functions.xsl"/>-->
    <xsl:include href="../functions/TAN-function-library.xsl"/>
 
-   <xsl:output method="xml" indent="no"/>
+   <xsl:output method="xml" indent="yes"/>
    
    <xsl:param name="tan:change-message">Assorted tests on the TAN Function Library</xsl:param>
    <xsl:param name="tan:stylesheet-iri">tag:textalign.net,2015:algorithm:tan-library-test</xsl:param>
    <xsl:param name="tan:stylesheet-url" as="xs:string" select="static-base-uri()"/>
    
-   <xsl:param name="tan:default-validation-phase">terse</xsl:param>
+   <xsl:param name="tan:default-validation-phase">verbose</xsl:param>
    
    <xsl:variable name="this-model-expanded" select="tan:expand-doc($tan:model-resolved, 'terse', false())"/>
    
@@ -136,6 +136,9 @@
    
    <xsl:variable name="string-a" as="xs:string">Classical models of string comparison have been difficult to implement in XSLT, in part because MATCH THEM those models are designed for imperative, stateful programming. In this article I introduce a new XSLT function, ns:diff(), which is built upon a different approach to string comparison, one more conducive to a declarative, stateless language. ns:diff() is efficient and fast, even on pairs of very long strings (100K to 1M characters), in part because of its staggered-sample approach, in part because of its optimization stategy for long strings. Its results are optimal, as the THEM POTATOES function normally returns a minimal diff, or shortest edit script.</xsl:variable>
    <xsl:variable name="string-b" as="xs:string">Classical models of string comparison have been difficult to implement in XSLT, in part because those models are designed for imperative, stateful programming. In this article I introduce a new XSLT function, ns:diff(), which is built upon a different approach to string comparison, one more conducive to a declarative, stateless language. ns:diff() is efficient and fast, even MATxCH THEM POTATOxES on pairs of very long strings (100K to 1M characters), in part because of its staggered-sample approach, in part because of its optimization stategy for long strings. Its results are optimal, as the function normally returns a minimal diff, or shortest edit script.</xsl:variable>
+   <xsl:variable name="string-c-a" as="xs:string" select="'145236'"/>
+   <xsl:variable name="string-c-o" as="xs:string" select="'123456'"/>
+   <xsl:variable name="string-c-b" as="xs:string" select="'124536'"/>
    <xsl:variable name="str-diff" as="element()" select="tan:diff($string-a, $string-b, false())"/>
    
    <xsl:variable name="string-a1" as="xs:string"><xsl:value-of select="substring($string-a, 1, 10)"/></xsl:variable>
@@ -273,148 +276,159 @@
    
    <xsl:variable name="tan-a-lm-to-mor4" as="document-node()" select="tan:convert-morphological-codes($tan-a-lm-doc, 'perseus-dik', $mor-1-to-4-maps)"/>-->
    
+   <xsl:variable name="local-cat-doc" as="document-node()?" select="doc('file:/E:/Joel/Dropbox/TAN/library-arithmeticus/evagrius/catalog.tan.xml')"/>
+   <xsl:variable name="local-cat-resolved" select="tan:resolve-doc($local-cat-doc)"/>
+   
+   
    
    <xsl:template match="/">
       <xsl:variable name="values" select="(1,2,3,4,5)" as="xs:double+"/>
       
-      <test>
-         <!--<xsl:variable name="target-uri" as="xs:anyURI?" select="resolve-uri('test2.xml', static-base-uri())"/>-->
-         <!--<doc-av><xsl:copy-of select="tan:doc-available($target-uri)"/></doc-av>-->
-         <!--<xsl:result-document href="{$target-uri}">
+      <test-common>
+         <!--<self-resolved><xsl:copy-of select="$tan:self-resolved"/></self-resolved>-->
+         <self-expanded count="{count($tan:self-expanded)}"><xsl:copy-of select="$tan:self-expanded"/></self-expanded>
+         <!--<sources-resolved count="{count($tan:sources-resolved)}"><xsl:copy-of select="$tan:sources-resolved"/></sources-resolved>-->
+         <redivisions-resolved count="{count($tan:redivisions-resolved)}"><xsl:copy-of select="$tan:redivisions-resolved"/></redivisions-resolved>
+         <!--<model><xsl:copy-of select="$tan:model-resolved"/></model>-->
+         
+      </test-common>
+      <!--<test>
+         <!-\-<local-cat><xsl:copy-of select="$local-cat-doc"/></local-cat>-\->
+         <!-\-<local-cat-res><xsl:copy-of select="$local-cat-resolved"/></local-cat-res>-\->
+         <local-cat-exp><xsl:copy-of select="tan:expand-doc($local-cat-resolved)"/></local-cat-exp>
+         <!-\-<xsl:copy-of select="tan:collate(($string-c-o, $string-c-a, $string-c-b), ('O', 'A', 'B'), false())"/>-\->
+         <!-\-<xsl:variable name="target-uri" as="xs:anyURI?" select="resolve-uri('test2.xml', static-base-uri())"/>-\->
+         <!-\-<doc-av><xsl:copy-of select="tan:doc-available($target-uri)"/></doc-av>-\->
+         <!-\-<xsl:result-document href="{$target-uri}">
             <test></test>
-         </xsl:result-document>-->
-         <!--<uri-collection><xsl:copy-of select="tan:uri-collection(tan:uri-directory(static-base-uri()))"/></uri-collection>-->
-         <!--<mor4-res><xsl:copy-of select="$tan-mor-4-resolved"/></mor4-res>-->
-         <!--<mor4-exp><xsl:copy-of select="tan:expand-doc($tan-mor-4-resolved, 'terse', true())"/></mor4-exp>-->
-         <!--<tan-a-mor-1-resolved><xsl:copy-of select="$tan-a-mor-1-resolved"/></tan-a-mor-1-resolved>-->
-         <!--<tan-a-mor-2-resolved><xsl:copy-of select="$tan-a-mor-2-resolved"/></tan-a-mor-2-resolved>-->
-         <!--<mor-1-to-mor-2-maps><xsl:copy-of select="tan:map-to-xml($mor-1-to-2-maps)"/></mor-1-to-mor-2-maps>-->
-         <!--<mor-1-to-mor-3-maps><xsl:copy-of select="tan:map-to-xml($mor-1-to-3-maps)"/></mor-1-to-mor-3-maps>-->
-         <!--<mor-1-to-mor-4-maps><xsl:copy-of select="tan:map-to-xml($mor-1-to-4-maps)"/></mor-1-to-mor-4-maps>-->
-         <!--<mor-2-to-mor-1-maps><xsl:copy-of select="tan:map-to-xml($mor-2-to-1-maps)"/></mor-2-to-mor-1-maps>-->
-         <!--<mor-2-to-mor-4-maps><xsl:copy-of select="tan:map-to-xml($mor-2-to-4-maps)"/></mor-2-to-mor-4-maps>-->
-         <!--<tan-a-lm-to-mor3><xsl:copy-of select="$tan-a-lm-to-mor3"/></tan-a-lm-to-mor3>-->
-         <!--<tan-a-lm-to-mor4><xsl:copy-of select="$tan-a-lm-to-mor4"/></tan-a-lm-to-mor4>-->
-         <!--<tan-a-lm-to-mor2-then-mor4><xsl:copy-of select="$tan-a-lm-to-mor2-then-mor4"/></tan-a-lm-to-mor2-then-mor4>-->
-         <!--<tan-a-lm-to-mor2><xsl:copy-of select="$tan-a-lm-to-mor2"/></tan-a-lm-to-mor2>-->
-         <!--<tan-a-lm-back-to-mor1><xsl:copy-of select="$tan-a-lm-back-to-mor1"/></tan-a-lm-back-to-mor1>-->
-         <!--<tan-a-lm-diff><xsl:copy-of select="tan:diff(serialize($tan-a-lm-doc), serialize($tan-a-lm-back-to-mor1))"/></tan-a-lm-diff>-->
-         <!--<xsl:copy-of select="$morpheus-searches"/>-->
-         <!--<xsl:copy-of select="tan:search-results-to-IRI-name-pattern($morpheus-searches)"/>-->
-         <!--<xsl:copy-of select="tan:search-results-to-claims($morpheus-searches, 'morpheus')"/>-->
-         <!--<xsl:copy-of select="$test-collation"/>-->
-         <!--<array-permutations><xsl:copy-of select="tan:array-to-xml(tan:array-permutations([(1, 2, 3), ('a', 'b', current-date())]))"/></array-permutations>-->
-         <!--<fa><xsl:copy-of select="function-available('file:exists')"/></fa>-->
-         <!--<xsl:copy-of select="tan:array-to-xml($array-build)"/>-->
-         <!--<xsl:copy-of select="tan:array-to-xml(array:subarray([(1), (2, 3)], 2))"/>-->
-         <!--<coll-str-seq><xsl:copy-of select="tan:collate-pair-of-sequences(tokenize($string-a, ' '), tokenize($string-b, ' '))"/></coll-str-seq>-->
-         <!--<integer-array><xsl:copy-of select="tan:array-to-xml(array:join($test-item-array))"/></integer-array>-->
-         <!--<las><xsl:copy-of select="$las"/></las>-->
-         <!--<xsl:variable name="array-a" as="array(xs:integer+)" select="[1]"/>-->
-         <!--<xsl:variable name="array-b" as="array(xs:integer+)" select="array:append($array-a, 2)"/>-->
-         <!--<xsl:variable name="test-subarray" as="array(xs:integer+)" select="array:subarray($array-b, 1)"/>-->
-         <!--<subarray><xsl:sequence select="array:size($test-subarray)"/></subarray>-->
-         <!--<subarray><xsl:copy-of select="array:subarray(['a', 'b', 'c', 'd'], 2)"/></subarray>-->
-         <!--<las><xsl:copy-of select="tan:array-to-xml($las)"/></las>-->
-         <!--<xsl:copy-of select="tan:duplicate-items((xs:double(3.0), 3, '3'))"/>-->
-         <!--<xsl:copy-of select="tan:map-entries-test($sample-map)"/>-->
-         <!--<xsl:copy-of select="tan:array-to-xml(tan:map-to-array($sample-map))"/>-->
-         <!--<array>
+         </xsl:result-document>-\->
+         <!-\-<uri-collection><xsl:copy-of select="tan:uri-collection(tan:uri-directory(static-base-uri()))"/></uri-collection>-\->
+         <!-\-<mor4-res><xsl:copy-of select="$tan-mor-4-resolved"/></mor4-res>-\->
+         <!-\-<mor4-exp><xsl:copy-of select="tan:expand-doc($tan-mor-4-resolved, 'terse', true())"/></mor4-exp>-\->
+         <!-\-<tan-a-mor-1-resolved><xsl:copy-of select="$tan-a-mor-1-resolved"/></tan-a-mor-1-resolved>-\->
+         <!-\-<tan-a-mor-2-resolved><xsl:copy-of select="$tan-a-mor-2-resolved"/></tan-a-mor-2-resolved>-\->
+         <!-\-<mor-1-to-mor-2-maps><xsl:copy-of select="tan:map-to-xml($mor-1-to-2-maps)"/></mor-1-to-mor-2-maps>-\->
+         <!-\-<mor-1-to-mor-3-maps><xsl:copy-of select="tan:map-to-xml($mor-1-to-3-maps)"/></mor-1-to-mor-3-maps>-\->
+         <!-\-<mor-1-to-mor-4-maps><xsl:copy-of select="tan:map-to-xml($mor-1-to-4-maps)"/></mor-1-to-mor-4-maps>-\->
+         <!-\-<mor-2-to-mor-1-maps><xsl:copy-of select="tan:map-to-xml($mor-2-to-1-maps)"/></mor-2-to-mor-1-maps>-\->
+         <!-\-<mor-2-to-mor-4-maps><xsl:copy-of select="tan:map-to-xml($mor-2-to-4-maps)"/></mor-2-to-mor-4-maps>-\->
+         <!-\-<tan-a-lm-to-mor3><xsl:copy-of select="$tan-a-lm-to-mor3"/></tan-a-lm-to-mor3>-\->
+         <!-\-<tan-a-lm-to-mor4><xsl:copy-of select="$tan-a-lm-to-mor4"/></tan-a-lm-to-mor4>-\->
+         <!-\-<tan-a-lm-to-mor2-then-mor4><xsl:copy-of select="$tan-a-lm-to-mor2-then-mor4"/></tan-a-lm-to-mor2-then-mor4>-\->
+         <!-\-<tan-a-lm-to-mor2><xsl:copy-of select="$tan-a-lm-to-mor2"/></tan-a-lm-to-mor2>-\->
+         <!-\-<tan-a-lm-back-to-mor1><xsl:copy-of select="$tan-a-lm-back-to-mor1"/></tan-a-lm-back-to-mor1>-\->
+         <!-\-<tan-a-lm-diff><xsl:copy-of select="tan:diff(serialize($tan-a-lm-doc), serialize($tan-a-lm-back-to-mor1))"/></tan-a-lm-diff>-\->
+         <!-\-<xsl:copy-of select="$morpheus-searches"/>-\->
+         <!-\-<xsl:copy-of select="tan:search-results-to-IRI-name-pattern($morpheus-searches)"/>-\->
+         <!-\-<xsl:copy-of select="tan:search-results-to-claims($morpheus-searches, 'morpheus')"/>-\->
+         <!-\-<xsl:copy-of select="$test-collation"/>-\->
+         <!-\-<array-permutations><xsl:copy-of select="tan:array-to-xml(tan:array-permutations([(1, 2, 3), ('a', 'b', current-date())]))"/></array-permutations>-\->
+         <!-\-<fa><xsl:copy-of select="function-available('file:exists')"/></fa>-\->
+         <!-\-<xsl:copy-of select="tan:array-to-xml($array-build)"/>-\->
+         <!-\-<xsl:copy-of select="tan:array-to-xml(array:subarray([(1), (2, 3)], 2))"/>-\->
+         <!-\-<coll-str-seq><xsl:copy-of select="tan:collate-pair-of-sequences(tokenize($string-a, ' '), tokenize($string-b, ' '))"/></coll-str-seq>-\->
+         <!-\-<integer-array><xsl:copy-of select="tan:array-to-xml(array:join($test-item-array))"/></integer-array>-\->
+         <!-\-<las><xsl:copy-of select="$las"/></las>-\->
+         <!-\-<xsl:variable name="array-a" as="array(xs:integer+)" select="[1]"/>-\->
+         <!-\-<xsl:variable name="array-b" as="array(xs:integer+)" select="array:append($array-a, 2)"/>-\->
+         <!-\-<xsl:variable name="test-subarray" as="array(xs:integer+)" select="array:subarray($array-b, 1)"/>-\->
+         <!-\-<subarray><xsl:sequence select="array:size($test-subarray)"/></subarray>-\->
+         <!-\-<subarray><xsl:copy-of select="array:subarray(['a', 'b', 'c', 'd'], 2)"/></subarray>-\->
+         <!-\-<las><xsl:copy-of select="tan:array-to-xml($las)"/></las>-\->
+         <!-\-<xsl:copy-of select="tan:duplicate-items((xs:double(3.0), 3, '3'))"/>-\->
+         <!-\-<xsl:copy-of select="tan:map-entries-test($sample-map)"/>-\->
+         <!-\-<xsl:copy-of select="tan:array-to-xml(tan:map-to-array($sample-map))"/>-\->
+         <!-\-<array>
             <xsl:for-each select="1 to array:size($array-test-to-array)">
                <member><xsl:copy-of select="$array-test-to-array(current())"/></member>
             </xsl:for-each>
-         </array>-->
-         <!--<array2>
-            <!-\-<xsl:copy-of select="array:size($array-test2)"/>-\->
+         </array>-\->
+         <!-\-<array2>
+            <!-\\-<xsl:copy-of select="array:size($array-test2)"/>-\\->
             <xsl:for-each select="1 to array:size($array-test2)">
                <member><xsl:copy-of select="$array-test2(current())"/></member>
             </xsl:for-each>
-         </array2>-->
-         <!--<array3>
-            <!-\-<xsl:copy-of select="array:size($array-test2)"/>-\->
+         </array2>-\->
+         <!-\-<array3>
+            <!-\\-<xsl:copy-of select="array:size($array-test2)"/>-\\->
             <xsl:for-each select="1 to array:size($array-test3)">
                <member><xsl:copy-of select="$array-test3(current())"/></member>
             </xsl:for-each>
-         </array3>-->
-         <!--<array-2-and-3><xsl:copy-of select="deep-equal($array-test2, $array-test3)"/></array-2-and-3>-->
-         <!--<casting>
+         </array3>-\->
+         <!-\-<array-2-and-3><xsl:copy-of select="deep-equal($array-test2, $array-test3)"/></array-2-and-3>-\->
+         <!-\-<casting>
             <integers><xsl:copy-of select="avg($test-int-seq)"/></integers>
-            <!-\-<strings><xsl:copy-of select="exists($test-str-seq)"/></strings>-\->
-            <!-\-<doubles><xsl:copy-of select="avg($test-dbl-seq)"/></doubles>-\->
+            <!-\\-<strings><xsl:copy-of select="exists($test-str-seq)"/></strings>-\\->
+            <!-\\-<doubles><xsl:copy-of select="avg($test-dbl-seq)"/></doubles>-\\->
             <back-integers><xsl:copy-of select="avg($test-back-int-seq)"/></back-integers>
-         </casting>-->
-         <!--<map-contains><xsl:copy-of select="tan:map-contains($sample-map, 'deep')"/></map-contains>-->
-         <!--<map-keys><xsl:copy-of select="tan:map-keys($sample-map)"/></map-keys>-->
-         <!--<map-find><xsl:copy-of select="array:size(map:find($sample-map, 'deep'))"/></map-find>-->
+         </casting>-\->
+         <!-\-<map-contains><xsl:copy-of select="tan:map-contains($sample-map, 'deep')"/></map-contains>-\->
+         <!-\-<map-keys><xsl:copy-of select="tan:map-keys($sample-map)"/></map-keys>-\->
+         <!-\-<map-find><xsl:copy-of select="array:size(map:find($sample-map, 'deep'))"/></map-find>-\->
          
-         <!--<xsl:variable name="int-seq" as="xs:integer+" select="(1, 78, 5, 4, 79, -1, 0)"/>-->
-         <!--<xsl:variable name="int-seq-array" as="array(xs:integer+)" select="tan:integer-groups($int-seq)"/>-->
-         <!--<int-clusters>
+         <!-\-<xsl:variable name="int-seq" as="xs:integer+" select="(1, 78, 5, 4, 79, -1, 0)"/>-\->
+         <!-\-<xsl:variable name="int-seq-array" as="array(xs:integer+)" select="tan:integer-groups($int-seq)"/>-\->
+         <!-\-<int-clusters>
             <xsl:for-each select="1 to array:size($int-seq-array)">
                <cluster><xsl:copy-of select="$int-seq-array(current())"/></cluster>
             </xsl:for-each>
-         </int-clusters>-->
-         <!--<int-clusters-2><xsl:copy-of select="tan:array-to-xml($int-seq-array)"/></int-clusters-2>-->
-         <!--<map-keys><xsl:copy-of select="map:keys($sample-map)"/></map-keys>-->
-         <!--<map-sorted>
+         </int-clusters>-\->
+         <!-\-<int-clusters-2><xsl:copy-of select="tan:array-to-xml($int-seq-array)"/></int-clusters-2>-\->
+         <!-\-<map-keys><xsl:copy-of select="map:keys($sample-map)"/></map-keys>-\->
+         <!-\-<map-sorted>
             <xsl:for-each select="map:keys($sample-map)">
                <xsl:sort select="number()"/>
                <key type="{tan:node-type(.)}">
                   <xsl:value-of select="."/>
                </key>
             </xsl:for-each>
-         </map-sorted>-->
-         <!--<xsl:copy-of select="tan:map-to-xml($sample-map)"/>-->
-         <!--<xsl:copy-of select="$s-map-to-xml"/>-->
-         <!--<xsl:copy-of select="tan:map-to-xml($s-back-to-map)"/>-->
-         <!--<samp-map>
+         </map-sorted>-\->
+         <!-\-<xsl:copy-of select="tan:map-to-xml($sample-map)"/>-\->
+         <!-\-<xsl:copy-of select="$s-map-to-xml"/>-\->
+         <!-\-<xsl:copy-of select="tan:map-to-xml($s-back-to-map)"/>-\->
+         <!-\-<samp-map>
             <xsl:for-each select="map:keys($sample-map)">
                <key><xsl:value-of select="tan:item-type(.)"/></key>
             </xsl:for-each>
-         </samp-map>-->
-         <!--<xsl:copy-of select="tan:get-diff-output-transpositions($str-diff, 5, 0.8)"/>-->
-         <!--<xsl:copy-of select="tan:stamp-tree-with-text-data(tan:stamp-diff-with-text-data($str-diff), true())"/>-->
-         <!--<xsl:copy-of select="tan:stamp-tree-with-text-data($str-diff, false())"/>-->
-         <!--<slices>
+         </samp-map>-\->
+         <!-\-<xsl:copy-of select="tan:get-diff-output-transpositions($str-diff, 5, 0.8)"/>-\->
+         <!-\-<xsl:copy-of select="tan:stamp-tree-with-text-data(tan:stamp-diff-with-text-data($str-diff), true())"/>-\->
+         <!-\-<xsl:copy-of select="tan:stamp-tree-with-text-data($str-diff, false())"/>-\->
+         <!-\-<slices>
             <xsl:copy-of select="tan:map-to-xml(tan:get-diff-output-slices($str-diff, 5, 0.8, 0, true()))"/>
-         </slices>-->
-         <!--<int-cl>
+         </slices>-\->
+         <!-\-<int-cl>
             <xsl:copy-of select="tan:integer-clusters((1, 4, 5, 7, 9), (6, 12))"/>
-         </int-cl>-->
-         <!--<xsl:for-each select="1 to count($values)">
+         </int-cl>-\->
+         <!-\-<xsl:for-each select="1 to count($values)">
             <xsl:sequence select="$values[current()]"/>    
-         </xsl:for-each>-->
-         <!--<s2-test><xsl:copy-of select="tan:resolve-doc(tan:get-1st-doc($tan:head/tan:source[2]), true(), tan:attr('src', ($tan:head/tan:source[2]/@xml:id, '1')[1]))"/></s2-test>-->
-         <!--<xsl:copy-of select="tan:normalize-tree-space($tan:sources-resolved, true())"/>-->
-         <!--<xsl:for-each select="$tan:self-expanded">
+         </xsl:for-each>-\->
+         <!-\-<s2-test><xsl:copy-of select="tan:resolve-doc(tan:get-1st-doc($tan:head/tan:source[2]), true(), tan:attr('src', ($tan:head/tan:source[2]/@xml:id, '1')[1]))"/></s2-test>-\->
+         <!-\-<xsl:copy-of select="tan:normalize-tree-space($tan:sources-resolved, true())"/>-\->
+         <!-\-<xsl:for-each select="$tan:self-expanded">
             <xsl:value-of select="tan:node-type(.)"/>
-         </xsl:for-each>-->
-         <!--<collate><xsl:sequence select="tan:collate(('abc', 'bcd', 'cde'), (), true())"></xsl:sequence></collate>-->
-         <!--<card><xsl:sequence select="tan:cardinal(2001)"/></card>-->
-         <!--<cfne><xsl:sequence select="tan:cfn('jar:file:/E:/Joel/Dropbox/TAN/library-arithmeticus/test/ring1951rev')"></xsl:sequence></cfne>-->
-         <!--<uri-test><xsl:copy-of select="tan:uri-relative-to('file:/e:/COVID-19-analysis-tables/temperature.html', 'file:/e:/COVID-19-analysis-tables/test3.xml')"/></uri-test>-->
-         <!--<ns-nodes><xsl:copy-of select="$ns-nodes"/></ns-nodes>-->
-         <!--<namespace-test><xsl:copy-of select="//namespace-node()"/></namespace-test>-->
-         <!--<html-test><xsl:copy-of select="tan:convert-to-html(/, true())"/></html-test>-->
-         <!--<tree-to-seq><xsl:sequence select="$test-tree-seq"/></tree-to-seq>-->
-         <!--<seq-to-tree><xsl:copy-of select="$test-tree-restored"/></seq-to-tree>-->
-         <self-resolved><xsl:copy-of select="$tan:self-resolved"/></self-resolved>
-         <!--<model><xsl:copy-of select="$tan:model-resolved"/></model>-->
-         <!--<sources-resolved count="{count($tan:sources-resolved)}"><xsl:copy-of select="$tan:sources-resolved"/></sources-resolved>-->
-         <self-expanded count="{count($tan:self-expanded)}"><xsl:copy-of select="$tan:self-expanded"/></self-expanded>
-         <!--<model-res><xsl:copy-of select="$tan:model-resolved"/></model-res>-->
-         <!--<href><xsl:copy-of select="tan:revise-hrefs(/, 'http://www.w3.org/2001/XMLSchema', 'http://www.w3.org/2001/XMLSchema2')"/></href>-->
-         <!--<targ-el-names><xsl:copy-of select="tan:target-element-names($test-el/@which)"/></targ-el-names>-->
-         <!--<voc-test><xsl:copy-of select="tan:vocabulary('normalization', 'no hyphens', $tan:head)"/></voc-test>-->
-         <!--<el-attr-wh><xsl:copy-of select="string-join($TAN-elements-that-take-the-attribute-which/@name, ', ')"/></el-attr-wh>-->
-         <!--<shallow-copy><xsl:copy-of select="tan:shallow-copy(/*/*[1], 2)"/></shallow-copy>-->
-         <!--<TAN-vocabularies><xsl:copy-of select="$tan:TAN-vocabularies"/></TAN-vocabularies>-->
-         <!--<vocab><xsl:copy-of select="$tan:all-vocabularies"/></vocab>-->
-         <!--<cat><xsl:copy-of select="tan:catalogs(/, true())"/></cat>-->
-         <!--<merged-docs>
+         </xsl:for-each>-\->
+         <!-\-<collate><xsl:sequence select="tan:collate(('abc', 'bcd', 'cde'), (), true())"></xsl:sequence></collate>-\->
+         <!-\-<card><xsl:sequence select="tan:cardinal(2001)"/></card>-\->
+         <!-\-<cfne><xsl:sequence select="tan:cfn('jar:file:/E:/Joel/Dropbox/TAN/library-arithmeticus/test/ring1951rev')"></xsl:sequence></cfne>-\->
+         <!-\-<uri-test><xsl:copy-of select="tan:uri-relative-to('file:/e:/COVID-19-analysis-tables/temperature.html', 'file:/e:/COVID-19-analysis-tables/test3.xml')"/></uri-test>-\->
+         <!-\-<ns-nodes><xsl:copy-of select="$ns-nodes"/></ns-nodes>-\->
+         <!-\-<namespace-test><xsl:copy-of select="//namespace-node()"/></namespace-test>-\->
+         <!-\-<html-test><xsl:copy-of select="tan:convert-to-html(/, true())"/></html-test>-\->
+         <!-\-<tree-to-seq><xsl:sequence select="$test-tree-seq"/></tree-to-seq>-\->
+         <!-\-<seq-to-tree><xsl:copy-of select="$test-tree-restored"/></seq-to-tree>-\->
+         <!-\-<href><xsl:copy-of select="tan:revise-hrefs(/, 'http://www.w3.org/2001/XMLSchema', 'http://www.w3.org/2001/XMLSchema2')"/></href>-\->
+         <!-\-<targ-el-names><xsl:copy-of select="tan:target-element-names($test-el/@which)"/></targ-el-names>-\->
+         <!-\-<voc-test><xsl:copy-of select="tan:vocabulary('normalization', 'no hyphens', $tan:head)"/></voc-test>-\->
+         <!-\-<el-attr-wh><xsl:copy-of select="string-join($TAN-elements-that-take-the-attribute-which/@name, ', ')"/></el-attr-wh>-\->
+         <!-\-<shallow-copy><xsl:copy-of select="tan:shallow-copy(/*/*[1], 2)"/></shallow-copy>-\->
+         <!-\-<TAN-vocabularies><xsl:copy-of select="$tan:TAN-vocabularies"/></TAN-vocabularies>-\->
+         <!-\-<vocab><xsl:copy-of select="$tan:all-vocabularies"/></vocab>-\->
+         <!-\-<cat><xsl:copy-of select="tan:catalogs(/, true())"/></cat>-\->
+         <!-\-<merged-docs>
             <xsl:copy-of select="tan:merge-expanded-docs(($tan:self-expanded, tan:expand-doc($tan:model-resolved, 'terse')))"/>
-         </merged-docs>-->
-      </test>
+         </merged-docs>-\->
+      </test>-->
       <!--<xsl:result-document format="xml" href="../output/{tan:cfn(/)}-diagnostics.xml">
          <diagnostics>
             <!-\-<sources-resolved count="{count($tan:sources-resolved)}"><xsl:copy-of select="$tan:sources-resolved[2]"/></sources-resolved>-\->
