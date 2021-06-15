@@ -299,7 +299,7 @@
             <xsl:otherwise>
                 <xsl:variable name="archive-as-base64Binary" as="xs:base64Binary"
                     select="file:read-binary($source-uri)"/>
-                <xsl:copy-of select="$archive-as-base64Binary"/>
+                <xsl:sequence select="$archive-as-base64Binary"/>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:function>
@@ -352,6 +352,7 @@
                 as="item()?"/>
             <xsl:variable name="this-component-content-is-map"
                 select="$this-component-content instance of map(xs:string,map(xs:string,item()?))"/>
+            
             <xsl:choose>
                 <xsl:when test="$this-component-content-type = 'binary'">
                     <xsl:document>
@@ -387,6 +388,7 @@
                             </xsl:otherwise>
                         </xsl:choose>
                     </xsl:variable>
+                    
                     <xsl:for-each select="$this-content-parsed">
                         <xsl:document>
                             <xsl:for-each select="node()">
@@ -397,6 +399,9 @@
                                             <xsl:copy-of select="$this-archive-path-attr, $this-xml-base-attr"/>
                                             <xsl:copy-of select="node()"/>
                                         </xsl:copy>
+                                    </xsl:when>
+                                    <xsl:when test=". instance of document-node()">
+                                        <xsl:copy-of select="node()"/>
                                     </xsl:when>
                                     <xsl:otherwise>
                                         <xsl:copy-of select="."/>
@@ -410,7 +415,7 @@
                     <xsl:message select="'The component at ' || $this-component-path || ' is not one of the predefined content types (text, binary, archive), and it is not a map. Please fix.'"/>
                 </xsl:when>
                 <xsl:otherwise>
-                    <xsl:copy-of select="tan:archive-map-to-xml($this-component-content, $archive-base-uri, $local-archive-directory || $this-component-path || '/' )"/>
+                    <xsl:sequence select="tan:archive-map-to-xml($this-component-content, $archive-base-uri, $local-archive-directory || $this-component-path || '/' )"/>
                 </xsl:otherwise>
             </xsl:choose>
         </xsl:for-each>
@@ -457,13 +462,14 @@
         />
         
         <xsl:variable name="these-archive-keys" select="map:keys($this-archive-map-with-content)"/>
+        
         <xsl:choose>
             <xsl:when test="string-length($source-uri) lt 1 or not(file:exists($source-uri))"/>
             <xsl:when test="not(exists($these-archive-keys))">
                 <xsl:message select="$source-uri || ' appears not to be a valid archive.'"/>
             </xsl:when>
             <xsl:otherwise>
-                <xsl:copy-of select="tan:archive-map-to-xml($this-archive-map-with-content, $source-archive-uri, ())"/>
+                <xsl:sequence select="tan:archive-map-to-xml($this-archive-map-with-content, $source-archive-uri, ())"/>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:function>

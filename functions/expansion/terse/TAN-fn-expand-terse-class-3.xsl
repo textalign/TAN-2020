@@ -131,13 +131,11 @@
       <xsl:param name="is-reserved" as="xs:boolean?" tunnel="yes"/>
       <xsl:variable name="these-affects-elements" select="tan:affects-element/text()"/>
       <xsl:variable name="reserved-vocabulary-docs"
-         select="$tan:TAN-vocabularies[tan:TAN-voc/tan:body[tokenize(@affects-element, '\s+') = $these-affects-elements]]"/>
-      <xsl:variable name="reserved-vocabulary-items"
-         select="
-         for $i in $reserved-vocabulary-docs
-         return
-         key('tan:item-via-node-name', $these-affects-elements, $i)"
-      />
+         select="$tan:TAN-vocabularies[tan:TAN-voc[not(contains(@xml:base, 'extra'))]/tan:body[tokenize(@affects-element, '\s+') = $these-affects-elements]]"/>
+      <xsl:variable name="reserved-vocabulary-items" select="
+            for $i in $reserved-vocabulary-docs
+            return
+               key('tan:item-via-node-name', $these-affects-elements, $i)"/>
       <xsl:copy>
          <xsl:copy-of select="@*"/>
          <xsl:if

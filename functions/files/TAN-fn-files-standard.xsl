@@ -72,10 +72,10 @@
          <xsl:variable name="this-class" select="tan:class-number(.)"/>
          <xsl:variable name="first-la" as="xs:string?" select="tan:first-loc-available($this-element-norm[1])"/>
          <xsl:variable name="this-id" select="root(.)/*/@id"/>
-         <xsl:variable name="these-hrefs" select="$this-element-norm//@href"/>
+         <xsl:variable name="these-unpatterned-hrefs" select="$this-element-norm//@href[not(matches(., '[*?]'))]"/>
          <xsl:variable name="some-href-is-local"
             select="
-            some $i in $these-hrefs
+            some $i in $these-unpatterned-hrefs
             satisfies tan:url-is-local($i)"/>
          
          <xsl:variable name="diagnostics-on" select="false()"/>
@@ -91,23 +91,21 @@
          </xsl:if>
          
          <xsl:choose>
-            <xsl:when test="not(exists($these-hrefs))"/>
+            <xsl:when test="not(exists($these-unpatterned-hrefs))"/>
             <xsl:when test="string-length($first-la) lt 1">
                <xsl:variable name="this-base-uri" select="tan:base-uri(.)"/>
                <xsl:variable name="these-hrefs-resolved" select="tan:resolve-href(.)"/>
-               <xsl:variable name="these-tan-catalog-uris"
-                  select="
-                  for $i in $these-hrefs-resolved//@href
-                  return
-                  replace($i, '[^/]+$', 'catalog.tan.xml')"/>
+               <xsl:variable name="these-tan-catalog-uris" select="
+                     for $i in $these-hrefs-resolved//@href
+                     return
+                        replace($i, '[^/]+$', 'catalog.tan.xml')"/>
                <xsl:variable name="these-tan-catalogs"
                   select="doc($these-tan-catalog-uris[doc-available(.)])"/>
-               <xsl:variable name="these-IRIs"
-                  select="
-                  if (self::tan:master-location) then
-                  root()/*/@id
-                  else
-                  tan:IRI"/>
+               <xsl:variable name="these-IRIs" select="
+                     if (self::tan:master-location) then
+                        root()/*/@id
+                     else
+                        tan:IRI"/>
                <xsl:variable name="possible-docs" as="element()*">
                   <xsl:apply-templates select="$these-tan-catalogs//doc[@id = $these-IRIs]"
                      mode="tan:resolve-href"/>
@@ -118,7 +116,7 @@
                   </xsl:for-each>
                </xsl:variable>
                <xsl:variable name="this-message-raw" as="xs:string*">
-                  <xsl:value-of select="'No XML document found found at ' || string-join($these-hrefs, ' ')"/>
+                  <xsl:value-of select="'No XML document found found at ' || string-join($these-unpatterned-hrefs, ' ')"/>
                   <xsl:if test="exists($possible-hrefs)">
                      <xsl:value-of
                         select="' For @href try: ' || string-join($possible-hrefs/@href, ', ')"
@@ -147,10 +145,11 @@
                         />
                      </xsl:when>
                      <!-- Skip <source> in class 1 files when the URL points to non-XML. -->
-                     <xsl:when
-                        test="
-                        self::tan:source and ($this-class = 1) and (some $i in $these-hrefs
-                        satisfies (unparsed-text-available($i)) or doc-available('zip:' || $i || '!/_rels/.rels'))"
+                     <!-- Skip <predecessor>s, since they may be non-TAN files. -->
+                     <xsl:when test="
+                           ((self::tan:source and ($this-class = 1)) or self::tan:predecessor) 
+                           and (some $i in $these-unpatterned-hrefs
+                              satisfies (unparsed-text-available($i)) or doc-available('zip:' || $i || '!/_rels/.rels'))"
                      />
                      <xsl:when
                         test="self::tan:source and not(exists(tan:location)) and tan:tan-type(.) = 'TAN-mor'"/>

@@ -44,6 +44,7 @@
         <warning xml:id="wrn11"><rule>If the internet is available, and an @href points to a non-local file that is not available, a warning will be returned.</rule><message>@href points to non-local file that is either (1) not available, (2) not valid XML, or (3) at a server not trusted by the validation engine.</message></warning>
         <error xml:id="tan16"><rule>The only @href in a TAN document that may point to another document with the same document id is that of &lt;master-location> or &lt;see-also></rule></error>
         <error xml:id="tan17"><rule>No @href should point to the URI of the document itself.</rule></error>
+        <error xml:id="tan23"><rule>An @href that points to a local drive should have "file:/" prepended.</rule></error>
     </group>
     <group affects-element="IRI">
         <error xml:id="tan09"><rule>An IRI may appear no more than once in a TAN document.</rule></error>
@@ -77,8 +78,8 @@
     <group affects-element="inclusion">
         <error xml:id="lnk01"><rule>An inclusion must point to a TAN file</rule></error>
     </group>
-    <group affects-element="successor predecessor companion-version">
-        <error xml:id="lnk02"><rule>&lt;successor>, &lt;predecessor>, and &lt;companion-version> must point to TAN files of the same type.</rule></error>
+    <group affects-element="successor companion-version">
+        <error xml:id="lnk02"><rule>&lt;successor> and &lt;companion-version> must point to TAN files of the same type.</rule></error>
     </group>
     <group affects-element="model redivision">
         <error xml:id="lnk03"><rule>&lt;model> and &lt;redivision> must point to class 1 TAN files</rule></error>
@@ -117,7 +118,7 @@
     <group affects-element="location inclusion source vocabulary redivision model annotation predecessor successor">
         <error xml:id="lnk07"><rule>If a linking element points to a file that must be resolved, that file must be a TAN file.</rule></error>
     </group>
-    <group affects-element="location algorithm see-also">
+    <group affects-element="location algorithm see-also predecessor">
         <warning xml:id="loc04"><rule>If an element not essential to validation has no &lt;location> that points to a document a warning should be returned.</rule></warning>
     </group>
     <group affects-element="location inclusion see-also source vocabulary" affects-attribute="accessed-when">

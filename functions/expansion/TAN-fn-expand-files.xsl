@@ -744,6 +744,27 @@
       </xsl:copy>
    </xsl:template>
    
+   
+   <xsl:template match="tan:predecessor | tan:see-also" mode="tan:check-referred-doc" priority="1">
+      <!-- For those referrals that may point to TAN files or non-TAN files. This does a preliminary 
+         check, to see if the default should be used. -->
+      <xsl:variable name="this-voc-expansion" select="tan:element-vocabulary(.)/tan:item"/>
+      <xsl:variable name="this-element-expanded"
+         select="(.[exists(tan:location)], $this-voc-expansion, $tan:empty-element)[1]"/>
+      <xsl:variable name="target-1st-da" select="tan:get-1st-doc($this-element-expanded)"/>
+      <xsl:choose>
+         <xsl:when test="exists($target-1st-da/*/@TAN-version)">
+            <xsl:next-match/>
+         </xsl:when>
+         <xsl:otherwise>
+            <xsl:copy>
+               <xsl:copy-of select="@*"/>
+               <xsl:copy-of select="$target-1st-da/(tan:error, tan:warning, tan:fatal, tan:help)"/>
+               <xsl:copy-of select="node()"/>
+            </xsl:copy>
+         </xsl:otherwise>
+      </xsl:choose>
+   </xsl:template>
    <xsl:template
       match="
          tan:inclusion | tan:vocabulary | tan:TAN-A/tan:head/tan:source | tan:TAN-A-lm/tan:head/tan:source | tan:TAN-A-tok/tan:head/tan:source
@@ -1043,6 +1064,9 @@
       <xsl:variable name="href-is-local" select="tan:url-is-local(@href)"/>
       <xsl:copy>
          <xsl:copy-of select="@*"/>
+         <xsl:if test="matches(@href, '^[a-zA-Z]:')">
+            <xsl:copy-of select="tan:error('tan23')"/>
+         </xsl:if>
          <xsl:choose>
             <xsl:when test="not($tan:internet-available) and not($href-is-local)">
                <!-- if it's a url on the internet, but there's no internet connection, provide the appropriate warning -->

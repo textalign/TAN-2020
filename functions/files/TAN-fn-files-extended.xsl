@@ -9,7 +9,7 @@
    <xsl:function name="tan:open-file" visibility="public">
       <!-- 1-parameter function of the main one below -->
       <xsl:param name="resolved-urls"/>
-      <xsl:copy-of select="tan:open-file($resolved-urls, $tan:fallback-encoding)"/>
+      <xsl:sequence select="tan:open-file($resolved-urls, $tan:fallback-encoding)"/>
    </xsl:function>
 
    <xsl:function name="tan:open-file" as="document-node()*" visibility="public">
