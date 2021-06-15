@@ -173,7 +173,9 @@ tr > td.label
 {
    background-color: white;
 }
-.control .group > .label {
+.control .group > .label, 
+.control .e-group > .label 
+{
    background-color: rgba(255, 255, 255, 0.7);
 }
 
@@ -181,7 +183,9 @@ tr > td.label
 table {
    border-collapse: collapse;
 }
-.control .group > .label {
+.control .group > .label,
+.control .e-group > .label
+{
    border-radius: 5px;
 }
 td div {
@@ -190,7 +194,9 @@ td div {
 
 .head,
 .e-head,
-.control .group {
+.control .group,
+.control .e-group
+{
    border: 1px solid tan;
    border-radius: 5px;
 }
@@ -213,7 +219,9 @@ body > div:first-child ~ div {
 }*/
 
 /* color */
-.control .group > .label {
+.control .group > .label,
+.control .e-group > .label
+{
    color: black;
 }
 .div > .tok > *,
@@ -280,6 +288,7 @@ div.lb:before {
 .e-head > .label ~ *,
 .meta .label ~ *,
 .control > .group > .label ~ *,
+.control > .e-group > .label ~ *,
 .hideNext ~ *,
 .tei .hideNext ~ *,
 /* hide specific elements that you wish to suppress */
@@ -333,6 +342,8 @@ div.tei > .anchor,
 div.ns-tei > .e-anchor,
 .display-n ~ .n,
 .e-display-n ~ .a-n,
+.e-display-n ~ .e-n,
+.e-display-n ~ .e-ref,
 td .n,
 td .a-n,
 td .e-n,
@@ -345,7 +356,10 @@ td.e-ref > div:first-child ~ *,
 .emph > .resp,
 .e-emph > .e-resp,
 .allusion > .type
-.e-allusion > .a-type
+.e-allusion > .a-type,
+/* next to items added ad hoc 2021-06-12 */
+td.filler > .e-src,
+.e-claim > .a-include
 {
    display: none
 }
@@ -404,16 +418,22 @@ tr > td div.tei > *,
 tr > td div.tei > .list,
 .prevFrag,
 .nextFrag,
+/* 2021-06-12 added the next line for the parallel editions */
+.sortable > .e-group,
 .meta td .label ~ *
 /*.tei .wrapper > *,*/
 
 {
    display: inline-block
 }
-.sortable > .group {
+.sortable > .group
+.sortable > .e-group
+{
    display: table-cell;
 }
-.group.sortable {
+.group.sortable,
+.e-group.sortable
+{
    display: table-row;
 }
 .TAN-T_merge .td > .version,
@@ -649,6 +669,7 @@ div.a-n ~ div.a-n
 }
 
 .control .group,
+.control .e-group,
 .classSwitch > * {
    margin: 0.2em;
 }
@@ -681,6 +702,7 @@ div.e-common,
    margin-left: 0em;
 }
 div.group.sortable,
+div.e-group.sortable,
 .claim,
 .e-claim,
 .bibl-key {
@@ -748,7 +770,9 @@ div.e-non-tok
 td.version.filler {
    padding: 0px;
 }
-.control > .group {
+.control > .group,
+.control > .e-group
+{
    padding: 0.2em;
 }
 
