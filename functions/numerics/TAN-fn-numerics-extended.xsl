@@ -70,6 +70,7 @@
       <!-- Output: an array, with each member containing a sequence of integers that are collectively contiguous -->
       <!-- Array members and their contents will be sorted; duplicates will be ignored -->
       <xsl:param name="integers-to-group" as="xs:integer*"/>
+      
       <xsl:variable name="ints-sorted" as="xs:integer*"
          select="sort(distinct-values($integers-to-group))"/>
       

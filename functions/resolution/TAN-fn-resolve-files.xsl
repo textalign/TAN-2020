@@ -1259,7 +1259,7 @@
       <xsl:param name="n-alias-items" as="element()*" tunnel="yes"/>
       <xsl:param name="n-alias-div-type-constraints" as="xs:string*" tunnel="yes"/>
       
-      <xsl:variable name="these-n-vals" select="tokenize(normalize-space(@n), ' ')" as="xs:string+"/>
+      <xsl:variable name="these-n-vals" select="tokenize(normalize-space(@n), ' ')" as="xs:string*"/>
       <xsl:variable name="these-div-types" select="tokenize(@type, '\s+')" as="xs:string+"/>
       <xsl:variable name="n-aliases-should-be-checked" as="xs:boolean"
          select="not(exists($n-alias-div-type-constraints)) or ($these-div-types = $n-alias-div-type-constraints)"/>

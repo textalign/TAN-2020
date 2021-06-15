@@ -86,7 +86,7 @@
       <xsl:param name="globs" as="xs:string*"/>
       <xsl:for-each select="$globs">
          <!-- escape special regex characters that aren't special glob characters -->
-         <xsl:variable name="pass-1" select="replace(., '([\.\\\|\^\$\+\{\}\(\)])', '\$1')"/>
+         <xsl:variable name="pass-1" select="replace(., '([\.\\\|\^\$\+\{\}\(\)])', '\\$1')"/>
          <!-- convert glob * -->
          <xsl:variable name="pass-2" select="replace($pass-1, '\*', '.*')"/>
          <!-- convert glob ? -->
@@ -145,74 +145,199 @@
    </xsl:function>
    
    
+   <xsl:template name="tan:regex-group-count" as="xs:integer?" visibility="public">
+      <!-- Input: perhaps a parameter specifying how many blank entries are permitted 
+         before stopping the iteration. -->
+      <!-- Output: the number of groups of regular expressions in the current context. -->
+      <!-- Most often in the TAN function library, a function is preferred over a named template.
+         In this case, we have a named template, because the function severs the context of 
+         regex-groups() -->
+      <xsl:param name="number-of-blank-entries-ceiling" as="xs:integer" select="10"/>
+      <xsl:iterate select="1 to 100">
+         <xsl:param name="number-of-blanks-so-far" as="xs:integer" select="0"/>
+         <!--<xsl:message select="'iteration ' || string(.) || ' regex group: [' || regex-group(.) || ']'"/>-->
+         <xsl:variable name="is-blank" as="xs:boolean" select="string-length(regex-group(.)) eq 0"/>
+         <xsl:choose>
+            <xsl:when test="$is-blank and ($number-of-blanks-so-far eq $number-of-blank-entries-ceiling)">
+               <xsl:sequence select=". - ($number-of-blanks-so-far + 1)"/>
+               <xsl:break/>
+            </xsl:when>
+            <xsl:otherwise>
+               <xsl:next-iteration>
+                  <xsl:with-param name="number-of-blanks-so-far" select="
+                        if ($is-blank) then
+                           ($number-of-blanks-so-far + 1)
+                        else
+                           0"/>
+               </xsl:next-iteration>
+            </xsl:otherwise>
+         </xsl:choose>
+      </xsl:iterate>
+   </xsl:template>
+   
+   
+   
+   
    <xsl:function name="tan:batch-replace-advanced" as="item()*" visibility="public">
-      <!-- Input: a string; a sequence of elements <[ANY NAME] pattern="" [flags=""]>[ANY CONTENT]</[ANY NAME]> -->
+      <!-- Input: any items; a sequence of elements:
+         <[ANY NAME] pattern="" [flags=""] [message=""] [exclude-pattern=""]>[ANY CONTENT]</[ANY NAME]> -->
       <!-- Output: a sequence of items, with instances of @pattern replaced by the content of the elements -->
-      <!-- This is a more advanced form of tan:batch-replace(), in that it allows text to be replaced by elements. -->
+      <!-- This is a more advanced form of tan:batch-replace(), in that it allows text to be replaced by elements.
+         It also allows for exclusion of matches via @exclude-pattern. That is, if a span of text matches that value,
+         the match will be ignored. -->
       <!-- The function was devised to convert raw text into TAN-T. Textual references can be turned into <div n=""/> anchors, and the result can then be changed into a traditional hierarchy. -->
-      <xsl:param name="string" as="xs:string?"/>
+      <xsl:param name="items-with-strings" as="item()*"/>
       <xsl:param name="replace-elements" as="element()*"/>
+      
+      <xsl:variable name="replace-elements-of-interest" as="element()*"
+         select="$replace-elements[@pattern]"/>
+      
+      <xsl:variable name="replace-elements-ignored" as="element()*"
+         select="$replace-elements except $replace-elements-of-interest"/>
+      
+      <xsl:if test="exists($replace-elements-ignored)">
+         <xsl:message
+            select="string(count($replace-elements-ignored)) || ' replace elements are ignored, because they are missing @pattern.'"
+         />
+      </xsl:if>
       <xsl:choose>
-         <xsl:when test="not(exists($replace-elements))">
-            <xsl:value-of select="$string"/>
-         </xsl:when>
-         <xsl:when test="string-length($replace-elements[1]/@pattern) lt 1">
-            <xsl:copy-of
-               select="tan:batch-replace-advanced($string, $replace-elements[position() gt 1])"/>
+         <xsl:when test="not(exists($replace-elements-of-interest))">
+            <xsl:sequence select="$items-with-strings"/>
          </xsl:when>
          <xsl:otherwise>
-            <xsl:analyze-string select="$string" regex="{$replace-elements[1]/@pattern}" flags="{$replace-elements[1]/@flags}">
-               <xsl:matching-substring>
-                  <xsl:apply-templates select="$replace-elements[1]/node()" mode="tan:batch-replace-advanced">
-                     <xsl:with-param name="regex-zero" tunnel="yes" select="."/>
-                     <xsl:with-param name="regex-groups" tunnel="yes"
-                        select="
-                        for $i in (1 to 20)
-                        return
-                        regex-group($i)"
-                     />
+            <xsl:iterate select="$replace-elements-of-interest">
+               <xsl:param name="results-so-far" as="item()*" select="$items-with-strings"/>
+               
+               <xsl:on-completion select="$results-so-far"/>
+               
+               <xsl:variable name="new-items" as="item()*">
+                  <xsl:apply-templates select="$results-so-far" mode="tan:batch-replace-advanced-pass-1">
+                     <xsl:with-param name="replace-element" tunnel="yes" select="."/>
                   </xsl:apply-templates>
-               </xsl:matching-substring>
-               <xsl:non-matching-substring>
-                  <!-- Anything that doesn't match should be processed with the next replace element -->
-                  <xsl:copy-of
-                     select="tan:batch-replace-advanced(., $replace-elements[position() gt 1])"/>
-               </xsl:non-matching-substring>
-            </xsl:analyze-string>
+               </xsl:variable>
+               
+               <xsl:next-iteration>
+                  <xsl:with-param name="results-so-far" as="item()*" select="$new-items"/>
+               </xsl:next-iteration>
+            </xsl:iterate>
          </xsl:otherwise>
       </xsl:choose>
    </xsl:function>
    
+   <xsl:mode name="tan:batch-replace-advanced-pass-1" on-no-match="shallow-copy"/>
    
-   <xsl:mode name="tan:batch-replace-advanced" 
-      on-no-match="shallow-copy"/>
-   
-   <xsl:template match="*" mode="tan:batch-replace-advanced">
-      <xsl:copy>
-         <xsl:apply-templates select="@* | node()" mode="#current"/>
-      </xsl:copy>
+   <xsl:template match="text()" mode="tan:batch-replace-advanced-pass-1">
+      <xsl:param name="replace-element" tunnel="yes" as="element()"/>
+      
+      <xsl:variable name="exclude-pattern" as="xs:string?" select="$replace-element/@exclude-pattern"/>
+      
+      <xsl:analyze-string select="." regex="{$replace-element/@pattern}" flags="{$replace-element/@flags}">
+         <xsl:matching-substring>
+            <xsl:choose>
+               <xsl:when
+                  test="string-length($exclude-pattern) gt 0 and tan:matches(., $exclude-pattern, ($replace-element/@flags, '')[1])">
+                  <xsl:value-of select="."/>
+               </xsl:when>
+               <xsl:otherwise>
+                  <xsl:variable name="regex-group-count" as="xs:integer">
+                     <xsl:call-template name="tan:regex-group-count"/>
+                  </xsl:variable>
+                  
+                  <xsl:apply-templates select="$replace-element/@message" mode="tan:batch-replace-advanced-pass-2">
+                     <xsl:with-param name="regex-group-count" tunnel="yes" select="$regex-group-count"/>
+                  </xsl:apply-templates>
+                  <xsl:apply-templates select="$replace-element/node()" mode="tan:batch-replace-advanced-pass-2">
+                     <xsl:with-param name="regex-group-count" tunnel="yes" select="$regex-group-count"/>
+                  </xsl:apply-templates>
+               </xsl:otherwise>
+            </xsl:choose>
+         </xsl:matching-substring>
+         <xsl:non-matching-substring>
+            <xsl:value-of select="."/>
+         </xsl:non-matching-substring>
+      </xsl:analyze-string>
+      
+   </xsl:template>
+   <xsl:template match=".[. instance of xs:string]" mode="tan:batch-replace-advanced-pass-1">
+      <xsl:param name="replace-element" tunnel="yes" as="element()"/>
+      
+      <xsl:variable name="exclude-pattern" as="xs:string?" select="$replace-element/@exclude-pattern"/>
+      
+      <xsl:analyze-string select="." regex="{$replace-element/@pattern}" flags="{$replace-element/@flags}">
+         <xsl:matching-substring>
+            <xsl:choose>
+               <xsl:when
+                  test="string-length($exclude-pattern) gt 0 and tan:matches(., $exclude-pattern, ($replace-element/@flags, '')[1])">
+                  <xsl:value-of select="."/>
+               </xsl:when>
+               <xsl:otherwise>
+                  <xsl:variable name="regex-group-count" as="xs:integer">
+                     <xsl:call-template name="tan:regex-group-count"/>
+                  </xsl:variable>
+                  
+                  <xsl:apply-templates select="$replace-element/@message" mode="tan:batch-replace-advanced-pass-2">
+                     <xsl:with-param name="regex-group-count" tunnel="yes" select="$regex-group-count"/>
+                  </xsl:apply-templates>
+                  <xsl:apply-templates select="$replace-element/node()" mode="tan:batch-replace-advanced-pass-2">
+                     <xsl:with-param name="regex-group-count" tunnel="yes" select="$regex-group-count"/>
+                  </xsl:apply-templates>
+               </xsl:otherwise>
+            </xsl:choose>
+         </xsl:matching-substring>
+         <xsl:non-matching-substring>
+            <xsl:value-of select="."/>
+         </xsl:non-matching-substring>
+      </xsl:analyze-string>
+      
    </xsl:template>
    
-   <xsl:template match="@*" mode="tan:batch-replace-advanced">
-      <xsl:param name="regex-zero" as="xs:string" tunnel="yes"/>
-      <xsl:param name="regex-groups" as="xs:string*" tunnel="yes"/>
+   
+   <xsl:mode name="tan:batch-replace-advanced-pass-2" 
+      on-no-match="shallow-copy"/>
+   
+   <xsl:template match="@*" mode="tan:batch-replace-advanced-pass-2">
+      <xsl:param name="regex-group-count" as="xs:integer" tunnel="yes">
+         <xsl:call-template name="tan:regex-group-count"/>
+      </xsl:param>
+      
+      <!-- Note, regex-group(0) is first, regex-group(1) is second, etc. -->
+      <xsl:variable name="regex-groups" as="xs:string*" select="
+            for $i in (0 to $regex-group-count)
+            return
+               regex-group($i)"/>
       <xsl:variable name="new-value" as="xs:string*">
          <xsl:analyze-string select="." regex="\$(\d+)">
             <xsl:matching-substring>
                <xsl:variable name="this-regex-no" select="number(regex-group(1))"/>
-               <xsl:value-of select="$regex-groups[$this-regex-no]"/>
+               <xsl:value-of select="$regex-groups[$this-regex-no + 1]"/>
             </xsl:matching-substring>
             <xsl:non-matching-substring>
                <xsl:value-of select="."/>
             </xsl:non-matching-substring>
          </xsl:analyze-string>
       </xsl:variable>
-      <xsl:attribute name="{name(.)}" select="string-join($new-value, '')"/>
+      <xsl:choose>
+         <xsl:when test="name(.) eq 'message'">
+            <xsl:message select="string-join($new-value, '')"/>
+         </xsl:when>
+         <xsl:otherwise>
+            <xsl:attribute name="{name(.)}" select="string-join($new-value, '')"/>
+         </xsl:otherwise>
+      </xsl:choose>
+      
    </xsl:template>
    
-   <xsl:template match="text()" mode="tan:batch-replace-advanced">
-      <xsl:param name="regex-zero" as="xs:string" tunnel="yes"/>
-      <xsl:param name="regex-groups" as="xs:string*" tunnel="yes"/>
+   <xsl:template match="text()" mode="tan:batch-replace-advanced-pass-2">
+      <xsl:param name="regex-group-count" as="xs:integer" tunnel="yes">
+         <xsl:call-template name="tan:regex-group-count"/>
+      </xsl:param>
+
+      <!-- Note, regex-group(0) is first, regex-group(1) is second, etc. -->
+      <xsl:variable name="regex-groups" as="xs:string*" select="
+            for $i in (0 to $regex-group-count)
+            return
+               regex-group($i)"/>
+      
       <xsl:choose>
          <!-- omit whitespace text -->
          <xsl:when test="not(matches(., '\S'))"/>
@@ -220,7 +345,7 @@
             <xsl:analyze-string select="." regex="\$(\d+)">
                <xsl:matching-substring>
                   <xsl:variable name="this-regex-no" select="number(regex-group(1))"/>
-                  <xsl:value-of select="$regex-groups[$this-regex-no]"/>
+                  <xsl:value-of select="$regex-groups[$this-regex-no + 1]"/>
                </xsl:matching-substring>
                <xsl:non-matching-substring>
                   <xsl:value-of select="."/>
