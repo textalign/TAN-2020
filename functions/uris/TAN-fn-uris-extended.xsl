@@ -218,4 +218,50 @@
       <xsl:sequence select="xs:boolean($result-map('output'))"/>
    </xsl:function>
    
+   
+   <xsl:function name="tan:uri-collection-from-pattern" as="xs:anyURI*" visibility="public">
+      <!-- Input: a string representing a resolved uri, with patterns -->
+      <!-- Output: a uri collection based on the string as an input pattern -->
+      <!-- This function was written to support glob-like patterns for files. -->
+      <xsl:param name="resolved-patterned-uri" as="xs:string?"/>
+      
+      <xsl:variable name="pattern-parts" as="element()">
+         <pattern-parts>
+            <xsl:analyze-string select="$resolved-patterned-uri" regex="^(.+/)([^/]*)$">
+               <xsl:matching-substring>
+                  <directory>
+                     <xsl:value-of select="regex-group(1)"/>
+                  </directory>
+                  <filename>
+                     <xsl:value-of select="regex-group(2)"/>
+                  </filename>
+               </xsl:matching-substring>
+            </xsl:analyze-string>
+         </pattern-parts>
+      </xsl:variable>
+      
+      <xsl:choose>
+         <xsl:when test="not(resolve-uri($resolved-patterned-uri) eq $resolved-patterned-uri)">
+            <xsl:message select="$resolved-patterned-uri || ' is not a resolved uri pattern.'"/>
+         </xsl:when>
+         <xsl:when test="matches($resolved-patterned-uri, '[*?].*/')">
+            <xsl:message select="'tan:uri-collection-from-pattern() does not support wildcards for directories. Unable to process ' || $resolved-patterned-uri || '.'"/>
+         </xsl:when>
+         <xsl:when test="not(exists($pattern-parts/*))">
+            <xsl:message select="'tan:uri-collection-from-pattern() unable to process ' || $resolved-patterned-uri || '.'"/>
+         </xsl:when>
+         <xsl:otherwise>
+            <xsl:variable name="context-uri-collection" as="xs:anyURI*" select="uri-collection($pattern-parts/tan:directory)"/>
+            <xsl:variable name="context-pattern" as="xs:string" select="tan:glob-to-regex($pattern-parts/tan:filename)"/>
+
+            <xsl:sequence select="
+                  $context-uri-collection[if (string-length($context-pattern) gt 0) then
+                     matches(., $context-pattern)
+                  else
+                     true()]"/>
+         </xsl:otherwise>
+      </xsl:choose>
+      
+   </xsl:function>
+   
 </xsl:stylesheet>

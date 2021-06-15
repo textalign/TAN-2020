@@ -7,9 +7,9 @@
 
    <!-- TAN Function Library URIs read incognito -->
    
-   <!-- This small file is collected with, but not to, the TAN function library. It is accessed through
-      the tan:doc-available() function at TAN-fn-uris-extended via transform(), to avoid I/O conflicts 
-      in case an application wishes to write to a file there. -->
+   <!-- This small file comes with the TAN function library, but is not included directly. It is 
+      accessed through the tan:doc-available() function at TAN-fn-uris-extended via transform(), 
+      intended to avoid I/O conflicts in case an application wishes to write to a file there. -->
 
    <xsl:function name="tan:doc-available" as="xs:boolean" visibility="public">
       <!-- Input: a string -->
