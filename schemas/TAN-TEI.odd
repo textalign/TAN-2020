@@ -322,7 +322,7 @@
                 main.xml#vocabularies-n-unlabeled-divs-1-eng</desc>
               <datatype>
                 <rng:data type="string">
-                  <rng:param name="pattern">[\w\._]+([\- ,]+[\w\._]+)*</rng:param>
+                  <rng:param name="pattern">[\w/_]+([\- ,]+[\w/_]+)*</rng:param>
                 </rng:data>
               </datatype>
             </attDef>
