@@ -3,6 +3,7 @@
    xmlns="tag:textalign.net,2015:ns"
    xmlns:tei="http://www.tei-c.org/ns/1.0"
    xmlns:map="http://www.w3.org/2005/xpath-functions/map"
+   xmlns:array="http://www.w3.org/2005/xpath-functions/array"
    xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
    xmlns:xs="http://www.w3.org/2001/XMLSchema"
    version="3.0">
@@ -630,6 +631,65 @@
          </xsl:if>
       </xsl:copy>
    </xsl:template>
+   
+   
+   
+   <xsl:function name="tan:restore-chopped-tree" as="item()*">
+      <!-- Input: a sequence of items -->
+      <!-- Output: sequence that attempts to restore the items in a single tree -->
+      <!-- This function reverses the effects of tan:chop-tree(), but does so on
+         the basis of the chopped fragments, not a map. By default, adjacent items 
+         of the same node type are fused into a single node of the same type, except
+         for elements, which must have the same name, namespace, and attributes for
+         them to be fused. -->
+      <xsl:param name="tree-slices" as="item()*"/>
+      
+      <xsl:for-each-group select="$tree-slices" group-adjacent="tan:item-type(.)">
+         <xsl:choose>
+            <xsl:when test="current-grouping-key() eq 'document-node'">
+               <xsl:document>
+                  <xsl:sequence select="tan:restore-chopped-tree(current-group()/node())"/>
+               </xsl:document>
+            </xsl:when>
+            <xsl:when test="current-grouping-key() eq 'comment'">
+               <xsl:comment>
+                  <xsl:value-of select="string-join(current-group())"/>
+               </xsl:comment>
+            </xsl:when>
+            <xsl:when test="current-grouping-key() eq 'processing-instruction'">
+               <xsl:for-each-group select="current-group()" group-adjacent="name(.)">
+                  <xsl:processing-instruction name="{current-grouping-key()}">
+                     <xsl:value-of select="string-join(current-group())"/>
+                  </xsl:processing-instruction>
+               </xsl:for-each-group> 
+            </xsl:when>
+            <xsl:when test="current-grouping-key() eq 'element'">
+               <xsl:for-each-group select="current-group()" group-adjacent="tan:element-fingerprint(tan:shallow-copy(.))">
+                  <xsl:for-each select="current-group()[1]">
+                     <xsl:copy>
+                        <xsl:copy-of select="@*"/>
+                        <xsl:sequence select="tan:restore-chopped-tree(current-group()/node())"/>
+                     </xsl:copy>
+                  </xsl:for-each>
+               </xsl:for-each-group> 
+            </xsl:when>
+            <xsl:when test="current-grouping-key() eq 'text'">
+               <xsl:value-of select="string-join(current-group())"/>
+            </xsl:when>
+            <xsl:when test="current-grouping-key() eq 'map'">
+               <xsl:sequence select="map:merge(current-group())"/>
+            </xsl:when>
+            <xsl:when test="current-grouping-key() eq 'array'">
+               <xsl:sequence select="array:join(current-group())"/>
+            </xsl:when>
+            <xsl:otherwise>
+               <xsl:sequence select="current-group()"/>
+            </xsl:otherwise>
+         </xsl:choose>
+      </xsl:for-each-group> 
+      
+   </xsl:function>
+   
    
    
    
