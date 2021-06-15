@@ -1,6 +1,7 @@
 <xsl:stylesheet exclude-result-prefixes="#all" 
    xmlns="tag:textalign.net,2015:ns"
    xmlns:tan="tag:textalign.net,2015:ns"
+   xmlns:tei="http://www.tei-c.org/ns/1.0"
    xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xs="http://www.w3.org/2001/XMLSchema"
    version="3.0">
    
@@ -1271,6 +1272,7 @@
    </xsl:template>
    
    
+   
    <xsl:function name="tan:sequence-to-tree" as="item()*" visibility="public">
       <!-- One-parameter version of the more complete one below -->
       <xsl:param name="sequence-to-reconstruct" as="item()*"/>
@@ -1312,51 +1314,107 @@
    <xsl:template match="*[*[@_level]]" mode="tan:sequence-to-tree">
       <xsl:param name="level-so-far" as="xs:integer"/>
       <xsl:param name="fix-orphan-text" as="xs:boolean" tunnel="yes"/>
+      
       <xsl:variable name="this-element" select="."/>
-      <xsl:variable name="first-child-element" select="*[1]"/>
+      <xsl:variable name="first-child-element" as="element()" select="*[1]"/>
       <xsl:variable name="level-to-process" select="$level-so-far + 1"/>
+      <xsl:variable name="first-target-child-element" as="element()?"
+         select="*[xs:integer(@_level) eq $level-to-process][1]"/>
+      
+      
       <xsl:copy>
          <xsl:copy-of select="@*"/>
-         <xsl:for-each-group select="node()" group-starting-with="*[@_level = $level-to-process]">
-            <xsl:variable name="this-head" select="current-group()[1]"/>
-            <xsl:variable name="this-is-new-group" as="xs:boolean" select="($this-head/@_level = $level-to-process, false())[1]"/>
-            <xsl:variable name="this-close-at-id" select="$this-head/@_close-at"/>
-            <xsl:variable name="new-group" as="item()*">
-               <xsl:if test="$this-is-new-group">
-                  <xsl:for-each-group select="current-group()" group-starting-with="tan:_close-at[@id = $this-close-at-id]">
-                     <xsl:choose>
-                        <xsl:when test="current-group()[1][@id = $this-close-at-id]">
-                           <xsl:copy-of select="tail(current-group())"/>
-                        </xsl:when>
-                        <xsl:otherwise>
-                           <xsl:element name="{name($this-head)}" namespace="{namespace-uri($this-head)}">
-                              <xsl:copy-of select="$this-head/(@* except (@_level | @_close-at))"/>
-                              <xsl:copy-of select="tail(current-group())"/>
-                           </xsl:element>
-                        </xsl:otherwise>
-                     </xsl:choose>
-                  </xsl:for-each-group> 
+         <xsl:choose>
+            <xsl:when test="not(exists($first-target-child-element))">
+               <xsl:variable name="all-levels" as="xs:integer+" select="
+                     for $i in */@_level
+                     return
+                        xs:integer($i)"/>
+               <xsl:variable name="next-level" as="xs:integer" select="min($all-levels)"/>
+               <xsl:if test="$next-level le $level-so-far">
+                  <xsl:message select="'Problem in template mode tan:sequence-to-tree, jumping from '
+                     || string($level-so-far) || ' to ' || string($next-level) || '. Current context: ', ."/>
                </xsl:if>
-            </xsl:variable>
-            <xsl:choose>
-               <xsl:when test="not($this-is-new-group) and $fix-orphan-text">
-                  <xsl:element name="{name($first-child-element)}"
-                     namespace="{namespace-uri($first-child-element)}">
-                     <xsl:copy-of select="$first-child-element/(@* except (@_level | @_close-at))"/>
-                     <xsl:copy-of select="current-group()"/>
-                  </xsl:element>
+               <xsl:apply-templates mode="#current">
+                  <xsl:with-param name="level-so-far" select="$next-level - 1"/>
+               </xsl:apply-templates>
+            </xsl:when>
+            <xsl:otherwise>
+               <xsl:for-each-group select="node()" group-starting-with="*[xs:integer(@_level) eq $level-to-process]">
+                  <xsl:variable name="this-head" as="node()" select="current-group()[1]"/>
+                  <xsl:variable name="this-is-new-group" as="xs:boolean"
+                     select="(xs:integer($this-head/@_level) eq $level-to-process, false())[1]"/>
+                  <!-- There may be cases where the nodes before the first node of interest (the level
+                     to process) include elements targeting deeper levels. In that case, we respect the
+                     instruction in @_level and wrap the orphaned nodes in an element that replicates
+                     the first element of interest. -->
+                  <xsl:variable name="this-orphan-has-orphaned-levels" as="xs:boolean" select="
+                        not($this-is-new-group)
+                        and exists(current-group()/@_level)"/>
+                  <xsl:variable name="this-close-at-id" select="$this-head/@_close-at"/>
+                  <xsl:variable name="new-group" as="item()*">
+                     <xsl:if test="$this-is-new-group">
+                        <xsl:for-each-group select="current-group()" group-starting-with="tan:_close-at[@id = $this-close-at-id]">
+                           <xsl:choose>
+                              <xsl:when test="current-group()[1][@id eq $this-close-at-id]">
+                                 <xsl:copy-of select="tail(current-group())"/>
+                              </xsl:when>
+                              <xsl:otherwise>
+                                 <xsl:element name="{name($this-head)}" namespace="{namespace-uri($this-head)}">
+                                    <xsl:copy-of select="$this-head/(@* except (@_level | @_close-at))"/>
+                                    <!-- Yes, the anchor does not necessarily have to be empty. -->
+                                    <xsl:copy-of select="$this-head/node()"/>
+                                    <xsl:copy-of select="tail(current-group())"/>
+                                 </xsl:element>
+                              </xsl:otherwise>
+                           </xsl:choose>
+                        </xsl:for-each-group> 
+                     </xsl:if>
+                     <xsl:if test="$this-orphan-has-orphaned-levels">
+                        <xsl:element name="{name($first-target-child-element)}" namespace="{namespace-uri($first-target-child-element)}">
+                           <xsl:copy-of select="$first-target-child-element/(@* except (@_level | @_close-at))"/>
+                           <xsl:copy-of select="current-group()"/>
+                        </xsl:element>
+                     </xsl:if>
+                  </xsl:variable>
                   
-               </xsl:when>
-               <xsl:when test="not($this-is-new-group) or not(exists($new-group))">
-                  <xsl:copy-of select="current-group()"/>
-               </xsl:when>
-               <xsl:otherwise>
-                  <xsl:apply-templates select="$new-group" mode="#current">
-                     <xsl:with-param name="level-so-far" select="$level-to-process"/>
-                  </xsl:apply-templates>
-               </xsl:otherwise>
-            </xsl:choose>
-         </xsl:for-each-group>
+                  <xsl:choose>
+                     <xsl:when
+                        test="not($this-is-new-group) and (($this-head instance of text()) and $fix-orphan-text)">
+                        <xsl:element name="{name(($first-target-child-element, $first-child-element)[1])}"
+                           namespace="{namespace-uri($first-child-element)}">
+                           <xsl:copy-of select="$first-child-element/(@* except (@_level | @_close-at))"/>
+                           <xsl:value-of select="$this-head"/>
+                           <xsl:apply-templates select="tail(current-group())" mode="#current">
+                              <xsl:with-param name="level-so-far" select="$level-to-process"/>
+                           </xsl:apply-templates>
+                        </xsl:element>
+                     </xsl:when>
+                     <xsl:when test="$this-orphan-has-orphaned-levels">
+                        <xsl:message select="
+                              'Orphaned nodes found while processing template mode tan:sequence-to-tree. Currently processing level '
+                              || string($level-to-process) || ' but need to process nodes of depth ' ||
+                              string-join(distinct-values(current-group()/@_level), ', ') ||
+                              '. Wrapping them in a replica of the first element of the current target level. Orphaned nodes: ', current-group()"
+                        />
+                        <xsl:apply-templates select="$new-group" mode="#current">
+                           <xsl:with-param name="level-so-far" select="$level-to-process"/>
+                        </xsl:apply-templates>
+                     </xsl:when>
+                     <xsl:when test="not($this-is-new-group) or not(exists($new-group))">
+                        <xsl:copy-of select="current-group()"/>
+                     </xsl:when>
+                     <xsl:otherwise>
+                        <xsl:apply-templates select="$new-group" mode="#current">
+                           <xsl:with-param name="level-so-far" select="$level-to-process"/>
+                        </xsl:apply-templates>
+                     </xsl:otherwise>
+                  </xsl:choose>
+                  
+               </xsl:for-each-group>
+               
+            </xsl:otherwise>
+         </xsl:choose>
       </xsl:copy>
    </xsl:template>
    
@@ -1420,7 +1478,7 @@
             - if the 2nd parameter is true, any special end-div characters will be removed 
       -->
       <!-- Because this function attends to space normalization as a mixed-content problem, it
-         will normalize in TEI constructions. -->
+         will normalize TEI constructions. -->
       <!-- Expanded TAN files are space normalized via this function, so there is no sense in 
          running them again. In fact, it can introduce errors (because special div-end characters 
          have already been removed).
@@ -1431,12 +1489,20 @@
       <xsl:variable name="pass-1" as="item()*">
          <xsl:apply-templates select="$input-tree" mode="tan:strip-outer-indentation"/>
       </xsl:variable>
+
+      <xsl:variable name="pass-2" as="item()*">
+         <xsl:apply-templates select="$pass-1" mode="tan:normalize-tree-space">
+            <xsl:with-param name="remove-special-end-div-chars" select="$remove-special-end-div-chars" tunnel="yes"/>
+         </xsl:apply-templates>
+      </xsl:variable>
+
+      <xsl:variable name="pass-3" as="item()*">
+         <xsl:apply-templates select="$pass-2" mode="tan:selectively-adjust-tei-space"/>
+      </xsl:variable>
       
-      <xsl:apply-templates select="$pass-1" mode="tan:normalize-tree-space">
-         <xsl:with-param name="remove-special-end-div-chars" select="$remove-special-end-div-chars" tunnel="yes"/>
-      </xsl:apply-templates>
+      <xsl:sequence select="$pass-3"/>
+      
    </xsl:function>
-   
    
    
    <xsl:mode name="tan:normalize-tree-space" on-no-match="shallow-copy"/>
@@ -1457,6 +1523,10 @@
          <xsl:copy-of select="@*"/>
          <xsl:apply-templates mode="#current"/>
       </xsl:copy>
+   </xsl:template>
+   
+   <xsl:template match="*[@xml:space eq 'preserve']" priority="1" mode="tan:normalize-tree-space tan:selectively-adjust-tei-space">
+      <xsl:copy-of select="."/>
    </xsl:template>
    
    <!-- The pattern *[text()[matches(., '\S')]] ensures that any outer indentations are ignored, and that
@@ -1627,6 +1697,84 @@
    </xsl:template>
    
    
+   <xsl:mode name="tan:selectively-adjust-tei-space" on-no-match="shallow-copy"/>
+   
+   <xsl:template match="tei:div[not(tei:div)]/node()[last()]/node()[last()]/self::tei:*"
+      mode="tan:selectively-adjust-tei-space" priority="1">
+      <!-- tei leaf div, if the final grandchild is an element, not a text node, make sure it is followed by the titular space
+         marking the end of a div. We do it in the grandchild position, because technically no text is allowed as a child of 
+         a tei div, even a leaf one. We try a next match, in case that final grandchild element needs to have its space adjusted. -->
+      <xsl:next-match/>
+      <xsl:value-of select="' '"/>
+   </xsl:template>
+   
+   <xsl:template match="*[tei:app/tei:lem[matches(., '^\s|\s$')]]/node()"
+      mode="tan:selectively-adjust-tei-space">
+      <!-- A <tei:lem> should not be anchored to text that begins with or ends with space, because apparatus critici are
+         not concerned with initial or trailing space. -->
+      <!-- We pull in the space from <lem>, but further down we also make sure <rdg> does not have initial or terminal space. -->
+      
+      <xsl:variable name="follows-rdg-with-appended-space" as="xs:boolean"
+         select="exists(preceding-sibling::node()[1]/self::tei:app/tei:lem[matches(., '^\s|\s$')])"/>
+      <xsl:variable name="precedes-rdg-with-prepended-space" as="xs:boolean"
+         select="exists(following-sibling::node()[1]/self::tei:app/tei:lem[matches(., '^\s|\s$')])"/>
+      
+      <xsl:if test="$follows-rdg-with-appended-space">
+         <xsl:value-of select="' '"/>
+      </xsl:if>
+      <xsl:copy>
+         <xsl:copy-of select="@*"/>
+         <xsl:apply-templates mode="#current"/>
+      </xsl:copy>
+      <xsl:if test="$precedes-rdg-with-prepended-space">
+         <xsl:value-of select="' '"/>
+      </xsl:if>
+   </xsl:template>
+   
+   <xsl:template match="tei:app/tei:lem | tei:app/tei:rdg" mode="tan:selectively-adjust-tei-space">
+      <!-- No tei <lem> or <rdg> should begin with or end with space -->
+      <xsl:apply-templates select="." mode="tan:trim-initial-and-terminal-space"/>
+   </xsl:template>
+   
+   <xsl:mode name="tan:trim-initial-and-terminal-space" on-no-match="shallow-copy"/>
+   
+   <xsl:template match="text()" mode="tan:trim-initial-and-terminal-space">
+      <!-- These tests permit comments and processing instructions to be inserted inside initial
+   or final indentations, without affecting the results. -->
+      <xsl:variable name="preceding-nodes-of-interest" as="node()*" select="(preceding-sibling::* | preceding-sibling::text())"/>
+      <xsl:variable name="following-nodes-of-interest" as="node()*" select="(following-sibling::* | following-sibling::text())"/>
+      <xsl:variable name="is-not-initial-indentation" as="xs:boolean" select="
+         exists($preceding-nodes-of-interest) and
+         (some $i in $preceding-nodes-of-interest
+         satisfies matches($i, '\S'))"/>
+      <xsl:variable name="is-not-final-indentation" as="xs:boolean" select="
+         exists($following-nodes-of-interest) and
+         (some $i in $following-nodes-of-interest
+         satisfies matches($i, '\S'))"/>
+      
+      <xsl:variable name="diagnostics-on" as="xs:boolean" select="false()"/>
+      <xsl:if test="$diagnostics-on">
+         <xsl:message select="'diagnostics on, template mode tan:trim-initial-and-terminal-space'"/>
+         <xsl:message select="'preceding nodes of interest count: ', count($preceding-nodes-of-interest)"/>
+         <xsl:message select="'following nodes of interest count: ', count($following-nodes-of-interest)"/>
+         <xsl:message select="'has initial indentation?', not($is-not-initial-indentation)"/>
+         <xsl:message select="'has final indentation?', not($is-not-final-indentation)"/>
+      </xsl:if>
+      
+      <xsl:if test="$is-not-initial-indentation and matches(., '^\s')">
+         <xsl:value-of select="' '"/>
+      </xsl:if>
+      <xsl:value-of select="normalize-space(.)"/>
+      <xsl:if test="$is-not-final-indentation and matches(., '\S\s+$')">
+         <xsl:value-of select="' '"/>
+      </xsl:if>
+   </xsl:template>
+   
+   
+   
+   
+   
+   
    
    
    
@@ -1750,7 +1898,6 @@
          </xsl:copy>
       </xsl:if>
    </xsl:template>
-   
    
    
    
