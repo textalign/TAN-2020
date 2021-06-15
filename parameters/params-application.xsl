@@ -59,7 +59,10 @@
    <xsl:param name="tan:default-output-directory-resolved" as="xs:string"
       select="resolve-uri('../output/', static-base-uri())"/>
    
-   <!-- Where is the defaulte HTML template? -->
+   <!-- Where is the default TAN-T template? -->
+   <xsl:param name="tan:default-tan-t-template-uri-resolved" as="xs:string" select="resolve-uri('../templates/template-tan-t.xml', static-base-uri())"/>
+   
+   <!-- Where is the default HTML template? -->
    <xsl:param name="tan:default-html-template-uri-resolved" as="xs:string" select="resolve-uri('../templates/template.html', static-base-uri())"/>
 
    <!-- What should be the default output method? May be overwritten by specific applications. -->
