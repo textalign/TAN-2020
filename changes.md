@@ -16,9 +16,10 @@ Below are listed significant changes that have been made since version 2020. See
 * Included function library `open-and-save-archive` have been located in the main function library, without all the examples.
 * Function library now subject to development schemas that check for best practices and other desiderata.
 * The inclusions that populate the applications folder are being liquidated. They either go into the official TAN function library, or they are moved to the specific application. 
-* New error tan22
+* New errors tan22, tan23
 * Removed `@help`
 * Added `@exceptions` in `numerals`, to prevent specific `@ref` and `@n` values from being interpreted as numerals.
+* `<predecessor>` need not point to a TAN file, and they may use patterns to point to multiple files, since a TAN file might be based upon a number of previous files.
 
 ### Class 1
 
@@ -102,6 +103,8 @@ Added:
 * `tan:map-remove()`. Surrogate of `map:remove()`, but removes entries deep in the map, and allows multiple keys.
 * `tan:trim-long-tree()`. Truncates long runs of siblings; excellent for handling diagnostic output.
 * `tan:integer-groups()`. Takes a sequence of integers and returns them as sorted groups. Each group is a set of contiguous integers.
+* `tan:restore-chopped-tree()`. Stitches together the output of `tan:chop-tree()`.
+* Template named `tan:regex-group-count()`. Retrieves the current number of regex groups, without breaking the cycle of templates and tunnel parameters.
 
 Altered:
 * `tan:diff()` has been greatly simplified and improved. It runs about 40% faster, and easily handles pairs of strings 3M characters in length.
@@ -112,6 +115,8 @@ Altered:
 * `tan:map-to-xml()`. Output is typed, better keyed to how it is presented in the XSLT specs.
 * `tan:collate-pair-of-sequences()`. Better handling via maps.
 * `tan:ellipses()`. Added 3- and 4-arity versions, to support mid-string ellipses, and an elision character count
+* `tan:batch-replace-advanced()`. Supported the use of captured regular expressions, messaging.
+* `tan:uri-collection-from-pattern()`. Same as `uri-collection()`, but allows glob syntax.
 
 ## Languages
 
@@ -125,4 +130,4 @@ Introduced batch replacements and functions for Latin, Greek, Syriac, for purpos
 * Retired resolve hrefs.xsl and resolve TAN file because they are trivial (the output of a single standard TAN function).
 * Converted relativize hrefs to an extended function.
 * Conversions from previous versions of TAN are retired, replaced by a single application, upgrade TAN file, which can be developed for multiple versions in years to come.
-* Restored the application that updates a class-1 file based on 
+* Restored the application that updates a class-1 file based on its predecessor. 

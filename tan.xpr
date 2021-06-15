@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project version="22.0">
+<project>
     <meta>
         <filters directoryPatterns="" filePatterns="\QTAN.xpr\E" positiveFilePatterns="" showHiddenFiles="false"/>
         <options>
-            <serialized version="22.0" xml:space="preserve">
+            <serialized xml:space="preserve">
                 <serializableOrderedMap>
                     <entry>
                         <String>additional.frameworks.directories</String>
@@ -30,6 +30,46 @@
                     <entry>
                         <String>scenario.associations</String>
                         <scenarioAssociation-array>
+                            <scenarioAssociation>
+                                <field name="url">
+                                    <String>examples/TAN-A/ar.cat.TAN-A.xml</String>
+                                </field>
+                                <field name="scenarioIds">
+                                    <list>
+                                        <String>Display merged TAN-A sources as html</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioTypes">
+                                    <list>
+                                        <String>XSL</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioStorageLocations">
+                                    <list>
+                                        <Byte>2</Byte>
+                                    </list>
+                                </field>
+                            </scenarioAssociation>
+                            <scenarioAssociation>
+                                <field name="url">
+                                    <String>examples/TAN-A/ringoroses.div.1.xml</String>
+                                </field>
+                                <field name="scenarioIds">
+                                    <list>
+                                        <String>Display merged TAN-A sources as html</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioTypes">
+                                    <list>
+                                        <String>XSL</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioStorageLocations">
+                                    <list>
+                                        <Byte>2</Byte>
+                                    </list>
+                                </field>
+                            </scenarioAssociation>
                             <scenarioAssociation>
                                 <field name="url">
                                     <String>examples/ring-o-roses.eng.1881.xml</String>
@@ -1041,7 +1081,7 @@
                                     <String></String>
                                 </field>
                                 <field name="inputXSLURL">
-                                    <String>${pdu}/applications/display/display%20merged%20sources%20as%20HTML.xsl</String>
+                                    <String>${pdu}/applications/display/display%20merged%20TAN-A%20sources%20as%20HTML.xsl</String>
                                 </field>
                                 <field name="inputXMLURL">
                                     <String>${currentFileURL}</String>

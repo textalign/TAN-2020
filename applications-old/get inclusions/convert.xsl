@@ -7,8 +7,8 @@
    exclude-result-prefixes="#all" version="3.0">
 
    <xsl:include href="core-for-TAN-output.xsl"/>
-   <xsl:include href="../../functions/TAN-A-functions.xsl"/>
-   <xsl:include href="../../functions/TAN-extra-functions.xsl"/>
+   <xsl:include href="../../functions-old/TAN-A-functions.xsl"/>
+   <xsl:include href="../../functions-old/TAN-extra-functions.xsl"/>
    <xsl:include href="xslt-for-docx/open-and-save-docx.xsl"/>
    <xsl:include href="save-files.xsl"/>
 
