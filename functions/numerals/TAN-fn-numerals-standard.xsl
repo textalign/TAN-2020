@@ -462,9 +462,6 @@
                      $score-to-beat"/>
          </xsl:next-iteration>
       </xsl:iterate>
-      <!--<xsl:sequence
-         select="$integer-sequence-a[$best-a-and-b-by-pos[1]], $integer-sequence-b[$best-a-and-b-by-pos[2]]"
-      />-->
       
       
    </xsl:function>

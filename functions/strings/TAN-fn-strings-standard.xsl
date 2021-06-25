@@ -532,8 +532,38 @@
                   ('…[' || string($amount-to-truncate) || ']…')
                else
                   ('…')"/>
+         <xsl:variable name="truncate-this" as="xs:boolean" select="$amount-to-truncate gt string-length($truncation-insertion)"/>
+         
+         <xsl:variable name="diagnostics-on" as="xs:boolean" select="false()"/>
+         <xsl:if test="$diagnostics-on">
+            <xsl:message select="'Diagnostics on, tan:ellipses()'"/>
+            <xsl:message select="'String to truncate: ' || ."/>
+            <xsl:message select="'String to truncate length: ', $this-string-length"/>
+            <xsl:message select="'Initial string length to retain: ', $initial-string-length-to-retain"/>
+            <xsl:message select="'Terminal string length to retain: ', $terminal-string-length-to-retain"/>
+            <xsl:message select="'Show count of characters elided: ', $indicate-number-of-characters-elided"/>
+            <xsl:message select="'Amount to truncate: ', $amount-to-truncate"/>
+            <xsl:message select="'Truncate this?: ', $truncate-this"/>
+            <xsl:message select="'Truncation insertion: ' || $truncation-insertion"/>
+         </xsl:if>
+         
+         
          <xsl:choose>
-            <xsl:when test="$amount-to-truncate gt string-length($truncation-insertion)">
+            <xsl:when test="$truncate-this
+               and ($initial-string-length-to-retain eq 0)
+               and ($terminal-string-length-to-retain eq 0)">
+               <xsl:value-of select="$truncation-insertion"/>
+            </xsl:when>
+            <xsl:when test="$truncate-this
+               and ($initial-string-length-to-retain eq 0)">
+               <xsl:value-of select="$truncation-insertion || 
+                  substring(., $this-string-length - $terminal-string-length-to-retain)"/>
+            </xsl:when>
+            <xsl:when test="$truncate-this
+               and ($terminal-string-length-to-retain eq 0)">
+               <xsl:value-of select="substring(., 1, $initial-string-length-to-retain) || $truncation-insertion"/>
+            </xsl:when>
+            <xsl:when test="$truncate-this">
                <xsl:value-of select="substring(., 1, $initial-string-length-to-retain) || $truncation-insertion || 
                   substring(., $this-string-length - $terminal-string-length-to-retain)"/>
             </xsl:when>

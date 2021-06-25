@@ -1097,12 +1097,6 @@
                   <xsl:with-param name="exclude-elements-named-regex" tunnel="yes" select="$exclude-from-count-elements-whose-names-match"/>
                   <xsl:with-param name="exclude-elements-not-named-regex" tunnel="yes" select="$exclude-from-count-elements-whose-names-do-not-match"/>
                </xsl:apply-templates>
-               <!--<xsl:apply-templates select="($this-element-prepped-1, .)[1]" mode="tan:filter-elements">
-                  <xsl:with-param name="keep-elements-whose-names-match" as="xs:string?" tunnel="yes"
-                     select="$exclude-from-count-elements-whose-names-match"/>
-                  <xsl:with-param name="keep-elements-whose-names-do-not-match" as="xs:string?"
-                     tunnel="yes" select="$exclude-from-count-elements-whose-names-do-not-match"/>
-               </xsl:apply-templates>-->
             </xsl:if>
          </xsl:variable>
          

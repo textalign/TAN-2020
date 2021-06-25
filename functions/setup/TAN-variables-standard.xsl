@@ -12,7 +12,7 @@
    <xsl:variable name="tan:previous-TAN-versions" select="('1 dev', '2018', '2020')"/>
    <xsl:variable name="tan:internet-available" as="xs:boolean">
       <xsl:choose>
-         <xsl:when test="$tan:do-not-access-internet = true()">
+         <xsl:when test="$tan:do-not-access-internet eq true()">
             <xsl:value-of select="false()"/>
          </xsl:when>
          <xsl:otherwise>
@@ -97,7 +97,7 @@
       select="('object', 'unit', 'lexicon', 'license', 'see-also', 'work', 'role', 'source', 'group-type', 'morphology', 'source', 'work', 'verb', 'scriptum', 'relationship', 'person', 'period', 'organization', 'div-type', 'algorithm', 'vocabulary', 'successor', 'source', 'predecessor', 'inclusion', 'companion-version', 'token-definition', 'bitext-relation', 'checksum', 'redivision', 'model', 'annotation', 'version', 'normalization', 'item', 'feature', 'version', 'reuse-type', 'topic', 'place', 'modal', 'subject', 'at-ref')"
    />
    <xsl:variable name="tan:names-of-elements-that-must-always-refer-to-tan-files"
-      select="('morphology', 'inclusion', 'vocabulary', 'redivision', 'model', 'successor', 'predecessor', 'annotation')"/>
+      select="('morphology', 'inclusion', 'vocabulary', 'redivision', 'model', 'successor', 'annotation')"/>
    <xsl:variable name="tan:names-of-elements-that-describe-text-creators" select="('person', 'organization')"/>
    <xsl:variable name="tan:names-of-elements-that-describe-text-bearers" select="('scriptum', 'work', 'version', 'source')"/>
    <xsl:variable name="tan:names-of-elements-that-make-adjustments" select="('skip', 'rename', 'equate', 'reassign')"/>
@@ -284,7 +284,7 @@
       select="
       ('bitext-relation', 'div-type', 'feature', 'group-type', 'license', 'modal', 'normalization',
       'reuse-type', 'role', 'token-definition', 'verb', 'vocabulary')"/>
-   <!-- vocabularies: explicit, non-standard; we retain tan:key for the sake of older versions of TAN -->
+   <!-- vocabularies: explicit, non-standard; we retain tan:key to handle older versions of TAN -->
    <xsl:variable name="tan:vocabularies-resolved" as="document-node()*"
       select="tan:get-and-resolve-dependency($tan:head/(tan:vocabulary, tan:key[tan:location]))"/>
    <!-- vocabularies: standard TAN -->

@@ -528,7 +528,7 @@
                <expand-diagnostics>
                   <!--<core-expansion-ad-hoc-pre-pass><xsl:copy-of select="$core-expansion-ad-hoc-pre-pass"/></core-expansion-ad-hoc-pre-pass>-->
                   <core-terse-pass-1><xsl:copy-of select="$core-terse-expansion-pass-1"/></core-terse-pass-1>
-                  <core-terse-pass-2><xsl:copy-of select="$core-terse-expansion-pass-2"/></core-terse-pass-2>
+                  <!--<core-terse-pass-2><xsl:copy-of select="$core-terse-expansion-pass-2"/></core-terse-pass-2>-->
                   <xsl:if test="$this-is-class-2">
                      <dependencies-resolved><xsl:copy-of select="$dependencies-resolved-plus"/></dependencies-resolved>
                      <!--<reference-trees count="{count($reference-trees)}"><xsl:copy-of select="$reference-trees"/></reference-trees>-->
@@ -776,8 +776,8 @@
       <xsl:variable name="most-point-to-same-file-type" select="$this-name = ('successor', 'predecessor', 'model', 'redivision')"/>-->
       <xsl:variable name="this-doc-id" select="root(.)/*/@id"/>
       <xsl:variable name="this-base-uri" select="tan:base-uri(.)"/>
-      <xsl:variable name="this-pos" select="count(preceding-sibling::*[name(.) = $this-name]) + 1"/>
-      <xsl:variable name="this-class" select="tan:class-number(.)"/>
+      <xsl:variable name="this-pos" as="xs:integer" select="count(preceding-sibling::*[name(.) eq $this-name]) + 1"/>
+      <xsl:variable name="this-class" as="xs:integer" select="tan:class-number(.)"/>
       <xsl:variable name="this-tan-type" select="tan:tan-type(.)"/>
       <xsl:variable name="this-relationship-idrefs" select="tan:relationship"/>
       <xsl:variable name="this-relationship-IRIs"
@@ -797,21 +797,21 @@
       <xsl:variable name="target-resolved" as="document-node()?">
          <xsl:choose>
             <xsl:when test="self::tan:inclusion and $this-doc-id eq $tan:doc-id">
-               <xsl:copy-of select="$tan:inclusions-resolved[position() = $this-pos]"/>
+               <xsl:sequence select="$tan:inclusions-resolved[position() = $this-pos]"/>
             </xsl:when>
             <xsl:when test="self::tan:vocabulary and $this-doc-id eq $tan:doc-id">
-               <xsl:copy-of select="$tan:vocabularies-resolved[position() = $this-pos]"/>
+               <xsl:sequence select="$tan:vocabularies-resolved[position() = $this-pos]"/>
             </xsl:when>
             <xsl:when test="self::tan:source and $this-doc-id eq $tan:doc-id">
-               <xsl:copy-of select="$tan:sources-resolved[position() = $this-pos]"/>
+               <xsl:sequence select="$tan:sources-resolved[position() = $this-pos]"/>
             </xsl:when>
             <xsl:otherwise>
                <xsl:copy-of select="tan:resolve-doc($target-1st-da, false(), ())"/>
             </xsl:otherwise>
          </xsl:choose>
       </xsl:variable>
-      <xsl:variable name="target-class" select="tan:class-number($target-resolved)"/>
-      <xsl:variable name="target-tan-type" select="name($target-resolved/*)"/>
+      <xsl:variable name="target-class" as="xs:integer?" select="tan:class-number($target-resolved)"/>
+      <xsl:variable name="target-tan-type" as="xs:string" select="name($target-resolved/*)"/>
       <xsl:variable name="target-errors" select="$target-resolved/(tan:error, tan:warning, tan:fatal, tan:help)"/>
       <xsl:variable name="target-is-faulty"
          select="deep-equal($target-resolved, $tan:empty-doc) or exists($target-errors)"/>
@@ -1045,6 +1045,9 @@
       </xsl:copy>
    </xsl:template>
    
+   <xsl:template match="tan:checksum/tan:IRI" priority="3" mode="tan:check-referred-doc">
+      <xsl:copy-of select="."/>
+   </xsl:template>
    <xsl:template match="tan:IRI" priority="2" mode="tan:check-referred-doc">
       <xsl:param name="target-id" as="xs:string?"/>
       <xsl:copy>
@@ -2057,6 +2060,17 @@
          <xsl:apply-templates mode="#current"/>
       </xsl:copy>
    </xsl:template>
+   
+   <xsl:template priority="1"
+      match="tan:TAN-A/tan:head/tan:source | tan:TAN-A-tok/tan:head/tan:source | tan:TAN-A-lm/tan:head/tan:source"
+      mode="tan:core-expansion-normal">
+      <!-- Class-2 sources have already been dealt with during terse expansion -->
+      <xsl:copy>
+         <xsl:copy-of select="@*"/>
+         <xsl:apply-templates mode="#current"/>
+      </xsl:copy>
+   </xsl:template>
+   
    <xsl:template
       match="tan:see-also | tan:model | tan:redivision | tan:successor | tan:predecessor | tan:algorithm | tan:source[tan:location] | tan:annotation"
       mode="tan:core-expansion-normal">
