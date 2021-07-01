@@ -201,15 +201,10 @@
             <xsl:variable name="element-filters-for-inclusions" as="element()*">
                <xsl:for-each-group select="$elements-with-attr-include"
                   group-by="tokenize(@include, '\s+')">
-                  <xsl:variable name="these-element-names"
-                     select="
-                        distinct-values(for $i in current-group()
-                        return
-                           name($i))"/>
                   <xsl:variable name="this-inclusion" select="current-grouping-key()"/>
                   <xsl:for-each-group select="current-group()" group-by="name(.)">
                      <xsl:if test="exists(current-group()[not(tan:filter)])">
-                        <filter inclusion="{$this-inclusion}">
+                        <filter type="inclusion" inclusion="{$this-inclusion}">
                            <element-name>
                               <xsl:value-of select="current-grouping-key()"/>
                            </element-name>
@@ -217,6 +212,7 @@
                      </xsl:if>
                      <xsl:for-each select="current-group()/tan:filter">
                         <xsl:copy>
+                           <xsl:copy-of select="@*"/>
                            <xsl:attribute name="inclusion" select="$this-inclusion"/>
                            <xsl:copy-of select="*"/>
                         </xsl:copy>
@@ -243,9 +239,10 @@
             />
             
             <xsl:variable name="element-filters-for-vocabularies-pass-1" as="element()*">
-               <xsl:for-each-group select="$attributes-that-take-vocabulary except $attributes-that-take-vocab-based-aliases" group-by="name(.)">
-                  <xsl:variable name="this-attr-name" select="current-grouping-key()"/>
-                  <xsl:variable name="is-attr-which" select="$this-attr-name eq 'which'"/>
+               <xsl:for-each-group select="$attributes-that-take-vocabulary except $attributes-that-take-vocab-based-aliases" 
+                  group-by="name(.)">
+                  <xsl:variable name="this-attr-name" as="xs:string" select="current-grouping-key()"/>
+                  <xsl:variable name="is-attr-which" as="xs:boolean" select="$this-attr-name eq 'which'"/>
                   <xsl:choose>
                      <xsl:when test="$is-attr-which">
                         <xsl:for-each-group select="current-group()" group-by="name(..)">
@@ -266,7 +263,8 @@
                         </xsl:for-each-group>
                      </xsl:when>
                      <xsl:otherwise>
-                        <xsl:variable name="target-element-names" select="tan:target-element-names(current-grouping-key())"/>
+                        <xsl:variable name="target-element-names" as="xs:string*"
+                           select="tan:target-element-names(current-grouping-key())"/>
                         <xsl:for-each-group select="current-group()" group-by="tokenize(., '\s+')">
                            <xsl:variable name="this-val" select="current-grouping-key()"/>
                            <filter type="vocabulary">
@@ -604,8 +602,8 @@
                </xsl:otherwise>
             </xsl:choose>
          </xsl:for-each>
-         <xsl:if test="exists(@include)">
-            <filter inclusion="{@include}">
+         <xsl:if test="exists($this-attr-include)">
+            <filter type="inclusion" inclusion="{$this-attr-include}">
                <element-name>
                   <xsl:value-of select="name(.)"/>
                </element-name>
@@ -763,7 +761,7 @@
 
       <xsl:variable name="this-element-name" select="name(.)"/>
       <xsl:variable name="this-href" select="@href"/>
-      <xsl:variable name="this-id" select="(@xml:id, @id)[1]"/>
+      <xsl:variable name="this-id" as="xs:string?" select="(@xml:id, @id)[1]"/>
       <xsl:variable name="copy-id-to-element" as="xs:boolean" select="exists(self::tan:*)"/>
       
       <!-- Some elements are the kind that would be suited to IRI + name patterns, but don't need them because

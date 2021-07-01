@@ -33,7 +33,7 @@
          input is the name of an element or attribute that takes idrefs -->
       <xsl:param name="items" as="item()*"/>
       <xsl:for-each select="$items">
-         <xsl:variable name="this-item" select="."/>
+         <xsl:variable name="this-item" as="item()" select="."/>
          <xsl:variable name="this-item-val-norm" select="normalize-space($this-item)"/>
          <xsl:choose>
             <xsl:when test="$this-item instance of xs:string and string-length($this-item-val-norm) gt 0">
@@ -42,10 +42,10 @@
                <xsl:copy-of select="$this-idref-entry/tan:element/text()"/>
             </xsl:when>
             <xsl:otherwise>
-               <xsl:variable name="this-is-attribute" select=". instance of attribute()"/>
-               <xsl:variable name="this-is-element" select=". instance of element()"/>
-               <xsl:variable name="this-name" select="name(.)"/>
-               <xsl:variable name="this-parent-name" select="name(..)"/>
+               <xsl:variable name="this-is-attribute" as="xs:boolean" select=". instance of attribute()"/>
+               <xsl:variable name="this-is-element" as="xs:boolean" select=". instance of element()"/>
+               <xsl:variable name="this-name" as="xs:string" select="name(.)"/>
+               <xsl:variable name="this-parent-name" as="xs:string" select="name(..)"/>
                <xsl:choose>
                   <xsl:when test="$this-name = ('which', 'type')">
                      <!-- @which always points to an element that has the name as its parent, and perhaps some other elements, 
