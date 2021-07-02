@@ -195,6 +195,7 @@ nontextual-reference = (attr-lang-xml | ptr-attr-units)?, text
 textual-reference =
    multi-source-whole-div-textual-reference
    | single-source-partial-div-textual-reference
+   | work-version-reference
    | scriptum-reference
 # If a textual reference points merely to <div>s then all one need is @src/@work plus @ref
 multi-source-whole-div-textual-reference = (ptr-attr-src-many | ptr-attr-work), attr-ref-many
@@ -207,5 +208,9 @@ single-div-partial-textual-reference =
 # If a partial textual reference is a spans <div>s then @ref should be in the children elements
 multi-div-partial-textual-reference =
    (element-tok-for-claim-with-ref | text-passage-selector-with-ref)+
+# Some textual references point a work or work-version in the abstract
+work-version-reference = ptr-attr-work
+# Some textual references point to a scriptum, perhaps qualified
+scriptum-reference = ptr-attr-scriptum, scriptum-filter?
 # A region of a scriptum can be constrained through nested divs, pointing to the region of the scriptum intended.
-scriptum-reference = ptr-attr-scriptum, element-div*
+scriptum-filter = element-div+

@@ -158,7 +158,7 @@ attr-n =
    
    ## Extra TAN vocabulary is available for @n, to provide built-in aliases. For more on this feature see main.xml#extra_n_vocabulary. For specific extra vocabulary see main.xml#vocabularies-n-bible-eng main.xml#vocabularies-n-bible-spa main.xml#vocabularies-n-quran-eng-ara main.xml#vocabularies-n-unlabeled-divs-1-eng
    attribute n {
-      xsd:string { pattern = "[\w/_]+([\- ,]+[\w/_]+)*" }
+      xsd:string { pattern = "[\w/_]+([\- ,;]+[\w/_]+)*" }
    }
 attr-pattern =
    

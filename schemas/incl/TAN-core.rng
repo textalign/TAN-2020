@@ -173,7 +173,7 @@
       <a:documentation>Because @n is used to construct @ref, it is indirectly cumulatively inheritable. See main.xml#inheritable_attributes.</a:documentation>
       <a:documentation>Extra TAN vocabulary is available for @n, to provide built-in aliases. For more on this feature see main.xml#extra_n_vocabulary. For specific extra vocabulary see main.xml#vocabularies-n-bible-eng main.xml#vocabularies-n-bible-spa main.xml#vocabularies-n-quran-eng-ara main.xml#vocabularies-n-unlabeled-divs-1-eng</a:documentation>
       <data type="string">
-        <param name="pattern">[\w/_]+([\- ,]+[\w/_]+)*</param>
+        <param name="pattern">[\w/_]+([\- ,;]+[\w/_]+)*</param>
       </data>
     </attribute>
   </define>

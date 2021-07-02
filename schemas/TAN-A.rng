@@ -344,6 +344,7 @@
     <choice>
       <ref name="multi-source-whole-div-textual-reference"/>
       <ref name="single-source-partial-div-textual-reference"/>
+      <ref name="work-version-reference"/>
       <ref name="scriptum-reference"/>
     </choice>
   </define>
@@ -382,11 +383,21 @@
       </choice>
     </oneOrMore>
   </define>
-  <!-- A region of a scriptum can be constrained through nested divs, pointing to the region of the scriptum intended. -->
+  <!-- Some textual references point a work or work-version in the abstract -->
+  <define name="work-version-reference">
+    <ref name="ptr-attr-work"/>
+  </define>
+  <!-- Some textual references point to a scriptum, perhaps qualified -->
   <define name="scriptum-reference">
     <ref name="ptr-attr-scriptum"/>
-    <zeroOrMore>
+    <optional>
+      <ref name="scriptum-filter"/>
+    </optional>
+  </define>
+  <!-- A region of a scriptum can be constrained through nested divs, pointing to the region of the scriptum intended. -->
+  <define name="scriptum-filter">
+    <oneOrMore>
       <ref name="element-div"/>
-    </zeroOrMore>
+    </oneOrMore>
   </define>
 </grammar>
