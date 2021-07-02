@@ -1122,11 +1122,11 @@ ancestor-or-self::*:return[namespace-uri() = "http://www.oxygenxml.com/ns/doc/xs
                         <scenarioAssociation-array>
                             <scenarioAssociation>
                                 <field name="url">
-                                    <String>../library-arithmeticus/evagrius/cpg2432/cpg2432.grc.2000.furrer-pilliod.xml</String>
+                                    <String>../library-arithmeticus/evagrius/TAN-A/private-evagrius.all-alignments.TAN-A%20-%20Copy.xml</String>
                                 </field>
                                 <field name="scenarioIds">
                                     <list>
-                                        <String>TEI P5 PDF - Gentium</String>
+                                        <String>Test TAN Function Library</String>
                                     </list>
                                 </field>
                                 <field name="scenarioTypes">
@@ -1152,6 +1152,26 @@ ancestor-or-self::*:return[namespace-uri() = "http://www.oxygenxml.com/ns/doc/xs
                                 <field name="scenarioTypes">
                                     <list>
                                         <String>XML</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioStorageLocations">
+                                    <list>
+                                        <Byte>2</Byte>
+                                    </list>
+                                </field>
+                            </scenarioAssociation>
+                            <scenarioAssociation>
+                                <field name="url">
+                                    <String>../library-arithmeticus/evagrius/TAN-A/private-cpg2437.TAN-A.xml</String>
+                                </field>
+                                <field name="scenarioIds">
+                                    <list>
+                                        <String>Display merged TAN-A sources as html</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioTypes">
+                                    <list>
+                                        <String>XSL</String>
                                     </list>
                                 </field>
                                 <field name="scenarioStorageLocations">
@@ -1222,6 +1242,106 @@ ancestor-or-self::*:return[namespace-uri() = "http://www.oxygenxml.com/ns/doc/xs
                             </scenarioAssociation>
                             <scenarioAssociation>
                                 <field name="url">
+                                    <String>../library-arithmeticus/evagrius/TAN-A/private-cpg2431.TAN-A.xml</String>
+                                </field>
+                                <field name="scenarioIds">
+                                    <list>
+                                        <String>Display merged TAN-A sources as html</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioTypes">
+                                    <list>
+                                        <String>XSL</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioStorageLocations">
+                                    <list>
+                                        <Byte>2</Byte>
+                                    </list>
+                                </field>
+                            </scenarioAssociation>
+                            <scenarioAssociation>
+                                <field name="url">
+                                    <String>../library-arithmeticus/evagrius/TAN-A/cpg2437.TAN-A.xml</String>
+                                </field>
+                                <field name="scenarioIds">
+                                    <list>
+                                        <String>Display merged TAN-A sources as html</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioTypes">
+                                    <list>
+                                        <String>XSL</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioStorageLocations">
+                                    <list>
+                                        <Byte>2</Byte>
+                                    </list>
+                                </field>
+                            </scenarioAssociation>
+                            <scenarioAssociation>
+                                <field name="url">
+                                    <String>../library-arithmeticus/evagrius/TAN-voc/evagrius-works-TAN-voc.xml</String>
+                                </field>
+                                <field name="scenarioIds">
+                                    <list>
+                                        <String>Test TAN Function Library</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioTypes">
+                                    <list>
+                                        <String>XSL</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioStorageLocations">
+                                    <list>
+                                        <Byte>2</Byte>
+                                    </list>
+                                </field>
+                            </scenarioAssociation>
+                            <scenarioAssociation>
+                                <field name="url">
+                                    <String>../library-arithmeticus/evagrius/TAN-A/evagrius.TAN-A%20-%20Copy.xml</String>
+                                </field>
+                                <field name="scenarioIds">
+                                    <list>
+                                        <String>Test TAN Function Library</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioTypes">
+                                    <list>
+                                        <String>XSL</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioStorageLocations">
+                                    <list>
+                                        <Byte>2</Byte>
+                                    </list>
+                                </field>
+                            </scenarioAssociation>
+                            <scenarioAssociation>
+                                <field name="url">
+                                    <String>../library-arithmeticus/evagrius/TAN-A/bible-for-evagrius.TAN-A%20-%20Copy.xml</String>
+                                </field>
+                                <field name="scenarioIds">
+                                    <list>
+                                        <String>Test TAN Function Library</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioTypes">
+                                    <list>
+                                        <String>XSL</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioStorageLocations">
+                                    <list>
+                                        <Byte>2</Byte>
+                                    </list>
+                                </field>
+                            </scenarioAssociation>
+                            <scenarioAssociation>
+                                <field name="url">
                                     <String>../library-arithmeticus/evagrius/TAN-A/cpg2432.quotations.TAN-A.xml</String>
                                 </field>
                                 <field name="scenarioIds">
@@ -1242,11 +1362,11 @@ ancestor-or-self::*:return[namespace-uri() = "http://www.oxygenxml.com/ns/doc/xs
                             </scenarioAssociation>
                             <scenarioAssociation>
                                 <field name="url">
-                                    <String>../library-arithmeticus/evagrius/TAN-A/cpg2432.TAN-A%20-%20Copy.xml</String>
+                                    <String>../library-arithmeticus/bible/TAN-voc/bible.tan-voc.xml</String>
                                 </field>
                                 <field name="scenarioIds">
                                     <list>
-                                        <String>Display merged TAN-A sources, diagnostic xml</String>
+                                        <String>Test TAN Function Library</String>
                                     </list>
                                 </field>
                                 <field name="scenarioTypes">
@@ -1262,11 +1382,11 @@ ancestor-or-self::*:return[namespace-uri() = "http://www.oxygenxml.com/ns/doc/xs
                             </scenarioAssociation>
                             <scenarioAssociation>
                                 <field name="url">
-                                    <String>../library-arithmeticus/evagrius/TAN-A/private-cpg2432.TAN-A%20-%20Copy.xml</String>
+                                    <String>../library-arithmeticus/evagrius/TAN-A-tok/cpg2430.grc-Guillaumonts+syr-BL14578.s2.token.1%20-%20Copy.xml</String>
                                 </field>
                                 <field name="scenarioIds">
                                     <list>
-                                        <String>Display merged TAN-A sources, diagnostic xml</String>
+                                        <String>Test TAN Function Library</String>
                                     </list>
                                 </field>
                                 <field name="scenarioTypes">
@@ -1287,6 +1407,169 @@ ancestor-or-self::*:return[namespace-uri() = "http://www.oxygenxml.com/ns/doc/xs
                                 <field name="scenarioIds">
                                     <list>
                                         <String>Display merged TAN-A sources as html</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioTypes">
+                                    <list>
+                                        <String>XSL</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioStorageLocations">
+                                    <list>
+                                        <Byte>2</Byte>
+                                    </list>
+                                </field>
+                            </scenarioAssociation>
+                            <scenarioAssociation>
+                                <field name="url">
+                                    <String>../library-arithmeticus/evagrius/cpg2432/private-cpg2432.eng.2020.stang-from-grc.xml</String>
+                                </field>
+                                <field name="scenarioIds">
+                                    <list>
+                                        <String>Convert non-TAN to TAN</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioTypes">
+                                    <list>
+                                        <String>XSL</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioStorageLocations">
+                                    <list>
+                                        <Byte>2</Byte>
+                                    </list>
+                                </field>
+                            </scenarioAssociation>
+                            <scenarioAssociation>
+                                <field name="url">
+                                    <String>../library-arithmeticus/evagrius/cpg2432/cpg2432.grc.2000.furrer-pilliod.xml</String>
+                                </field>
+                                <field name="scenarioIds">
+                                    <list>
+                                        <String>TEI P5 PDF - Gentium</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioTypes">
+                                    <list>
+                                        <String>XSL</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioStorageLocations">
+                                    <list>
+                                        <Byte>2</Byte>
+                                    </list>
+                                </field>
+                            </scenarioAssociation>
+                            <scenarioAssociation>
+                                <field name="url">
+                                    <String>../library-arithmeticus/evagrius/cpg2432/private-cpg2432.eng.2020.stang-from-s2.xml</String>
+                                </field>
+                                <field name="scenarioIds">
+                                    <list>
+                                        <String>Convert non-TAN to TAN</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioTypes">
+                                    <list>
+                                        <String>XSL</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioStorageLocations">
+                                    <list>
+                                        <Byte>2</Byte>
+                                    </list>
+                                </field>
+                            </scenarioAssociation>
+                            <scenarioAssociation>
+                                <field name="url">
+                                    <String>../library-arithmeticus/evagrius/cpg2432/private-cpg2432.eng.2020.stang-from-s1.xml</String>
+                                </field>
+                                <field name="scenarioIds">
+                                    <list>
+                                        <String>Convert non-TAN to TAN</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioTypes">
+                                    <list>
+                                        <String>XSL</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioStorageLocations">
+                                    <list>
+                                        <Byte>2</Byte>
+                                    </list>
+                                </field>
+                            </scenarioAssociation>
+                            <scenarioAssociation>
+                                <field name="url">
+                                    <String>../library-arithmeticus/evagrius/TAN-A/cpg2432.TAN-A%20-%20Copy.xml</String>
+                                </field>
+                                <field name="scenarioIds">
+                                    <list>
+                                        <String>Test TAN Function Library</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioTypes">
+                                    <list>
+                                        <String>XSL</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioStorageLocations">
+                                    <list>
+                                        <Byte>2</Byte>
+                                    </list>
+                                </field>
+                            </scenarioAssociation>
+                            <scenarioAssociation>
+                                <field name="url">
+                                    <String>examples/TAN-A/ringoroses.div.1.xml</String>
+                                </field>
+                                <field name="scenarioIds">
+                                    <list>
+                                        <String>Display merged TAN-A sources as html</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioTypes">
+                                    <list>
+                                        <String>XSL</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioStorageLocations">
+                                    <list>
+                                        <Byte>2</Byte>
+                                    </list>
+                                </field>
+                            </scenarioAssociation>
+                            <scenarioAssociation>
+                                <field name="url">
+                                    <String>schemas/TAN-TEI.odd</String>
+                                </field>
+                                <field name="scenarioIds">
+                                    <list>
+                                        <String>TAN-TEI ODD to RELAX NG Compact</String>
+                                        <String>TAN-TEI ODD to RELAX NG XML</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioTypes">
+                                    <list>
+                                        <String>ANT</String>
+                                        <String>ANT</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioStorageLocations">
+                                    <list>
+                                        <Byte>2</Byte>
+                                        <Byte>2</Byte>
+                                    </list>
+                                </field>
+                            </scenarioAssociation>
+                            <scenarioAssociation>
+                                <field name="url">
+                                    <String>../library-arithmeticus/evagrius/TAN-A/private-cpg2432.TAN-A%20-%20Copy.xml</String>
+                                </field>
+                                <field name="scenarioIds">
+                                    <list>
+                                        <String>Display merged TAN-A sources, diagnostic xml</String>
                                     </list>
                                 </field>
                                 <field name="scenarioTypes">
@@ -1363,66 +1646,6 @@ ancestor-or-self::*:return[namespace-uri() = "http://www.oxygenxml.com/ns/doc/xs
                             <scenarioAssociation>
                                 <field name="url">
                                     <String>../../../Google%20Drive/CLIO%20commons/TAN%20library/CLIO/cpg%204425%20lat%201173%20Burgundio%202021.xml</String>
-                                </field>
-                                <field name="scenarioIds">
-                                    <list>
-                                        <String>Convert non-TAN to TAN</String>
-                                    </list>
-                                </field>
-                                <field name="scenarioTypes">
-                                    <list>
-                                        <String>XSL</String>
-                                    </list>
-                                </field>
-                                <field name="scenarioStorageLocations">
-                                    <list>
-                                        <Byte>2</Byte>
-                                    </list>
-                                </field>
-                            </scenarioAssociation>
-                            <scenarioAssociation>
-                                <field name="url">
-                                    <String>../library-arithmeticus/evagrius/cpg2432/private-cpg2432.eng.2020.stang-from-s2.xml</String>
-                                </field>
-                                <field name="scenarioIds">
-                                    <list>
-                                        <String>Convert non-TAN to TAN</String>
-                                    </list>
-                                </field>
-                                <field name="scenarioTypes">
-                                    <list>
-                                        <String>XSL</String>
-                                    </list>
-                                </field>
-                                <field name="scenarioStorageLocations">
-                                    <list>
-                                        <Byte>2</Byte>
-                                    </list>
-                                </field>
-                            </scenarioAssociation>
-                            <scenarioAssociation>
-                                <field name="url">
-                                    <String>../library-arithmeticus/evagrius/cpg2432/private-cpg2432.eng.2020.stang-from-s1.xml</String>
-                                </field>
-                                <field name="scenarioIds">
-                                    <list>
-                                        <String>Convert non-TAN to TAN</String>
-                                    </list>
-                                </field>
-                                <field name="scenarioTypes">
-                                    <list>
-                                        <String>XSL</String>
-                                    </list>
-                                </field>
-                                <field name="scenarioStorageLocations">
-                                    <list>
-                                        <Byte>2</Byte>
-                                    </list>
-                                </field>
-                            </scenarioAssociation>
-                            <scenarioAssociation>
-                                <field name="url">
-                                    <String>../library-arithmeticus/evagrius/cpg2432/private-cpg2432.eng.2020.stang-from-grc.xml</String>
                                 </field>
                                 <field name="scenarioIds">
                                     <list>
@@ -1567,46 +1790,6 @@ ancestor-or-self::*:return[namespace-uri() = "http://www.oxygenxml.com/ns/doc/xs
                                 <field name="scenarioIds">
                                     <list>
                                         <String>Display merged TAN-A sources as html</String>
-                                    </list>
-                                </field>
-                                <field name="scenarioTypes">
-                                    <list>
-                                        <String>XSL</String>
-                                    </list>
-                                </field>
-                                <field name="scenarioStorageLocations">
-                                    <list>
-                                        <Byte>2</Byte>
-                                    </list>
-                                </field>
-                            </scenarioAssociation>
-                            <scenarioAssociation>
-                                <field name="url">
-                                    <String>examples/TAN-A/ringoroses.div.1.xml</String>
-                                </field>
-                                <field name="scenarioIds">
-                                    <list>
-                                        <String>Display merged TAN-A sources as html</String>
-                                    </list>
-                                </field>
-                                <field name="scenarioTypes">
-                                    <list>
-                                        <String>XSL</String>
-                                    </list>
-                                </field>
-                                <field name="scenarioStorageLocations">
-                                    <list>
-                                        <Byte>2</Byte>
-                                    </list>
-                                </field>
-                            </scenarioAssociation>
-                            <scenarioAssociation>
-                                <field name="url">
-                                    <String>../library-arithmeticus/evagrius/TAN-voc/evagrius-works-TAN-voc.xml</String>
-                                </field>
-                                <field name="scenarioIds">
-                                    <list>
-                                        <String>Test TAN Function Library</String>
                                     </list>
                                 </field>
                                 <field name="scenarioTypes">
@@ -1806,26 +1989,6 @@ ancestor-or-self::*:return[namespace-uri() = "http://www.oxygenxml.com/ns/doc/xs
                             <scenarioAssociation>
                                 <field name="url">
                                     <String>../library-arithmeticus/bible/lxx.grc.rahlfs.xml</String>
-                                </field>
-                                <field name="scenarioIds">
-                                    <list>
-                                        <String>Test TAN Function Library</String>
-                                    </list>
-                                </field>
-                                <field name="scenarioTypes">
-                                    <list>
-                                        <String>XSL</String>
-                                    </list>
-                                </field>
-                                <field name="scenarioStorageLocations">
-                                    <list>
-                                        <Byte>2</Byte>
-                                    </list>
-                                </field>
-                            </scenarioAssociation>
-                            <scenarioAssociation>
-                                <field name="url">
-                                    <String>../library-arithmeticus/bible/TAN-voc/bible.tan-voc.xml</String>
                                 </field>
                                 <field name="scenarioIds">
                                     <list>
@@ -2079,29 +2242,6 @@ ancestor-or-self::*:return[namespace-uri() = "http://www.oxygenxml.com/ns/doc/xs
                                 </field>
                                 <field name="scenarioStorageLocations">
                                     <list>
-                                        <Byte>2</Byte>
-                                    </list>
-                                </field>
-                            </scenarioAssociation>
-                            <scenarioAssociation>
-                                <field name="url">
-                                    <String>schemas/TAN-TEI.odd</String>
-                                </field>
-                                <field name="scenarioIds">
-                                    <list>
-                                        <String>TAN-TEI ODD to RELAX NG Compact</String>
-                                        <String>TAN-TEI ODD to RELAX NG XML</String>
-                                    </list>
-                                </field>
-                                <field name="scenarioTypes">
-                                    <list>
-                                        <String>ANT</String>
-                                        <String>ANT</String>
-                                    </list>
-                                </field>
-                                <field name="scenarioStorageLocations">
-                                    <list>
-                                        <Byte>2</Byte>
                                         <Byte>2</Byte>
                                     </list>
                                 </field>
@@ -2491,26 +2631,6 @@ ancestor-or-self::*:return[namespace-uri() = "http://www.oxygenxml.com/ns/doc/xs
                             </scenarioAssociation>
                             <scenarioAssociation>
                                 <field name="url">
-                                    <String>../library-arithmeticus/evagrius/TAN-A/private-cpg2431.TAN-A.xml</String>
-                                </field>
-                                <field name="scenarioIds">
-                                    <list>
-                                        <String>Display merged TAN-A sources as html</String>
-                                    </list>
-                                </field>
-                                <field name="scenarioTypes">
-                                    <list>
-                                        <String>XSL</String>
-                                    </list>
-                                </field>
-                                <field name="scenarioStorageLocations">
-                                    <list>
-                                        <Byte>2</Byte>
-                                    </list>
-                                </field>
-                            </scenarioAssociation>
-                            <scenarioAssociation>
-                                <field name="url">
                                     <String>../library-arithmeticus/evagrius/TAN-A/private-cpg2430.TAN-A.xml</String>
                                 </field>
                                 <field name="scenarioIds">
@@ -2796,46 +2916,6 @@ ancestor-or-self::*:return[namespace-uri() = "http://www.oxygenxml.com/ns/doc/xs
                                 <field name="scenarioIds">
                                     <list>
                                         <String>Remodel via TAN-T revised</String>
-                                    </list>
-                                </field>
-                                <field name="scenarioTypes">
-                                    <list>
-                                        <String>XSL</String>
-                                    </list>
-                                </field>
-                                <field name="scenarioStorageLocations">
-                                    <list>
-                                        <Byte>2</Byte>
-                                    </list>
-                                </field>
-                            </scenarioAssociation>
-                            <scenarioAssociation>
-                                <field name="url">
-                                    <String>../library-arithmeticus/evagrius/TAN-A/cpg2437.TAN-A.xml</String>
-                                </field>
-                                <field name="scenarioIds">
-                                    <list>
-                                        <String>Display merged TAN-A sources as html</String>
-                                    </list>
-                                </field>
-                                <field name="scenarioTypes">
-                                    <list>
-                                        <String>XSL</String>
-                                    </list>
-                                </field>
-                                <field name="scenarioStorageLocations">
-                                    <list>
-                                        <Byte>2</Byte>
-                                    </list>
-                                </field>
-                            </scenarioAssociation>
-                            <scenarioAssociation>
-                                <field name="url">
-                                    <String>../library-arithmeticus/evagrius/TAN-A/private-cpg2437.TAN-A.xml</String>
-                                </field>
-                                <field name="scenarioIds">
-                                    <list>
-                                        <String>Display merged TAN-A sources as html</String>
                                     </list>
                                 </field>
                                 <field name="scenarioTypes">
@@ -6651,6 +6731,7 @@ ancestor-or-self::*:return[namespace-uri() = "http://www.oxygenxml.com/ns/doc/xs
             <file name="schemas/TAN-voc.rnc"/>
             <file name="schemas/TAN-voc.rng"/>
             <file name="schemas/TAN.sch"/>
+            <file name="tests/test%20TAN%20function%20library.xsl"/>
             <file name="applications-old/update/update%20TAN-T%20text%20via%20redivided%20copy.xsl"/>
             <file name="applications-old/update/update%20TAN-voc%20via%20TEI%20collection.xsl"/>
             <file name="applications/upgrade/upgrade%20TAN%20file.xsl"/>

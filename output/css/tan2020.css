@@ -251,7 +251,9 @@ tr td.irrelevant {
 .tei .resp:after {
    content: ': ';
 }
-div.lb:before {
+div.lb::before,
+div.e-lb::before
+{
    content: '|';
 }
 
@@ -359,7 +361,8 @@ td.e-ref > div:first-child ~ *,
 .e-allusion > .a-type,
 /* next to items added ad hoc 2021-06-12 */
 td.filler > .e-src,
-.e-claim > .a-include
+.e-claim > .a-include,
+.a-break
 {
    display: none
 }
@@ -377,7 +380,8 @@ div.p > *,
 .tok *,
 .e-tok *,
 .tei *,
-.ns-tei *
+.ns-tei *,
+.e-lb
 /*.tei .app,
 .tei .lem,
 .tei .rdg,
