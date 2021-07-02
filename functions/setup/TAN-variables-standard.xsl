@@ -250,13 +250,8 @@
             return
                string($i)"/>
    
-   <xsl:variable name="tan:all-ids" as="attribute()*"
-      select="key('tan:attrs-by-name', ('id', 'xml:id'), $tan:self-resolved)"/>
-   <xsl:variable name="tan:all-ids-not-in-inclusions" as="attribute()*"
-      select="$tan:all-ids[not(ancestor-or-self::tan:inclusion)]"/>
    <xsl:variable name="tan:all-head-iris" as="element(tan:IRI)*"
       select="$tan:head/(* except (tan:inclusion | tan:vocabulary | tan:tan-vocabulary))//tan:IRI[not(ancestor::tan:error)]"/>
-   <xsl:variable name="tan:duplicate-ids" as="attribute()*" select="tan:duplicate-items($tan:all-ids-not-in-inclusions)"/>
    <xsl:variable name="tan:duplicate-head-iris" as="element(tan:IRI)*" select="tan:duplicate-items($tan:all-head-iris)"/>
    <xsl:variable name="tan:doc-namespace" as="xs:anyURI" select="namespace-uri(/*)"/>
    <xsl:variable name="tan:doc-id-namespace" as="xs:string?" select="tan:doc-id-namespace($tan:self-resolved)"/>

@@ -1926,7 +1926,7 @@
                </overlaps>
             </xsl:variable>
             
-            <!-- Commenting out Apr 2021, pending further investigation when the split needs to be
+            <!-- Commenting out Apr 2021, pending further investigation into when the split needs to be
                recalibrated. This does not work when the differences between a and b are significant,
                esp. at the beginning. -->
             <!--<xsl:variable name="overlaps-split-2" as="element()">

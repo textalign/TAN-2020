@@ -35,6 +35,7 @@
       <xsl:param name="use-validation-mode" as="xs:boolean"/>
       <xsl:document>
          <test-expansion>
+            <!-- Normally this is empty, to be replaced only when running diagnostics. -->
          </test-expansion>
       </xsl:document>
       
@@ -1098,6 +1099,7 @@
    
    <xsl:mode name="tan:core-expansion-terse-attributes" on-no-match="shallow-copy"/>
    <xsl:mode name="tan:core-expansion-prep-for-attr-query" on-no-match="shallow-copy"/>
+   <xsl:mode name="tan:attributes-not-in-inclusions" on-no-match="shallow-skip"/>
    <xsl:mode name="tan:core-expansion-terse-attributes-to-elements" on-no-match="shallow-copy"/>
    <xsl:mode name="tan:remove-inclusions" on-no-match="shallow-copy"/>
    <xsl:mode name="tan:core-expansion-terse" on-no-match="shallow-copy"/>
@@ -1126,6 +1128,13 @@
    <!-- We ignore TEI attributes that are not tethered to the TAN vocabulary system -->
    <xsl:template match="tei:teiHeader | tan:tail | tei:div[not(tei:div)]/node()"
       mode="tan:core-expansion-prep-for-attr-query"/>
+   
+   
+   <xsl:template match="tan:inclusion | *[@include]" mode="tan:attributes-not-in-inclusions"/>
+   
+   <xsl:template match="@xml:id | @id" mode="tan:attributes-not-in-inclusions">
+      <xsl:sequence select="."/>
+   </xsl:template>
    
    
 
@@ -1157,6 +1166,11 @@
       
       <xsl:variable name="these-pointing-attrs"
          select="key('tan:attrs-by-name', ($tan:names-of-attributes-that-take-idrefs, 'which'), $this-doc-prepped-for-attr-query)"/>
+      
+      <xsl:variable name="id-attrs-not-in-inclusions" as="attribute()*">
+         <xsl:apply-templates select="." mode="tan:attributes-not-in-inclusions"/>
+      </xsl:variable>
+      
 
       <!-- Master check of @which and attributes that point to vocabulary items -->
       <xsl:variable name="all-descendant-insertions" as="element()*">
@@ -1508,6 +1522,8 @@
          </xsl:if>
       </xsl:variable>
       
+      
+      
       <xsl:copy>
          <xsl:copy-of select="@*"/>
          <xsl:apply-templates mode="#current">
@@ -1518,6 +1534,8 @@
             <xsl:with-param name="insertions" tunnel="yes" as="element()*"
                select="$all-descendant-insertions"/>
             <xsl:with-param name="regex-u-values" tunnel="yes" select="$regex-u-values"/>
+            <xsl:with-param name="duplicate-attr-ids" as="attribute()*" tunnel="yes"
+               select="tan:duplicate-items($id-attrs-not-in-inclusions)"/>
          </xsl:apply-templates>
       </xsl:copy>
    </xsl:template>
@@ -1600,9 +1618,10 @@
    </xsl:template>
    
    <xsl:template match="@xml:id | @id" mode="tan:core-expansion-terse-attributes-to-elements">
-      <xsl:if test=". = $tan:duplicate-ids">
+      <xsl:param name="duplicate-attr-ids" tunnel="yes" as="attribute()*"/>
+      <xsl:if test=". = $duplicate-attr-ids">
          <xsl:variable name="this-id" select="."/>
-         <xsl:variable name="competing-id-attrs" select="($tan:all-ids except .)[. = $this-id]"/>
+         <xsl:variable name="competing-id-attrs" select="($duplicate-attr-ids except .)[. = $this-id]"/>
          <xsl:variable name="this-message" as="xs:string*">
             <xsl:value-of select="string(.) || ' is already in use by '"/>
             <xsl:for-each select="$competing-id-attrs">
