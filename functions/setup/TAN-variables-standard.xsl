@@ -89,7 +89,7 @@
    
    <xsl:variable name="tan:names-of-attributes-that-take-idrefs" as="xs:string+" select="$tan:id-idrefs/tan:id-idrefs/tan:id/tan:idrefs/@attribute"/>
    <xsl:variable name="tan:names-of-attributes-that-may-take-multiple-space-delimited-values" as="xs:string+"
-      select="$tan:names-of-attributes-that-take-idrefs, ('n', 'affects-element', 'affects-attribute', 'item-type')"/>
+      select="$tan:names-of-attributes-that-take-idrefs, ('affects-element', 'affects-attribute', 'item-type')"/>
    <xsl:variable name="tan:names-of-attributes-that-permit-keyword-last" select="('pos', 'chars', 'm-has-how-many-features')"/>
    <xsl:variable name="tan:names-of-attributes-that-are-case-indifferent" as="xs:string+" select="('n', 'ref', 'affects-element', 'affects-attribute', 'item-type', 'in-lang')"/>
    <xsl:variable name="tan:names-of-elements-that-take-idrefs" as="xs:string+" select="$tan:id-idrefs/tan:id-idrefs/tan:id/tan:idrefs/@element"/>

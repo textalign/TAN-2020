@@ -380,6 +380,7 @@
       </xsl:variable>
       <xsl:variable name="primary-tokenization-pattern" as="xs:string">
          <xsl:choose>
+            <xsl:when test="$attribute-name eq 'n'">[,; ]+</xsl:when>
             <xsl:when
                test="$attribute-name = $tan:names-of-attributes-that-may-take-multiple-space-delimited-values"
                > +</xsl:when>
