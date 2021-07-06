@@ -9,8 +9,8 @@
    
    
    <xsl:variable name="tan:error-key" as="map(*)">
-      <!-- This error key pertains NOT to TAN files' structures, but to the
-      behavior of TAN functions, particularly when other applications use them. -->
+      <!-- This error key pertains NOT to validation errors when evaluating TAN files' structures, but to the
+      behavior of TAN functions, mainly when input is not what is expected. -->
       <xsl:map>
          <xsl:sequence select="$tan:numeric-conversion-error-key"/>
          <xsl:sequence select="$tan:binary-error-key"/>
@@ -20,7 +20,6 @@
    </xsl:variable>
    
    <xsl:variable name="tan:doc-history" select="tan:get-doc-history(/)"/>
-   <!--<xsl:variable name="doc-filename" select="replace($doc-uri, '.*/([^/]+)$', '$1')"/>-->
    <xsl:variable name="tan:doc-filename" select="tan:cfne(/)"/>
    <xsl:param name="tan:saxon-extension-functions-available" static="yes" as="xs:boolean" select="function-available('saxon:evaluate', 3)"/>
    

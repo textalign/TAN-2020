@@ -49,7 +49,7 @@
 
     <!-- These XSLT functions allow one to extract the component parts an archive and to rearchive and save those 
         component parts, perhaps after some transformation. 
-             I wrote these functions partly because I needed to develop workflows that needed to convert to and from 
+             I wrote these functions partly because I needed to develop workflows that converted to and from 
         Word and Excel, and partly because I was frustrated with some limitations of Microsoft Word and Excel. It is 
         widely known only among specialists that Word (docx) and Excel (xslx) are merely compressed archives. If you
         take a docx file and change its extension to zip, you can decompress it like any other zip file, and look at its 
@@ -166,12 +166,13 @@
                             <xsl:map-entry key="'diagnostics'">
                                 <diagnostics>
                                     <diag-key><xsl:copy-of select="$this-key"/></diag-key>
-                                    <diag-entry><xsl:copy-of select="tan:map-to-xml($this-entry)"/></diag-entry>
+                                    <!-- tan:map-to-xml() can be found in the TAN function library -->
+                                    <!--<diag-entry><xsl:copy-of select="tan:map-to-xml($this-entry)"/></diag-entry>-->
                                     <diag-data><xsl:copy-of select="$this-data"/></diag-data>
                                     <diag-is-plain-text><xsl:value-of select="$this-entry-content-is-plain-text"/></diag-is-plain-text>
                                     <diag-encoding><xsl:value-of select="$this-encoding"/></diag-encoding>
                                     <diag-is-marked-as-compressed><xsl:value-of select="$this-entry-content-is-marked-as-compressed"/></diag-is-marked-as-compressed>
-                                    <diag-data-entries><xsl:copy-of select="tan:map-to-xml($these-data-entries)"/></diag-data-entries>
+                                    <!--<diag-data-entries><xsl:copy-of select="tan:map-to-xml($these-data-entries)"/></diag-data-entries>-->
                                     <diag-is-itself-an-archive><xsl:value-of select="$this-entry-content-is-itself-an-archive"/></diag-is-itself-an-archive>
                                     <diag-data-as-string><xsl:value-of select="$this-data-as-decoded-string"/></diag-data-as-string>
                                     <diag-is-encoded-text><xsl:value-of select="$this-entry-content-is-encoded-text"/></diag-is-encoded-text>
