@@ -549,7 +549,7 @@
         <xsl:param name="starting-pos" tunnel="yes" as="xs:integer" select="1"/>
         <xsl:param name="comment-placement-arrays" tunnel="yes" as="array(*)*"/>
         
-        <xsl:variable name="context-length" as="xs:integer" select="string-length(.)"/>
+        <xsl:variable name="context-length" as="xs:integer" select="tan:string-length(.)"/>
         <xsl:variable name="next-sibling-starting-pos" as="xs:integer" select="$starting-pos + $context-length"/>
         
         <xsl:variable name="diagnostics-on" as="xs:boolean" select="false()"/>
@@ -565,7 +565,7 @@
             <xsl:iterate select="node()">
                 <xsl:param name="current-starting-pos" as="xs:integer" select="$starting-pos"/>
                 
-                <xsl:variable name="current-length" as="xs:integer" select="string-length(.)"/>
+                <xsl:variable name="current-length" as="xs:integer" select="tan:string-length(.)"/>
                 <xsl:variable name="next-starting-pos" as="xs:integer" select="$current-starting-pos + $current-length"/>
                 
                 <xsl:variable name="placement-arrays-to-send-through" as="array(*)*">
@@ -621,12 +621,12 @@
         <xsl:param name="comment-placement-arrays" tunnel="yes" as="array(*)*"/>
         
         <xsl:variable name="context-element" as="element()" select="."/>
-        <xsl:variable name="next-pos" as="xs:integer" select="$starting-pos + string-length(.)"/>
+        <xsl:variable name="next-pos" as="xs:integer" select="$starting-pos + tan:string-length(.)"/>
         
         <xsl:variable name="all-text-positions" as="xs:integer+">
             <xsl:iterate select="node()">
                 <xsl:param name="current-starting-pos" as="xs:integer" select="$starting-pos"/>
-                <xsl:variable name="current-length" as="xs:integer" select="string-length(.)"/>
+                <xsl:variable name="current-length" as="xs:integer" select="tan:string-length(.)"/>
                 
                 <xsl:if test=". instance of text() and $current-length gt 0">
                     <xsl:sequence select="
@@ -648,7 +648,7 @@
                 
                 <xsl:on-completion select="$array-so-far"/>
                 
-                <xsl:variable name="current-length" as="xs:integer" select="string-length(.)"/>
+                <xsl:variable name="current-length" as="xs:integer" select="tan:string-length(.)"/>
                 
                 <xsl:variable name="new-sequence" as="xs:integer*" select="
                         if ($current-length gt 0) then
@@ -1110,15 +1110,16 @@
             <formats-of-interest count="{count($formats-of-interest)}"><xsl:value-of select="$formats-of-interest"/></formats-of-interest>
             <input-to-format-tree><xsl:copy-of select="$input-to-format-tree"/></input-to-format-tree>
             <input-formats-available count="{count($input-formats-available)}"><xsl:copy-of select="$input-formats-available"/></input-formats-available>
-            <!--<input-to-main-text-and-format-tree><xsl:copy-of select="$input-to-main-text-and-format-tree"/></input-to-main-text-and-format-tree>-->
-            <!--<input-to-comment-text-and-format-tree><xsl:copy-of select="$input-to-comment-text-and-format-tree"/></input-to-comment-text-and-format-tree>-->
-            <!--<comments-of-interest><xsl:copy-of select="$comments-of-interest"/></comments-of-interest>-->
-            <!--<input-main-text-and-format-tree-fused><xsl:copy-of select="$main-text-and-format-trees-fused"/></input-main-text-and-format-tree-fused>-->
-            <!--<input-main-text-and-format-trees-with-format-anchors-resolved><xsl:copy-of select="$main-text-and-format-trees-with-format-anchors-resolved"/></input-main-text-and-format-trees-with-format-anchors-resolved>-->
-            <!--<input-main-text-and-format-tree-stamped><xsl:copy-of select="$main-text-and-format-tree-stamped"/></input-main-text-and-format-tree-stamped>-->
+            <input-to-main-text-and-format-tree><xsl:copy-of select="$input-to-main-text-and-format-tree"/></input-to-main-text-and-format-tree>
+            <input-to-comment-text-and-format-tree><xsl:copy-of select="$input-to-comment-text-and-format-tree"/></input-to-comment-text-and-format-tree>
+            <comments-of-interest><xsl:copy-of select="$comments-of-interest"/></comments-of-interest>
+            <input-main-text-and-format-tree-fused><xsl:copy-of select="$main-text-and-format-trees-fused"/></input-main-text-and-format-tree-fused>
+            <input-main-text-and-format-trees-with-format-anchors-resolved><xsl:copy-of select="$main-text-and-format-trees-with-format-anchors-resolved"/></input-main-text-and-format-trees-with-format-anchors-resolved>
+            <input-main-text-and-format-tree-stamped><xsl:copy-of select="$main-text-and-format-tree-stamped"/></input-main-text-and-format-tree-stamped>
+            <!--<input-docx-format><xsl:copy-of select="tan:map-to-xml($input-docx-format-map, true())"/></input-docx-format>-->
             <!--<source-input-map><xsl:copy-of select="tan:map-to-xml($source-input-map, true())"/></source-input-map>-->
-            <!--<source-input-pass-1-map><xsl:copy-of select="tan:map-to-xml($source-input-pass-1-map)"/></source-input-pass-1-map>-->
-            <!--<source-input-pass-2-map><xsl:copy-of select="tan:map-to-xml($source-input-pass-2-map)"/></source-input-pass-2-map>-->
+            <source-input-pass-1-map><xsl:copy-of select="tan:map-to-xml($source-input-pass-1-map, true())"/></source-input-pass-1-map>
+            <source-input-pass-2-map><xsl:copy-of select="tan:map-to-xml($source-input-pass-2-map, true())"/></source-input-pass-2-map>
             <!--<source-input-pass-2-map-format-keys count="{count($source-input-pass-2-map-format-keys)}"><xsl:copy-of select="$source-input-pass-2-map-format-keys"/></source-input-pass-2-map-format-keys>-->
             <!--<comment-codes-of-interest count="{count($comment-codes-of-interest)}"><xsl:copy-of select="$comment-codes-of-interest"/></comment-codes-of-interest>-->
             <!--<source-input-pass-2-map-format-keys-for-comments count="{count($source-input-pass-2-map-format-keys-for-comments)}"><xsl:copy-of select="$source-input-pass-2-map-format-keys-for-comments"/></source-input-pass-2-map-format-keys-for-comments>-->
@@ -1126,8 +1127,8 @@
             <!--<comments-of-interest-pos-to-group-map><xsl:copy-of select="tan:map-to-xml($comments-of-interest-pos-to-group-map)"/></comments-of-interest-pos-to-group-map>-->
             <!--<comments-of-interest-id-to-pos-map><xsl:copy-of select="tan:map-to-xml($comments-of-interest-id-to-pos-map)"/></comments-of-interest-id-to-pos-map>-->
             <!--<comments-of-interest-placement-arrays><xsl:copy-of select="tan:array-to-xml($comments-of-interest-placement-arrays)"/></comments-of-interest-placement-arrays>-->
-            <!--<source-input-pass-2b><xsl:copy-of select="$source-input-pass-2b"/></source-input-pass-2b>-->
-            <!--<source-input-pass-3><xsl:copy-of select="$source-input-pass-3"/></source-input-pass-3>-->
+            <source-input-pass-2b><xsl:copy-of select="$source-input-pass-2b"/></source-input-pass-2b>
+            <source-input-pass-3><xsl:copy-of select="$source-input-pass-3"/></source-input-pass-3>
             <!--<source-input-pass-3b><xsl:copy-of select="$source-input-pass-3b"/></source-input-pass-3b>-->
             <!--<source-input-pass-4><xsl:copy-of select="$source-input-pass-4"/></source-input-pass-4>-->
             <!--<source-input-pass-5><xsl:copy-of select="$source-input-pass-5"/></source-input-pass-5>-->
@@ -1145,6 +1146,7 @@
             <xsl:message select="'Source docx input detected.'"/>
             <xsl:message select="'Ignore deletions:', $ignore-docx-deletions"/>
             <xsl:message select="'Ignore insertions: ', $ignore-docx-insertions"/>
+            <xsl:message select="'Ignore comments: ', $ignore-comments"/>
             <xsl:message select="'Input formats available: ' || string-join($input-formats-available, ', ')"/>
             <xsl:message select="'Formats of interest: ' || string-join($formats-of-interest, ', ')"/>
             <xsl:message select="'Report any comments that are ignored?', $report-ignored-comments"/>

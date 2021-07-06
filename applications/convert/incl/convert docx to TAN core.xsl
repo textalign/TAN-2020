@@ -169,7 +169,9 @@
    </xsl:variable>
    
    <xsl:variable name="input-to-comment-text-and-format-tree" as="document-node()*">
-      <xsl:apply-templates select="$source-input-files" mode="docx-comment-text-and-format-tree"/>
+      <xsl:if test="not($ignore-comments)">
+         <xsl:apply-templates select="$source-input-files" mode="docx-comment-text-and-format-tree"/>
+      </xsl:if>
    </xsl:variable>
    
    <xsl:mode name="docx-main-text-and-format-tree" on-no-match="text-only-copy"/>
@@ -195,7 +197,8 @@
       </xsl:document>
    </xsl:template>
    
-   <xsl:template match="/*[@_archive-path]" priority="-1" mode="docx-main-text-and-format-tree docx-comment-text-and-format-tree"/>
+   <xsl:template match="/*[@_archive-path] | w:pPr/w:tabs" priority="-1" 
+      mode="docx-main-text-and-format-tree docx-comment-text-and-format-tree"/>
    <xsl:template match="/*[not(@_archive-path)] | w:document" mode="docx-main-text-and-format-tree">
       <xsl:copy copy-namespaces="no">
          <xsl:copy-of select="@*"/>
@@ -268,14 +271,16 @@
       <xsl:variable name="this-is-of-interest" as="xs:boolean" select="exists($matching-comments-of-interest)"/>
       <xsl:variable name="range-type" as="xs:string" select="lower-case(substring(local-name(.), 13))"/>
       
-      <format range="{$range-type}">
-         <xsl:value-of select="'comment=' || @w:id"/>
-      </format>
-      <xsl:for-each select="$matching-comments-of-interest">
+      <xsl:if test="not($ignore-comments)">
          <format range="{$range-type}">
-            <xsl:value-of select="'comment#' || @id"/>
+            <xsl:value-of select="'comment=' || @w:id"/>
          </format>
-      </xsl:for-each>
+         <xsl:for-each select="$matching-comments-of-interest">
+            <format range="{$range-type}">
+               <xsl:value-of select="'comment#' || @id"/>
+            </format>
+         </xsl:for-each>
+      </xsl:if>
       
    </xsl:template>
    
@@ -441,7 +446,7 @@
    
    
    
-   <!-- Process the text and format tree -->
+   <!-- Process the text and format tree, and deal with combining characters separated from their base character -->
    
    <!-- If there are multiple inputs, combine them, so there is a single run of text. -->
    <xsl:variable name="main-text-and-format-trees-fused" as="document-node()?">
@@ -454,9 +459,32 @@
    <xsl:template match="/*" mode="fuse-text-and-format-trees">
       <xsl:copy>
          <xsl:copy-of select="@*"/>
-         <xsl:copy-of select="node()"/>
-         <xsl:copy-of select="$input-to-main-text-and-format-tree[position() gt 1]/*/node()"/>
+         <xsl:apply-templates mode="#current"/>
+         <xsl:apply-templates select="$input-to-main-text-and-format-tree[position() gt 1]/*/node()"
+            mode="#current"/>
+         <!--<xsl:copy-of select="node()"/>-->
+         <!--<xsl:copy-of select="$input-to-main-text-and-format-tree[position() gt 1]/*/node()"/>-->
       </xsl:copy>
+   </xsl:template>
+   
+   <xsl:template match="tan:text" mode="fuse-text-and-format-trees">
+      <xsl:variable name="following-combining-chars" as="xs:string?">
+         <xsl:analyze-string select="following-sibling::tan:text[1]" regex="^\p{{M}}+">
+            <xsl:matching-substring>
+               <xsl:value-of select="."/>
+            </xsl:matching-substring>
+         </xsl:analyze-string>
+      </xsl:variable>
+      <xsl:copy>
+         <xsl:copy-of select="@*"/>
+         <xsl:apply-templates mode="#current">
+            <xsl:with-param name="following-combining-chars" tunnel="yes" select="$following-combining-chars"/>
+         </xsl:apply-templates>
+      </xsl:copy>
+   </xsl:template>
+   <xsl:template match="tan:text/text()" mode="fuse-text-and-format-trees">
+      <xsl:param name="following-combining-chars" tunnel="yes" as="xs:string?"/>
+      <xsl:value-of select="replace(., '^\p{M}+', '') || $following-combining-chars"/>
    </xsl:template>
    
    
@@ -582,6 +610,19 @@
          <!--<xsl:variable name="check-formats-first" as="xs:boolean" select="$current-change-element/@pattern eq '.+'
             and (exists($current-change-element/@format) or exists($current-change-element/@exclude-format))"/>-->
          
+         <xsl:variable name="positions-disallowed" as="xs:integer*">
+            <!-- Previously I had not(exists($formats-expected)) and exists($formats-excluded) but
+            I'm not sure why the first branch existed. -->
+            <xsl:if test="exists($formats-excluded)">
+               <xsl:for-each select="$current-format-map-keys">
+                  <xsl:variable name="this-key" as="xs:integer" select="."/>
+                  <xsl:variable name="these-formats" as="xs:string+" select="$current-format-map($this-key)"/>
+                  <xsl:if test="($these-formats = $formats-excluded)">
+                     <xsl:sequence select="."/>
+                  </xsl:if>
+               </xsl:for-each>
+            </xsl:if>
+         </xsl:variable>
          <xsl:variable name="positions-required" as="xs:integer*">
             <xsl:if test="exists($formats-expected)">
                <!-- We add a single integer, to signal to the next variable's template that there must be
@@ -592,18 +633,9 @@
                   <xsl:variable name="this-key" as="xs:integer" select="."/>
                   <xsl:variable name="these-formats" as="xs:string+" select="$current-format-map($this-key)"/>
                   <xsl:if test="
-                        ($these-formats = $formats-expected) and not($these-formats = $formats-excluded)">
-                     <xsl:sequence select="."/>
-                  </xsl:if>
-               </xsl:for-each>
-            </xsl:if>
-         </xsl:variable>
-         <xsl:variable name="positions-disallowed" as="xs:integer*">
-            <xsl:if test="not(exists($formats-expected)) and exists($formats-excluded)">
-               <xsl:for-each select="$current-format-map-keys">
-                  <xsl:variable name="this-key" as="xs:integer" select="."/>
-                  <xsl:variable name="these-formats" as="xs:string+" select="$current-format-map($this-key)"/>
-                  <xsl:if test="($these-formats = $formats-excluded)">
+                        ($these-formats = $formats-expected) 
+                        and not($these-formats = $formats-excluded)
+                        and not(. = $positions-disallowed)">
                      <xsl:sequence select="."/>
                   </xsl:if>
                </xsl:for-each>
@@ -618,6 +650,8 @@
                         select="$positions-required"/>
                      <xsl:with-param name="positions-disallowed" as="xs:integer*" tunnel="yes"
                         select="$positions-disallowed"/>
+                     <xsl:with-param name="must-match-a-format" as="xs:boolean" tunnel="yes"
+                        select="exists($formats-expected)"/>
                   </xsl:apply-templates>
                </xsl:when>
                <xsl:otherwise>
@@ -725,15 +759,15 @@
          <xsl:if test="$output-diagnostics-on">
             <xsl:message select="'Output diagnostics on, tan:batch-replace-docx()'"/>
             <xsl:message select="'Current change element: ', $current-change-element"/>
-            <xsl:message select="'docx input map so far:', tan:map-to-xml($docx-input-map-so-far, true())"/>
-            <xsl:message select="'positions required: ', $positions-required"/>
-            <xsl:message select="'positions disallowed: ', $positions-disallowed"/>
-            <xsl:message select="'Current text, format-sequestered: ', $current-text-format-sequestered"/>
-            <xsl:message select="'Current text analyzed:', $current-text-analyzed"/>
-            <xsl:message select="'Current text analyzed and stamped:', $current-text-analyzed-and-stamped"/>
-            <xsl:message select="'Analysis checked for formats:', $analysis-checked-for-formats"/>
-            <xsl:message select="'Adjustments to make to format map:', tan:map-to-xml($adjustments-to-make-to-format-map, true())"/>
-            <xsl:message select="'New docx map: ', tan:map-to-xml($new-docx-map, true())"/>
+            <xsl:message select="'docx input map so far:', tan:trim-long-tree(tan:map-to-xml($docx-input-map-so-far, true()), 20, 100)"/>
+            <xsl:message select="'positions required (count ' || count($positions-required) || '), first 20: ', subsequence($positions-required, 1, 20)"/>
+            <xsl:message select="'positions disallowed (count ' || count($positions-disallowed) || '), first 20: ', subsequence($positions-disallowed, 1, 20)"/>
+            <xsl:message select="'Current text, format-sequestered: ', tan:trim-long-tree($current-text-format-sequestered, 20, 100)"/>
+            <xsl:message select="'Current text analyzed:', tan:trim-long-tree($current-text-analyzed, 20, 100)"/>
+            <xsl:message select="'Current text analyzed and stamped:', tan:trim-long-tree($current-text-analyzed-and-stamped, 20, 100)"/>
+            <xsl:message select="'Analysis checked for formats:', tan:trim-long-tree($analysis-checked-for-formats, 20, 100)"/>
+            <xsl:message select="'Adjustments to make to format map:', tan:trim-long-tree(tan:map-to-xml($adjustments-to-make-to-format-map, true()), 20, 100)"/>
+            <xsl:message select="'New docx map: ', tan:trim-long-tree(tan:map-to-xml($new-docx-map, true()), 20, 100)"/>
          </xsl:if>
          
          <xsl:next-iteration>
@@ -751,15 +785,45 @@
    <xsl:template match="*[text()]" mode="sequester-formats">
       <xsl:param name="positions-required" tunnel="yes" as="xs:integer*"/>
       <xsl:param name="positions-disallowed" tunnel="yes" as="xs:integer*"/>
+      <xsl:param name="must-match-a-format" tunnel="yes" as="xs:boolean"/>
       <xsl:param name="current-starting-position" as="xs:integer" tunnel="yes" select="1"/>
       <xsl:copy>
          <xsl:copy-of select="@*"/>
          <xsl:iterate select="node()">
             <xsl:param name="this-starting-position" as="xs:integer" select="$current-starting-position"/>
             
-            <xsl:variable name="this-length" as="xs:integer" select="string-length(.)"/>
+            <xsl:variable name="this-length" as="xs:integer" select="tan:string-length(.)"/>
+            <xsl:variable name="next-starting-position" as="xs:integer" select="$this-starting-position + $this-length"/>
             
             <xsl:choose>
+               <xsl:when test=". instance of text()">
+                  <!-- diagnostics -->
+                  <xsl:apply-templates select="." mode="#current">
+                     <xsl:with-param name="current-starting-position" tunnel="yes" select="$this-starting-position"/>
+                     <xsl:with-param name="positions-required" tunnel="yes" select="$positions-required[. ge $this-starting-position][. lt $next-starting-position]"/>
+                     <xsl:with-param name="positions-disallowed" tunnel="yes" select="$positions-disallowed[. ge $this-starting-position][. lt $next-starting-position]"/>
+                  </xsl:apply-templates>
+               </xsl:when>
+               <xsl:when test=". instance of text()">
+                  <xsl:for-each-group select="string-to-codepoints(.)" group-adjacent="
+                        let $p := $this-starting-position + position() - 1
+                        return
+                           if ($must-match-a-format) then
+                              (($p = $positions-required) and not($p = $positions-disallowed))
+                           else
+                              not($p = $positions-disallowed)">
+                     <xsl:choose>
+                        <xsl:when test="current-grouping-key() eq true()">
+                           <xsl:value-of select="codepoints-to-string(current-group())"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                           <x>
+                              <xsl:value-of select="codepoints-to-string(current-group())"/>
+                           </x>
+                        </xsl:otherwise>
+                     </xsl:choose>
+                  </xsl:for-each-group>
+               </xsl:when>
                <xsl:when test=". instance of text()">
                   <xsl:for-each-group select="string-to-codepoints(.)"
                      group-adjacent="($this-starting-position + position() - 1) = ($positions-required, $positions-disallowed)">
@@ -779,6 +843,8 @@
                <xsl:otherwise>
                   <xsl:apply-templates select="." mode="#current">
                      <xsl:with-param name="current-starting-position" tunnel="yes" select="$this-starting-position"/>
+                     <xsl:with-param name="positions-required" tunnel="yes" select="$positions-required[. ge $this-starting-position]"/>
+                     <xsl:with-param name="positions-disallowed" tunnel="yes" select="$positions-disallowed[. ge $this-starting-position]"/>
                   </xsl:apply-templates>
                </xsl:otherwise>
             </xsl:choose>
@@ -788,6 +854,116 @@
             </xsl:next-iteration>
          </xsl:iterate>
       </xsl:copy>
+   </xsl:template>
+   
+   <xsl:template match="text()" mode="sequester-formats">
+      <xsl:param name="positions-required" tunnel="yes" as="xs:integer*"/>
+      <xsl:param name="positions-disallowed" tunnel="yes" as="xs:integer*"/>
+      <xsl:param name="must-match-a-format" tunnel="yes" as="xs:boolean"/>
+      <xsl:param name="current-starting-position" as="xs:integer" tunnel="yes" select="1"/>
+      
+      <xsl:variable name="combining-char-codepoints" as="xs:integer*" select="string-to-codepoints(string-join(analyze-string(., '\p{M}+')/*:match))"/>
+      
+      <xsl:variable name="diagnostics-on" as="xs:boolean" select="false()"/>
+      <xsl:if test="$diagnostics-on">
+         <xsl:message select="'Diagnostics on, template mode sequester-formats'"/>
+         <xsl:message select="'positions required (count ' || count($positions-required) || '), first 20: ', subsequence($positions-required, 1, 20)"/>
+         <xsl:message select="'positions disallowed (count ' || count($positions-disallowed) || '), first 20: ', subsequence($positions-disallowed, 1, 20)"/>
+         <xsl:message select="'Must match a format: ', $must-match-a-format"/>
+         <xsl:message select="'Current starting position: ', $current-starting-position"/>
+         <xsl:message select="'Combining character codepoints: ', $combining-char-codepoints"/>
+      </xsl:if>
+      
+      <!--<xsl:iterate select="tan:chop-string(.)">
+         <xsl:value-of select="."/>
+      </xsl:iterate>-->
+      
+      <xsl:iterate select="string-to-codepoints(.)">
+         <xsl:param name="string-so-far" as="xs:string?"/>
+         <xsl:param name="string-so-far-is-a-match" as="xs:boolean" select="true()"/>
+         <xsl:param name="current-pos" as="xs:integer" select="$current-starting-position"/>
+         <xsl:param name="positions-required-remnant" as="xs:integer*" select="$positions-required"/>
+         <xsl:param name="positions-disallowed-remnant" as="xs:integer*" select="$positions-disallowed"/>
+         
+         <xsl:on-completion>
+            <xsl:choose>
+               <xsl:when test="$string-so-far-is-a-match">
+                  <xsl:value-of select="$string-so-far"/>
+               </xsl:when>
+               <xsl:when test="string-length($string-so-far) gt 0">
+                  <x><xsl:value-of select="$string-so-far"/></x>
+               </xsl:when>
+            </xsl:choose>
+         </xsl:on-completion>
+         
+         <xsl:variable name="this-is-required" as="xs:boolean"
+            select="$current-pos = $positions-required-remnant[1]"/>
+         <xsl:variable name="this-is-disallowed" as="xs:boolean"
+            select="$current-pos = $positions-disallowed-remnant[1]"/>
+         <xsl:variable name="mark-this-as-a-match" as="xs:boolean" select="
+               if ($must-match-a-format)
+               then
+                  $this-is-required
+               else
+                  not($this-is-disallowed)"/>
+         
+         <xsl:variable name="next-string-fragment" as="xs:string">
+            <xsl:choose>
+               <xsl:when test="not($mark-this-as-a-match eq $string-so-far-is-a-match)">
+                  <xsl:value-of select="codepoints-to-string(.)"/>
+               </xsl:when>
+               <xsl:otherwise>
+                  <xsl:value-of select="$string-so-far || codepoints-to-string(.)"/>
+               </xsl:otherwise>
+            </xsl:choose>
+         </xsl:variable>
+         
+         <xsl:variable name="inner-diagnostics-on" as="xs:boolean" select="false()"/>
+         <xsl:if test="$inner-diagnostics-on">
+            <xsl:message select="'String so far: ' || tan:ellipses($string-so-far, 20)"/>
+            <xsl:message select="'String so far is a match: ', $string-so-far-is-a-match"/>
+            <xsl:message select="'Current position: ' || $current-pos"/>
+            <xsl:message select="'Positions required remnant, head: ', $positions-required-remnant[1]"/>
+            <xsl:message select="'Positions disallowed remnant, head: ', $positions-disallowed-remnant[1]"/>
+            <xsl:message select="'This is required: ', $this-is-required"/>
+            <xsl:message select="'This is disallowed: ', $this-is-disallowed"/>
+            <xsl:message select="'Mark this as a match: ', $mark-this-as-a-match"/>
+            <xsl:message select="'Next string fragment: ' || tan:ellipses($next-string-fragment, 20)"/>
+         </xsl:if>
+         
+         <!-- Output the string so far if the status changes -->
+         <xsl:choose>
+            <xsl:when test="string-length($string-so-far) eq 0"/>
+            <xsl:when test="not($string-so-far-is-a-match) and $mark-this-as-a-match">
+               <x><xsl:value-of select="$string-so-far"/></x>
+            </xsl:when>
+            <xsl:when test="$string-so-far-is-a-match and not($mark-this-as-a-match)">
+               <xsl:value-of select="$string-so-far"/>
+            </xsl:when>
+         </xsl:choose>
+         
+         <xsl:next-iteration>
+            <xsl:with-param name="string-so-far" as="xs:string" select="$next-string-fragment"/>
+            <xsl:with-param name="string-so-far-is-a-match" as="xs:boolean" select="$mark-this-as-a-match"/>
+            <xsl:with-param name="current-pos" as="xs:integer" select="
+                  if (. = $combining-char-codepoints) then
+                     $current-pos
+                  else
+                     $current-pos + 1"/>
+            <xsl:with-param name="positions-required-remnant" select="
+                  if ($this-is-required) then
+                     tail($positions-required-remnant)
+                  else
+                     $positions-required-remnant"/>
+            <xsl:with-param name="positions-disallowed-remnant" select="
+                  if ($this-is-disallowed) then
+                     tail($positions-disallowed-remnant)
+                  else
+                     $positions-disallowed-remnant"/>
+         </xsl:next-iteration>
+         
+      </xsl:iterate>
+      
    </xsl:template>
    
    
@@ -928,7 +1104,7 @@
    <xsl:template match="tan:match" mode="calculate-adjustments-to-format-map">
       <xsl:variable name="old-pos" as="xs:integer" select="xs:integer(@_pos)"/>
       <xsl:variable name="old-length" as="xs:integer" select="xs:integer(@_len)"/>
-      <xsl:variable name="new-length" as="xs:integer" select="string-length(tan:replacement)"/>
+      <xsl:variable name="new-length" as="xs:integer" select="tan:string-length(tan:replacement)"/>
       <xsl:choose>
          <xsl:when test="$old-length gt $new-length">
             <!-- Deletions have taken place -->

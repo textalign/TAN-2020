@@ -21,7 +21,20 @@
          <sch:assert test="exists(tan:where) and exists(tan:div)">A marker must have at least one
             where and at least one div.</sch:assert>
       </sch:rule>
+      <sch:rule context="
+            xsl:param[@name eq $main-text-to-markup-param-name]">
+         <sch:assert test="exists(xsl:*) or exists(*[name(.) eq $main-text-to-markup-child-name])">The parameter
+         <sch:value-of select="name(.)"/> must have at least one element <sch:value-of select="$main-text-to-markup-child-name"/>
+            or XSLT elements that constructs one or more <sch:value-of select="$main-text-to-markup-child-name"/>.
+         </sch:assert>
+      </sch:rule>
+      <sch:rule context="
+            xsl:param[@name eq $main-text-to-markup-param-name]/xsl:*
+            | xsl:param[@name eq $comments-to-markup-param-name]/xsl:*">
+         <!-- It is fine to use XSLT elements within this parameter, to point to a configuration file. -->
+      </sch:rule>
       <sch:rule context="xsl:param[@name eq $main-text-to-markup-param-name]/*">
+         <!-- Otherwise, it must be the mandated name. -->
          <sch:assert test="name(.) eq $main-text-to-markup-child-name">The parameter <sch:value-of
                select="$main-text-to-markup-param-name"/> must contain only elements named <sch:value-of
                select="$main-text-to-markup-child-name"/></sch:assert>
@@ -44,12 +57,6 @@
       <sch:rule context="tan:div">
          <sch:assert test="exists(@type)">div must have @type, specifying the division type</sch:assert>
       </sch:rule>
-
-      <!--<sch:rule context="xsl:param[@name eq $main-text-to-markup-param-name]/*/*">
-         <sch:assert test="exists(@level)">Every markup element in the main text to
-            markup parameter must have @level, specifying what level the markup should take. 
-         </sch:assert>
-      </sch:rule>-->
 
    </sch:pattern>
    
