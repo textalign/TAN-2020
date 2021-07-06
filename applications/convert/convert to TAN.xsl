@@ -7,13 +7,13 @@
 
    <!-- Welcome to the TAN application for converting a file to TAN. -->
 
-   <!-- This is the public face of the application. The application proper can be found by
-      following any links in an <xsl:include> or <xsl:import>. You are invited to alter any of 
-      the parameters in this file as you like, to customize the application to apply to 
-      specific situations. You should probably do so on the basis of a copy of this file.
-      If you are comfortable with XSLT, try importing this stylesheet, and then selectively
-      change the parameters that suit your project.
-   -->
+   <!-- This is the public interface for the application. The code that runs the application can
+      be found by following the links in the <xsl:include> or <xsl:import> at the bottom of this
+      file. You are invited to alter as you like any of the parameters in this file, to customize
+      the application to suit your needs. If you are relatively new to XSLT, or you are nervous
+      about making changes, make a copy of this file before changing it, or configure a
+      transformation scenario in Oxygen. If you are comfortable with XSLT, try creating your own
+      stylesheet, then import this one, selectively changing the parameters as needed.-->
 
    <!-- DESCRIPTION -->
 

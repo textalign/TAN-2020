@@ -15,13 +15,13 @@
 
     <!-- About this stylesheet -->
     
-    <xsl:param name="stylesheet-iri"
+    <xsl:param name="tan:stylesheet-iri"
         select="'tag:textalign.net,2015:stylesheet:compare-texts'"/>
-    <xsl:param name="stylesheet-url" select="static-base-uri()"/>
-    <xsl:param name="stylesheet-name" select="'Application to compare class 1 files'"/>
+    <xsl:param name="tan:stylesheet-url" select="static-base-uri()"/>
+    <xsl:param name="tan:stylesheet-name" select="'Application to compare class 1 files'"/>
     <xsl:param name="tan:change-message" select="'Compared class 1 files.'"/>
-    <xsl:param name="stylesheet-is-core-tan-application" select="true()"/>
-    <xsl:param name="stylesheet-to-do-list">
+    <xsl:param name="tan:stylesheet-is-core-tan-application" select="true()"/>
+    <xsl:param name="tan:stylesheet-to-do-list">
         <to-do xmlns="tag:textalign.net,2015:ns">
             <comment who="kalvesmaki" when="2020-10-06">Revise process that reinfuses a class 1 file with a diff/collate into a standard extra TAN function.</comment>
         </to-do>

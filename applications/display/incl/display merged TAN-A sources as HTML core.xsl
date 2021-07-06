@@ -2136,7 +2136,7 @@
     
     <xsl:mode name="infuse-html-template" on-no-match="shallow-copy"/>
     
-    <xsl:template match="html:body/html:div[1]" mode="infuse-html-template">
+    <xsl:template match="html:body/node()[1]" mode="infuse-html-template">
         <xsl:apply-templates select="$input-pass-4" mode="#current"/>
     </xsl:template>
     
@@ -2310,28 +2310,28 @@
             <!--<alias-based-group-and-sort-pattern><xsl:copy-of select="$alias-based-group-and-sort-pattern"/></alias-based-group-and-sort-pattern>-->
             <!--<src-id-sequence><xsl:value-of select="$src-id-sequence"/></src-id-sequence>-->
             <!--<sort-and-group-by-what-alias><xsl:value-of select="$sort-and-group-by-what-alias-idrefs"/></sort-and-group-by-what-alias>-->
-            <source-group-and-sort-pattern><xsl:copy-of select="$source-group-and-sort-pattern"/></source-group-and-sort-pattern>
             <!--<self-resolved><xsl:copy-of select="$self-resolved"/></self-resolved>-->
-            <!--<sources-resolved><xsl:copy-of select="$tan:sources-resolved"/></sources-resolved>-->
+            <sources-resolved><xsl:copy-of select="$tan:sources-resolved"/></sources-resolved>
+            <!--<source-group-and-sort-pattern><xsl:copy-of select="$source-group-and-sort-pattern"/></source-group-and-sort-pattern>-->
             <!--<TAN-A-self-expanded><xsl:copy-of select="$self-expanded[tan:TAN-A]"/></TAN-A-self-expanded>-->
             <!--<src-ids><xsl:value-of select="$src-ids"/></src-ids>-->
             <!--<src-ids-from-sources><xsl:for-each select="$self-expanded/tan:TAN-T/@src">
                 <xsl:value-of select=". || ' '"/>
             </xsl:for-each></src-ids-from-sources>-->
             <!--<self-head-expanded><xsl:copy-of select="$head"/></self-head-expanded>-->
-            <sources-expanded count="{count($tan:self-expanded[tan:TAN-T])}"><xsl:copy-of select="$tan:self-expanded[tan:TAN-T]"/></sources-expanded>
-            <input-pass-1><xsl:copy-of select="$input-pass-1"/></input-pass-1>
-            <input-pass-1b><xsl:copy-of select="$input-pass-1b"/></input-pass-1b>
+            <!--<sources-expanded count="{count($tan:self-expanded[tan:TAN-T])}"><xsl:copy-of select="$tan:self-expanded[tan:TAN-T]"/></sources-expanded>-->
+            <!--<input-pass-1><xsl:copy-of select="$input-pass-1"/></input-pass-1>-->
+            <!--<input-pass-1b><xsl:copy-of select="$input-pass-1b"/></input-pass-1b>-->
             <!--<input-pass-1b-shallow><xsl:copy-of select="tan:shallow-copy($input-pass-1b, 3)"/></input-pass-1b-shallow>-->
             <!--<input-pass-1b-heads><xsl:copy-of select="$input-pass-1b/*/tan:head"/></input-pass-1b-heads>-->
-            <input-pass-2><xsl:copy-of select="$input-pass-2"/></input-pass-2>
-            <input-pass-2b><xsl:copy-of select="$input-pass-2b"/></input-pass-2b>
-            <input-pass-3><xsl:copy-of select="$input-pass-3"/></input-pass-3>
-            <input-pass-3a><xsl:copy-of select="$input-pass-3a"/></input-pass-3a>
-            <input-pass-3b><xsl:copy-of select="$input-pass-3b"/></input-pass-3b>
-            <input-pass-3c><xsl:copy-of select="$input-pass-3c"/></input-pass-3c>
+            <!--<input-pass-2><xsl:copy-of select="$input-pass-2"/></input-pass-2>-->
+            <!--<input-pass-2b><xsl:copy-of select="$input-pass-2b"/></input-pass-2b>-->
+            <!--<input-pass-3><xsl:copy-of select="$input-pass-3"/></input-pass-3>-->
+            <!--<input-pass-3a><xsl:copy-of select="$input-pass-3a"/></input-pass-3a>-->
+            <!--<input-pass-3b><xsl:copy-of select="$input-pass-3b"/></input-pass-3b>-->
+            <!--<input-pass-3c><xsl:copy-of select="$input-pass-3c"/></input-pass-3c>-->
             <!--<source-bibliography><xsl:copy-of select="$source-bibliography"/></source-bibliography>-->
-            <input-pass-4><xsl:copy-of select="$input-pass-4"/></input-pass-4>
+            <!--<input-pass-4><xsl:copy-of select="$input-pass-4"/></input-pass-4>-->
             <!--<html-template-url-resolved><xsl:value-of select="$html-template-uri-resolved"/></html-template-url-resolved>-->
             <!--<html-template-doc><xsl:copy-of select="$html-template-doc"/></html-template-doc>-->
             <!--<template-infused><xsl:copy-of select="$template-infused-with-revised-input"/></template-infused>-->

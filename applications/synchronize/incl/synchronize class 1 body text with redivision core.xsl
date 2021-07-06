@@ -15,6 +15,7 @@
    <xsl:param name="tan:stylesheet-url" select="static-base-uri()"/>
    <xsl:param name="tan:stylesheet-iri"
       select="'tag:textalign.net,2015:stylesheet:update-tan-t-text-to-redivision'"/>
+   <xsl:param name="tan:stylesheet-name" select="'TAN class 1 body synchronizing utility'"/>
    <xsl:param name="tan:change-message" select="concat('Replaced body text with redivision ', xs:string($redivision-number))"/>
    <xsl:param name="tan:stylesheet-is-core-tan-application" select="true()"/>
    

@@ -7,11 +7,14 @@
 
    <!-- Welcome to the TAN application for merging work versions. -->
 
-   <!-- This is the public face of the application. The application proper can be found by
-      following any links in any <xsl:include> or <xsl:import>. You are invited to alter any 
-      parameter in this file as you like, to customize the application. You may want to 
-      make copies of this file, with parameters preset to apply to specific situations.
-   -->
+   <!-- This is the public interface for the application. The code that runs the application can
+      be found by following the links in the <xsl:include> or <xsl:import> at the bottom of this
+      file. You are invited to alter as you like any of the parameters in this file, to customize
+      the application to suit your needs. If you are relatively new to XSLT, or you are nervous
+      about making changes, make a copy of this file before changing it, or configure a
+      transformation scenario in Oxygen. If you are comfortable with XSLT, try creating your own
+      stylesheet, then import this one, selectively changing the parameters as needed.-->
+   
 
    <!-- DESCRIPTION -->
 
@@ -151,7 +154,7 @@
    <xsl:param name="suppress-ns" as="xs:boolean?" select="false()"/>
    <!-- Should a <display-n> be added to a <div>, reflecting either the original n (if present) or the 
       calculated n? -->
-   <xsl:param name="add-display-n" as="xs:boolean" select="true()"/>
+   <xsl:param name="add-display-n" as="xs:boolean" select="false()"/>
    <!-- Should the most common value for @type (div type) be added to a display n? -->
    <xsl:param name="add-div-type-to-display-n" as="xs:boolean" select="true()"/>
    
@@ -159,7 +162,7 @@
    <!-- Should any references to vocabulary items (by idref or by name) be supplemented with the 
       actual IRI + name vocabulary? Note, this can lead to much larger files, since every <div> @type will
       include IRI + name vocabulary. Such information can be filtered and controlled by CSS. -->
-   <xsl:param name="tan:distribute-vocabulary" as="xs:boolean" select="true()"/>
+   <xsl:param name="tan:distribute-vocabulary" as="xs:boolean" select="false()"/>
    
    <!-- Merge anomalies -->
    
