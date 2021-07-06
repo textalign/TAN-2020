@@ -243,9 +243,6 @@
                      <xsl:call-template name="tan:regex-group-count"/>
                   </xsl:variable>
                   
-                  <xsl:apply-templates select="$replace-element/@message" mode="tan:batch-replace-advanced-pass-2">
-                     <xsl:with-param name="regex-group-count" tunnel="yes" select="$regex-group-count"/>
-                  </xsl:apply-templates>
                   <xsl:apply-templates select="$replace-element/node()" mode="tan:batch-replace-advanced-pass-2">
                      <xsl:with-param name="regex-group-count" tunnel="yes" select="$regex-group-count"/>
                   </xsl:apply-templates>
@@ -275,9 +272,6 @@
                      <xsl:call-template name="tan:regex-group-count"/>
                   </xsl:variable>
                   
-                  <xsl:apply-templates select="$replace-element/@message" mode="tan:batch-replace-advanced-pass-2">
-                     <xsl:with-param name="regex-group-count" tunnel="yes" select="$regex-group-count"/>
-                  </xsl:apply-templates>
                   <xsl:apply-templates select="$replace-element/node()" mode="tan:batch-replace-advanced-pass-2">
                      <xsl:with-param name="regex-group-count" tunnel="yes" select="$regex-group-count"/>
                   </xsl:apply-templates>
