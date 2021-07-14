@@ -21,8 +21,8 @@
     <xsl:param name="tan:stylesheet-name" select="'Converter to the TAN format'"/>
     <xsl:param name="tan:stylesheet-url" select="static-base-uri()"/>
     <xsl:param name="tan:change-message" select="'Converting text from the following ' || 
-        string(count($source-input-uris-resolved)) || ' files to TAN: ' ||
-        string-join($source-input-uris-resolved, ', ') "/>
+        string(count($source-input-uris-resolved)) || ' files to TAN, based on ' ||
+        $source-input-uri-resolved "/>
     <xsl:param name="tan:stylesheet-is-core-tan-application" select="true()"/>
 
 
@@ -793,7 +793,7 @@
                                 select="$comments-of-interest/w:comments/w:comment[@id eq $this-comment-id]"/>
                             <xsl:variable name="markup-to-apply" as="element()*" select="$this-comment/tan:markup"/>
                             <xsl:variable name="this-markup-must-nest" as="xs:boolean"
-                                select="array:head(array:reverse($this-placement-array)) eq true()"
+                                select="exists($this-placement-array) and (array:head(array:reverse($this-placement-array)) eq true())"
                             />
                             
                             <xsl:variable name="diagnostics-on" as="xs:boolean" select="false()"/>
@@ -801,14 +801,17 @@
                                 <xsl:message select="'Diagnostics on, $result-container, iteration #' || string(position())"/>
                                 <xsl:message select="'This slice starting number: ', $this-slice-starting-number"/>
                                 <xsl:message select="'This placement array: ', $this-placement-array"/>
+                                <xsl:message select="'This placement array restored: ', $this-placement-array-restored"/>
                                 <xsl:message select="'This comment id: ' || $this-comment-id"/>
                                 <xsl:message select="'This comment: ', $this-comment"/>
                                 <xsl:message select="'Markup to apply: ', $markup-to-apply"/>
+                                <xsl:message select="'Markup must nest?', $this-markup-must-nest"/>
+                                <xsl:message select="'Map slice picked: ', $context-chopped-map($this-slice-starting-number)"/>
                             </xsl:if>
                             
                             <xsl:choose>
                                 <xsl:when test="exists($this-placement-array) and exists($this-comment) and $this-markup-must-nest">
-                                    <xsl:apply-templates select="$context-chopped-map($this-slice-starting-number)/*" mode="#current">
+                                    <xsl:apply-templates select="$context-chopped-map($this-slice-starting-number)/node()" mode="#current">
                                         <xsl:with-param name="comment-placement-arrays" tunnel="yes" select="$this-placement-array-restored"/>
                                         <xsl:with-param name="starting-pos" tunnel="yes"
                                             select="$this-slice-starting-number + $starting-pos - 1"
@@ -822,7 +825,7 @@
                                         <xsl:with-param name="starting-pos" tunnel="yes"
                                             as="xs:integer"
                                             select="$this-slice-starting-number + $starting-pos - 1"/>
-                                        <!-- Pass through the nested placement arrays -->
+                                        <!-- Pass the nested placement arrays through -->
                                         <xsl:with-param name="comment-placement-arrays" tunnel="yes"
                                             as="array(*)*" select="$this-placement-array-restored(5)"/>
                                         <xsl:with-param name="maintext-substitute" tunnel="yes" select="$context-chopped-map($this-slice-starting-number)/node()"/>
@@ -1129,9 +1132,9 @@
             <!--<comments-of-interest-placement-arrays><xsl:copy-of select="tan:array-to-xml($comments-of-interest-placement-arrays)"/></comments-of-interest-placement-arrays>-->
             <source-input-pass-2b><xsl:copy-of select="$source-input-pass-2b"/></source-input-pass-2b>
             <source-input-pass-3><xsl:copy-of select="$source-input-pass-3"/></source-input-pass-3>
-            <!--<source-input-pass-3b><xsl:copy-of select="$source-input-pass-3b"/></source-input-pass-3b>-->
-            <!--<source-input-pass-4><xsl:copy-of select="$source-input-pass-4"/></source-input-pass-4>-->
-            <!--<source-input-pass-5><xsl:copy-of select="$source-input-pass-5"/></source-input-pass-5>-->
+            <source-input-pass-3b><xsl:copy-of select="$source-input-pass-3b"/></source-input-pass-3b>
+            <source-input-pass-4><xsl:copy-of select="$source-input-pass-4"/></source-input-pass-4>
+            <source-input-pass-5><xsl:copy-of select="$source-input-pass-5"/></source-input-pass-5>
             <!--<output-pass-1-template-infused><xsl:copy-of select="$output-pass-1"/></output-pass-1-template-infused>-->
             <!--<output-pass-2-credited><xsl:copy-of select="$output-pass-2"/></output-pass-2-credited>-->
         </diagnostics>
