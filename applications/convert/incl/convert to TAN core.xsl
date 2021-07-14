@@ -18,12 +18,38 @@
     
     <xsl:param name="tan:stylesheet-iri"
         select="'tag:textalign.net,2015:stylesheet:convert-to-tan'"/>
-    <xsl:param name="tan:stylesheet-name" select="'Converter to the TAN format'"/>
+    <xsl:param name="tan:stylesheet-name" select="'Body Builder'"/>
+    <xsl:param name="tan:stylesheet-activity"
+        select="'converts structured texts to a TEI/TAN body based on user-specified rules'"/>
+    <xsl:param name="tan:stylesheet-description">Suppose you have texts, aspects of whose syntax,
+        structure, or format correspond to TAN or TEI elements or markup. This application allows
+        you to write regular-expression-based rules to convert that text into a TAN or TEI format.
+        Input consists of one or more files in plain text, XML, or Word docx. The input is processed
+        against each rule, in order of appearance, progressively structuring the text. Body Builder
+        is intended for intermediate and advanced users who are comfortable with regular expressions
+        and XML markup. The application is ideal for cases where complex, numerous, or lengthy
+        documents need to be converted into TAN or TEI, as well as for developing workflows where live,
+        ever-changing work needs to be regularly pushed into a TAN or TEI format. 
+    </xsl:param>
     <xsl:param name="tan:stylesheet-url" select="static-base-uri()"/>
-    <xsl:param name="tan:change-message" select="'Converting text from the following ' || 
+    <xsl:param name="tan:stylesheet-change-message" select="'Converting text from the following ' || 
         string(count($source-input-uris-resolved)) || ' files to TAN: ' ||
         string-join($source-input-uris-resolved, ', ') "/>
+    <xsl:param name="tan:stylesheet-change-log">
+        <change xmlns="tag:textalign.net,2015:ns" who="kalvesmaki" when="2021-07-07">Edited,
+            prepared for TAN 2021 release.</change>
+    </xsl:param>
     <xsl:param name="tan:stylesheet-is-core-tan-application" select="true()"/>
+    <xsl:param name="tan:stylesheet-to-do-list">
+        <to-do xmlns="tag:textalign.net,2015:ns">
+            <comment who="kalvesmaki" when="2021-07-13">Allow comments to be anchored in zero width.</comment>
+            <comment who="kalvesmaki" when="2021-07-13">Support HTML input</comment>
+            <comment who="kalvesmaki" when="2021-07-13">Support ODT input</comment>
+            <comment who="kalvesmaki" when="2021-07-13">Let the default template be a document with
+                the root element body.</comment>
+            <comment who="kalvesmaki" when="2021-07-13">Demonstrate how to convert a raw index to TAN-A.</comment>
+        </to-do>
+    </xsl:param>
 
 
     <!-- Normalize the parameters -->
@@ -1152,7 +1178,7 @@
             <xsl:message select="'Report any comments that are ignored?', $report-ignored-comments"/>
         </xsl:if>
         <xsl:message select="'Orphan text option:', $orphan-text-option-norm"/>
-        <xsl:message select="$tan:change-message"/>
+        <xsl:message select="$tan:stylesheet-change-message"/>
         
         <xsl:apply-templates select="$output-pass-2" mode="tan:doc-nodes-on-new-lines"/>
         
