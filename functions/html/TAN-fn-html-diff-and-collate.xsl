@@ -102,7 +102,7 @@
 
         <xsl:variable name="html-output-pass-1" as="element()?">
             <xsl:apply-templates select="$diff-or-collate-results" mode="diff-or-collate-to-html-output-pass-1">
-                <xsl:with-param name="last-wit-ref" tunnel="yes" as="xs:string?"
+                <xsl:with-param name="last-wit-idref" tunnel="yes" as="xs:string?"
                     select="$primary-version-ref-adjusted"/>
                 <xsl:with-param name="primary-version-tree" as="element()*" tunnel="yes"
                     select="$primary-version-tree"/>
@@ -113,6 +113,22 @@
         
         <xsl:variable name="html-output-pass-3" as="element()*" select="tan:convert-to-html($html-output-pass-2, true())"/>
         
+        <xsl:variable name="diagnostics-on" as="xs:boolean" select="false()"/>
+        <xsl:if test="$diagnostics-on">
+            <xsl:message select="'Diagnostics on, tan:diff-or-collate-to-html()'"/>
+            <xsl:message select="'Diff or collate results: ', $diff-or-collate-results"/>
+            <xsl:message select="'Primary version ref: ' || $primary-version-ref"/>
+            <xsl:message select="'Primary version ref adjusted (last wit ref): ' || $primary-version-ref-adjusted"/>
+            <xsl:message select="'Primary version tree: ', $primary-version-tree"/>
+            <xsl:message select="'Primary version tree text: ' || $primary-version-tree-text"/>
+            <xsl:message select="'Main diff node: ', $main-diff-node"/>
+            <xsl:message select="'Main collation node: ', $main-collation-node"/>
+            <xsl:message select="'Collation refs: ', $collation-refs"/>
+            <xsl:message select="'Is diff?', $is-diff"/>
+            <xsl:message select="'output pass 1: ', $html-output-pass-1"/>
+            <xsl:message select="'output pass 2: ', $html-output-pass-2"/>
+            <xsl:message select="'output pass 3: ', $html-output-pass-3"/>
+        </xsl:if>
         
         
         <xsl:sequence select="$html-output-pass-3"/>
@@ -209,12 +225,24 @@
                 <xsl:otherwise>aggregate</xsl:otherwise>
             </xsl:choose>
         </xsl:variable>
-        <xsl:variable name="is-last-witness" select="
+        <xsl:variable name="is-last-witness" as="xs:boolean" select="
                 if (string-length($last-wit-idref) gt 0) then
-                    ($this-ref = $last-wit-idref)
+                    (($this-ref, @id) = $last-wit-idref)
                 else
                     (following-sibling::*[1]/(self::tan:collation | self::tan:diff))"/>
-        <xsl:variable name="is-summary" select="self::tan:collation or self::tan:diff"/>
+        <xsl:variable name="is-summary" as="xs:boolean" select="self::tan:collation or self::tan:diff"/>
+        
+        <xsl:variable name="diagnostics-on" as="xs:boolean" select="false()"/>
+        <xsl:if test="$diagnostics-on">
+            <xsl:message select="'Diagnostics on, template mode diff-or-collate-to-html-output-pass-1 on element ', tan:shallow-copy(.)"/>
+            <xsl:message select="'Last witness idref: ' || $last-wit-idref"/>
+            <xsl:message select="'Diff a ref: ' || $diff-a-ref"/>
+            <xsl:message select="'Diff b ref: ' || $diff-b-ref"/>
+            <xsl:message select="'This ref: ' || $this-ref"/>
+            <xsl:message select="'Is last witness? ', $is-last-witness"/>
+            <xsl:message select="'Is summary? ', $is-summary"/>
+        </xsl:if>
+        
         <xsl:if test="$is-summary">
             <xsl:variable name="prec-wits" select="preceding-sibling::tan:witness"/>
             <tr class="averages" xmlns="http://www.w3.org/1999/xhtml">
@@ -568,17 +596,19 @@ div.selectAll(".venn-circle path").style("fill-opacity", .6);
     <xsl:template match="tan:diff | tan:collation" mode="diff-or-collate-to-html-output-pass-1">
         <!-- group/stats/witness sorts them according to label order whereas group/collation/witness (if a collation) 
             puts the least divergent witness at the top. We presume the former is the one of interest, and that 
-            because many labels include numbers that allow them to be sorted in chronological order, the last is 
-            the most interesting. -->
+            because many labels include numbers that allow them to be sorted in chronological order, the last witness 
+            is the most interesting. -->
         <xsl:param name="primary-version-tree" as="element()*" tunnel="yes"/>
         <xsl:param name="last-wit-idref" tunnel="yes" as="xs:string?"
             select="(tan:witness[last()]/@id, 'b')[1]"/>
         
+        <!-- We presume that the primary tree has already been space-normalized or not, according to parameters/settings
+            established before the input arrives in this template. -->
         <xsl:variable name="primary-tree-analyzed" as="element()*"
-            select="tan:stamp-tree-with-text-data($primary-version-tree, true())"/>
+            select="tan:stamp-tree-with-text-data($primary-version-tree, false())"/>
 
         <xsl:variable name="split-collation-where"
-            select="$primary-tree-analyzed/descendant-or-self::*[text()]" as="element()*"/>
+            select="$primary-tree-analyzed/descendant-or-self::*[not(*) or exists(text()[matches(., '\S')])]" as="element()*"/>
         <xsl:variable name="split-count" select="count($split-collation-where)" as="xs:integer"/>
 
         <!-- The strings may have been normalized before being processed in the diff/collate function.
@@ -604,23 +634,35 @@ div.selectAll(".venn-circle path").style("fill-opacity", .6);
                             select="$this-diff-or-collation-stamped"/>
                         <xsl:variable name="this-string-last-pos"
                             select="xs:integer(@_pos) + xs:integer(@_len) - 1"/>
-                        <xsl:variable name="first-diff-element-not-of-interest"
-                            select="$diff-so-far/(tan:a | tan:common)[xs:integer(@_pos-a) gt $this-string-last-pos][1]"/>
+                        <xsl:variable name="first-diff-element-not-of-interest" select="
+                                if ($last-wit-idref eq 'b') then
+                                    $diff-so-far/(tan:b | tan:common)[xs:integer(@_pos-b) gt $this-string-last-pos][1]
+                                else
+                                    $diff-so-far/(tan:a | tan:common)[xs:integer(@_pos-a) gt $this-string-last-pos][1]"/>
                         <xsl:variable name="diff-elements-not-of-interest"
                             select="$first-diff-element-not-of-interest | $first-diff-element-not-of-interest/following-sibling::*"/>
                         <xsl:variable name="diff-elements-of-interest"
                             select="$diff-so-far/(* except $diff-elements-not-of-interest)"/>
                         <xsl:variable name="last-diff-element-of-interest-with-this-witness"
-                            select="$diff-elements-of-interest[self::tan:a or self::tan:common][last()]"/>
-                        <xsl:variable name="last-deoiwtw-pos"
-                            select="xs:integer($last-diff-element-of-interest-with-this-witness/@_pos-a)"/>
+                            select="
+                                if ($last-wit-idref eq 'b') then
+                                    $diff-elements-of-interest[self::tan:b or self::tan:common][last()]
+                                else
+                                    $diff-elements-of-interest[self::tan:a or self::tan:common][last()]
+                                "/>
+                        <xsl:variable name="last-deoiwtw-pos" select="
+                                if ($last-wit-idref eq 'b') then
+                                    xs:integer($last-diff-element-of-interest-with-this-witness/@_pos-b)
+                                else
+                                    xs:integer($last-diff-element-of-interest-with-this-witness/@_pos-a)"
+                        />
                         <xsl:variable name="last-deoiwtw-length"
                             select="xs:integer($last-diff-element-of-interest-with-this-witness/@_len)"/>
                         <xsl:variable name="amount-needed"
                             select="$this-string-last-pos - $last-deoiwtw-pos + 1"/>
                         <xsl:variable name="fragment-to-keep" as="element()*">
                             <xsl:if test="exists($last-diff-element-of-interest-with-this-witness)">
-                                <xsl:element
+                                <xsl:element namespace="tag:textalign.net,2015:ns"
                                     name="{name($last-diff-element-of-interest-with-this-witness)}">
                                     <xsl:value-of
                                         select="substring($last-diff-element-of-interest-with-this-witness, 1, ($amount-needed, 0)[1])"
@@ -630,20 +672,24 @@ div.selectAll(".venn-circle path").style("fill-opacity", .6);
                                 <b> should be kept as well. We don't worry about cases where the next sibling is an <a> or <common>
                                 because that is already accounted for by $first-diff-element-not-of-interest. -->
                                 <xsl:if test="not($last-deoiwtw-length gt $amount-needed)">
-                                    <xsl:copy-of
-                                        select="$last-diff-element-of-interest-with-this-witness/following-sibling::*[1]/self::tan:b"
-                                    />
+                                    <xsl:copy-of select="
+                                            if ($last-wit-idref eq 'b')
+                                            then
+                                                $last-diff-element-of-interest-with-this-witness/following-sibling::*[1]/self::tan:a
+                                            else
+                                                $last-diff-element-of-interest-with-this-witness/following-sibling::*[1]/self::tan:b
+                                            "/>
                                 </xsl:if>
                             </xsl:if>
                         </xsl:variable>
                         <xsl:variable name="fragment-to-push-to-next-iteration" as="element()*">
                             <xsl:if
                                 test="($last-deoiwtw-length gt $amount-needed) and exists($last-diff-element-of-interest-with-this-witness)">
-                                <xsl:element
+                                <xsl:element namespace="tag:textalign.net,2015:ns"
                                     name="{name($last-diff-element-of-interest-with-this-witness)}">
                                     <xsl:attribute name="_len"
                                         select="$last-deoiwtw-length - $amount-needed"/>
-                                    <xsl:attribute name="_pos-a"
+                                    <xsl:attribute name="_pos-{$last-wit-idref}"
                                         select="$last-deoiwtw-pos + $amount-needed"/>
 
                                     <xsl:value-of
@@ -652,19 +698,22 @@ div.selectAll(".venn-circle path").style("fill-opacity", .6);
                                 </xsl:element>
                                 <!-- If only part of the last element of interest is kept, then if the next item is a <b>, it
                                 should be pushed to the next iteration. -->
-                                <xsl:copy-of
-                                    select="$last-diff-element-of-interest-with-this-witness/following-sibling::*[1]/self::tan:b"
+                                <xsl:copy-of select="
+                                        if ($last-wit-idref eq 'b') then
+                                            $last-diff-element-of-interest-with-this-witness/following-sibling::*[1]/self::tan:a
+                                        else
+                                            $last-diff-element-of-interest-with-this-witness/following-sibling::*[1]/self::tan:b"
                                 />
                             </xsl:if>
                         </xsl:variable>
                         <xsl:variable name="next-diff" as="element()">
-                            <diff>
+                            <diff xmlns="tag:textalign.net,2015:ns">
                                 <xsl:copy-of select="$fragment-to-push-to-next-iteration"/>
                                 <xsl:copy-of select="$diff-elements-not-of-interest"/>
                             </diff>
                         </xsl:variable>
 
-                        <xsl:variable name="diagnostics-on" select="not(exists($amount-needed))"/>
+                        <xsl:variable name="diagnostics-on" select="false()"/>
                         <xsl:if test="$diagnostics-on">
                             <xsl:message select="'Iterating over ', tan:shallow-copy(.)"/>
                             <xsl:message select="'This string, last pos:', $this-string-last-pos"/>
@@ -742,9 +791,9 @@ div.selectAll(".venn-circle path").style("fill-opacity", .6);
                         <xsl:variable name="fragment-to-keep" as="element()*">
                             <xsl:if
                                 test="exists($last-collation-element-of-interest-with-this-witness)">
-                                <xsl:element
+                                <xsl:element namespace="tag:textalign.net,2015:ns"
                                     name="{name($last-collation-element-of-interest-with-this-witness)}">
-                                    <txt>
+                                    <txt xmlns="tag:textalign.net,2015:ns">
                                         <xsl:value-of
                                             select="substring($last-collation-element-of-interest-with-this-witness, 1, $amount-needed)"
                                         />
@@ -763,9 +812,9 @@ div.selectAll(".venn-circle path").style("fill-opacity", .6);
                         <xsl:variable name="fragment-to-push-to-next-iteration" as="element()*">
                             <xsl:if
                                 test="$last-ceoiwtw-length gt $amount-needed and exists($last-collation-element-of-interest-with-this-witness)">
-                                <xsl:element
+                                <xsl:element namespace="tag:textalign.net,2015:ns"
                                     name="{name($last-collation-element-of-interest-with-this-witness)}">
-                                    <txt>
+                                    <txt xmlns="tag:textalign.net,2015:ns">
                                         <xsl:value-of
                                             select="substring($last-collation-element-of-interest-with-this-witness, $amount-needed + 1)"
                                         />
@@ -785,7 +834,7 @@ div.selectAll(".venn-circle path").style("fill-opacity", .6);
                             </xsl:if>
                         </xsl:variable>
                         <xsl:variable name="next-collation" as="element()">
-                            <collation>
+                            <collation xmlns="tag:textalign.net,2015:ns">
                                 <xsl:copy-of select="$fragment-to-push-to-next-iteration"/>
                                 <xsl:copy-of select="$collation-elements-not-of-interest"/>
                             </collation>
@@ -797,7 +846,6 @@ div.selectAll(".venn-circle path").style("fill-opacity", .6);
                             <xsl:copy-of
                                 select="$last-collation-element-of-interest-with-this-witness/preceding-sibling::*[not(self::tan:witness)]"/>
                             <xsl:copy-of select="$fragment-to-keep"/>
-                            <!--<xsl:copy-of select="$last-collation-element-of-interest-with-this-witness/(following-sibling::* except $collation-elements-not-of-interest)"/>-->
                         </xsl:copy>
 
                         <xsl:choose>
@@ -827,13 +875,15 @@ div.selectAll(".venn-circle path").style("fill-opacity", .6);
         <xsl:variable name="diagnostics-on" select="false()"/>
         <xsl:if test="$diagnostics-on">
             <xsl:message
-                select="'Diagnostics on, template mode infuse-class-1-with-diff-or-collation'"/>
+                select="'Diagnostics on, template mode diff-or-collate-to-html-output-pass-1'"/>
             <xsl:message select="'Primary version tree: ', $primary-version-tree"/>
             <xsl:message select="'Primary version tree analyzed: ', $primary-tree-analyzed"/>
+            <xsl:message select="'Last wit id ref: ' || $last-wit-idref"/>
             <xsl:message
                 select="'Split diff or collation where? ' || string-join($split-collation-where/@_pos, ', ')"/>
+            <xsl:message select="'Diff/collation stamped: ', $this-diff-or-collation-stamped"/>
             <xsl:message select="'Leaf elements infused: ', $leaf-element-replacements"/>
-            <xsl:message select="'Primary file adjusted: ', $primary-file-adjusted"/>
+            <xsl:message select="'Primary file adjusted, prepared for infusion: ', $primary-file-adjusted"/>
         </xsl:if>
 
         <h2 xmlns="http://www.w3.org/1999/xhtml">Comparison</h2>
@@ -842,7 +892,6 @@ div.selectAll(".venn-circle path").style("fill-opacity", .6);
                 <xsl:copy-of select="@*"/>
                 <xsl:apply-templates mode="#current"/>
             </xsl:if>
-            <!--<xsl:copy-of select="tan:witness"/>-->
             <xsl:apply-templates select="$primary-file-adjusted"
                 mode="infuse-primary-file-with-diff-results">
                 <xsl:with-param name="element-replacements" tunnel="yes"
@@ -891,9 +940,9 @@ div.selectAll(".venn-circle path").style("fill-opacity", .6);
         <xsl:apply-templates select="$element-replacements" mode="adjust-diff-infusion"/>
     </xsl:template>
 
-    <xsl:template match="*[@q]" mode="infuse-primary-file-with-diff-results">
+    <xsl:template match="*[@q or @id]" mode="infuse-primary-file-with-diff-results">
         <xsl:param name="element-replacements" tunnel="yes" as="element()*"/>
-        <xsl:variable name="context-q" select="@q"/>
+        <xsl:variable name="context-q" as="xs:string" select="(@q, @id)[1]"/>
         <xsl:variable name="this-substitute" select="$element-replacements[@q eq $context-q]"/>
         <xsl:choose>
             <xsl:when test="exists($this-substitute)">
@@ -922,13 +971,13 @@ div.selectAll(".venn-circle path").style("fill-opacity", .6);
     </xsl:template>
 
     <xsl:template match="tan:c | tan:u" mode="adjust-diff-infusion">
-        <xsl:param name="last-wit-ref" as="xs:string?" tunnel="yes"/>
+        <xsl:param name="last-wit-idref" as="xs:string?" tunnel="yes"/>
         <xsl:variable name="wit-refs" as="xs:string*" select="tan:wit/@ref"/>
         <xsl:variable name="class-values" as="xs:string*" select="
                 (for $i in $wit-refs
                 return
                     'a-w-' || $i),
-                (if ($last-wit-ref = $wit-refs) then
+                (if ($last-wit-idref = $wit-refs) then
                     ('a-last', 'a-other')
                 else
                     ())"/>
