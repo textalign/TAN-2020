@@ -262,7 +262,7 @@
             
             
 
-            <xsl:variable name="diagnostics-on" select="true()"/>
+            <xsl:variable name="diagnostics-on" select="false()"/>
             <xsl:if test="$diagnostics-on">
                <xsl:variable name="str-a-result" as="xs:string" select="string-join($diff-chain/(tan:a | tan:common))"/>
                <xsl:variable name="str-b-result" as="xs:string" select="string-join($diff-chain/(tan:b | tan:common))"/>
@@ -609,9 +609,6 @@
                </xsl:if>
 
                <xsl:for-each-group select="$input-analyzed-2/tan:group" group-by="@n">
-                  <!--<xsl:copy-of select="
-                        tan:diff(current-group()[@input = '1']/tan:distinct, current-group()[@input = '2']/tan:distinct,
-                        $snap-to-word, tail($characters-to-tokenize-on), $loop-counter + 1)/*"/>-->
                   <xsl:copy-of select="
                         tan:diff(current-group()[@input = '1']/tan:distinct, current-group()[@input = '2']/tan:distinct,
                         $snap-to-word, ($current-tokenizer-cps, head($next-tokenizer-cps)), tail($next-tokenizer-cps), $loop-counter + 1)/*"/>
@@ -955,9 +952,6 @@
                                  else
                                     string-join($short-tokenized[position() gt $best-matching-pair[1]], $this-search-string)"
                               as="xs:string"/>
-                           <!--<xsl:variable name="this-short-head" select="substring-before($short-string, $this-search-string)" as="xs:string"/>-->
-                           <!--<xsl:variable name="this-long-tail" select="substring-after($long-string, $this-search-string)" as="xs:string"/>-->
-                           <!--<xsl:variable name="this-short-tail" select="substring-after($short-string, $this-search-string)" as="xs:string"/>-->
                            
                            <xsl:variable name="inner-diagnostics-on" as="xs:boolean" select="false()"/>
                            <xsl:if test="$inner-diagnostics-on">
@@ -1000,11 +994,6 @@
                                  </xsl:element>
                               </check-start>
                               
-                              
-                              
-                              
-                              
-                              
                            </result>
                            <xsl:break/>
                         </xsl:when>
@@ -1014,9 +1003,9 @@
                      </xsl:choose>
                   </xsl:iterate>
                </xsl:variable>
-               
+
                <xsl:if test="$diagnostics-on">
-                  <xsl:message select="'outer loop number', $loop-counter"/>
+                  <xsl:message select="'loop counter', $loop-counter"/>
                   <xsl:message select="'$short-string:', tan:trim-long-text($short-string, 11)"/>
                   <xsl:message select="'$long-string:', tan:trim-long-text($long-string, 11)"/>
                   <xsl:message select="'$vertical-stops-to-process:', $vertical-stops-to-process"/>
@@ -1095,9 +1084,21 @@
    
    <xsl:template match="tan:check-start" mode="tan:adjust-horizontal-search">
       <xsl:param name="loop-counter" tunnel="yes" as="xs:integer" select="0"/>
-      
-      <xsl:variable name="this-common-start" select="tan:common-start-string((*[1], *[2]))"
-         as="xs:string?"/>
+
+      <xsl:variable name="el1" as="element()" select="*[1]"/>
+      <xsl:variable name="el2" as="element()" select="*[2]"/>
+      <xsl:variable name="this-common-start" as="xs:string?">
+         <xsl:if test="string-length($el1) gt 0 and string-length($el2) gt 0">
+            <xsl:try select="tan:common-start-string(($el1, $el2))">
+               <xsl:catch>
+                  <xsl:message
+                     select="'Too many calls to tan:common-start-string(), perhaps due to granular diff samples. Process will continue, but try adjusting parameters in parameters/params-function-diff.xsl.'"/>
+                  <xsl:message select="'string 1: [' || tan:ellipses($el1, 100) || ']'"/>
+                  <xsl:message select="'string 2: [' || tan:ellipses($el2, 100) || ']'"/>
+               </xsl:catch>
+            </xsl:try>
+         </xsl:if>
+      </xsl:variable>
       <xsl:variable name="this-common-start-length" select="string-length($this-common-start)" as="xs:integer"/>
       <xsl:variable name="new-elements" as="element()">
          <new>
@@ -1112,7 +1113,7 @@
       <common>
          <xsl:value-of select="$this-common-start"/>
       </common>
-      
+
       <xsl:sequence
          select="tan:diff-loop($new-elements/tan:a, $new-elements/tan:b, tan:vertical-stops($new-elements/*[1]), $loop-counter + 1)"
       />
@@ -1122,8 +1123,22 @@
    <xsl:template match="tan:check-end" mode="tan:adjust-horizontal-search">
       <xsl:param name="loop-counter" tunnel="yes" as="xs:integer" select="0"/>
       
-      <xsl:variable name="this-common-end" select="tan:common-end-string((*[1], *[2]))"
-         as="xs:string?"/>
+      <xsl:variable name="el1" as="element()" select="*[1]"/>
+      <xsl:variable name="el2" as="element()" select="*[2]"/>
+      <xsl:variable name="this-common-end" as="xs:string?">
+         <xsl:if test="string-length($el1) gt 0 and string-length($el2) gt 0">
+            <xsl:try
+               select="tan:common-end-string(($el1, $el2))">
+               <xsl:catch>
+                  <xsl:message
+                     select="'Too many calls to tan:common-end-string(), perhaps due to granular diff samples. Process will continue, but try adjusting parameters in parameters/params-function-diff.xsl.'"
+                  />
+                  <xsl:message select="'string 1: [' || tan:ellipses($el1, 100) || ']'"/>
+                  <xsl:message select="'string 2: [' || tan:ellipses($el2, 100) || ']'"/>
+               </xsl:catch>
+            </xsl:try>
+         </xsl:if>
+      </xsl:variable>
       <xsl:variable name="this-common-end-length" select="string-length($this-common-end)" as="xs:integer"/>
       <xsl:variable name="new-elements" as="element()">
          <new>
@@ -1148,12 +1163,38 @@
    <xsl:template match="tan:check-start-and-end" mode="tan:adjust-horizontal-search">
       <xsl:param name="loop-counter" tunnel="yes" as="xs:integer" select="0"/>
       
-      <xsl:variable name="this-common-start" select="tan:common-start-string((*[1], *[2]))"
-         as="xs:string?"/>
+      <xsl:variable name="el1" as="element()" select="*[1]"/>
+      <xsl:variable name="el2" as="element()" select="*[2]"/>
+      <xsl:variable name="this-common-start" as="xs:string?">
+         <xsl:if test="string-length($el1) gt 0 and string-length($el2) gt 0">
+            <xsl:try select="tan:common-start-string(($el1, $el2))">
+               <xsl:catch>
+                  <xsl:message
+                     select="'Too many calls to tan:common-start-string(), perhaps due to granular diff samples. Process will continue, but try adjusting parameters in parameters/params-function-diff.xsl.'"
+                  />
+                  <xsl:message select="'string 1: [' || tan:ellipses($el1, 100) || ']'"/>
+                  <xsl:message select="'string 2: [' || tan:ellipses($el2, 100) || ']'"/>
+               </xsl:catch>
+            </xsl:try>
+         </xsl:if>
+      </xsl:variable>
       <xsl:variable name="this-common-start-length" select="string-length($this-common-start)" as="xs:integer"/>
-      <xsl:variable name="this-common-end" as="xs:string?"
-         select="tan:common-end-string((substring(*[1], 1 + $this-common-start-length), substring(*[2], 1 + $this-common-start-length)))"
-      />
+      <xsl:variable name="this-common-end" as="xs:string?">
+         <xsl:if test="string-length($el1) gt 0 and string-length($el2) gt 0">
+            <xsl:try
+               select="tan:common-end-string((substring($el1, 1 + $this-common-start-length), substring($el2, 1 + $this-common-start-length)))">
+               <xsl:catch>
+                  <xsl:message
+                     select="'Too many calls to tan:common-end-string(), perhaps due to granular diff samples. Process will continue, but try adjusting parameters in parameters/params-function-diff.xsl.'"
+                  />
+                  <xsl:message select="'string 1: [' || tan:ellipses(substring($el1, 1 + $this-common-start-length), 100) || ']'"/>
+                  <xsl:message select="'string 2: [' || tan:ellipses(substring($el2, 1 + $this-common-start-length), 100) || ']'"/>
+               </xsl:catch>
+            </xsl:try>
+            
+         </xsl:if>
+
+      </xsl:variable>
       <xsl:variable name="this-common-end-length" select="string-length($this-common-end)" as="xs:integer"/>
       
       <xsl:variable name="new-elements" as="element()">
@@ -1488,7 +1529,7 @@
    
    <xsl:function name="tan:adjust-diff" as="element()*" visibility="public">
       <!-- Input: any output <diff>s from tan:diff() -->
-      <!-- Output: the output adjusted, with <a> and <b>s adjusted if there are more optimal divisions -->
+      <!-- Output: the output adjusted, with <a> and <b>s shifted if there are more optimal divisions -->
       <!-- Multiple inputs are presumed to be tan:diff() results that should be concatenated. -->
       <!-- This function is helpful for cases where the common element needs to be adjusted to better respect word or phrase boundaries. -->
       <xsl:param name="diff-output" as="element(tan:diff)*"/>
