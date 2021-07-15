@@ -117,7 +117,7 @@
    
    <xsl:variable name="tan:applications-uri-collection"
       select="uri-collection('../applications/catalog.xml?on-error=ignore')"/>
-   <xsl:variable name="applications-collection" as="document-node()*">
+   <xsl:variable name="tan:applications-collection" as="document-node()*">
       <xsl:for-each select="$tan:applications-uri-collection">
          <xsl:choose>
             <xsl:when test="doc-available(.)">
