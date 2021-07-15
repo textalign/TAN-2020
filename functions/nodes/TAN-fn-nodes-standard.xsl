@@ -1126,6 +1126,9 @@
             <xsl:message select="'Diagnostics on, tan:stamp-tree-with-text-data()'"/>
             <xsl:message select="'Current node type, name:', tan:item-type(.), name(.)" use-when="not($tan:validation-mode-on)"/>
             <xsl:message select="'Current char pos:', $current-char-pos"/>
+            <xsl:message select="'Ignore outer indentations?', $ignore-outer-indentations"/>
+            <xsl:message select="'Exclude from count elements whose names match: ' || string-join($exclude-from-count-elements-whose-names-match)"/>
+            <xsl:message select="'Exclude from count elements whose names do not match: ' || string-join($exclude-from-count-elements-whose-names-do-not-match)"/>
             <xsl:message select="'Element prepped 1: ', $this-element-prepped-1"/>
             <xsl:message select="'Element prepped 2: ', $this-element-prepped-2"/>
             <xsl:message select="'Fragment length:', $this-fragment-length"/>
@@ -1167,14 +1170,7 @@
                      </xsl:copy>
                   </xsl:otherwise>
                </xsl:choose>
-               <!--<xsl:apply-templates select="." mode="tan:stamp-tree-with-text-data">
-                  <xsl:with-param name="ignore-white-space"
-                     select="$continue-to-ignore-indentations" tunnel="yes"/>
-                  <xsl:with-param name="current-char-pos" select="$current-char-pos"/>
-                  <xsl:with-param name="current-node-length" select="$this-fragment-length"/>
-                  <xsl:with-param name="ignore-elements-whose-names-match" select="$exclude-from-count-elements-whose-names-match"/>
-                  <xsl:with-param name="ignore-elements-whose-names-do-not-match" select="$exclude-from-count-elements-whose-names-do-not-match"/>
-               </xsl:apply-templates>-->
+               
             </xsl:when>
             <xsl:otherwise>
                <xsl:sequence select="."/>
