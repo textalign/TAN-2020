@@ -792,8 +792,6 @@
                             <xsl:sort/>
                             <xsl:variable name="this-slice-starting-number" as="xs:integer"
                                 select="."/>
-                            <!--<xsl:variable name="this-placement-array" as="array(*)?"
-                                select="$placement-arrays-to-use[.(2) eq ($this-slice-starting-number + $starting-pos - 1)]"/>-->
                             <xsl:variable name="this-placement-array" as="array(*)?" select="
                                     for $i in $placement-arrays-to-use
                                     return
@@ -837,12 +835,17 @@
                             
                             <xsl:choose>
                                 <xsl:when test="exists($this-placement-array) and exists($this-comment) and $this-markup-must-nest">
-                                    <xsl:apply-templates select="$context-chopped-map($this-slice-starting-number)/node()" mode="#current">
+                                    <!-- If the comment-markup is supposed to nest, it can do so only within an element. Therefore
+                                        the current context map slice must begin with a single element, followed perhaps by other 
+                                        nodes, especially if the context element is mixed. The nesting instruction is injected into 
+                                        the first element, and any following nodes are copied. -->
+                                    <xsl:apply-templates select="$context-chopped-map($this-slice-starting-number)/*" mode="#current">
                                         <xsl:with-param name="comment-placement-arrays" tunnel="yes" select="$this-placement-array-restored"/>
                                         <xsl:with-param name="starting-pos" tunnel="yes"
                                             select="$this-slice-starting-number + $starting-pos - 1"
                                         />
                                     </xsl:apply-templates>
+                                    <xsl:copy-of select="$context-chopped-map($this-slice-starting-number)/*/following-sibling::node()"/>
                                 </xsl:when>
                                 <xsl:when
                                     test="exists($this-placement-array) and exists($this-comment)">

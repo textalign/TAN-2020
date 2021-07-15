@@ -5,7 +5,18 @@
    xmlns:tei="http://www.tei-c.org/ns/1.0" xmlns:tan="tag:textalign.net,2015:ns"
    exclude-result-prefixes="#all" version="3.0">
 
-   <!-- Welcome to the TAN application for converting a file to TAN. -->
+   <!-- Welcome to Body Builder, the TAN application that converts structured texts to a TEI/TAN
+      body based on user-specified rules-->
+   <!-- Suppose you have texts, aspects of whose syntax, structure, or format correspond to TAN or
+      TEI elements or markup. This application allows you to write regular-expression-based rules
+      to convert that text into a TAN or TEI format. Input consists of one or more files in plain
+      text, XML, or Word docx. The input is processed against each rule, in order of appearance,
+      progressively structuring the text. Body Builder is intended for intermediate and advanced
+      users who are comfortable with regular expressions and XML markup. The application is ideal
+      for cases where complex, numerous, or lengthy documents need to be converted into TAN or TEI,
+      as well as for developing workflows where live, ever-changing work needs to be regularly
+      pushed into a TAN or TEI format.-->
+   <!-- Version 2021-07-13-->
 
    <!-- This is the public interface for the application. The code that runs the application can
       be found by following the links in the <xsl:include> or <xsl:import> at the bottom of this
@@ -77,21 +88,26 @@
    -->
    
    <!-- Nota bene:
-      * Many input files will be full of internal inconsistency and error. Do not take results at
-      face value. Scrutinize the output. Sometimes this will reveal that the problem originates with
-      the input: typos, inconsistencies, bad formatting, etc. If you see errors in the input, you can 
-      either (1) fix the input or (2) customize this application to make those changes during processing. 
-      Option 2 is definitely to be preferred if the source text is a live, working document that you have 
-      little control over, and there is even the slightest chance it might be revised, and need
-      to be processed again.
-      * This application works well with a TAN file that points to the source file in question, via
-      <source> or <predecessor>. As that source file gets updated, the TAN file can be re-processed through 
-      this application, to refresh the results.
-      * Currently, this application focuses only select Word docx components: the main text, comments,
+        * Many input files will be full of internal inconsistency and error. Do not take results at face
+      value. Scrutinize the output. Sometimes this will reveal that the problem originates with the
+      input: typos, inconsistencies, bad formatting, etc. If you see errors in the input, you can either
+      (1) fix the input or (2) customize this application to make those changes during processing. Option
+      2 is definitely to be preferred if the source text is a live, working document that you have little
+      control over, and there is even the slightest chance it might be revised, and need to be processed
+      again.
+        * This application works well with a TAN file that points to the source file in question, via
+      <source> or <predecessor>. As that source file gets updated, the TAN file can be re-processed
+      through this application, to refresh the results.
+        * Currently, this application focuses only select Word docx components: the main text, comments,
       deletions, insertions. No support is yet provided for the header, footer, footnotes, endnotes.
-      * This application is still being refined and developed. If you find problems, please raise an issue
-      via GitHub.
-   -->
+        * This application is still being refined and developed. If you find problems, please raise an
+      issue via GitHub.
+ -->
+
+   <!-- WARNING: CERTAIN FEATURES HAVE YET TO BE IMPLEMENTED-->
+   <!-- * Allow comments to be anchored in zero width. * Support HTML input * Support ODT input *
+      Let the default template be a document with the root element body. * Demonstrate how to
+      convert a raw index to TAN-A.-->
    
    
 
@@ -133,17 +149,18 @@
    <!-- This begins the most complicated part of the application. You should be comfortable with 
       regular expressions before attempting to populate the values of these parameters. -->
    
-   <!-- What initial adjustments, if any, should be made to the text? Expected is a sequence of elements.
-      The element names do not matter, but each one must have attributes @pattern and @replacement. They may
+   <!-- What initial adjustments, if any, should be made to the text? Expected is a sequence of elements. The
+      element names do not matter, but each one must have attributes @pattern and @replacement. They may
       have @flags and @message. These attributes take the values one is supposed to provide to the XSLT
-      function fn:replace(). The attribute @pattern must be a regular expression, and @replacement must be a
-      corresponding replacement, using capture groups as needed. @flags must be zero or more of the letters
-      ixqms, corresponding to case insensitive, ignore space, no special characters, multi-line mode, dot-all
-      mode. For more on flags, see https://www.w3.org/TR/xpath-functions-31/#flags.
-         Adjustments are made only to the main text. If input is a Word docx file, the comments
-      will not be adjusted.
-         These elements are processed by tan:batch-replace(), on which see documentation in the TAN library.
-   -->
+      function fn:replace(). The attribute @pattern must be a regular expression, and @replacement must be
+      a corresponding replacement, using capture groups as needed. @flags must be zero or more of the
+      letters ixqms, corresponding to case insensitive, ignore space, no special characters, multi-line
+      mode, dot-all mode. For more on flags, see https://www.w3.org/TR/xpath-functions-31/#flags.
+         Adjustments are made only to the main text. If input is a Word docx file, the comments will not
+      be adjusted.
+         These elements are processed by tan:batch-replace(), on which see documentation in the TAN
+      library.
+ -->
    <xsl:param name="initial-adjustments" as="element()*">
       <!-- Example of a replacement element. Note that capture groups in @replacement, per XSLT usage, are 
          marked with $ not \. -->
@@ -163,23 +180,24 @@
    <!-- If the input is Word docx, should any insertions be ignored? -->
    <xsl:param name="ignore-docx-insertions" as="xs:boolean" select="false()"/>
    
-   <!-- What parts of the text signal divisions? This parameter takes a series of <markup> elements, each one
-      containing one or more <where> elements followed by one or more <div> elements. 
-         The <where> element is used to identify spans of text in the source input. It must contain a @pattern,
-      a @format, or both. @pattern is a regular expression matching text. @format applies only to docx input,
-      and accepts a handful of keywords identifying one or more formats that the text must be rendered in. If 
-      the input is not a docx file, any <where> with a @format will be ignored.
-         The <div> specifies the class 1 <div> element that should begin here. It must take @n and @type (which
-      are required for the output TAN file) as well as @level, an integer that specifies how deep in the 
-      hierarchy the <div> should be. Both @n and @type are interpreted like @replacement in the parameter above.
-      That is, you can use $1 to capture the first parenthesized subexpression in a given <where>'s @pattern.
-      You can use $0 to the entire captured string. For more on this concept, see examples below and the 
-      discussion of $replacement at https://www.w3.org/TR/xpath-functions-31/#func-replace.
-         These elements are also processed by tan:batch-replace(), in sequential order. Every span of text 
-      that matches a <where> is replaced by the <div> anchors. After all markers are processed, the hierarchy
-      will be constructed with tan:sequence-to-tree(), which rebuilds the hierarchy.
+   <!-- What parts of the text signal divisions? This parameter takes a series of <markup> elements, each
+      one containing one or more <where> elements followed by one or more <div> elements.
+         The <where> element is used to identify spans of text in the source input. It must contain a
+      @pattern, a @format, or both. @pattern is a regular expression matching text. @format applies only
+      to docx input, and accepts a handful of keywords identifying one or more formats that the text must
+      be rendered in. If the input is not a docx file, any <where> with a @format will be ignored.
+         The <div> specifies the class 1 <div> element that should begin here. It must take @n and @type
+      (which are required for the output TAN file) as well as @level, an integer that specifies how deep
+      in the hierarchy the <div> should be. Both @n and @type are interpreted like @replacement in the
+      parameter above. That is, you can use $1 to capture the first parenthesized subexpression in a
+      given <where>'s @pattern. You can use $0 to the entire captured string. For more on this concept,
+      see examples below and the discussion of $replacement at
+      https://www.w3.org/TR/xpath-functions-31/#func-replace.
+         These elements are also processed by tan:batch-replace(), in sequential order. Every span of
+      text that matches a <where> is replaced by the <div> anchors. After all markers are processed, the
+      hierarchy will be constructed with tan:sequence-to-tree(), which rebuilds the hierarchy.
          All node insertions will be space-normalized.
-   -->
+ -->
    <xsl:param name="main-text-to-markup" as="element()*">
       <!-- Below is a simple example to get you started. For more complicated examples, see
          the configuration files. -->
