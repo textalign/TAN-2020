@@ -12,7 +12,7 @@
    <xsl:function name="tan:update-TAN-change-log" as="document-node()?" visibility="public">
       <xsl:param name="TAN-file" as="document-node()?"/>
       <xsl:sequence select="tan:update-TAN-change-log($TAN-file, $tan:stylesheet-iri,
-         $tan:stylesheet-name, $tan:stylesheet-url, 'algorithm', 'stylesheet', $tan:change-message, $tan:doc-uri)"/>
+         $tan:stylesheet-name, $tan:stylesheet-url, 'algorithm', 'stylesheet', $tan:stylesheet-change-message, $tan:doc-uri)"/>
    </xsl:function>
    
    <xsl:function name="tan:update-TAN-change-log" as="document-node()?" visibility="public">
