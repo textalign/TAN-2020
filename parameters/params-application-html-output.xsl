@@ -76,7 +76,7 @@
    <!-- Once an XML file is prepared, it can be converted to HTML (see description above). -->
    
    <!-- What attributes should be retained, and not converted to elements? The value must be a regular
-      expression matching an attribute name. Note, @lang (perhaps converted from @xml:lang), and @class 
+      expression matching attribute names. Note, @lang (perhaps converted from @xml:lang), and @class 
       will always be retained and not converted to elements. See also next parameter. -->
    <xsl:param name="tan:html-out.attributes-to-retain-regex" as="xs:string?" select="'^_'"/>
    

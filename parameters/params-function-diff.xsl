@@ -23,20 +23,26 @@
          return
             math:pow($tan:diff-sample-size-attenuation-base, ($tan:diff-sample-size-attenuation-rate * $i))"/>
    
-   <!-- How steeply should sample sizes attenuate? The value serves to change the exponent by which sample sizes diminish.
-      With the default, 0.5 (and assuming an attenuation base of 0.5), the sample sizes proceed 71%, 50%, 35%, ... 
-      Lowering it to 0.25 results
-      in samples sizes of 84%, 71%, 59%, 50%, ... This parameter's value will have no effect if $tan:diff-vertical-stops has been
-      overridden.
+   <!-- How steeply should sample sizes attenuate? Expected is a decimal between 1.0 and 0.0. The value defines the exponent 
+      by which sample sizes diminish. Assuming an attenuation base (see next parameter) of 0.5, the values of this parameter 
+      would result in the following sample sizes:
+      0.7   62%, 38%, 23%, 14%, ...
+      0.5   71%, 50%, 35%, 25%, ... 
+      0.3   81%, 66%, 54%, 44%, ... 
+      This parameter's value will have no effect if $tan:diff-vertical-stops has been overridden.
    -->
    <xsl:param name="tan:diff-sample-size-attenuation-rate" as="xs:decimal" select="0.5"/>
    
-   <!-- Where is the basis or center of the sample size series? Expected is a decimal between 1.0 and 0.0, with 
-      0.5 being the default. Lowering from 0.5 progressively slows down the diminishment of the sample sizes, and puts more
-      emphasis on large fragment checks. Greater
-      than 0.5 accelerates them, and puts more emphasis on smaller sample fragments. This parameter's value will 
-      have no effect if $tan:diff-vertical-stops has been
-      overridden.
+   <!-- Where is the basis or center of the sample size series? Expected is a decimal between 1.0 and 0.0. The value defines
+      the base by which sample sizes diminish. As the number gets smaller, the largest sample size also diminishes. 
+      Assuming an attenuation rate (see previous parameter) of 0.5, the values of this parameter 
+      would result in the following sample sizes:
+      0.7   84%, 70%, 59%, 49%, ...
+      0.5   71%, 50%, 35%, 25%, ... 
+      0.3   55%, 30%, 16%, 9%, ... 
+      
+      This parameter's value will have no effect if $tan:diff-vertical-stops 
+      has been overridden.
    -->
    <xsl:param name="tan:diff-sample-size-attenuation-base" as="xs:decimal" select="0.5"/>
    
@@ -47,11 +53,15 @@
    <!-- The number of samples will increase from 1 to the maximum. How quickly should it rise? Expected is a positive
       number above 0, with 0.5 being the default, to reach the maximum relatively quickly. This number has 
       exponential power over the complement of the sample size. The higher the number the greater the number
-      of samples at the beginning of the vertical stops. This factor does not greatly affect the end of the
-      vertical stops. With the default series of sample sizes, 71%, 50%, 35%, ... and a maximum of 50 samples,
-      the number of samples proceeds 5, 13, 21, 29, 34, ... if the parameter is set to 0.5. If it is 1, it would be 
-      15, 26, 33, 38, 42, ... The higher number plus a smaller maximum number of horizontal passes would help 
-      cases where it is known that the two texts are rather alike.
+      of samples at the beginning of the vertical stops. 
+      Assuming an attenuation rate of 0.5 and attenuation base of 0.5 (see above), and 50 for maximum number of 
+      horizontal passes (see above), the values of this parameter would result in the following number of samples
+      for each vertical stop (sample size):
+      0.7   9, 19, 27, 34, 38, ... 
+      0.5   5, 13, 21, 29, 34, ... 
+      0.3   1, 5, 12, 20, 27, ... 
+      In general, the lower the value, the greater the efficiency, and the more work that is done on a granular
+      level, which may be ideal for pairs of texts known to be unalike.
    -->
    <xsl:param name="tan:diff-horizontal-pass-frequency-rate" as="xs:decimal" select="0.5"/>
    
