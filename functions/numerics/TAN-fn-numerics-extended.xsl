@@ -2,6 +2,7 @@
    xmlns:xs="http://www.w3.org/2001/XMLSchema" 
    xmlns="tag:textalign.net,2015:ns"
    xmlns:tan="tag:textalign.net,2015:ns"
+   xmlns:math="http://www.w3.org/2005/xpath-functions/math"
    xmlns:array="http://www.w3.org/2005/xpath-functions/array"
    xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="3.0">
 
@@ -120,6 +121,14 @@
             </xsl:iterate>
          </xsl:when>
       </xsl:choose>
+   </xsl:function>
+   
+   
+   <xsl:function name="tan:log2" as="xs:double?">
+      <!-- Input: any double -->
+      <!-- Output: the binary logarithm of the value -->
+      <xsl:param name="arg" as="xs:double?"/>
+      <xsl:sequence select="math:log($arg) div math:log(2)"/>
    </xsl:function>
 
 
