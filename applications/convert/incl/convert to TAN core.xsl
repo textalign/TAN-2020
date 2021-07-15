@@ -32,7 +32,7 @@
         ever-changing work needs to be regularly pushed into a TAN or TEI format. 
     </xsl:param>
     <xsl:param name="tan:stylesheet-url" select="static-base-uri()"/>
-    <xsl:param name="tan:change-message" select="'Converting text from the following ' || 
+    <xsl:param name="tan:stylesheet-change-message" select="'Converting text from the following ' || 
         string(count($source-input-uris-resolved)) || ' files to TAN, based on ' ||
         $source-input-uri-resolved "/>
     <xsl:param name="tan:stylesheet-change-log">
