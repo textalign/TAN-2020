@@ -71,7 +71,7 @@
       <xsl:param name="target-url" tunnel="yes" as="xs:string?"/>
       <xsl:param name="make-absolute" tunnel="yes" as="xs:boolean?"/>
       
-      <xsl:variable name="this-href-resolved" select="resolve-uri(., $original-url)" as="xs:string"
+      <xsl:variable name="this-href-resolved" select="resolve-uri(., $original-url)" as="xs:anyURI"
       />
       <xsl:variable name="this-href-relative" as="xs:string"
          select="
