@@ -16,7 +16,30 @@
     
     <xsl:param name="tan:stylesheet-iri"
         select="'tag:textalign.net,2015:stylesheet:display-merged-sources-as-html'"/>
-    <xsl:param name="tan:stylesheet-name" as="xs:string" select="'Converter of merged TAN-A sources to HTML'"/>
+    <xsl:param name="tan:stylesheet-name" as="xs:string" select="'Parabola'"/>
+    <xsl:param name="tan:stylesheet-activity" as="xs:string"
+        select="'arranges work versions in parallel for the web'"/>
+    <xsl:param name="tan:stylesheet-description" as="xs:string">This application allows you to take
+        a library of TAN/TEI files with multiple versions of each work and present them in an
+        interactive HTML page.</xsl:param>
+    <xsl:param name="tan:stylesheet-output-examples" as="element()*">
+        <example>
+            <location>http://textalign.net/output/aristotle-categories-ref-bekker-page-col-line.html</location>
+            <description>Aristotle, Categories, in eight versions, six languages</description>
+        </example>
+        <example>
+            <location>https://textalign.net/output/cpg%204425.TAN-A-div-2018-03-09.html</location>
+            <description>Homilies on the Gospel of John, John Chrysostom, four versions, two languages</description>
+        </example>
+        <example>
+            <location>https://evagriusponticus.net/cpg2430/cpg2430-full-for-reading.html</location>
+            <description>The Praktikos by Evagrius of Pontus, three languages, with Bible quotations</description>
+        </example>
+        <example>
+            <location>https://textalign.net/quran/quran.ara+grc+syr+lat+deu+eng.html</location>
+            <description>Qur'an in eighteen versions, six languages</description>
+        </example>
+    </xsl:param>
     <xsl:param name="tan:stylesheet-url" select="static-base-uri()"/>
     <xsl:param name="tan:stylesheet-is-core-tan-application" select="true()"/>
     <xsl:param name="tan:stylesheet-to-do-list">
@@ -37,7 +60,11 @@
                 wrappers.</comment>
         </to-do>
     </xsl:param>
-    <xsl:param name="tan:change-message" select="'Converted merged TAN-A sources to HTML'"/>
+    <xsl:param name="tan:stylesheet-change-log">
+        <change xmlns="tag:textalign.net,2015:ns" who="kalvesmaki" when="2021-07-07">Edited,
+            prepared for TAN 2021 release.</change>
+    </xsl:param>
+    <xsl:param name="tan:stylesheet-change-message" select="'Converted merged TAN-A sources to HTML'"/>
     
 
     <!-- Normalize the parameters -->
@@ -2339,7 +2366,7 @@
         </diagnostics>
     </xsl:template>
     <xsl:template match="/">
-        <xsl:message select="$tan:change-message"/>
+        <xsl:message select="$tan:stylesheet-change-message"/>
         <xsl:copy-of select="$output-revised"/>
         
     </xsl:template>

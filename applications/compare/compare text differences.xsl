@@ -5,7 +5,33 @@
     xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tei="http://www.tei-c.org/ns/1.0"
     xmlns:tan="tag:textalign.net,2015:ns" exclude-result-prefixes="#all" version="3.0">
     
-    <!-- Welcome to the TAN application for comparing texts. -->
+    <!-- Welcome to Pandiff, the TAN application that finds and analyzes text differences-->
+    <!-- Version 2021-07-13-->
+    <!-- Take any number of versions of a text, compare them, and view and study all the text
+        differences in an HTML page. The HTML output allows you to see precisely where one version
+        differs from the other. A small Javascript library allows you to change focus, remove
+        versions, and explore statistics that show quantitatively how close the versions are to each
+        other. Parameters allow you to make normalizations before making the comparison, and to weigh
+        statistics accordingly. This application has been used not only for individual comparisons,
+        but for more demanding needs: to analyze changes in documents passing through a multistep
+        editorial workflow, to compare the quality of OCR results, and to study the relationship
+        between ancient/medieval manuscripts (stemmatology).-->
+    
+    <!-- Examples of output:
+        https://textalign.net/output/CFR-2017-title1-vol1-compared.xml
+            XML master output file, comparing four years of the United States Code of Federal Regulations,
+            vol. 1
+        https://textalign.net/output/CFR-2017-title1-vol1-compared.html
+            HTML comparison of four years of the United States Code of Federal Regulations, vol. 1
+        https://textalign.net/output/diff-grc-2021-02-08-five-versions.html
+            Comparison of results from four OCR processes against a benchmark,
+            classical Greek
+        https://textalign.net/clio/darwin-3diff.html
+            Comparison of three editions of Darwin's works, sample
+        https://textalign.net/clio/hom-01-coll-ignore-uv.html
+            Comparison of five versions of Griffolini's translation of John Chrysostom's Homily 1 on 
+            the Gospel of John
+    -->
     
     <!-- This is the public interface for the application. The code that runs the application can
         be found by following the links in the <xsl:include> or <xsl:import> at the bottom of this
@@ -37,6 +63,10 @@
         HTML output is directed to the TAN output subdirectory, with the HTML pointing to the appropriate
         javascript and CSS files in the js and css directories. -->
     
+    <!-- WARNING: CERTAIN FEATURES HAVE YET TO BE IMPLEMENTED-->
+    <!-- * Revise process that reinfuses a class 1 file with a diff/collate into a standard extra
+        TAN function.-->
+    
     <!-- This application currently just scratches the surface of what is possible. New features are
         planned! Some desiderata:
         1. Support a single TAN-A as the catalyst or MIRU provider, allowing <alias> to define the groups.
@@ -47,18 +77,18 @@
 
     <!-- PARAMETERS -->
     <!-- Many parameters relevant to this application are to be found at:
-            ../../parameters/params-application.xsl
-            ../../parameters/params-application-diff.xsl 
-            ../../parameters/params-application-language.xsl
-            Any parameter in this file that begins "tan:" has a corresponding parameter in one of
-        the files above, and will overwrite the default value given there.
-            You might want to alter other parameters in the files above for this application.
-        All you need to do is paste a copy of the element in this file, replacing the value with the one 
-        you prefer. The local parameter will overwrite the general one. For example, if you want differences
-        between two texts to be letter-for-letter, not word-for-word, then paste the following into this file:
-            <xsl:param name="tan:snap-to-word" as="xs:boolean" select="false()"/>
-        Study the parameters to see what options are available. 
-    -->
+        ../../parameters/params-application.xsl
+        ../../parameters/params-application-diff.xsl
+        ../../parameters/params-application-language.xsl
+        Any parameter in this file that begins "tan:" has a corresponding parameter in one of the
+      files above, and will overwrite the default value given there. You might want to alter other
+      parameters in the files above for this application. All you need to do is paste a copy of the
+      element in this file, replacing the value with the one you prefer. The local parameter will
+      overwrite the general one. For example, if you want differences between two texts to be
+      letter-for-letter, not word-for-word, then paste the following into this file: <xsl:param
+      name="tan:snap-to-word" as="xs:boolean" select="false()"/> Study the parameters to see what options
+      are available.
+ -->
 
 
     <!-- STEP ONE: PICK YOUR DIRECTORIES AND FILES -->
@@ -71,7 +101,7 @@
     <xsl:param name="directory-3-uri" select="'../../../library-arithmeticus/bible'" as="xs:string?"/>
     <xsl:param name="directory-4-uri" select="'file:/e:/joel/google%20drive/clio%20commons/TAN%20library/clio'" as="xs:string?"/>
     <xsl:param name="directory-5-uri" select="'../../../library-arithmeticus/test'" as="xs:string?"/>
-    <xsl:param name="directory-6-uri" select="'../../../../NAPS/workshops/ocr%202021/5%20plain%20text%20comparisons/bunce-038'" as="xs:string?"/>
+    <xsl:param name="directory-6-uri" select="'../../../../publications%20and%20lectures/4%20in%20press/AR18%20TAN%20diff/cfr'" as="xs:string?"/>
     
     <!-- What directory or directories has the main input files? Any relative path will be calculated relative 
         to this application file. Multiple directories may be supplied. Results can be filtered below. -->
@@ -80,7 +110,7 @@
     <!-- What pattern must each filename match (a regular expression, case-insensitive)? Of the files 
         in the directories chosen, only those whose names match this pattern will be included. A null 
         or empty string means ignore this parameter. -->
-    <xsl:param name="tan:input-filenames-must-match-regex" as="xs:string?" select="'tess150|correct'"/>
+    <xsl:param name="tan:input-filenames-must-match-regex" as="xs:string?" select="'title1-vol1'"/>
 
     <!-- What pattern must each filename NOT match (a regular expression, case-insensitive)? Of the files 
         in the directories chosen, any whose names match this pattern will be excluded. A null 
@@ -105,14 +135,17 @@
     -->
     <xsl:param name="restrict-to-matching-top-level-div-attr-ns" as="xs:boolean" select="false()"/>
     
-    <!-- What language should be assumed for any input text that does not have a language associated with
-        it? Please a standard 3-letter ISO code, e.g., eng for English, grc for ancient Greek, deu for German,
-        etc.
-    -->
+    <!-- What language should be assumed for any input text that does not have a language associated with it?
+      Please use a standard 3-letter ISO code, e.g., eng for English, grc for ancient Greek, deu for
+      German, etc. -->
     <xsl:param name="default-language" as="xs:string?" select="'eng'"/>
     
     <!-- Should non-TAN input be space-normalized before processing? -->
     <xsl:param name="space-normalize-non-tan-input" as="xs:boolean" select="false()"/>
+    
+    <!-- For any input files that are XML, should any attributes be removed before processing? The value 
+        must be a regular expression matching attribute names.  -->
+    <xsl:param name="input-attributes-to-remove-regex" as="xs:string?" select="'.+'"/>
     
     
     <!-- STEP THREE: NORMALIZE INPUT STRINGS -->
@@ -123,12 +156,11 @@
         ../../parameters/params-application-language.xsl 
     -->
     
-    <!-- You can make normalizations to the string before it goes through the comparison. The XML output 
-        will show the normalized results, and statistics will be based on it. But when building the HTML output, 
-        this application will try to reinject the original text into the adjusted difference. This is oftentimes
-        an imperfect process, because versions may differ on what the restoration should be. In general, the
-        first version will predominate.
-    -->
+    <!-- You can make normalizations to the string before it goes through the comparison. The XML output will show
+      the normalized results, and statistics will be based on it. But when building the HTML output, this
+      application will try to reinject the original text into the adjusted difference. This is oftentimes
+      an imperfect process, because versions may differ on what the restoration should be. In general,
+      the first version will predominate. -->
     
     <!-- Should differences between the Greek grave and acute be ignored? -->
     <xsl:param name="ignore-greek-grave-acute-distinction" as="xs:boolean" select="false()"/>
@@ -162,7 +194,8 @@
     
     <!-- Collation/diff handling -->
     
-    <!-- Should tan:collate() be allowed to re-sort the strings to take advantage of optimal matches? True produces better results, but could take longer than false. -->
+    <!-- Should tan:collate() be allowed to re-sort the strings to take advantage of optimal matches? True
+      produces better results, but could take longer than false. -->
     <xsl:param name="preoptimize-string-order" as="xs:boolean" select="true()"/>
     
     
@@ -175,10 +208,10 @@
     <!-- In what directory should the output be saved? -->
     <xsl:param name="output-directory-uri" as="xs:string" select="$tan:default-output-directory-resolved"/>
     
-    <!-- What should the base output filename be? If missing, the base filename of the first item in each
-    group will be used, with suffixes of "-compared.xml" and "-compared.html". If multiple comparisons are
-    made on the same output base filename, they will be numerically incremented. This process will overwrite 
-    any files. -->
+    <!-- What should the base output filename be? If missing, the base filename of the first item in each group
+      will be used, with suffixes of "-compared.xml" and "-compared.html". If multiple comparisons are
+      made on the same output base filename, they will be numerically incremented. This process will
+      overwrite any files. -->
     <xsl:param name="output-base-filename" as="xs:string?"/>
     
     

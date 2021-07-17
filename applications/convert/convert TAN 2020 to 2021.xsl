@@ -4,7 +4,9 @@
     xmlns:tan="tag:textalign.net,2015:ns" xmlns:map="http://www.w3.org/2005/xpath-functions/map"
     exclude-result-prefixes="#all" version="3.0">
     
-    <!-- Welcome to the TAN application for converting a TAN file from the 2020 version to 2021. -->
+    <!-- Welcome to TAN Updater, the TAN application that converts TAN files from older versions 
+        to the current version. -->
+    <!-- Version 2021-07-07-->
     
     <!-- This is the public interface for the application. The code that runs the application can
         be found by following the links in the <xsl:include> or <xsl:import> at the bottom of this
@@ -28,6 +30,9 @@
         prior alpha versions. -->
 
 
+    <!-- The main engine for the application is in this file, and in other files it links to. Feel
+        free to explore, but make alterations only if you know what you are doing. If you make
+        changes, make a copy of the original file first.-->
     <xsl:include href="incl/convert%20TAN%202020%20to%202021%20core.xsl"/>
     
     

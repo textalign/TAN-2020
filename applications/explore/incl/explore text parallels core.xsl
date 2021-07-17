@@ -25,7 +25,34 @@
     <!-- The predecessor to this stylesheet is tag:textalign.net,2015:stylesheet:create-quotations-from-tan-a -->
     <xsl:param name="tan:stylesheet-iri"
         select="'tag:textalign.net,2015:stylesheet:explore-text-parallels'"/>
-    <xsl:param name="tan:stylesheet-name" as="xs:string" select="'Text parallel explorer'"/>
+    <xsl:param name="tan:stylesheet-name" as="xs:string" select="'Tangram'"/>
+    <xsl:param name="tan:stylesheet-activity"
+        select="'finds and scores clusters of words (ngrams) shared across two groups of texts'"
+    />
+    <xsl:param name="tan:stylesheet-description">This application searches for and scores clusters
+        of words shared across two groups of texts, allowing you to look for quotations,
+        paraphrases, or shared topics. When configured correctly, Tangram can also find idioms and
+        collocations. Each input file, which may come in a variety of formats (TAN, TEI, other XML
+        formats, plain text, Word documents) must be assigned to one or both of two groups, each
+        group representing a work. Members of a work-group can be from different languages. Users
+        can specify how many ngrams ("words") should be found, and how far apart they can be from
+        each other. Ngram order is disregarded (e.g., ngram "shear", "blue", "sheep" would match
+        ngram "sheep", "blue", "shear"). Tangram first normalizes and tokenizes each text according
+        to language rules. Each token is converted to one or more aliases. If lexico-morphological
+        data is available through a TAN-A-lm file, or if there is a TAN-A-lm language library for
+        the language of the text being processed, a token may be replaced by multiple lexemes (e.g.,
+        "rung" would attract aliases "ring" and "rung"); otherwise, a case-insensitive generic form
+        of the word is used. Then each text in group 1 is compared to each text in group 2 that
+        shares the same language. For each pair of texts, Tangram identifies clusters of tokens that
+        share the same alias. It then consolidates adjacent clusters of ngrams, and scores the
+        results based upon several criteria. Grouped clusters are then converted into a primitive
+        TAN-A file consisting of claims that identify parallel passages of each pair of texts, and
+        the output is rendered as sortable HTML, to facilitate better study of the results. Tangram
+        was written primarily to support quotation detection in ancient Greek and Latin texts, which
+        has rather demanding requirements. Because of these objectives, Tangram frequently operates
+        in quadratic or cubic time, so can be quite time-consuming to run. A feature allows the user
+        to save intermediate stages as temporary files, to reduce processing time.
+    </xsl:param>
     <xsl:param name="tan:stylesheet-url" select="static-base-uri()"/>
     <xsl:param name="tan:stylesheet-is-core-tan-application" select="true()"/>
     <xsl:param name="tan:stylesheet-to-do-list">
@@ -35,7 +62,11 @@
             <comment who="kalvesmaki" when="2021-03-11">Make sure texts run against themselves work.</comment>
         </to-do>
     </xsl:param>
-    <xsl:param name="tan:change-message" select="'Exploring text parallels'"/>
+    <xsl:param name="tan:stylesheet-change-log">
+        <change xmlns="tag:textalign.net,2015:ns" who="kalvesmaki" when="2021-07-07">Edited,
+            prepared for TAN 2021 release.</change>
+    </xsl:param>
+    <xsl:param name="tan:stylesheet-change-message" select="'Exploring text parallels'"/>
     
     
     <!-- MANIFEST HANDLING -->
@@ -3599,7 +3630,7 @@
         </xsl:result-document>-->
     </xsl:template>
     <xsl:template match="/">
-        <xsl:message select="$tan:change-message"/>
+        <xsl:message select="$tan:stylesheet-change-message"/>
         
     </xsl:template>
     

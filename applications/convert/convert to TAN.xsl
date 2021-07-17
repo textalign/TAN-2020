@@ -191,7 +191,7 @@
       in the hierarchy the <div> should be. Both @n and @type are interpreted like @replacement in the
       parameter above. That is, you can use $1 to capture the first parenthesized subexpression in a
       given <where>'s @pattern. You can use $0 to the entire captured string. For more on this concept,
-      see examples below and the discussion of $replacement at
+      see examples below and the discussion of the parameter replacement at
       https://www.w3.org/TR/xpath-functions-31/#func-replace.
          These elements are also processed by tan:batch-replace(), in sequential order. Every span of
       text that matches a <where> is replaced by the <div> anchors. After all markers are processed, the

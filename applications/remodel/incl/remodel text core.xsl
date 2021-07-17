@@ -14,10 +14,37 @@
     
     <xsl:param name="tan:stylesheet-iri"
         select="'tag:textalign.net,2015:stylesheet:remodel-text'"/>
-    <xsl:param name="tan:stylesheet-name" select="'Text remodeler'"/>
+    <xsl:param name="tan:stylesheet-name" select="'Body Remodeler'"/>
+    <xsl:param name="tan:stylesheet-activity"
+        select="'remodels a text to resemble the existing div structure of the body of a TAN-T text'"
+    />
+    <xsl:param name="tan:stylesheet-description">Suppose you have a text in a well-structured TAN-T
+        file, and you want to use it to model the structure of another version of that same work.
+        This application will take the input, and infuse the text into the structure of the model,
+        using the proportionate lengths of the model's text as a guide where to break the new text.
+        Any two versions of a single work, particularly translations, paraphrases, and other
+        versions, rarely correlate. A translator may begin a work being relatively verbose, and
+        become more economical in later parts. Such uneven correlation means that one-to-one
+        modeling is not a good strategy for aligning the new text. Rather, one should start with the
+        topmost structures and working progressively toward the smallest levels. Body Remodeler
+        supports such an incremental approach, and allows you to restrict the remodeling activity to
+        certain parts of a text. When used in tandem with the TAN editing tools for Oxygen, which
+        allow you to push and pull words, clauses, and sentences from one leaf div to another, you
+        will find that Body Builder can save you hours of editorial work. </xsl:param>
     <xsl:param name="tan:stylesheet-url" select="static-base-uri()"/>
-    <xsl:param name="tan:change-message" select="'Remodeling ' || $tan:doc-uri || ' against ' || $current-model-uri-resolved"/>
+    <xsl:param name="tan:stylesheet-change-message"
+        select="'Remodeling ' || $tan:doc-uri || ' against ' || $current-model-uri-resolved"/>
+    <xsl:param name="tan:stylesheet-change-log">
+        <change xmlns="tag:textalign.net,2015:ns" who="kalvesmaki" when="2021-07-13">Edited,
+            prepared for TAN 2021 release.</change>
+    </xsl:param>
     <xsl:param name="tan:stylesheet-is-core-tan-application" select="true()"/>
+    <xsl:param name="tan:stylesheet-to-do-list">
+        <to-do xmlns="tag:textalign.net,2015:ns">
+            <comment who="kalvesmaki" when="2021-07-13">Support the complete-the-square method</comment>
+            <comment who="kalvesmaki" when="2021-07-13">Test, troubleshoot against various TEI models</comment>
+        </to-do>
+    </xsl:param>
 
 
     <!-- Normalize the parameters -->
@@ -385,7 +412,7 @@
         </diagnostics>
     </xsl:template>
     <xsl:template match="/">
-        <xsl:message select="$tan:change-message"/>
+        <xsl:message select="$tan:stylesheet-change-message"/>
         <xsl:message
             select="
                 'Model reference system is indicated to be ' || (if ($model-has-scriptum-oriented-reference-system) then

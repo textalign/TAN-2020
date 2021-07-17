@@ -5,7 +5,22 @@
     xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tei="http://www.tei-c.org/ns/1.0"
     xmlns:tan="tag:textalign.net,2015:ns" exclude-result-prefixes="#all" version="3.0">
     
-    <!-- Welcome to the TAN application for calibrating the certainty of TAN-A-lm files. -->
+    <!-- Welcome to TAN-A-lm Calibrator, the TAN application that recalibrates TAN-A-lm certainty -->
+    <!-- Welcome to Application to calibrate the certainty of TAN-A-lm files, the TAN application -->
+    <!-- Version 2021-07-07-->
+    
+    <!-- This application is useful when editing TAN-A-lm files. Very frequently, when using local language
+      resources to generate a fresh TAN-A-lm file for a class-1 file, the results are very dirty.
+      Cleaning up the file normally involves deleting many entries, so that alternative options' certainty
+      rates no longer add to a whole 1.0. Or perhaps certainty has not even been set, and it needs to be
+      added. This application will refresh the certainty rates of a TAN-A-lm, making it more useful for
+      applications that rely on certainty rates for scoring, such Tangram. A second way this may be
+      useful is for edits to language-specific TAN-A-lm file, where you might be recalibrating the
+      certainty values of some lm combinations. Perhaps a wordform that has ten lexicomorphological
+      resolutions, each one with a detailed @cert value. You want to promote one of the options as being
+      slightly more probable, but you do not want to recalculate all the values so they add to 1.0. You
+      can increase or decrease the @cert value of an option, then run the file through this application
+      to recalibrate all entries so they add to 1.0 certainty. -->
     
     <!-- This is the public interface for the application. The code that runs the application can
         be found by following the links in the <xsl:include> or <xsl:import> at the bottom of this
@@ -23,16 +38,9 @@
     <!-- Primary output: the TAN-A-lm file with certainty recalibrated -->
     <!-- Secondary output: none. -->
     
-    <!-- This application is useful when editing TAN-A-lm files. Very frequently, when using
-        local language resources to generate a fresh TAN-A-lm file for a class-1 file, the results 
-        are very dirty, and normally involves the deletion of many entries. While editing, one can 
-        run that TAN-A-lm file through this application to refresh the certainty rates. This, in turn
-        makes interim TAN-A-lm files that have yet to be finished nevertheless more useful for other
-        applications, such as the quotation checking application. A second way this may be useful is
-        when editing a language-specific TAN-A-lm file, where you might be recalibrating the 
-        certainty values of some lm combinations. You can promote an LM option by increasing by an
-        arbitrary value its @cert, or demote it by decreasing it. Then running the results through
-        this application will recalibrate the entries to 1. -->
+    
+    <!-- WARNING: CERTAIN FEATURES HAVE YET TO BE IMPLEMENTED -->
+    <!-- * Look at ways to adjust tok certainty -->
 
     <!-- Nota bene: -->
     <!-- * Input is not resolved ahead of time, so inclusions are ignored. -->

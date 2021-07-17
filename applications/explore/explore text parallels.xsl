@@ -5,13 +5,40 @@
    xmlns:array="http://www.w3.org/2005/xpath-functions/array"
    exclude-result-prefixes="#all" version="3.0">
 
-   <!-- Welcome to the TAN application for exploring text parallels. -->
+   <!--  Welcome to Tangram, the TAN application that finds and scores clusters of words (ngrams)
+      shared across two groups of texts -->
+   
+   <!-- This application searches for and scores clusters of words shared across two groups of texts, allowing
+      you to look for quotations, paraphrases, or shared topics. When configured correctly, Tangram can
+      also find idioms and collocations. Each input file, which may come in a variety of formats (TAN,
+      TEI, other XML formats, plain text, Word documents) must be assigned to one or both of two groups,
+      each group representing a work. Members of a work-group can be from different languages. Users can
+      specify how many ngrams ("words") should be found, and how far apart they can be from each other.
+      Ngram order is disregarded (e.g., ngram "shear", "blue", "sheep" would match ngram "sheep", "blue",
+      "shear"). Tangram first normalizes and tokenizes each text according to language rules. Each token
+      is converted to one or more aliases. If lexico-morphological data is available through a TAN-A-lm
+      file, or if there is a TAN-A-lm language library for the language of the text being processed, a
+      token may be replaced by multiple lexemes (e.g., "rung" would attract aliases "ring" and "rung");
+      otherwise, a case-insensitive generic form of the word is used. Then each text in group 1 is
+      compared to each text in group 2 that shares the same language. For each pair of texts, Tangram
+      identifies clusters of tokens that share the same alias. It then consolidates adjacent clusters of
+      ngrams, and scores the results based upon several criteria. Grouped clusters are then converted
+      into a primitive TAN-A file consisting of claims that identify parallel passages of each pair of
+      texts, and the output is rendered as sortable HTML, to facilitate better study of the results.
+      Tangram was written primarily to support quotation detection in ancient Greek and Latin texts,
+      which has rather demanding requirements. Because of these objectives, Tangram frequently operates
+      in quadratic or cubic time, so can be quite time-consuming to run. A feature allows the user to
+      save intermediate stages as temporary files, to reduce processing time. -->
+   <!-- Version 2021-07-07-->
+   
 
-   <!-- This is the public face of the application. The application proper can be found by
-      following any links in any <xsl:include> or <xsl:import>. You are invited to alter any 
-      parameter in this file as you like, to customize the application. You may want to 
-      make copies of this file, with parameters preset to apply to specific situations.
-   -->
+   <!-- This is the public interface for the application. The code that runs the application can
+      be found by following the links in the <xsl:include> or <xsl:import> at the bottom of this
+      file. You are invited to alter as you like any of the parameters in this file, to customize
+      the application to suit your needs. If you are relatively new to XSLT, or you are nervous
+      about making changes, make a copy of this file before changing it, or configure a
+      transformation scenario in Oxygen. If you are comfortable with XSLT, try creating your own
+      stylesheet, then import this one, selectively changing the parameters as needed.-->
 
    <!-- DESCRIPTION -->
 
@@ -23,41 +50,28 @@
    <!-- Secondary output: (1) an XML file with TAN-A claims, most likely parallels first; (2) an 
       HTML file the renders #1 in a more legible format. -->
    
-   <!-- This is one of the most significant TAN applications, because it allows you to look for
-      quotations between two groups of texts, or for passages where the same topics, concepts, or 
-      ideas are discussed. When configured correctly, the application can also facilitate searches 
-      for idioms and collocations. 
-         Input files are sorted into two groups, according to the parameters supplied. 
-      Each group represents a work. Members of a work-group can be from different languages. The 
-      application then normalizes and tokenizes each text according to language rules. Each token is 
-      converted to one or more aliases based on available lexico-morphological analysis (for example, 
-      "shot" would attract aliases "shoot" [verb] and "shot" [noun]). Then each text in group 1 is 
-      compared to each same-language text in group 2, to identify clusters of token-alias commonality, 
-      scoring them. These clusters are then converted into a primitive TAN-A file consisting of
-      <claim>s that identify parallel passages of each pair of texts, and the output is rendered as 
-      HTML, to facilitate better study of the results.
-   -->
    
+   <!-- WARNING: CERTAIN FEATURES HAVE YET TO BE IMPLEMENTED-->
+   <!-- * Support the method pioneered by Shmidman, Koppel, and Porat:
+      https://arxiv.org/abs/1602.08715v2 * Make sure texts run against themselves work.-->
+
    <!-- Nota bene: -->
-   <!-- * This application is a work in progress: see $tan:stylesheet-to-do-list, at
-      the incl subfolder for a list of things that must be attended to. -->
    <!-- * A file may be placed in both groups, to explore cases of self-quotation or 
       repetition. -->
-   <!-- * This process can take a very long time for lengthy texts, particuarly at the stage where
-      a 1gram gets added to an Ngram, because the process takes quadratic time. Many messages could 
-      appear during tan:add-1gram(), updating progress through perhaps long routines. It is 
-      recommended that you save intermediate steps, to avoid having to repeat steps on
-      subsequent runs.
-         By way of comparison, two texts in group 1 of about 4.4K and 2.6K words against a single
-      text in group 1 of about 137K words took 319 seconds to build up to the unconsolidated token
-      alias form $tok-aliases-g1/2. One text from group 1 had an associated TAN-A-lm annotation and
-      the text from group 2 did as well. There was a TAN-A-lm library associated with the language
-      (Greek). When the program was run again without changing parameters, it took only 11 seconds 
-      to get to that same stage, because of the saved temporary files.
-         That same set of texts took 1,219 seconds (20 minutes) to develop into a 3gram, with chops
-      at common Greek stop words and skipping the most common 1% token aliases. When run again, 
-      based on temporary files, it took only 23 seconds.
-   -->
+   <!-- * This process can take a very long time for lengthy texts, particuarly at the stage where a 1gram gets
+      added to an Ngram, because the process takes quadratic time. Many messages could appear during
+      tan:add-1gram(), updating progress through perhaps long routines. It is recommended that you save
+      intermediate steps, to avoid having to repeat steps on subsequent runs.
+         By way of comparison, two texts in group 1 of about 4.4K and 2.6K words against a single text in
+      group 2 of about 137K words took 319 seconds to build up to a set of unconsolidated token aliases.
+      One text from group 1 had an associated TAN-A-lm annotation and the text from group 2 did as well.
+      There was a TAN-A-lm library associated with the language (Greek). When the program was run again
+      without changing parameters, it took only 11 seconds to get to that same stage, because of the
+      saved temporary files.
+         That same set of texts took 1,219 seconds (20 minutes) to develop into a 3gram, with chops at
+      common Greek stop words and skipping the most common 1% token aliases. When run again, based on
+      temporary files, it took only 23 seconds. That is, saving intermediate steps could save you hours
+      of time. -->
    
    
 
@@ -188,13 +202,13 @@
       least (false)? -->
    <xsl:param name="skp-use-most-frequent-letters" as="xs:boolean" select="true()"/>
    
-   <!-- What percentage of the most common tokens (actually, token aliases) should be ignored? Must be 
-      between 0 (ignore nothing) and 1 (ignore everything). If multiple values are supplied, the largest will 
-      be applied to building 1grams, the second largest to 2grams, and so forth. If an ngram step lacks a 
-      value, the smallest one will be applied. In texts with numerous words, 0.05 tends to be a steep cut; 
-      0.001 a rather thin cut. If you know something about the language, try using the $skip-token-alias-map
-      in combination with a thin cut.
-   -->
+   <!-- What percentage of the most common tokens (actually, token aliases) should be ignored? Must be
+      between 0 (ignore nothing) and 1 (ignore everything). If multiple values are supplied, the largest
+      will be applied to building 1grams, the second largest to 2grams, and so forth. If an ngram step
+      lacks a value, the smallest one will be applied. In texts with numerous words, 0.05 tends to be a
+      steep cut; 0.001 a rather thin cut. If you know something about the language, try using the
+      $skip-token-alias-map in combination with a thin cut.
+ -->
    <xsl:param name="cut-most-frequent-aliases-per-ngram" as="xs:decimal+"
       select="0.01"/>
    
@@ -243,14 +257,13 @@
    -->
    <xsl:param name="verify-intermediate-steps-strictly" as="xs:boolean" select="false()"/>
    
-   <!-- Note, the temporary directory where intermediate steps is established by $tan:temporary-file-directory
-   in ../../parameters/params-application.xsl. Normally you'll want to keep your temporary files in a 
-   central location where you can remember to clear them out. The files that are save there are given 
-   filenames associated with the hash value of the file being saved, so overwriting of a temporary file
-   is nearly impossible.
-      If you want to dictate exactly where temporary files should go for this application, simply copy
-   the parameter and paste in here, replacing it with the value that you prefer.
-   -->
+   <!-- Note, the temporary directory where intermediate steps is established by the parameter
+      temporary-file-directory in ../../parameters/params-application.xsl. Normally you'll want to keep
+      your temporary files in a central location where you can remember to clear them out. The files that
+      are saved there are given filenames associated with the hash value of the file being saved, so
+      overwriting of a temporary file is nearly impossible.
+         If you want to dictate exactly where temporary files should go for this application, simply copy
+      the parameter and paste in here, replacing it with the value that you prefer. -->
    
 
 

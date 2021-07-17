@@ -4,7 +4,8 @@
     xmlns:tan="tag:textalign.net,2015:ns" xmlns:map="http://www.w3.org/2005/xpath-functions/map"
     exclude-result-prefixes="#all" version="3.0">
     
-    <!-- Welcome to the TAN application for creating a catalog file. -->
+    <!-- Welcome to Catalog Creator, the TAN application that creates an XML or TAN catalog of files -->
+    <!-- Version 2021-07-07-->
     
     <!-- This is the public interface for the application. The code that runs the application can
         be found by following the links in the <xsl:include> or <xsl:import> at the bottom of this
@@ -40,9 +41,9 @@
         <head>, or do you want only minimal metadata (the children of <head> before <vocabulary-key>)? -->
     <xsl:param name="include-fully-resolved-metadata" as="xs:boolean" select="false()"/>
     
-    <!-- What files do you want to exclude from results? Expected: a regular expression. It is recommended
-        that you include /\. because that pattern will ignore hidden files and directories, such as those used
-        in Git or other version control managers. -->
+    <!-- What files do you want to exclude from results? Expected: a regular expression. It is recommended that
+      you include /\. because that pattern will ignore hidden files and directories, such as those used
+      in Git or other version control managers. -->
     <xsl:param name="exclude-filenames-that-match-what-pattern" as="xs:string?"
         select="'private-|archive|transformations|temp-|/\.'"/>
     
@@ -52,6 +53,9 @@
     
     
 
+    <!-- The main engine for the application is in this file, and in other files it links to. Feel
+        free to explore, but make alterations only if you know what you are doing. If you make
+        changes, make a copy of the original file first.-->
     <xsl:include href="incl/create%20catalog%20file%20core.xsl"/>
     
     

@@ -3,8 +3,9 @@
    xmlns:xs="http://www.w3.org/2001/XMLSchema"
    version="3.0">
    
-   <!-- Welcome to the TAN application for synchronizing the text in the body of a class 1 file 
-      with one of its <redivision>s. -->
+   <!-- Welcome to Body Sync, the TAN application that updates a transcription in a class 1 file to
+      match that in a redivision -->
+   <!-- Version 2021-07-07-->
    
    <!-- This is the public interface for the application. The code that runs the application can
       be found by following the links in the <xsl:include> or <xsl:import> at the bottom of this
@@ -19,7 +20,8 @@
    
    <!-- Initial (main) input: a class 1 file -->
    <!-- Secondary input: none (but see parameters) -->
-   <!-- Main output: the main input, with the text of its body revised to match the text in the chosen redivision -->
+   <!-- Main output: the main input, with the text of its body revised to match the text in the chosen
+      redivision -->
    <!-- Secondary output: none -->
    
    <!-- Nota bene:

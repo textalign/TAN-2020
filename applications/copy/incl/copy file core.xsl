@@ -20,9 +20,16 @@
     
     <xsl:param name="tan:stylesheet-iri"
         select="'tag:textalign.net,2015:stylesheet:copy-tan-file'"/>
-    <xsl:param name="tan:stylesheet-name" select="'File copy utility'"/>
+    <xsl:param name="tan:stylesheet-name" select="'File Copy Utility'"/>
+    <xsl:param name="tan:stylesheet-activity"
+        select="'copies a file to a location, updating internal relative URLs'"/>
+    
     <xsl:param name="tan:stylesheet-url" select="static-base-uri()"/>
-    <xsl:param name="tan:change-message" select="'Copied file from', $tan:doc-uri, 'to', $target-uri-resolved"/>
+    <xsl:param name="tan:stylesheet-change-log">
+        <change xmlns="tag:textalign.net,2015:ns" who="kalvesmaki" when="2021-07-07">Edited,
+            prepared for TAN 2021 release.</change>
+    </xsl:param>
+    <xsl:param name="tan:stylesheet-change-message" select="'Copied file from', $tan:doc-uri, 'to', $target-uri-resolved"/>
     <xsl:param name="tan:stylesheet-is-core-tan-application" select="true()"/>
 
 

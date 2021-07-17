@@ -18,7 +18,9 @@
     <!-- The predecessor to this stylesheet is tag:textalign.net,2015:stylesheet:create-quotations-from-tan-a -->
     <xsl:param name="tan:stylesheet-iri"
         select="'tag:textalign.net,2015:stylesheet:create-tan-a-lm'"/>
-    <xsl:param name="tan:stylesheet-name" as="xs:string" select="'TAN-A-lm builder'"/>
+    <xsl:param name="tan:stylesheet-name" as="xs:string" select="'TAN-A-lm Builder'"/>
+    <xsl:param name="tan:stylesheet-activity"
+        select="'creates a TAN-A-lm file for a class 1 file'"/>
     <xsl:param name="tan:stylesheet-url" select="static-base-uri()"/>
     <xsl:param name="tan:stylesheet-is-core-tan-application" select="true()"/>
     <xsl:param name="tan:stylesheet-to-do-list">
@@ -32,7 +34,11 @@
             
         </to-do>
     </xsl:param>
-    <xsl:param name="tan:change-message" select="
+    <xsl:param name="tan:stylesheet-change-log">
+        <change xmlns="tag:textalign.net,2015:ns" who="kalvesmaki" when="2021-07-07">Edited,
+            prepared for TAN 2021 release.</change>
+    </xsl:param>
+    <xsl:param name="tan:stylesheet-change-message" select="
             'Generated lexico-morphological data for ' || $tan:doc-id
             || ' based on the following sources:&#xa;' || string-join($output-pass-4/tan:claimants/tan:claimant, '&#xa;')"
     />

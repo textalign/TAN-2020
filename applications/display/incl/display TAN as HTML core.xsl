@@ -16,7 +16,9 @@
     
     <xsl:param name="tan:stylesheet-iri"
         select="'tag:textalign.net,2015:stylesheet:display-tan-as-html'"/>
-    <xsl:param name="tan:stylesheet-name" as="xs:string" select="'Converter TAN/TEI files to HTML'"/>
+    <xsl:param name="tan:stylesheet-name" as="xs:string" select="'TAN2HTML'"/>
+    <xsl:param name="tan:stylesheet-activity"
+        select="'converts TAN / TEI files to HTML'"/>
     <xsl:param name="tan:stylesheet-url" select="static-base-uri()"/>
     <xsl:param name="tan:stylesheet-is-core-tan-application" select="true()"/>
     <xsl:param name="tan:stylesheet-to-do-list">
@@ -25,7 +27,11 @@
             <comment who="kalvesmaki" when="2020-07-28">Need to build parameters to allow users to drop elements from the HTML DOM.</comment>
         </to-do>
     </xsl:param>
-    <xsl:param name="tan:change-message" select="'Converted merged TAN-A sources to HTML'"/>
+    <xsl:param name="tan:stylesheet-change-log">
+        <change xmlns="tag:textalign.net,2015:ns" who="kalvesmaki" when="2021-07-07">Edited,
+            prepared for TAN 2021 release.</change>
+    </xsl:param>
+    <xsl:param name="tan:stylesheet-change-message" select="'Converted merged TAN-A sources to HTML'"/>
     
     <xsl:variable name="output-directory-uri-resolved" as="xs:string"
         select="tan:uri-directory(resolve-uri($output-directory-uri, $calling-stylesheet-uri))"/>
@@ -127,7 +133,7 @@
         </diagnostics>
     </xsl:template>
     <xsl:template match="/">
-        <xsl:message select="$tan:change-message"/>
+        <xsl:message select="$tan:stylesheet-change-message"/>
         <xsl:if test="$tan:validation-mode-on">
             <xsl:message select="'Validation mode on; output will focus on errors and omit content'"/>
         </xsl:if>

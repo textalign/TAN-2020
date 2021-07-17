@@ -4,7 +4,8 @@
     xmlns:tan="tag:textalign.net,2015:ns" xmlns:map="http://www.w3.org/2005/xpath-functions/map"
     exclude-result-prefixes="#all" version="3.0">
     
-    <!-- Welcome to the TAN application for creating a TAN-A-lm file. -->
+    <!-- Welcome to TAN-A-lm Builder, the TAN application that creates a TAN-A-lm file for a class 1 file -->
+    <!-- Version 2021-07-07-->
     
     <!-- This is the public interface for the application. The code that runs the application can
         be found by following the links in the <xsl:include> or <xsl:import> at the bottom of this
@@ -24,20 +25,20 @@
         the data most likely in need of editing at the top. -->
     <!-- Secondary output: none -->
     
-    <!-- Well-curated lexico-morphological data is highly valuable for a variety of applications such as
-        quotation detection, stylometric analysis, and machine translation. This application will process
-        any TAN-T or TAN-TEI file through existing TAN-A-lm language libraries, and online search services,
-        looking for the best lexico-morphological profiles for the file's tokens. 
-    -->
+    <!-- Well-curated lexico-morphological data is highly valuable for a variety of applications such as quotation
+      detection, stylometric analysis, and machine translation. This application will process any TAN-T
+      or TAN-TEI file through existing TAN-A-lm language libraries, and online search services, looking
+      for the best lexico-morphological profiles for the file's tokens.
+ -->
     
     <!-- OPTIMIZATION STRATEGIES ADOPTED -->
     <!-- Minimize the number of times files in the language catalog must be consulted and resolved -->
     <!-- In the interests of efficient processing, if a hit on @val be taken as the best answer, and preclude 
         searches on @rgx or via online search services -->
-    <!-- We assume that a search for lexico-morphological data will entail a lot of different TAN-A-lm files 
-        with a number of conventions. Codes found in language catalogs must be converted to TAN-standardized 
-        feature names, and then reconverted into the codeset of choice, dictated by the <morphology> in the 
-        template TAN-A-lm file. -->
+    <!-- We assume that a search for lexico-morphological data will entail a lot of different TAN-A-lm files with
+      a number of conventions. Codes found in language catalogs must be converted to TAN-standardized
+      feature names, and then reconverted into the codeset of choice, dictated by the <morphology> in the
+      template TAN-A-lm file. -->
 
     <!-- Nota bene: -->
     <!-- * There must be access to a language catalog, i.e., a collection of TAN-A-lm files that are 
@@ -45,8 +46,11 @@
     <!-- * The TAN-A-lm is relied upon as dictating the settings for the file, e.g., tokenization pattern,
         TAN-mor morphology, etc. -->
 
-
-    <xsl:include href="incl/create%20TAN-A-lm%20core.xsl"/>
+    <!-- WARNING: CERTAIN FEATURES HAVE YET TO BE IMPLEMENTED -->
+    <!-- * What if the @xml:lang of the input doesn't match TAN-mor or language catalog files? * what if a
+      morphology has @which? Will it still work? * ensure the responsible repopulation of the metadata of
+      the template -->
+    
     
     
     <!-- PARAMETERS -->
@@ -73,12 +77,12 @@
         service. -->
     <xsl:param name="use-search-services-only-as-backup" as="xs:boolean" select="false()"/>
     
-    <!-- Do you want to assume that any morphological codes retrieved from the local language catalog are
-        to be retained as-is, without checking their underlying meaning? If true, then performance should
-        be relatively speedy. If there are problems, they can be resolved when editing the output, in light
-        of validation reports. If false, then the process may be very slow (perhaps twenty times longer), 
-        because every morphological code will need to be converted to a series of IRI values, which will 
-        then need to be reconverted into the template TAN-A-lm file's declared system. -->
+    <!-- Do you want to assume that any morphological codes retrieved from the local language catalog are to be
+      retained as-is, without checking their underlying meaning? If true, then performance should be
+      relatively speedy. If there are problems, they can be resolved when editing the output, in light of
+      validation reports. If false, then the process may be very slow (perhaps twenty times longer),
+      because every morphological code will need to be converted to a series of IRI values, which will
+      then need to be reconverted into the template TAN-A-lm file's declared system. -->
     <xsl:param name="retain-morphological-codes-as-is" as="xs:boolean" select="true()"/>
     <!-- As of April 2021, false() is not supported for the parameter above. -->
     
@@ -89,4 +93,11 @@
         words on either side of the target token. -->
     <xsl:param name="insert-tok-context" as="xs:integer?" select="3"/>
     
+    
+    <!-- THE APPLICATION -->
+    
+    <!-- The main engine for the application is in this file, and in other files it links to. Feel
+        free to explore, but make alterations only if you know what you are doing. If you make
+        changes, make a copy of the original file first.-->
+    <xsl:include href="incl/create%20TAN-A-lm%20core.xsl"/>
 </xsl:stylesheet>

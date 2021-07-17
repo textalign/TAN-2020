@@ -15,9 +15,28 @@
     <xsl:param name="tan:stylesheet-iri"
         select="'tag:textalign.net,2015:stylesheet:calibrate-tan-a-lm-certainty'"/>
     <xsl:param name="tan:stylesheet-url" select="static-base-uri()"/>
-    <xsl:param name="tan:stylesheet-name" select="'Application to calibrate the certainty of TAN-A-lm files'"/>
-    <xsl:param name="tan:change-message" select="'Calibrated certainty in TAN-A-lm files.'"/>
+    <xsl:param name="tan:stylesheet-name" select="'TAN-A-lm Calibrator'"/>
+    <xsl:param name="tan:stylesheet-activity"
+        select="'recalibrates TAN-A-lm certainty'"/>
+    <xsl:param name="tan:stylesheet-change-message" select="'Calibrated certainty in TAN-A-lm files.'"/>
+    <xsl:param name="tan:stylesheet-description">This application is useful when editing TAN-A-lm
+        files. Very frequently, when using local language resources to generate a fresh TAN-A-lm
+        file for a class-1 file, the results are very dirty. Cleaning up the file normally involves
+        deleting many entries, so that alternative options' certainty rates no longer add to a whole
+        1.0. Or perhaps certainty has not even been set, and it needs to be added. This application
+        will refresh the certainty rates of a TAN-A-lm, making it more useful for applications that
+        rely on certainty rates for scoring, such Tangram. A second way this may be useful is for
+        edits to language-specific TAN-A-lm file, where you might be recalibrating the certainty
+        values of some lm combinations. Perhaps a wordform that has ten lexicomorphological
+        resolutions, each one with a detailed @cert value. You want to promote one of the options as
+        being slightly more probable, but you do not want to recalculate all the values so they add
+        to 1.0. You can increase or decrease the @cert value of an option, then run the file through
+        this application to recalibrate all entries so they add to 1.0 certainty.</xsl:param>
     <xsl:param name="tan:stylesheet-is-core-tan-application" select="true()"/>
+    <xsl:param name="tan:stylesheet-change-log">
+        <change xmlns="tag:textalign.net,2015:ns" who="kalvesmaki" when="2021-07-07">Edited,
+            prepared for TAN 2021 release.</change>
+    </xsl:param>
     <xsl:param name="tan:stylesheet-to-do-list">
         <to-do xmlns="tag:textalign.net,2015:ns">
             <comment who="kalvesmaki" when="2021-04-20">Look at ways to adjust tok certainty</comment>

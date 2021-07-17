@@ -4,7 +4,22 @@
    xmlns:tei="http://www.tei-c.org/ns/1.0" xmlns:tan="tag:textalign.net,2015:ns"
    exclude-result-prefixes="#all" version="3.0">
 
-   <!-- Welcome to the TAN application for remodeling a text against a class 1 file. -->
+   <!-- Welcome to Body Remodeler, the TAN application that remodels a text to resemble the
+      existing div structure of the body of a TAN-T text-->
+   <!-- Version 2021-07-13-->
+   <!-- Suppose you have a text in a well-structured TAN-T file, and you want to use it to model
+      the structure of another version of that same work. This application will take the input, and
+      infuse the text into the structure of the model, using the proportionate lengths of the
+      model's text as a guide where to break the new text. Any two versions of a single work,
+      particularly translations, paraphrases, and other versions, rarely correlate. A translator
+      may begin a work being relatively verbose, and become more economical in later parts. Such
+      uneven correlation means that one-to-one modeling is not a good strategy for aligning the new
+      text. Rather, one should start with the topmost structures and working progressively toward
+      the smallest levels. Body Remodeler supports such an incremental approach, and allows you to
+      restrict the remodeling activity to certain parts of a text. When used in tandem with the TAN
+      editing tools for Oxygen, which allow you to push and pull words, clauses, and sentences from
+      one leaf div to another, you will find that Body Builder can save you hours of editorial
+      work.-->
 
    <!-- This is the public interface for the application. The code that runs the application can
       be found by following the links in the <xsl:include> or <xsl:import> at the bottom of this
@@ -19,18 +34,12 @@
 
    <!-- Primary (catalyzing) input: any XML file -->
    <!-- Secondary input: a TAN-T(EI) that exemplifies a model reference system that 
-        the input should imitate -->
-   <!-- Primary output: the original catalyzing input, but with the text infused into the 
-        <div> structure of the model. The text allocated to the new <div> structure proportionate 
+        the input should follow -->
+   <!-- Primary output: the model, with its <div> structure intact, but the text replaced with the 
+        text of the input. Text will be allocated to the new <div> structure proportionate 
         to the text length in the model. -->
    <!-- Secondary output: none -->
 
-   <!-- This application is intended to help users restructure a text, particularly for cases where
-      you have a good TAN model, and you want to introduce subsequent versions (translations, paraphrases, 
-      other versions). The output will likely be imperfect, because rarely are two versions synchronized. 
-      The output will require further editing and refinement. It is a good idea to adopt a progressive
-      strategy. See suggestions below. -->
-   
    <!-- Nota bene:
       * If the catalyzing input file is not a class-1 file, but just an XML file, it will be read
       for its string value, the output will be a copy of the model with the string proportionately
@@ -43,7 +52,15 @@
       with a change entry, crediting/blaming the application.
       * Comparison is made with the model on the basis of resolved, not expanded, class 1 files, and
       any matches involving @n or @n-built references will be on the basis of resolved numerals. 
+      * Although the model can be a TAN-TEI file, refining the output will not be possible using 
+      the TAN Oxygen editor tools, because pushing a word, clause, or sentence from one leaf div to
+      another will inevitably require splitting and rejoining the host elements. Such a utility is
+      possible, but would require further development of the editing tools. 
    -->
+   
+   <!-- WARNING: CERTAIN FEATURES HAVE YET TO BE IMPLEMENTED -->
+   <!-- * Support the complete-the-square method * Test, troubleshoot against various TEI models-->
+   
    
    <!-- Strategies for use:
     
@@ -54,18 +71,19 @@
     4. Run the edited input against the model again. Your top-level divisions should remain intact.
     5. Edit the output, focusing only on getting the 2nd-level divisions correct.
     6. Repeat ##3-5 through the rest of the hierarchy.
-    Use this method in tandem with the TAN editing tools in Oxygen, where you can easily push and pull
-    entire words, clauses, and sentences from one leaf div to another. When you are editing (##2, 5),
-    place the model in a parallel window.
+    Use this method in tandem with the TAN editing tools in Oxygen, where you can easily push and 
+    pull entire words, clauses, and sentences from one leaf div to another. When you are editing 
+    (##2, 5), place the model in a parallel window.
     
     Method: complete the square (not yet supported)
-    Sometimes you have a model text in version A that is in two different reference systems (A1 and A2). 
-    You now want to work on version B, and set up TAN-T(EI) versions in both reference systems (B1 and B2).
+    Sometimes you have a model text in version A that is in two different reference systems (A1 and 
+    A2). You now want to work on version B, and set up TAN-T(EI) versions in both reference systems 
+    (B1 and B2).
     1. Apply the gentle increments method to version B on ref system 1.
     2. Make sure that A1 and A2 point to each other through mutual <redivision>s.
     3. Add to version B1 a <model> that points to A1.
-    4. Run B1 against A2 with this application. It will check to see if there is an intermediate version
-    (A1) against which it can more precisely calibrate the portions of B1.
+    4. Run B1 against A2 with this application. It will check to see if there is an intermediate 
+    version (A1) against which it can more precisely calibrate the portions of B1.
     5. Edit B2 along the lines discussed under gentle increments.
     The method is called complete the square, because #4 assumes this:
     A1   A2
@@ -75,27 +93,28 @@
     the complete the square method has not been implemented. 
     
     Working with non-XML input
-    You might have text from some non-XML source that you want to feed into this method. If you can get
-    down to the plain text, put it into any XML file, and run it through this application, changing the 
-    parameter $model-uri-relative-to-catalyzing-input to specify exactly where the model is. You'll get 
-    the model with the text infused. It will need a lot of metadata editing, but at least you'll have a 
-    good start on getting the body structured. -->
+       You might have text from some non-XML source that you want to feed into this method. If you can 
+    get down to the plain text, put it into any XML file, and run it through this application, changing 
+    the parameter $model-uri-relative-to-catalyzing-input to specify exactly where the model is. You'll 
+    get the model with the text infused. It will need a lot of metadata editing, but at least you'll 
+    have a good start for structuring the body. -->
    
 
    <!-- PARAMETERS -->
    
    <!-- STEP 1: THE MODEL -->
    
-   <!-- Where is the model relative to the catalyzing input? Default is the @href for the first <model> within the input file. -->
+   <!-- Where is the model relative to the catalyzing input? Default is the @href for the first <model>
+      within the input file. -->
    <xsl:param name="model-uri-relative-to-catalyzing-input" as="xs:string?"
       select="tan:first-loc-available(/*/tan:head/tan:model[1])"/>
    
-   <!-- What top-level divs should be excluded (kept intact) from the input? Expected: a regular expression matching @n. 
-      If blank, this has no effect. -->
+   <!-- What top-level divs should be excluded (kept intact) from the input? Expected: a regular expression
+      matching @n. If blank, this has no effect. -->
    <xsl:param name="exclude-from-model-top-level-divs-with-attr-n-values-regex" as="xs:string?" select="''"/>
    
-   <!-- What div types should be excluded from the remodel? Expected: a regular expression matching @type. If blank, 
-      this has no effect. -->
+   <!-- What div types should be excluded from the remodel? Expected: a regular expression matching @type.
+      If blank, this has no effect. -->
    <xsl:param name="exclude-from-model-divs-with-attr-type-values-regex" as="xs:string?" select="''"/>
    
    
@@ -130,11 +149,11 @@
    <xsl:param name="break-text-at-material-divs-regex" as="xs:string"
       select="$tan:word-end-regex"/>
    
-   <!-- What regular expression should be used to decide where breaks are allowed if the model has a 
-      logical (non-scriptum) reference system? $tan:clause-end-regex is good for texts with ample punctuation; 
-      if a language makes use of word spaces, $tan:word-end-regex will prevent individual words from being
-      divided.
-   -->
+   <!-- What regular expression should be used to decide where breaks are allowed if the model has a logical
+      (non-scriptum) reference system? See parameters/params-application-language.xsl for parameters
+      whose regular expressions could be used: sentence-end-regex will likely result in too rough an
+      alignment; clause-end-regex is good for texts with ample punctuation; if a language makes use of
+      word spaces, word-end-regex will prevent individual words from being divided. -->
    <xsl:param name="break-text-at-logical-divs-regex" as="xs:string" select="$tan:clause-end-regex"
    />
    

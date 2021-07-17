@@ -5,7 +5,8 @@
    xmlns:array="http://www.w3.org/2005/xpath-functions/array"
    exclude-result-prefixes="#all" version="3.0">
 
-   <!-- Welcome to the TAN application for displaying TAN/TEI files as HTML. -->
+   <!-- Welcome to TAN2HTML, the TAN application that converts TAN / TEI files to HTML -->
+   <!-- Version 2021-07-07-->
 
    <!-- This is the public interface for the application. The code that runs the application can
       be found by following the links in the <xsl:include> or <xsl:import> at the bottom of this
@@ -31,6 +32,9 @@
       parameters are configured (see below).
    -->
    
+   <!-- WARNING: CERTAIN FEATURES HAVE YET TO BE IMPLEMENTED -->
+   <!-- * Need to wholly overhaul the default CSS and JavaScript files in output/css and output/js * Need to
+      build parameters to allow users to drop elements from the HTML DOM. -->
    
 
    <!-- PARAMETERS -->
@@ -53,7 +57,7 @@
    
    <!-- OUTPUT -->
    
-   <!-- Where is the HTML file that should be used as a template for the TAN/TEI file? -->
+   <!-- Where is the HTML file that should be used as a template for the output? -->
    <xsl:param name="html-template-uri-resolved" select="$tan:default-html-template-uri-resolved"/>
    
    

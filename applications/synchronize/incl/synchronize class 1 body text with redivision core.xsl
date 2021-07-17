@@ -15,9 +15,16 @@
    <xsl:param name="tan:stylesheet-url" select="static-base-uri()"/>
    <xsl:param name="tan:stylesheet-iri"
       select="'tag:textalign.net,2015:stylesheet:update-tan-t-text-to-redivision'"/>
-   <xsl:param name="tan:stylesheet-name" select="'TAN class 1 body synchronizing utility'"/>
-   <xsl:param name="tan:change-message" select="concat('Replaced body text with redivision ', xs:string($redivision-number))"/>
+   <xsl:param name="tan:stylesheet-name" select="'Body Sync'"/>
+   <xsl:param name="tan:stylesheet-activity"
+      select="'updates a transcription in a class 1 file to match that in a redivision'"/>
    <xsl:param name="tan:stylesheet-is-core-tan-application" select="true()"/>
+   <xsl:param name="tan:stylesheet-change-log">
+      <change xmlns="tag:textalign.net,2015:ns" who="kalvesmaki" when="2021-07-07">Edited,
+         prepared for TAN 2021 release.</change>
+   </xsl:param>
+   <xsl:param name="tan:stylesheet-change-message"
+      select="concat('Replaced body text with redivision ', xs:string($redivision-number))"/>
    
    <xsl:output use-character-maps="tan:see-special-chars"/>
    

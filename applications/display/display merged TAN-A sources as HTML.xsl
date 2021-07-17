@@ -5,7 +5,11 @@
    xmlns:array="http://www.w3.org/2005/xpath-functions/array"
    exclude-result-prefixes="#all" version="3.0">
 
-   <!-- Welcome to the TAN application for merging work versions. -->
+   <!-- Welcome to Parabola, the TAN application that arranges work versions in parallel for the
+      web -->
+   <!-- Version 2021-07-07-->
+   <!-- This application allows you to take a library of TAN/TEI files with multiple versions of
+      each work and present them in an interactive HTML page.-->
 
    <!-- This is the public interface for the application. The code that runs the application can
       be found by following the links in the <xsl:include> or <xsl:import> at the bottom of this
@@ -15,6 +19,15 @@
       transformation scenario in Oxygen. If you are comfortable with XSLT, try creating your own
       stylesheet, then import this one, selectively changing the parameters as needed.-->
    
+   <!-- OUTPUT EXAMPLES --> 
+   <!--http://textalign.net/output/aristotle-categories-ref-bekker-page-col-line.html
+      Aristotle, Categories, in eight versions, six languages-->
+   <!--https://textalign.net/output/cpg%204425.TAN-A-div-2018-03-09.html
+      Homilies on the Gospel of John, John Chrysostom, four versions, two languages-->
+   <!--https://evagriusponticus.net/cpg2430/cpg2430-full-for-reading.html
+      The Praktikos by Evagrius of Pontus, three languages, with Bible quotations-->
+   <!--https://textalign.net/quran/quran.ara+grc+syr+lat+deu+eng.html
+      Qur'an in eighteen versions, six languages-->
 
    <!-- DESCRIPTION -->
 
@@ -24,22 +37,28 @@
       groups and sequences determined by parameters explained below. -->
    <!-- Secondary output: none -->
 
-   <!-- This application is one of the most significant for TAN files, because it allows one to juxtapose 
-      any number of versions of a work in the same reading space, and to situate quotations or annotations. 
-      It is useful both in the middle stages of a project, where you might need to check on and adjust the 
-      alignment of a text in light of its peers, or at the end stages of a project, where you might be 
-      publishing a parallel edition, or using one in for study or teaching. -->
+   <!-- This application is one of the most significant for TAN files, because it allows one to juxtapose any
+      number of versions of a work in the same reading space, and to situate quotations or annotations.
+      It is useful both in the middle stages of a project, where you might need to check on and adjust
+      the alignment of a text in light of its peers, or at the end stages of a project, where you might
+      be publishing a parallel edition, or using one in for study or teaching. -->
    
    <!-- Nota bene:
       * This application has many fine-tuned configuration options. Read through the whole file
       to see what is available.
-      * This application is a work in progress see $tan:stylesheet-to-do-list, at
-      incl/merge%20work%20versions%20core.xsl for a list of things that must be attended to.
       * This application processes a single work, assumed to be the work of the first <source> in the
       catalyzing TAN-A file. If you want a different source, promote the relevant <source> to the first
       position.
    -->
    
+   <!-- WARNING: CERTAIN FEATURES HAVE YET TO BE IMPLEMENTED -->
+   <!-- * Simplify the routine. This was converted from an inferior workflow, and it is admittedly wretched
+      in the number of passes that are needed to be used to get to the output. * Annotations need a lot of
+      work. They should be placed into the merge early. In fact, the whole workflow needs to be revised,
+      with most structural work done before attempting to convert to HTML. * Develop output option using
+      nested HTML divs, to parallel the existing output that uses HTML tables * Integrate diff/collate
+      into cells, on both the global and local level. * Support in the css bar clicking source id labels
+      on and off. * Add labels for divs higher than version wrappers. -->
    
 
    <!-- PARAMETERS -->
@@ -210,9 +229,9 @@
       with TEI elements instead of plain text, but this may result in unexpected appearance of the HTML.
       Normally this can be attended to through CSS. -->
    
-   <!-- What batch replacements should be applied to claim components? Batch replacements are a sequence 
-      of elements (any name), each with @pattern, @replacement, and perhaps @flags and @message. The attributes
-      imitate the behavior of fn:replace(). -->
+   <!-- What batch replacements should be applied to claim components? Batch replacements are a sequence of
+      elements (any name), each with @pattern, @replacement, and perhaps @flags and @message. The
+      attributes imitate the behavior of fn:replace(). -->
    <xsl:param name="claim-component-batch-replacements" as="element()*"/>
    
 
@@ -266,12 +285,11 @@
    </xsl:param>
    
    
-   <!-- When converting the merge to HTML, the process is a simple, straightforward conversion until reaching
-      a place in the merge superstructure where the next level deeper has one or more versions. At that point
-      we have a leaf merge, which will certain have leaf divs from one or more versions, but may include some
-      versions that go deeper (they aren't leaf divs yet). Nevertheless, for comparison sake, the *leaf merge*
-      not the leaf divs are the key factor in building the HTML file.
-   -->
+   <!-- When converting the merge to HTML, the process is a simple, straightforward conversion until
+      reaching a place in the merge superstructure where the next level deeper has one or more versions.
+      At that point we have a leaf merge, which will certain have leaf divs from one or more versions,
+      but may include some versions that go deeper (they aren't leaf divs yet). Nevertheless, for
+      comparison sake, the *leaf merge* not the leaf divs are the key factor in building the HTML file. -->
    
    <!-- What class name should be applied to a <div> that wraps a leaf merge? -->
    <xsl:param name="version-wrapper-class-name" select="'version-wrapper'"/>
@@ -281,18 +299,17 @@
       ../../parameters/params-function-diff.xsl
       ../../parameters/params-application-diff.xsl -->
    
-   <!-- In a group within a leaf merge, tan:diff() and tan:collate() can be turned on. If the versions are 
-      close enough to each other, they will be collapsed into a single reading that shows through markup
-      where each version differs from the others. This is a very powerful benefit for comparative reading, 
-      because it lets readers see exactly where versions differ from each other. But because intermingled 
-      text illustrating differences breaks up words and phrases, it interferes with browser-based searches,
-      one of the more important utilities of this output format. So if you prioritize text searches over 
-      reading, do not turn on the diff/collate. 
-    -->
+   <!-- In a group within a leaf merge, tan:diff() and tan:collate() can be turned on. If the versions are close
+      enough to each other, they will be collapsed into a single reading that shows through markup where
+      each version differs from the others. This is a very powerful benefit for comparative reading,
+      because it lets readers see exactly where versions differ from each other. But because intermingled
+      text illustrating differences breaks up words and phrases, it interferes with browser-based
+      searches, one of the more important utilities of this output format. So if you prioritize text
+      searches over reading, do not turn on the diff/collate. -->
    
-   <!-- How similar should a group of versions in a div be before they are rendered as a difference or 
-      collation? Anything other than a number between 0 and 1 will be ignored. If the aggregate difference 
-      of a group of versions is less than the decimal provided, no diff/collate will be substituted. -->
+   <!-- How similar should a group of versions in a div be before they are rendered as a difference or collation?
+      Anything other than a number between 0 and 1 will be ignored. If the aggregate difference of a
+      group of versions is less than the decimal provided, no diff/collate will be substituted. -->
    <xsl:param name="render-as-diff-threshhold" as="xs:decimal?" select="1.0"/>
    <!-- What text differences should be ignored when compiling difference statistics? These are built 
       into a series of elements that group <c>s, e.g. <alias><c>'</c><c>"</c></alias> would, for 
@@ -309,9 +326,11 @@
    <xsl:param name="include-venns" as="xs:boolean" select="false()"/>
 
 
-   <!-- Should the width of each <td> be fixed according to their number? This will create even columns, but perhaps leave large gaps where versions are short or missing. -->
+   <!-- Should the width of each <td> be fixed according to their number? This will create even columns, but
+      perhaps leave large gaps where versions are short or missing. -->
    <xsl:param name="td-widths-proportionate-to-td-count" as="xs:boolean" select="false()"/>
-   <!-- Should the width of each <td> be fixed according to string length? This will create uneven columns, but balance space. Normally this can be handled by the browser via CSS. -->
+   <!-- Should the width of each <td> be fixed according to string length? This will create uneven columns, 
+      but balance space. Normally this can be handled by the browser via CSS. -->
    <xsl:param name="td-widths-proportionate-to-string-length" as="xs:boolean" select="false()"/>
    
 
@@ -319,16 +338,16 @@
       color will be determined according to any external CSS files. -->
    <xsl:param name="imprint-color-css" as="xs:boolean" select="true()"/>
    
-   <!-- If the preceding parameter is true, then the following five parameters have force; if false, they
-      are ignored. 
-         The color schemes below are based upon array. The primary color array will be used to allocate 
-      colors in the topmost groups. Groups inside, from the second tier down, will take the inherited color 
-      and blend it with the appropriate item from the secondary color array. At the very end, when colors are 
-      assigned to individual sources, the terminal color array will be applied. In each array, the second 
-      item will be applied first.
+   <!-- If the preceding parameter is true, then the following five parameters have force; if false, they are
+      ignored.
+         The color schemes below are based upon array. The primary color array will be used to allocate
+      colors in the topmost groups. Groups inside, from the second tier down, will take the inherited
+      color and blend it with the appropriate item from the secondary color array. At the very end, when
+      colors are assigned to individual sources, the terminal color array will be applied. In each array,
+      the second item will be applied first.
          Note, three of these parameters are arrays, which are special data constructions introduced to
       XPath and XSLT.
-   -->
+ -->
    
    <!-- What should the primary color scheme be? Expected: an array, each member consisting of three
       integers from 0 through 255, e.g., [(0,0,0), (255,255,255)], representing red, yellow, blue values. -->

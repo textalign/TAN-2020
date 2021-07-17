@@ -18,14 +18,20 @@
     <!-- The predecessor to this stylesheet is tag:textalign.net,2015:stylesheet:create-quotations-from-tan-a -->
     <xsl:param name="tan:stylesheet-iri"
         select="'tag:textalign.net,2015:application:convert-tan-file'"/>
-    <xsl:param name="tan:stylesheet-name" as="xs:string" select="'TAN conversion'"/>
+    <xsl:param name="tan:stylesheet-name" as="xs:string" select="'TAN Updater'"/>
+    <xsl:param name="tan:stylesheet-activity"
+        select="'converts TAN files from older versions to the current version'"/>
     <xsl:param name="tan:stylesheet-url" select="static-base-uri()"/>
     <xsl:param name="tan:stylesheet-is-core-tan-application" select="true()"/>
     <xsl:param name="tan:stylesheet-to-do-list">
         <to-do xmlns="tag:textalign.net,2015:ns">
         </to-do>
     </xsl:param>
-    <xsl:param name="tan:change-message" select="'Converted ' || $tan:doc-id || ' to version 2021'"
+    <xsl:param name="tan:stylesheet-change-log">
+        <change xmlns="tag:textalign.net,2015:ns" who="kalvesmaki" when="2021-07-07">Edited,
+            prepared for TAN 2021 release.</change>
+    </xsl:param>
+    <xsl:param name="tan:stylesheet-change-message" select="'Converted ' || $tan:doc-id || ' to version 2021'"
     />
     
     <xsl:variable name="output-pass-1" as="document-node()">

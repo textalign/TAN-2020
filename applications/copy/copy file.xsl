@@ -4,8 +4,9 @@
    xmlns:tei="http://www.tei-c.org/ns/1.0" xmlns:tan="tag:textalign.net,2015:ns"
    exclude-result-prefixes="#all" version="3.0">
 
-   <!-- Welcome to the TAN application for synchronizing the text in the body of a class 1 file 
-      with one of its <redivision>s. -->
+   <!-- Welcome to File Copy Utility, the TAN application that copies a file to a location, updating
+      internal relative URLs -->
+   <!-- Version 2021-07-07-->
 
    <!-- This is the public interface for the application. The code that runs the application can
       be found by following the links in the <xsl:include> or <xsl:import> at the bottom of this
@@ -21,7 +22,8 @@
    <!-- Primary (catalyzing) input: any file -->
    <!-- Secondary input: none (but see parameters) -->
    <!-- Primary output: none -->
-   <!-- Secondary output: the file copied to the target location, revising any relative @hrefs in light of the target location -->
+   <!-- Secondary output: the file copied to the target location, revising any relative @hrefs in light of
+      the target location -->
 
    <!-- Nota bene:
       * Links are based on common constructs: @href everywhere, but @src only in HTML files. Processing
@@ -30,7 +32,8 @@
 
    <!-- PARAMETERS -->
 
-   <!-- To what path should the file be copied? If a relative path, it will be resolved against the base path of the catalyzing input. -->
+   <!-- To what path should the file be copied? If a relative path, it will be resolved against the base
+      path of the catalyzing input. -->
    <xsl:param name="target-uri" as="xs:string" required="yes"/>
 
    <!-- Do you wish to convert any relative links to absolute links before saving? -->
