@@ -10,7 +10,7 @@
 
     <!-- Core application for remodeling a text. -->
     
-    <xsl:include href="convert%20docx%20to%20TAN%20core.xsl"/>
+    <xsl:include href="Body%20Builder%20docx.xsl"/>
     <xsl:import href="../../../functions/TAN-function-library.xsl"/>
     
 
