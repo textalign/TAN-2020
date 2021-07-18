@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<serialized version="22.1" xml:space="preserve">
+<serialized xml:space="preserve">
 	<serializableOrderedMap>
 		<entry>
 			<String>document.types</String>
@@ -31,7 +31,7 @@
 											<String>authorExtensionDescriptor/actionDescriptors</String>
 										</field>
 										<field name="index">
-											<Integer>90</Integer>
+											<Integer>92</Integer>
 										</field>
 										<field name="value">
 											<action>
@@ -66,7 +66,7 @@
 																<serializableOrderedMap>
 																	<entry>
 																		<String>script</String>
-																		<String>${baseFramework}/applications/configure%20oXygen%20author/get-lm-data.xsl
+																		<String>${baseFramework}/utilities/for%20Oxygen%20Author/get-lm-data.xsl
 </String>
 																	</entry>
 																	<entry>
@@ -102,7 +102,7 @@
 											<String>authorExtensionDescriptor/actionDescriptors</String>
 										</field>
 										<field name="index">
-											<Integer>91</Integer>
+											<Integer>93</Integer>
 										</field>
 										<field name="value">
 											<action>
@@ -145,7 +145,7 @@
 																	</entry>
 																	<entry>
 																		<String>script</String>
-																		<String>${baseFramework}/applications/configure%20oXygen%20author/detect-lang.xsl
+																		<String>${baseFramework}/utilities/for%20Oxygen%20Author/detect-lang.xsl
 </String>
 																	</entry>
 																	<entry>
@@ -181,7 +181,7 @@
 											<String>authorExtensionDescriptor/actionDescriptors</String>
 										</field>
 										<field name="index">
-											<Integer>92</Integer>
+											<Integer>94</Integer>
 										</field>
 										<field name="value">
 											<action>
@@ -246,7 +246,7 @@ get-lm-data-prelim
 											<String>authorExtensionDescriptor/actionDescriptors</String>
 										</field>
 										<field name="index">
-											<Integer>93</Integer>
+											<Integer>95</Integer>
 										</field>
 										<field name="value">
 											<action>
@@ -316,7 +316,7 @@ get-lm-data-prelim
 											<String>authorExtensionDescriptor/actionDescriptors</String>
 										</field>
 										<field name="index">
-											<Integer>94</Integer>
+											<Integer>96</Integer>
 										</field>
 										<field name="value">
 											<action>
@@ -386,7 +386,7 @@ get-lm-data-prelim
 											<String>authorExtensionDescriptor/actionDescriptors</String>
 										</field>
 										<field name="index">
-											<Integer>95</Integer>
+											<Integer>97</Integer>
 										</field>
 										<field name="value">
 											<action>
@@ -450,7 +450,7 @@ process-link-to
 											<String>authorExtensionDescriptor/actionDescriptors</String>
 										</field>
 										<field name="index">
-											<Integer>96</Integer>
+											<Integer>98</Integer>
 										</field>
 										<field name="value">
 											<action>
@@ -520,7 +520,7 @@ process-link-to
 											<String>authorExtensionDescriptor/actionDescriptors</String>
 										</field>
 										<field name="index">
-											<Integer>97</Integer>
+											<Integer>99</Integer>
 										</field>
 										<field name="value">
 											<action>
@@ -602,48 +602,6 @@ process-link-to
 									</poPatch>
 									<poPatch>
 										<field name="fieldPath">
-											<String>authorExtensionDescriptor/popupMenuDescriptor/menuEntriesDescriptorList/[6]/menuEntriesDescriptorList</String>
-										</field>
-										<field name="index">
-											<Integer>2</Integer>
-										</field>
-										<field name="value">
-											<menuItem>
-												<field name="actionID">
-													<String>add-source</String>
-												</field>
-											</menuItem>
-										</field>
-										<field name="patchHandling">
-											<String>addIndex</String>
-										</field>
-										<field name="anchor">
-											<null/>
-										</field>
-									</poPatch>
-									<poPatch>
-										<field name="fieldPath">
-											<String>authorExtensionDescriptor/popupMenuDescriptor/menuEntriesDescriptorList/[6]/menuEntriesDescriptorList</String>
-										</field>
-										<field name="index">
-											<Integer>3</Integer>
-										</field>
-										<field name="value">
-											<menuItem>
-												<field name="actionID">
-													<String>add-morphology</String>
-												</field>
-											</menuItem>
-										</field>
-										<field name="patchHandling">
-											<String>addIndex</String>
-										</field>
-										<field name="anchor">
-											<null/>
-										</field>
-									</poPatch>
-									<poPatch>
-										<field name="fieldPath">
 											<String>authorExtensionDescriptor/additionalToolbarsDescriptors</String>
 										</field>
 										<field name="index">
@@ -691,6 +649,23 @@ process-link-to
 										</field>
 										<field name="patchHandling">
 											<String>addIndex</String>
+										</field>
+										<field name="anchor">
+											<null/>
+										</field>
+									</poPatch>
+									<poPatch>
+										<field name="fieldPath">
+											<String>doctypeRules</String>
+										</field>
+										<field name="index">
+											<Integer>2</Integer>
+										</field>
+										<field name="value">
+											<null/>
+										</field>
+										<field name="patchHandling">
+											<String>removeIndex</String>
 										</field>
 										<field name="anchor">
 											<null/>
@@ -774,23 +749,6 @@ process-link-to
 									</poPatch>
 									<poPatch>
 										<field name="fieldPath">
-											<String>defaultValidationScenarios</String>
-										</field>
-										<field name="index">
-											<Integer>-1</Integer>
-										</field>
-										<field name="value">
-											<null/>
-										</field>
-										<field name="patchHandling">
-											<String>set</String>
-										</field>
-										<field name="anchor">
-											<null/>
-										</field>
-									</poPatch>
-									<poPatch>
-										<field name="fieldPath">
 											<String>priority</String>
 										</field>
 										<field name="index">
@@ -831,7 +789,7 @@ process-link-to
 								<cssFile-array>
 									<cssFile>
 										<field name="href">
-											<String>${framework}/applications/configure%20oXygen%20author/TAN-core.css</String>
+											<String>${framework}/utilities/for%20Oxygen%20Author/TAN-core.css</String>
 										</field>
 										<field name="title">
 											<String>TAN core</String>
@@ -1714,7 +1672,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/applications/configure%20oXygen%20author/get-first-word.xsl</String>
+																<String>${framework}/utilities/for%20Oxygen%20Author/get-first-word.xsl</String>
 															</entry>
 															<entry>
 																<String>targetLocation</String>
@@ -1772,7 +1730,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/applications/configure%20oXygen%20author/get-first-clause.xsl</String>
+																<String>${framework}/utilities/for%20Oxygen%20Author/get-first-clause.xsl</String>
 															</entry>
 															<entry>
 																<String>targetLocation</String>
@@ -1830,7 +1788,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/applications/configure%20oXygen%20author/get-first-sent.xsl</String>
+																<String>${framework}/utilities/for%20Oxygen%20Author/get-first-sent.xsl</String>
 															</entry>
 															<entry>
 																<String>targetLocation</String>
@@ -1888,7 +1846,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/applications/configure%20oXygen%20author/get-first-char.xsl</String>
+																<String>${framework}/utilities/for%20Oxygen%20Author/get-first-char.xsl</String>
 															</entry>
 															<entry>
 																<String>targetLocation</String>
@@ -1946,7 +1904,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/applications/configure%20oXygen%20author/cut-first-word.xsl</String>
+																<String>${framework}/utilities/for%20Oxygen%20Author/cut-first-word.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -2008,7 +1966,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/applications/configure%20oXygen%20author/cut-first-clause.xsl</String>
+																<String>${framework}/utilities/for%20Oxygen%20Author/cut-first-clause.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -2070,7 +2028,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/applications/configure%20oXygen%20author/cut-first-sent.xsl</String>
+																<String>${framework}/utilities/for%20Oxygen%20Author/cut-first-sent.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -2132,7 +2090,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/applications/configure%20oXygen%20author/cut-first-char.xsl</String>
+																<String>${framework}/utilities/for%20Oxygen%20Author/cut-first-char.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -2194,7 +2152,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/applications/configure%20oXygen%20author/get-last-word.xsl</String>
+																<String>${framework}/utilities/for%20Oxygen%20Author/get-last-word.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -2256,7 +2214,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/applications/configure%20oXygen%20author/get-last-clause.xsl</String>
+																<String>${framework}/utilities/for%20Oxygen%20Author/get-last-clause.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -2318,7 +2276,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/applications/configure%20oXygen%20author/get-last-sent.xsl</String>
+																<String>${framework}/utilities/for%20Oxygen%20Author/get-last-sent.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -2380,7 +2338,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/applications/configure%20oXygen%20author/get-last-char.xsl</String>
+																<String>${framework}/utilities/for%20Oxygen%20Author/get-last-char.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -2442,7 +2400,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/applications/configure%20oXygen%20author/cut-last-word.xsl</String>
+																<String>${framework}/utilities/for%20Oxygen%20Author/cut-last-word.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -2504,7 +2462,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/applications/configure%20oXygen%20author/cut-last-clause.xsl</String>
+																<String>${framework}/utilities/for%20Oxygen%20Author/cut-last-clause.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -2566,7 +2524,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/applications/configure%20oXygen%20author/cut-last-sent.xsl</String>
+																<String>${framework}/utilities/for%20Oxygen%20Author/cut-last-sent.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -2628,7 +2586,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/applications/configure%20oXygen%20author/cut-last-char.xsl</String>
+																<String>${framework}/utilities/for%20Oxygen%20Author/cut-last-char.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -2661,7 +2619,7 @@ go-to-prev-leaf-div</String>
 											<String>Move caret to the beginning of the next leaf element</String>
 										</field>
 										<field name="largeIconPath">
-											<String>${framework}/applications/configure%20oXygen%20author/img/next-leaf.png</String>
+											<String>${framework}/utilities/for%20Oxygen%20Author/img/next-leaf.png</String>
 										</field>
 										<field name="smallIconPath">
 											<String></String>
@@ -2790,7 +2748,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/applications/configure%20oXygen%20author/get-last-word.xsl</String>
+																<String>${framework}/utilities/for%20Oxygen%20Author/get-last-word.xsl</String>
 															</entry>
 															<entry>
 																<String>targetLocation</String>
@@ -2848,7 +2806,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/applications/configure%20oXygen%20author/get-last-clause.xsl</String>
+																<String>${framework}/utilities/for%20Oxygen%20Author/get-last-clause.xsl</String>
 															</entry>
 															<entry>
 																<String>targetLocation</String>
@@ -2906,7 +2864,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/applications/configure%20oXygen%20author/get-last-sent.xsl</String>
+																<String>${framework}/utilities/for%20Oxygen%20Author/get-last-sent.xsl</String>
 															</entry>
 															<entry>
 																<String>targetLocation</String>
@@ -2964,7 +2922,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/applications/configure%20oXygen%20author/get-last-char.xsl</String>
+																<String>${framework}/utilities/for%20Oxygen%20Author/get-last-char.xsl</String>
 															</entry>
 															<entry>
 																<String>targetLocation</String>
@@ -3022,7 +2980,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/applications/configure%20oXygen%20author/cut-last-word.xsl</String>
+																<String>${framework}/utilities/for%20Oxygen%20Author/cut-last-word.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -3084,7 +3042,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/applications/configure%20oXygen%20author/cut-last-clause.xsl</String>
+																<String>${framework}/utilities/for%20Oxygen%20Author/cut-last-clause.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -3146,7 +3104,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/applications/configure%20oXygen%20author/cut-last-sent.xsl</String>
+																<String>${framework}/utilities/for%20Oxygen%20Author/cut-last-sent.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -3208,7 +3166,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/applications/configure%20oXygen%20author/cut-last-char.xsl</String>
+																<String>${framework}/utilities/for%20Oxygen%20Author/cut-last-char.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -3270,7 +3228,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/applications/configure%20oXygen%20author/get-first-word.xsl</String>
+																<String>${framework}/utilities/for%20Oxygen%20Author/get-first-word.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -3332,7 +3290,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/applications/configure%20oXygen%20author/get-first-clause.xsl</String>
+																<String>${framework}/utilities/for%20Oxygen%20Author/get-first-clause.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -3394,7 +3352,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/applications/configure%20oXygen%20author/get-first-sent.xsl</String>
+																<String>${framework}/utilities/for%20Oxygen%20Author/get-first-sent.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -3456,7 +3414,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/applications/configure%20oXygen%20author/get-first-char.xsl</String>
+																<String>${framework}/utilities/for%20Oxygen%20Author/get-first-char.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -3518,7 +3476,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/applications/configure%20oXygen%20author/cut-first-word.xsl</String>
+																<String>${framework}/utilities/for%20Oxygen%20Author/cut-first-word.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -3580,7 +3538,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/applications/configure%20oXygen%20author/cut-first-clause.xsl</String>
+																<String>${framework}/utilities/for%20Oxygen%20Author/cut-first-clause.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -3642,7 +3600,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/applications/configure%20oXygen%20author/cut-first-sent.xsl</String>
+																<String>${framework}/utilities/for%20Oxygen%20Author/cut-first-sent.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -3704,7 +3662,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/applications/configure%20oXygen%20author/cut-first-char.xsl</String>
+																<String>${framework}/utilities/for%20Oxygen%20Author/cut-first-char.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -3737,7 +3695,7 @@ go-to-prev-leaf-div</String>
 											<String>Move caret to the start of the previous leaf element</String>
 										</field>
 										<field name="largeIconPath">
-											<String>${framework}/applications/configure%20oXygen%20author/img/prev-leaf.png</String>
+											<String>${framework}/utilities/for%20Oxygen%20Author/img/prev-leaf.png</String>
 										</field>
 										<field name="smallIconPath">
 											<String></String>
@@ -3787,7 +3745,7 @@ go-to-prev-leaf-div</String>
 											<String>Move caret to the beginning of the next top level div</String>
 										</field>
 										<field name="largeIconPath">
-											<String>${framework}/applications/configure%20oXygen%20author/img/next-tld.png</String>
+											<String>${framework}/utilities/for%20Oxygen%20Author/img/next-tld.png</String>
 										</field>
 										<field name="smallIconPath">
 											<String></String>
@@ -3837,7 +3795,7 @@ go-to-prev-leaf-div</String>
 											<String>Move caret to the beginning of the previous top level div</String>
 										</field>
 										<field name="largeIconPath">
-											<String>${framework}/applications/configure%20oXygen%20author/img/prev-tld.png</String>
+											<String>${framework}/utilities/for%20Oxygen%20Author/img/prev-tld.png</String>
 										</field>
 										<field name="smallIconPath">
 											<String></String>
@@ -4020,7 +3978,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/applications/configure%20oXygen%20author/get-marked-text.xsl</String>
+																<String>${framework}/utilities/for%20Oxygen%20Author/get-marked-text.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -4082,7 +4040,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/applications/configure%20oXygen%20author/get-marked-text.xsl</String>
+																<String>${framework}/utilities/for%20Oxygen%20Author/get-marked-text.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -4144,7 +4102,7 @@ go-to-prev-leaf-div</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/applications/configure%20oXygen%20author/cut-marked-text.xsl</String>
+																<String>${framework}/utilities/for%20Oxygen%20Author/cut-marked-text.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -4303,7 +4261,7 @@ remove-marked-text</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/applications/configure%20oXygen%20author/search-for-IRI+name.xsl</String>
+																<String>${framework}/utilities/for%20Oxygen%20Author/search-for-IRI+name.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -4336,7 +4294,7 @@ remove-marked-text</String>
 											<String>Normalize Unicode (NFC)</String>
 										</field>
 										<field name="largeIconPath">
-											<String>${framework}/applications/configure%20oXygen%20author/img/nfc.png</String>
+											<String>${framework}/utilities/for%20Oxygen%20Author/img/nfc.png</String>
 										</field>
 										<field name="smallIconPath">
 											<String></String>
@@ -4361,7 +4319,7 @@ remove-marked-text</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/applications/configure%20oXygen%20author/normalize-unicode.xsl</String>
+																<String>${framework}/utilities/for%20Oxygen%20Author/normalize-unicode.xsl</String>
 															</entry>
 														</serializableOrderedMap>
 													</field>
@@ -4461,7 +4419,7 @@ remove-marked-text</String>
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/applications/configure%20oXygen%20author/replace-text-with-string-base.xsl</String>
+																<String>${framework}/utilities/for%20Oxygen%20Author/replace-text-with-string-base.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -4494,7 +4452,7 @@ remove-marked-text</String>
 											<String>Replace each character in the selected text with its base character</String>
 										</field>
 										<field name="largeIconPath">
-											<String>${framework}/applications/configure%20oXygen%20author/img/a-to-a.png</String>
+											<String>${framework}/utilities/for%20Oxygen%20Author/img/a-to-a.png</String>
 										</field>
 										<field name="smallIconPath">
 											<String></String>
@@ -4571,7 +4529,7 @@ replace-marked-text-with-string-base
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/applications/configure%20oXygen%20author/replace-text-with-string-composite.xsl</String>
+																<String>${framework}/utilities/for%20Oxygen%20Author/replace-text-with-string-composite.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -4604,7 +4562,7 @@ replace-marked-text-with-string-base
 											<String>Replace each character in the selected text with its characters that use it as a base</String>
 										</field>
 										<field name="largeIconPath">
-											<String>${framework}/applications/configure%20oXygen%20author/img/a-to-aaa.png</String>
+											<String>${framework}/utilities/for%20Oxygen%20Author/img/a-to-aaa.png</String>
 										</field>
 										<field name="smallIconPath">
 											<String></String>
@@ -4652,7 +4610,7 @@ replace-marked-text-with-string-composite
 											<String>Resolve the text inside the braces of a \u{} regular expression</String>
 										</field>
 										<field name="largeIconPath">
-											<String>${framework}/applications/configure%20oXygen%20author/img/u.png</String>
+											<String>${framework}/utilities/for%20Oxygen%20Author/img/u.png</String>
 										</field>
 										<field name="smallIconPath">
 											<String></String>
@@ -4681,7 +4639,7 @@ replace-marked-text-with-string-composite
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/applications/configure%20oXygen%20author/resolve-escape-u.xsl</String>
+																<String>${framework}/utilities/for%20Oxygen%20Author/resolve-escape-u.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -4714,7 +4672,7 @@ replace-marked-text-with-string-composite
 											<String>Use the current text to search VIAF for IRI + name patterns that might be appropriate</String>
 										</field>
 										<field name="largeIconPath">
-											<String>${framework}/applications/configure%20oXygen%20author/img/viaf.png</String>
+											<String>${framework}/utilities/for%20Oxygen%20Author/img/viaf.png</String>
 										</field>
 										<field name="smallIconPath">
 											<String></String>
@@ -4743,7 +4701,7 @@ replace-marked-text-with-string-composite
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/applications/configure%20oXygen%20author/get-iri-name-via-viaf.xsl</String>
+																<String>${framework}/utilities/for%20Oxygen%20Author/get-iri-name-via-viaf.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -4776,7 +4734,7 @@ replace-marked-text-with-string-composite
 											<String>Use the current text to search the Library of Congress catalog for IRI + name patterns that might be appropriate</String>
 										</field>
 										<field name="largeIconPath">
-											<String>${framework}/applications/configure%20oXygen%20author/img/loc.png</String>
+											<String>${framework}/utilities/for%20Oxygen%20Author/img/loc.png</String>
 										</field>
 										<field name="smallIconPath">
 											<String></String>
@@ -4805,7 +4763,7 @@ replace-marked-text-with-string-composite
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/applications/configure%20oXygen%20author/get-iri-name-via-loc.xsl</String>
+																<String>${framework}/utilities/for%20Oxygen%20Author/get-iri-name-via-loc.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -4838,7 +4796,7 @@ replace-marked-text-with-string-composite
 											<String>Using the value of an element's @href insert the referenced TAN file's IRI and name values</String>
 										</field>
 										<field name="largeIconPath">
-											<String>${framework}/applications/configure%20oXygen%20author/img/href-in.png</String>
+											<String>${framework}/utilities/for%20Oxygen%20Author/img/href-in.png</String>
 										</field>
 										<field name="smallIconPath">
 											<String></String>
@@ -4859,7 +4817,7 @@ replace-marked-text-with-string-composite
 														<serializableOrderedMap>
 															<entry>
 																<String>script</String>
-																<String>${framework}/applications/configure%20oXygen%20author/get-iri-name-via-href.xsl</String>
+																<String>${framework}/utilities/for%20Oxygen%20Author/get-iri-name-via-href.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -4917,7 +4875,7 @@ replace-marked-text-with-string-composite
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/applications/configure%20oXygen%20author/toggle-soft-hyphen.xsl</String>
+																<String>${framework}/utilities/for%20Oxygen%20Author/toggle-soft-hyphen.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -4975,7 +4933,7 @@ replace-marked-text-with-string-composite
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/applications/configure%20oXygen%20author/update-text-via-redivided-copy.xsl</String>
+																<String>${framework}/utilities/for%20Oxygen%20Author/update-text-via-redivided-copy.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -5041,7 +4999,7 @@ replace-marked-text-with-string-composite
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${framework}/applications/configure%20oXygen%20author/normalize-leaf-div-text.xsl</String>
+																<String>${framework}/utilities/for%20Oxygen%20Author/normalize-leaf-div-text.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -5250,8 +5208,12 @@ process-link-to
 																<String>Replace</String>
 															</entry>
 															<entry>
+																<String>caretPosition</String>
+																<String>After</String>
+															</entry>
+															<entry>
 																<String>script</String>
-																<String>${framework}/applications/configure%20oXygen%20author/link-to-file.xsl</String>
+																<String>${framework}/utilities/for%20Oxygen%20Author/link-to-file.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -5559,7 +5521,7 @@ execute-shift-text
 															</entry>
 															<entry>
 																<String>script</String>
-																<String>${pdu}/applications/configure%20oXygen%20author/shift-text.xsl</String>
+																<String>${pdu}/utilities/for%20Oxygen%20Author/shift-text.xsl</String>
 															</entry>
 															<entry>
 																<String>sourceLocation</String>
@@ -5759,7 +5721,7 @@ process-link-to
 														<serializableOrderedMap>
 															<entry>
 																<String>fragment</String>
-																<String>&lt;link-to element-name="model" xml:base="${cfdu}/${cfne}">${ask('Link to what model TAN file?', relative_url, 'inclusion.${xpath_eval(name(/*))}.xml')}&lt;/link-to></String>
+																<String>&lt;link-to element-name="model" xml:base="${cfdu}/${cfne}">${ask('Link to what model TAN file?', relative_url, 'model.${xpath_eval(name(/*))}.xml')}&lt;/link-to></String>
 															</entry>
 															<entry>
 																<String>insertLocation</String>
@@ -5813,7 +5775,7 @@ process-link-to
 														<serializableOrderedMap>
 															<entry>
 																<String>fragment</String>
-																<String>&lt;link-to element-name="item" xml:base="${cfdu}/${cfne}">${ask('Item pointing to what file?', relative_url, 'inclusion.${xpath_eval(name(/*))}.xml')}&lt;/link-to></String>
+																<String>&lt;link-to element-name="item" xml:base="${cfdu}/${cfne}">${ask('Item pointing to what file?', relative_url, 'item.${xpath_eval(name(/*))}.xml')}&lt;/link-to></String>
 															</entry>
 															<entry>
 																<String>insertLocation</String>
@@ -5861,13 +5823,115 @@ process-link-to
 											<actionMode-array>
 												<actionMode>
 													<field name="xpathCondition">
-														<String>/*:TAN-voc/*:body</String>
+														<String>parent::*:body[parent::*:TAN-voc] | parent::*:group[ancestor::*:TAN-voc]</String>
 													</field>
 													<field name="argValues">
 														<serializableOrderedMap>
 															<entry>
 																<String>actionIDs</String>
 																<String>mark-link-to-item-with-location
+process-link-to
+</String>
+															</entry>
+														</serializableOrderedMap>
+													</field>
+													<field name="operationID">
+														<String>ro.sync.ecss.extensions.commons.operations.ExecuteMultipleActionsOperation</String>
+													</field>
+												</actionMode>
+											</actionMode-array>
+										</field>
+										<field name="enabledInReadOnlyContext">
+											<Boolean>false</Boolean>
+										</field>
+									</action>
+									<action>
+										<field name="id">
+											<String>mark-link-to-source</String>
+										</field>
+										<field name="name">
+											<String>Mark source for inclusion</String>
+										</field>
+										<field name="description">
+											<String>Insert a &lt;link-to> before &lt;adjustments> or &lt;vocabulary-key>, as the first step in creating a &lt;source> to another file.</String>
+										</field>
+										<field name="largeIconPath">
+											<String></String>
+										</field>
+										<field name="smallIconPath">
+											<String></String>
+										</field>
+										<field name="accessKey">
+											<String></String>
+										</field>
+										<field name="accelerator">
+											<null/>
+										</field>
+										<field name="actionModes">
+											<actionMode-array>
+												<actionMode>
+													<field name="xpathCondition">
+														<String></String>
+													</field>
+													<field name="argValues">
+														<serializableOrderedMap>
+															<entry>
+																<String>fragment</String>
+																<String>&lt;link-to element-name="source" xml:base="${cfdu}/${cfne}"  xml:id="${ask('Assign what value to @xml:id?', input_type, 'id')}">${ask('Link to what source TAN file?', relative_url, 'source.${xpath_eval(name(/*))}.xml')}&lt;/link-to></String>
+															</entry>
+															<entry>
+																<String>insertLocation</String>
+																<String>/*/*:head/(*:adjustments, *:vocabulary-key)[1]</String>
+															</entry>
+															<entry>
+																<String>insertPosition</String>
+																<String>Before</String>
+															</entry>
+														</serializableOrderedMap>
+													</field>
+													<field name="operationID">
+														<String>ro.sync.ecss.extensions.commons.operations.InsertFragmentOperation</String>
+													</field>
+												</actionMode>
+											</actionMode-array>
+										</field>
+										<field name="enabledInReadOnlyContext">
+											<Boolean>false</Boolean>
+										</field>
+									</action>
+									<action>
+										<field name="id">
+											<String>add-source</String>
+										</field>
+										<field name="name">
+											<String>Add source</String>
+										</field>
+										<field name="description">
+											<String>Add a source to the &lt;head></String>
+										</field>
+										<field name="largeIconPath">
+											<String></String>
+										</field>
+										<field name="smallIconPath">
+											<String></String>
+										</field>
+										<field name="accessKey">
+											<String></String>
+										</field>
+										<field name="accelerator">
+											<String>M1 M3 S</String>
+										</field>
+										<field name="actionModes">
+											<actionMode-array>
+												<actionMode>
+													<field name="xpathCondition">
+														<String>/(*:TAN-A | *:TAN-A-tok | *:TAN-A-lm)/*:head</String>
+													</field>
+													<field name="argValues">
+														<serializableOrderedMap>
+															<entry>
+																<String>actionIDs</String>
+																<String>mark-link-to-source
 process-link-to
 </String>
 															</entry>
@@ -5925,7 +5989,7 @@ process-link-to
 											</menuItem>
 											<menu>
 												<field name="label">
-													<String>LinkYY</String>
+													<String>Add link</String>
 												</field>
 												<field name="accessKey">
 													<String></String>
@@ -5943,6 +6007,16 @@ process-link-to
 														<menuItem>
 															<field name="actionID">
 																<String>add-vocabulary</String>
+															</field>
+														</menuItem>
+														<menuItem>
+															<field name="actionID">
+																<String>add-model</String>
+															</field>
+														</menuItem>
+														<menuItem>
+															<field name="actionID">
+																<String>add-item-with-location</String>
 															</field>
 														</menuItem>
 													</menuEntry-array>
@@ -6264,7 +6338,7 @@ process-link-to
 											</menuItem>
 											<menu>
 												<field name="label">
-													<String>Link</String>
+													<String>Add link</String>
 												</field>
 												<field name="accessKey">
 													<String></String>
@@ -6282,6 +6356,16 @@ process-link-to
 														<menuItem>
 															<field name="actionID">
 																<String>add-vocabulary</String>
+															</field>
+														</menuItem>
+														<menuItem>
+															<field name="actionID">
+																<String>add-model</String>
+															</field>
+														</menuItem>
+														<menuItem>
+															<field name="actionID">
+																<String>add-item-with-location</String>
 															</field>
 														</menuItem>
 													</menuEntry-array>
@@ -6948,7 +7032,7 @@ process-link-to
 									<String>*</String>
 								</field>
 								<field name="attributeValue">
-									<String>2020</String>
+									<String>202?</String>
 								</field>
 							</documentTypeRule>
 							<documentTypeRule>
@@ -7000,7 +7084,7 @@ process-link-to
 									<String>*</String>
 								</field>
 								<field name="attributeValue">
-									<String>2020</String>
+									<String>202?</String>
 								</field>
 							</documentTypeRule>
 						</documentTypeRule-array>
@@ -7166,50 +7250,6 @@ process-link-to
 												</validationUnitSchema>
 											</field>
 										</validationUnit>
-										<validationUnit>
-											<field name="validationType">
-												<validationUnitType>
-													<field name="validationInputType">
-														<String>text/xml</String>
-													</field>
-												</validationUnitType>
-											</field>
-											<field name="url">
-												<String>${currentFileURL}</String>
-											</field>
-											<field name="validationEngine">
-												<validationEngine>
-													<field name="engineType">
-														<String>&lt;Default engine></String>
-													</field>
-													<field name="allowsAutomaticValidation">
-														<Boolean>true</Boolean>
-													</field>
-												</validationEngine>
-											</field>
-											<field name="allowAutomaticValidation">
-												<Boolean>true</Boolean>
-											</field>
-											<field name="extensions">
-												<null/>
-											</field>
-											<field name="validationSchema">
-												<validationUnitSchema>
-													<field name="dtdSchemaPublicID">
-														<null/>
-													</field>
-													<field name="schematronPhase">
-														<null/>
-													</field>
-													<field name="type">
-														<Integer>7</Integer>
-													</field>
-													<field name="uri">
-														<String>${framework}/schemas/${xpath_eval(local-name(/*))}.sch</String>
-													</field>
-												</validationUnitSchema>
-											</field>
-										</validationUnit>
 									</list>
 								</field>
 								<field name="type">
@@ -7261,7 +7301,7 @@ process-link-to
 														<Integer>7</Integer>
 													</field>
 													<field name="uri">
-														<String>${framework}/schemas/${xpath_eval(local-name(/*))}.sch</String>
+														<String>${framework}/schemas/TAN.sch</String>
 													</field>
 												</validationUnitSchema>
 											</field>
