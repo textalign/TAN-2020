@@ -99,5 +99,5 @@
     <!-- The main engine for the application is in this file, and in other files it links to. Feel
         free to explore, but make alterations only if you know what you are doing. If you make
         changes, make a copy of the original file first.-->
-    <xsl:include href="incl/create%20TAN-A-lm%20core.xsl"/>
+    <xsl:include href="incl/TAN-A-lm%20Builder%20core.xsl"/>
 </xsl:stylesheet>
