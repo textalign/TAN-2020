@@ -50,6 +50,17 @@
    <!-- What is the maximum number of horizontal passes to be applied in a given diff? -->
    <xsl:param name="tan:diff-maximum-number-of-horizontal-passes" as="xs:integer" select="50"/>
    
+   <!-- At what point in the diminishment of the sample size should the maximum number of horizontal passes be suspended?
+      If the sample size is less than or equal to this value, then the algorithm will draw the maximum number of samples 
+      that can be taken from the short string. In some cases, setting this to say 3 might slightly improve the quality
+      of results in texts that are quite unalike, but at the expense of some extra processing time; and a setting of 3
+      will normally not affect the performance of tan:diff() on texts that are rather alike. The parameter should not
+      be set much higher than 3, to avoid performance deterioriation, and not to defeat the stagger-sample approach 
+      that has been adopted.
+   -->
+   <xsl:param name="tan:diff-suspend-horizontal-pass-maximum-when-sample-sizes-reach-what" as="xs:integer" select="3"/>
+   
+   
    <!-- The number of samples will increase from 1 to the maximum. How quickly should it rise? Expected is a positive
       number above 0, with 0.5 being the default, to reach the maximum relatively quickly. This number has 
       exponential power over the complement of the sample size. The higher the number the greater the number
@@ -71,20 +82,22 @@
    
    <!-- At what point is the shortest string so long that it would be better to pre-process via tokenization? 
       This preprocessing is best when applied to large strings that are rather alike. -->
-   <xsl:param name="tan:diff-preprocess-via-tokenization-trigger-point" as="xs:integer" select="3000000"/>
+   <xsl:param name="tan:diff-preprocess-via-tokenization-trigger-point" as="xs:integer" select="30000000"/>
    
    <!-- What is the size of the smallest string permitted before preprocessing the input via segmentation? 
       If both strings are larger than this value, they will be pushed to tan:giant-diff() and cut into segments.
    -->
-   <xsl:param name="tan:diff-preprocess-via-segmentation-trigger-point" as="xs:integer" select="2000000"/>
+   <xsl:param name="tan:diff-preprocess-via-segmentation-trigger-point" as="xs:integer" select="20000000"/>
    
    <!-- When segmenting enormous strings to be fed through giant diff, what is the maximum size allowed for any
       input string segment? Be certain to keep this below the segmentation trigger point. -->
    <xsl:param name="tan:diff-max-size-of-giant-string-segments" as="xs:integer"
       select="xs:integer($tan:diff-preprocess-via-segmentation-trigger-point * 0.98)"/>
+   
    <!-- What is the minimum number of segments into which a giant string should be chopped when processing a tan:giant-diff()? 
       The lower the number, the better the accuracy. A higher number might yield faster results. -->
    <xsl:param name="tan:diff-min-count-giant-string-segments" as="xs:integer" select="2"/>
+   
    
    
 </xsl:stylesheet>

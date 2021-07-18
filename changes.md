@@ -105,6 +105,7 @@ Added:
 * `tan:integer-groups()`. Takes a sequence of integers and returns them as sorted groups. Each group is a set of contiguous integers.
 * `tan:restore-chopped-tree()`. Stitches together the output of `tan:chop-tree()`.
 * Template named `tan:regex-group-count()`. Retrieves the current number of regex groups, without breaking the cycle of templates and tunnel parameters.
+* `tan:log2()`. Returns the binary logarithm of the input.
 
 Altered:
 * `tan:diff()` has been greatly simplified and improved. It runs about 40% faster, and easily handles pairs of strings 3M characters in length.

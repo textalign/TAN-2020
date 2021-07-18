@@ -37,4 +37,14 @@
       </xsl:iterate>
    </xsl:function>
    
+   
+   <xsl:function name="tan:log2" as="xs:double?">
+      <!-- Input: any double -->
+      <!-- Output: the binary logarithm of the value -->
+      <xsl:param name="arg" as="xs:double?"/>
+      <xsl:sequence select="math:log($arg) div math:log(2)"/>
+   </xsl:function>
+   
+   
+   
 </xsl:stylesheet>

@@ -861,9 +861,10 @@
                   select="min((max(($this-vertical-stop, 0.0000001)), 1.0))" as="xs:double"/>
                <xsl:variable name="length-of-short-substring" as="xs:integer"
                   select="xs:integer(ceiling($short-length * $percent-of-short-to-check))"/>
-               <!-- If sample sizes are down to 1, 2, or 3 characters, might as well check all the possibilities. -->
+               <!-- If the sample size is at or below a certain predetermined threshold, draw the maximum number of samples that
+                  the short string will allow. Otherwise, -->
                <xsl:variable name="number-of-horizontal-passes" select="
-                     if ($length-of-short-substring le 3) then
+                     if ($length-of-short-substring le $tan:diff-suspend-horizontal-pass-maximum-when-sample-sizes-reach-what) then
                         max(($str-a-size, $str-b-size)) - $length-of-short-substring + 1
                      else
                         xs:integer(math:pow(1 - $percent-of-short-to-check, (1 div $tan:diff-horizontal-pass-frequency-rate)) * $tan:diff-maximum-number-of-horizontal-passes) + 1"
