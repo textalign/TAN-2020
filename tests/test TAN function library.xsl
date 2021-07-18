@@ -20,7 +20,7 @@
 
    <xsl:output method="xml" indent="yes"/>
    
-   <xsl:param name="tan:change-message">Assorted tests on the TAN Function Library</xsl:param>
+   <xsl:param name="tan:stylesheet-change-message">Assorted tests on the TAN Function Library</xsl:param>
    <xsl:param name="tan:stylesheet-iri">tag:textalign.net,2015:algorithm:tan-library-test</xsl:param>
    <xsl:param name="tan:stylesheet-url" as="xs:string" select="static-base-uri()"/>
    

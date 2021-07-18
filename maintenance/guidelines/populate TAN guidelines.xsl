@@ -22,7 +22,7 @@
    <!-- Secondary output: the appendix sections of the Guidelines, converting major parts of TAN to docbook format (see end of this file) -->
    <!-- This process takes about 25 seconds. -->
    
-   <!-- This stylesheet and its components are pretty messy, reflecting several years of development. Because
+   <!-- This stylesheet and its components are pretty messy, reflecting the accumulation of several years of development. Because
       it is not intended for mass consumption, I haven't tried to clean or streamline the code. -->
    
    <xsl:param name="tan:include-diagnostics-components" as="xs:boolean" select="true()" static="yes"/>
