@@ -18,7 +18,7 @@
     <!-- The predecessor to this stylesheet is tag:textalign.net,2015:stylesheet:create-quotations-from-tan-a -->
     <xsl:param name="tan:stylesheet-iri"
         select="'tag:textalign.net,2015:application:convert-tan-file'"/>
-    <xsl:param name="tan:stylesheet-name" as="xs:string" select="'TAN Updater'"/>
+    <xsl:param name="tan:stylesheet-name" as="xs:string" select="'Updater'"/>
     <xsl:param name="tan:stylesheet-activity"
         select="'converts TAN files from older versions to the current version'"/>
     <xsl:param name="tan:stylesheet-url" select="static-base-uri()"/>

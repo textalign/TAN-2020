@@ -4,7 +4,7 @@
     xmlns:tan="tag:textalign.net,2015:ns" xmlns:map="http://www.w3.org/2005/xpath-functions/map"
     exclude-result-prefixes="#all" version="3.0">
     
-    <!-- Welcome to TAN Updater, the TAN application that converts TAN files from older versions 
+    <!-- Welcome to Updater, the TAN application that converts TAN files from older versions 
         to the current version. -->
     <!-- Version 2021-07-07-->
     
