@@ -4,7 +4,7 @@
    xmlns:tei="http://www.tei-c.org/ns/1.0" xmlns:tan="tag:textalign.net,2015:ns"
    exclude-result-prefixes="#all" version="3.0">
 
-   <!-- Welcome to File Copy Utility, the TAN application that copies a file to a location, updating
+   <!-- Welcome to File Copier, the TAN application that copies a file to a location, updating
       internal relative URLs -->
    <!-- Version 2021-07-07-->
 

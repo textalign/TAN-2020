@@ -20,7 +20,7 @@
     
     <xsl:param name="tan:stylesheet-iri"
         select="'tag:textalign.net,2015:stylesheet:copy-tan-file'"/>
-    <xsl:param name="tan:stylesheet-name" select="'File Copy Utility'"/>
+    <xsl:param name="tan:stylesheet-name" select="'File Copier'"/>
     <xsl:param name="tan:stylesheet-activity"
         select="'copies a file to a location, updating internal relative URLs'"/>
     
