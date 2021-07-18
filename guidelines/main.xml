@@ -4,7 +4,7 @@
 <book xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:xi="http://www.w3.org/2001/XInclude" version="5.0">
    <info>
-      <title>Guide to the Text Alignment Network, Version 2020</title>
+      <title>Guide to the Text Alignment Network, Version 2021</title>
       <legalnotice>
          <info>
             <title>Text Alignment Network: Official Guidelines</title>
@@ -30,15 +30,15 @@
       <revhistory>
          <info>
             <releaseinfo>Latest stable version: <link
-                  xlink:href="http://textalign.net/release/TAN-2020/guidelines/"
-                  >http://textalign.net/release/TAN-2020/guidelines/</link>.</releaseinfo>
+                  xlink:href="http://textalign.net/release/TAN-2021/guidelines/"
+                  >http://textalign.net/release/TAN-2021/guidelines/</link>.</releaseinfo>
             <releaseinfo>Development version: <link
-                  xlink:href="https://github.com/textalign/TAN-2020/tree/dev"
-                  >https://github.com/textalign/TAN-2020/tree/dev</link></releaseinfo>
+                  xlink:href="https://github.com/textalign/TAN-2021/tree/dev"
+                  >https://github.com/textalign/TAN-2021/tree/dev</link></releaseinfo>
          </info>
          <revision>
-            <revnumber>Version 2020 (alpha)</revnumber>
-            <date>2021-04-23</date>
+            <revnumber>Version 2021 (alpha)</revnumber>
+            <date>2021-07-08</date>
             <revdescription>
                <para>Formats: <link
                      xlink:href="http://textalign.net/release/TAN-2020/guidelines/xhtml/index.xhtml"
@@ -61,22 +61,76 @@
       <chapter>
          <title>Introduction</title>
          <section xml:id="tan_definition">
-            <title>Definition and purpose </title>
-            <para>The Text Alignment Network (TAN) is a suite of highly regulated XML formats
-               designed to maximize the syntactic and semantic interoperability of texts,
-               annotations, and language resources.</para>
-            <para>TAN is particularly suited to aligning texts with multiple versions (copies,
-               translations, paraphrases), and to annotating quotations, translation clusters
-               (word-to-word), and lexicomorphological features. Simple, modular, and networked, the
-               TAN format allows users, working independently and collaboratively, to find, create,
-               edit, study, align, and share their texts and annotations. The extensive validation
-               rules are based upon a library of cutting-edge XSLT functions that definitively
-               interpret the format and provide a foundation for third-party tools and
-               applications.</para>
-            <para>Although expressive of scholarly nuance and complexity, the TAN format has been
-               designed to benefit everyone, scholars and non-scholars alike, and can be used
-               broadly for reading, teaching, publishing, research, analysis, and language learning.
-            </para>
+            <title>Overview</title>
+            <para>The Text Alignment Network (TAN) is a suite of XML formats designed to maximize
+               the syntactic and semantic interoperability of texts, annotations, and language
+               resources. </para>
+            <para>Simple, modular, and networked, TAN formats allow users, working independently and
+               collaboratively, to find, create, edit, study, align, and share texts and
+               annotations. An extension of Text Encoding Initiative (TEI) XML, TAN is particularly
+               suited for organizing and aligning texts with multiple versions (copies,
+               translations, paraphrases), and for curating text annotations such as quotations,
+               translation clusters (word-to-word), and linguistic features. </para>
+            <para>Why use TAN? </para>
+            <para><emphasis role="bold">Extensive error checking</emphasis>. Built-in TAN validation
+               rules go well beyond the customary error-checking performed by other systems (e.g.,
+               TEI) and report back on more than one hundred types of errors, e.g., Unicode
+               normalization, unwanted textual variance, and changes and updates in dependencies.
+               The TAN-mor format allows anyone to write their own rules describing the grammar of
+               human languages, to report errors in linguistic data.</para>
+            <para><emphasis role="bold">Time-saving utilities</emphasis>. TAN's function library
+               drives Schematron Quick Fixes and an Oxygen framework, enhancing both its Text and
+               Author modes. Several other more complex utilities assist in creating and editing TEI
+               and TAN files. For example:
+               </para>
+            <para><itemizedlist>
+                  <listitem>
+                     <para><emphasis>Body Builder</emphasis>: write rules to convert plain text or
+                        Word docx files into a preferred TAN/TEI structure and markup.</para>
+                  </listitem>
+                  <listitem>
+                     <para><emphasis>Body Remodeler</emphasis>: incrementally restructure a text to
+                        imitate an existing TAN/TEI file; in conjunction with Oxygen Author tools,
+                        this utility can save hours of time getting texts into TAN/TEI.</para>
+                  </listitem>
+                  <listitem>
+                     <para><emphasis>Body Sync</emphasis>: update a TAN/TEI file so its text exactly
+                        matches that of a model TAN/TEI file.</para>
+                  </listitem>
+                  <listitem>
+                     <para><emphasis>TAN-A-lm Builder</emphasis>: generate lexico-morphological data
+                        for a TAN/TEI file.</para>
+                  </listitem>
+               </itemizedlist></para>
+            <para><emphasis role="bold">Novel applications</emphasis>. TAN is built upon an
+               extensive and robust XSLT library, one of the few of its kind, facilitating
+               development of applications for TAN/TEI files. Some cutting-edge applications are
+               already available, for example:
+               </para>
+            <para><itemizedlist>
+                  <listitem>
+                     <para><emphasis>Diff+</emphasis>: find and statistically analyze text
+                        differences between any number of versions of a text.</para>
+                  </listitem>
+                  <listitem>
+                     <para><emphasis>Parabola</emphasis>: juxtapose in a single interactive HTML
+                        page all the versions of a work, along with annotations. </para>
+                  </listitem>
+                  <listitem>
+                     <para><emphasis>Tangram</emphasis> identify quotations, paraphrases, and common
+                        text between two groups of texts, via scored Ngrams.</para>
+                  </listitem>
+               </itemizedlist></para>
+            <para><emphasis role="bold">Intuitive text referencing</emphasis>. Unlike TEI, HTML, or
+               other markup systems that rely heavily upon identifiers that can be difficult to
+               navigate, edit, and maintain, TAN uses a text pointer syntax based upon the reference
+               systems already customarily used when referencing texts in ordinary prose.</para>
+            <para><emphasis role="bold">Semantic Web compatibility</emphasis>. TAN was designed at
+               the outset to ensure that texts and their annotations would be rooted in the
+               disciplines of the Semantic Web. Unlike TEI, whose attribute values are almost always
+               only human-readable, most components in TAN files are tied to URIs. TAN files can be
+               converted to any number of RDF formats for use in Semantic Web applications. (An
+               export tool to RDF is under development.)</para>
          </section>
          <section>
             <title>Rationale and purpose</title>
@@ -233,15 +287,16 @@
          <section xml:id="tan_participation">
             <title>Participation</title>
             <para>Changes are made regularly to TAN, mainly in its <link
-                  xlink:href="https://github.com/textalign/TAN-2020/tree/dev">development
+                  xlink:href="https://github.com/textalign/TAN-2021/tree/dev">development
                   branch</link>. If you have a TAN library, sharing it with other participants,
                particularly via Git, will help developers test any changes that have been made to
                the function library, and encourage others to contribute to your project.</para>
-            <para>New participants to test, use, and develop the Text Alignment Network are welcome.
-               Our core purpose is to maintain and curate, in ascending order of importance, the
-               schemas, functions, guidelines, and applications. Inquiries about participation
-               should be sent to the project director, <link xlink:href="http://kalvesmaki.com/"
-                  >Joel Kalvesmaki</link>, by email: director at textalign.net.</para>
+            <para>The TAN project is by no means finished. The current release scratches the surface
+               of what is possible. The current codebase can be improved in numerous ways. New
+               participants to test, use, and develop TAN's schemas, functions, guidelines, and
+               applications are welcome. Inquiries about participation should be sent to the project
+               director, <link xlink:href="http://kalvesmaki.com/">Joel Kalvesmaki</link>, by email:
+               director at textalign.net.</para>
             <para>Official announcements are made by <link
                   xlink:href="http://groups.google.com/group/textalign?hl=en">email (Google
                   Group)</link> and by <link xlink:href="https://twitter.com/textalign"
@@ -251,25 +306,26 @@
       <chapter xml:id="gentle_guide">
          <title>Starting off with the TAN format</title>
          <para>If you are new to markup languages, or unfamiliar or uncomfortable with acronyms and
-            techincal terms such as <emphasis role="italic">XML</emphasis>, <emphasis role="italic"
+            technical terms such as <emphasis role="italic">XML</emphasis>, <emphasis role="italic"
                >RDF</emphasis>, <emphasis role="italic">XPath</emphasis>, and
                <emphasis>Unicode</emphasis>, you should start with this chapter, which uses a simple
             example to illustrate the steps typically taken to create and and edit TAN files, and to
-            introduce important technical terms. By the end of this chapter, you will have a sense
-            of how to create and edit a small collection of TAN transcriptions and alignments.<note
+            introduce new terminology. By the end of this chapter, you will have a sense of how to
+            create and edit a small collection of TAN transcriptions and alignments.<note
                xml:id="transcription_and_transliteration">
-               <para>In the TAN system, a <emphasis>transcription</emphasis> is a plain digital text
-                  that replicates a text found somewhere else, usually reproducing its script and
-                  spelling. The following—"In pluribus unum"—is a (partial) transcription of a
-                  United States dollar. The term should be distinguished from a
-                     <emphasis>transliteration</emphasis>, which is a transcription rendered in a
-                  script other than the original. For example, εν πλουριμπυς ουνεμ, would be a Greek
-                  transliteration of the previous transcription.</para>
+               <para>In the TAN system, <termdef>a <firstterm>transcription</firstterm> is a plain
+                     digital text that replicates a text found somewhere else, usually reproducing
+                     its script and spelling</termdef>. The following—"In pluribus unum"—is a
+                  (partial) transcription of a United States dollar. The term should be
+                  distinguished from <termdef>a <firstterm>transliteration</firstterm>, which is a
+                     transcription rendered in a script other than the original</termdef>. For
+                  example, εν πλουριμπυς ουνεμ, would be a Greek transliteration of the previous
+                  transcription.</para>
             </note></para>
          <para>The chapter touches on a number of general concepts that are discussed only briefly.
             If you find a particular term new or confusing, follow the prompts for further reading.
             If you are already familiar with basic markup concepts, you should at least skim through
-            the chapter, because sometimes TAN approaches old problems in new ways.</para>
+            the chapter, because TAN approaches some old problems in new ways.</para>
          <section>
             <title>Creating TAN transcription and alignment data</title>
             <para>Let us take a simple example, that of aligning two English versions of the nursery
@@ -1906,24 +1962,22 @@
          <para>This part of the guidelines provides a detailed description of the design and
             structure of the formats of the Text Alignment Network. The material follows the
             organization of the schema files (kept in the <code>schemas</code> subdirectory), so
-            both can be read in tandem.</para>
+            both can be studied in tandem.</para>
          <para><xref linkend="concepts_common"/> outlines, in a non-technical way, the principles
             and technical foundations of the TAN format.</para>
          <para><xref linkend="class_common"/>, <xref linkend="class_1"/>, <xref linkend="class_2"/>,
             and <xref linkend="class_3"/> describe each TAN format, class by class. Each chapter
-            starts with theoretical or scholarly contextual before expanding on technical points. </para>
-         <para>The chapters in this part are meant to provide a narrative companion to the much more
-            detailed technical appendixes, <xref linkend="elements-attributes-and-patterns"/> and
-               <xref linkend="vocabularies-master-list"/>, which are derived from the master schemas
-            and vocabularies.</para>
-         <para>The chapters in this part of the guidelines should be read selectively, not
-            consecutively. They have been written with the assumption that you have already read the
+            starts with theory or scholarly context before expanding on technical points. </para>
+         <para>The chapters in this part provide a narrative counterpart to the much more detailed
+            technical appendixes, <xref linkend="elements-attributes-and-patterns"/> and <xref
+               linkend="vocabularies-master-list"/>, which are derived from the master schemas and
+            vocabularies. They have been written with the assumption that you have already read the
             previous part (<xref linkend="general_overview"/>) and that you have already started to
             create or edit a TAN collection.</para>
          <para>Because readers will come from different specialties, all acronyms, abbreviations,
-            and concepts are defined and explained, albeit tersely. Concepts or technologies are
-            discussed only insofar as they affect the use of TAN; suggestions for further reading
-            are provided for those who want a more thorough introduction to a topic. </para>
+            and concepts are defined and explained, albeit tersely, to explain how they affect the
+            use of TAN. Suggestions for further reading are provided for those who want a more
+            thorough introduction to a topic. </para>
       </partintro>
       <chapter xml:id="concepts_common">
          <title>General underpinnings</title>
@@ -1947,7 +2001,7 @@
                      <para>Stay focused.</para>
                   </listitem>
                   <listitem>
-                     <para>Don't be redundant.</para>
+                     <para>Don't repeat yourself.</para>
                   </listitem>
                   <listitem>
                      <para>Don't state the obvious.</para>
@@ -2033,7 +2087,7 @@
                format (TAN-T) and a gentle customization of TEI All (TAN-TEI). These two types are
                differentiated by the root element, <code><link linkend="element-TAN-T"
                      >&lt;TAN-T></link></code> and <code>&lt;TEI></code> respectively.</para>
-            <para><emphasis role="bold">Class 2</emphasis>: claims about class-1 texts, and
+            <para><emphasis role="bold">Class 2</emphasis>: annotations on class-1 texts, and
                alignment declarations. There are two types of alignment, one for broad, general
                alignments and another for granular, word-for-word aligments. The former, with
                      <code><link linkend="element-TAN-A">&lt;TAN-A></link></code> as the root
@@ -2045,25 +2099,29 @@
                (or part-of-speech) forms of individual words from a single class-1 file, or of a
                language in general.</para>
             <para><emphasis role="bold">Class 3</emphasis>: everything else. <code><link
-                     linkend="element-TAN-mor">&lt;TAN-mor></link></code> is used to define the
-               grammatical categories or features of a given language and to specify rules for
-               lexico-morphological codes in dependent TAN-A-lm files. <code><link
                      linkend="element-TAN-voc">&lt;TAN-voc></link></code> collects and labels
                vocabulary items used in other TAN files. TAN catalog files have the root element
                      <code><link linkend="element-collection">&lt;collection></link></code>, and
-               they index locally available TAN files, and selective parts of their metadata.</para>
-            <para>This modular approach relies upon a <emphasis role="italic">stand-off</emphasis>
-               approach to annotation or markup. In the alternative method, <emphasis role="italic"
-                  >inline</emphasis> markup, which you may be familiar with from TEI or HTML, an
-               annotation is applied directly to the base text, e.g., <code>&lt;p>He said
+               they index locally available TAN files, and selective parts of their metadata.
+                     <code><link linkend="element-TAN-mor">&lt;TAN-mor></link></code> is used to
+               define the grammatical categories or features of a given language and to specify
+               rules for lexico-morphological codes in dependent TAN-A-lm files.</para>
+            <para>TAN adopts a <emphasis role="italic">stand-off</emphasis> approach to annotation
+               or markup. In the alternative method, <emphasis role="italic">inline</emphasis>
+               markup, which you may be familiar with from TEI or HTML, an annotation is applied
+               directly to the base text, e.g., <code>&lt;p>He said
                   &lt;quote>"Jump!"&lt;/quote>&lt;/p></code>, where the inner element
-                  <code>&lt;quote></code> annotates the third word. In stand-off annotation,
-               however, <code>&lt;p>He said "Jump!"&lt;/p></code> would be left as-is, and somewhere
-               else there would be an annotation that states that the third word is a quotation. If
-               the stand-off annotation is in the same file, it is an <emphasis>internal
-                  stand-off</emphasis> annotation. If the annotation is in a different file, it is
-               an <emphasis>external stand-off</emphasis> annotation.</para>
-            <para>TAN depends upon external stand-off annotation, which provides several benefits: <itemizedlist>
+                  <code>&lt;quote></code> annotates the third word. </para>
+            <para>In stand-off annotation, however, <code>&lt;p>He said "Jump!"&lt;/p></code> would
+               be left as-is, and somewhere else there would be an annotation that states that the
+               third word is a quotation. If the stand-off annotation is in the same file, it is an
+                  <emphasis>internal stand-off</emphasis> annotation. If the annotation is in a
+               different file, it is an <emphasis>external stand-off</emphasis> annotation.</para>
+            <para>For many common, simple cases, inline annotation is simple, convenient, and
+               straightforward. But as inline annotations are added, the benefits slowly diminish.
+               When parts of a file attract multiple markup elements, the file can become difficult
+               to read and navigate. </para>
+            <para>Stand-off annotation provides several benefits: <itemizedlist>
                   <listitem>
                      <para>An editor can focus on a limited set of closely related questions.</para>
                   </listitem>
@@ -2077,8 +2135,9 @@
                         interests.</para>
                   </listitem>
                   <listitem>
-                     <para>Annotations can be made of two or more texts (e.g., identification of
-                        quotations), and not have to be embedded in any single one.</para>
+                     <para>A single annotation refer to two or more texts (e.g., identification of
+                        quotations), and not have to prioritize, or be located in any single
+                        one.</para>
                   </listitem>
                   <listitem>
                      <para>Complementary or competing annotations can be made, and those annotations
@@ -2122,16 +2181,39 @@
                for, at which point we combined those ingredients in a variety of ways. It would be
                terrible if you were asked to make muesli (or granola), and found that someone had
                already turned the ingredients you wanted into a cake!</para>
-            <para>Stand-off annotation is not without problems and vulnerabilities. Files might be
-               altered or altogether deleted, rendering pointers in dependent files meaningless. An
-               editor may find that not having the annotated text in the same place as the
-               annotation is an inconvenience. These are important challenges, but TAN validation
-               rules have been designed to mitigate such problems.</para>
-            <para>Perhaps the greatest hindrance to stand-off annotation is the method of pointing.
-               To date, most stand-off annotation methods have relied upon a network of unique
-               identifiers, which are difficult to remember, maintain, and develop. TAN approaches
-               pointing in a much different way that is closer to current scholarly habits. See
-                  <xref xlink:href="#pointer-syntax"/>.</para>
+            <para>Stand-off annotation is not without problems and vulnerabilities. For example:<itemizedlist>
+                  <listitem>
+                     <para>When (not if) the base text changes, the editor is unaware of how that
+                        change will affect any stand-off annotations.</para>
+                  </listitem>
+                  <listitem>
+                     <para>Not having the annotated text and an the annotation in the same reading
+                        space can be an inconvenience. </para>
+                  </listitem>
+                  <listitem>
+                     <para>When searching for, or querying, the base text, standoff annotations can
+                        be difficult or impossible to incorporate to refine a selection.</para>
+                  </listitem>
+                  <listitem>
+                     <para>When using the material for other purposes, it can be cumbersome or
+                        challenging to reintegrate annotations with the base text.</para>
+                  </listitem>
+                  <listitem>
+                     <para>Linking an annotation to its base text requires extra work and
+                        maintenance. Normally this involves building and administering a library of
+                        identifiers. Adding and removing ids, or checking them for errors, can be
+                        time-consuming and confusing.</para>
+                  </listitem>
+               </itemizedlist>These are important challenges, but TAN validation rules have been
+               designed to mitigate such problems. The last problem listed above is perhaps the
+               greatest barrier to stand-off annotation. TAN approaches pointing in a much different
+               way that is closer to current scholarly habits. See <xref
+                  xlink:href="#pointer-syntax"/>.</para>
+            <para>Furthermore, TEI inline annotations are supported. In general, you are encouraged
+               to use TEI inline annotations where they are simple and make sense. But when the
+               markup accumulates, threatens to create overlapping structures, or pose other
+               difficulties, TAN class 2 files can be an ideal way to build and curate
+               annotations.</para>
          </section>
          <section xml:id="assumptions_creating_data">
             <title>Assumptions in the creation of TAN data</title>
@@ -2158,46 +2240,46 @@
                system, and how you interpret and use Unicode. If you write an alignment file, you
                must make decisions about what factors caused one text to be transformed into
                another. Lexicomorphological files require you to commit to one or more grammars and
-               dictionaries, which adopt different perspectives on language, and you must discern
-               how best to handle cases of vagueness and ambiguity. No TAN file ever stands
-               completely outside the interpretive act. <emphasis>In creating and publishing a TAN
-                  file you claim to have disclosed as best you can the assumptions behind your
-                  interpretive outlook; in using a TAN file, you hold the creator to that
-                  expectation.</emphasis></para>
+               dictionaries, which adopt certain perspectives on language, and you must discern how
+               best to handle cases of vagueness and ambiguity. No TAN file ever stands completely
+               outside the interpretive act. <emphasis>In creating and publishing a TAN file you
+                  claim to have disclosed as best you can the assumptions behind your interpretive
+                  outlook; in using a TAN file, you hold the creator to that
+               expectation.</emphasis></para>
             <para>Third, all core TAN files are <emphasis>applicable</emphasis>. That is, the
                interpretive impluse is assumed to be coupled with an equally strong desire to make
                the data as useful to as many users as possible, even those who may not share your
-               assumptions or interpretation. A creator of a transcription file, for example, should
-               normalize and segment texts with a minimum of idiosyncracies, adopting the most
-               widely used reference systems, so as to optimize the alignment process. Morphological
-               files should depend whenever possible upon commonly accepted grammars and lexica.
-               Alignment files should work with comprehensible categories of text reuse. No TAN file
-               will always be applicable to everyone, but it should be as applicable to as many as
-               possible, as often as possible. <emphasis>In creating a TAN file you claim to use
-                  common, shared conventions whenever possible, and to note any departures; in using
-                  a TAN file, you hold the creator to that expectation.</emphasis></para>
+               assumptions or interpretation. TAN files are intended for intertextual comparison, so
+               idiosyncrasies of a particular text-bearing object will be regarded by some users as
+               either uninteresting or an obstacle. A creator of a transcription file should
+               normalize and segment texts, adopting the most widely used reference systems, so as
+               to optimize the alignment process. Morphological files should depend whenever
+               possible upon commonly accepted grammars and lexica. Alignment files should work with
+               comprehensible categories of text reuse. No TAN file will always be applicable to
+               everyone, but it should be as suitable to as many as possible, for as many purposes
+               as possible. <emphasis>In creating a TAN file you claim to use common, shared
+                  conventions whenever possible, and to note any departures; in using a TAN file,
+                  you hold the creator to that expectation.</emphasis></para>
             <para xml:id="accuracy-precision-comprehensiveness">Fourth, TAN data is to be considered
                   <emphasis>accurate, but not necessarily precise or complete</emphasis>. For
                example, if a TAN-A file claims that the opening of Plato's
                   <emphasis>Republic</emphasis> book 3 quotes from Homer's
                   <emphasis>Iliad</emphasis>, the claim is true and accurate, but is neither precise
-               nor exhaustive. There are parts of the opening of book 3 that are certainly not
-               quotations, and most parts of the <emphasis>Iliad</emphasis> are not quoted in the
+               nor complete. Parts of the opening of book 3 are certainly not quotations, and the
+               whole of the <emphasis>Iliad</emphasis> is not quoted in the
                   <emphasis>Republic</emphasis>. Or take a TAN-A-tok file. The token-for-token
                alignment of two texts might be selective, and focus only on the points of interest
                to the editor. Although the TAN formats permit a great deal of both precision and
-               comprehensiveness, neither is mandated, unless explicitly required by a specific part
-               of the TAN specifications. <emphasis>In creating a TAN file you claim to make
-                  accurate assertions; in using a TAN file, you should hold the creator to that
-                  expectation, but you must assess for yourself how precise and complete it
-                  is.</emphasis></para>
+               comprehensiveness, neither is mandated, except where explicitly noted by the TAN
+               specifications. <emphasis>In creating a TAN file you claim to make accurate
+                  assertions; in using a TAN file, you should hold the creator to that expectation,
+                  but you must assess for yourself how precise and complete it is.</emphasis></para>
          </section>
          <section>
             <title>Core technology</title>
             <para>TAN depends upon a set of relatively stable technologies. Those technologies and
                the underlying terminology are briefly explained below, with attention paid to
-               interpretive decisions that affect validation rules. References to further reading
-               will lead you to better and more thorough introductions elsewhere. </para>
+               interpretive decisions that affect validation rules. </para>
             <section xml:id="unicode">
                <title>Unicode</title>
                <section>
@@ -2265,8 +2347,8 @@
                         <code>&amp;amp;</code> represents the ampersand and <code>&amp;lt;</code>
                      stands for <code>&lt;</code>. To access specific Unicode characters an entity
                      may start <code>&amp;#x</code> followed by the hexadecimal codepoint (if you
-                     prefer the decimal version, leave off the <code>x</code> and make sure you use
-                     the decimal form). For example, the XML hex entity <code>&amp;#x44E;</code> (or
+                     prefer to work with decimal codepoints, leave off the <code>x</code>). For
+                     example, the XML hex entity <code>&amp;#x44E;</code> (or
                         <code>&amp;#1102;</code> in decimal) is a proxy for the Cyrillic small
                      letter yu.</para>
                </section>
@@ -2275,7 +2357,7 @@
                   <para>Unicode rules provide guidance on how text should be normalized, to identify
                      equivalent variations. For example, the character o (U+006F: LATIN SMALL LETTER
                      O) followed by the combining accent ¨ (U+0308: COMBINING DIAERESIS) should be
-                     treated identical in meaning to the single character ö (U+00F6: LATIN SMALL
+                     treated as identical in meaning to the single character ö (U+00F6: LATIN SMALL
                      LETTER O WITH DIAERESIS). There are two codepoints that could be used for the
                      Greek question mark (;), and normalization converts the less preferred
                      codepoint to the other.</para>
@@ -2283,8 +2365,9 @@
                      Unicode NFC algorithm (the most common of the four normalization methods). Any
                      text in a TAN file that is not NFC normalized will be marked as invalid. A
                      supplied Schematron Quick Fix will let users automatically normalize text (for
-                     editing environments that support Schematron Quick Fixes). This enforcement of
-                     NFC normalization helps to make sure that texts are fairly compared.</para>
+                     editing tools such as Oxygen that support Schematron Quick Fixes). This
+                     enforcement of NFC normalization helps to make sure that texts are fairly
+                     compared.</para>
                </section>
                <section xml:id="unicode-characters-with-special-interpretation">
                   <title>Unicode characters with special interpretation</title>
@@ -2298,18 +2381,17 @@
                         ><code>&lt;div></code></link> structure will delete from the end of its text
                      the U+200B, U+200D, or U+00AD character and its trailing space. (By contrast,
                      text from a leaf <link linkend="element-div"><code>&lt;div></code></link> that
-                     does not end this way will be space-normalized, then appended by a single
-                     space.) Because these characters are difficult to distinguish visually from
-                     spaces and hyphens, any output based on the character mapping of the core
-                     functions should replace these characters with their XML entities,
+                     does not end this way will first be space-normalized, then a single space will
+                     be appended.) Because these special line-end characters are difficult to
+                     distinguish visually from spaces and hyphens, their XML entities,
                         <code>&amp;#x200b;</code>, <code>&amp;#x200d;</code>, and
-                        <code>&amp;#xad;</code>.</para>
+                        <code>&amp;#xad;</code> should be preferred in any XML output.</para>
                   <para>Much has been written about the different ways U+00AD SOFT HYPHEN has been
                      or should be used and interpreted. Debate will no doubt continue. TAN design
                      assumes that the soft hyphen marks a place in a word where a line break has
                      occurred, is allowed to occur, or both. In situations where the text is printed
-                     or displayed, any soft hyphen that does not mark a word that breaks across
-                     lines should not be displayed.</para>
+                     or displayed, any soft hyphen that does not mark a word broken by a line should
+                     not be displayed.</para>
                </section>
                <section xml:id="combining_characters">
                   <title>Combining characters</title>
