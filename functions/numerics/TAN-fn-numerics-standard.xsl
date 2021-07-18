@@ -1,6 +1,7 @@
 <xsl:stylesheet exclude-result-prefixes="#all" 
    xmlns:xs="http://www.w3.org/2001/XMLSchema"
    xmlns:tan="tag:textalign.net,2015:ns"
+   xmlns:math="http://www.w3.org/2005/xpath-functions/math"
    xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="3.0">
 
    <!-- TAN Function Library standard numeric functions. -->
