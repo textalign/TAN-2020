@@ -272,7 +272,7 @@
 
    <!-- Where is the HTML template that should be used as the basis for the output? Expected: a 
       resolved uri, e.g., file:/c:/users/~user/documents/my-template.html -->
-   <xsl:param name="html-template-uri-resolved" select="resolve-uri('incl/text-parallel-template.html')"/>
+   <xsl:param name="html-template-uri-resolved" select="resolve-uri('incl/tangram-template.html')"/>
    
    
    <!-- How many words context should be supplied on either side of a cluster? -->
