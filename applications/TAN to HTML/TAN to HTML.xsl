@@ -5,7 +5,7 @@
    xmlns:array="http://www.w3.org/2005/xpath-functions/array"
    exclude-result-prefixes="#all" version="3.0">
 
-   <!-- Welcome to TAN2HTML, the TAN application that converts TAN / TEI files to HTML -->
+   <!-- Welcome to TAN to HTML, the TAN application that converts TAN / TEI files to HTML -->
    <!-- Version 2021-07-07-->
 
    <!-- This is the public interface for the application. The code that runs the application can
@@ -94,7 +94,7 @@
    <!-- The main engine for the application is in this file, and in other files it links to. Feel free to 
       explore, but make alterations only if you know what you are doing. If you make changes, make a copy 
       of the original file first. -->
-   <xsl:include href="incl/display%20TAN%20as%20HTML%20core.xsl"/>
+   <xsl:include href="incl/TAN%20to%20HTML%20core.xsl"/>
    <!-- Please don't change the following variable. It helps the application figure out where your directories
     are. -->
    <xsl:variable name="calling-stylesheet-uri" as="xs:anyURI" select="static-base-uri()"/>

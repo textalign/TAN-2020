@@ -16,7 +16,7 @@
     
     <xsl:param name="tan:stylesheet-iri"
         select="'tag:textalign.net,2015:stylesheet:display-tan-as-html'"/>
-    <xsl:param name="tan:stylesheet-name" as="xs:string" select="'TAN2HTML'"/>
+    <xsl:param name="tan:stylesheet-name" as="xs:string" select="'TAN to HTML'"/>
     <xsl:param name="tan:stylesheet-activity"
         select="'converts TAN / TEI files to HTML'"/>
     <xsl:param name="tan:stylesheet-url" select="static-base-uri()"/>
