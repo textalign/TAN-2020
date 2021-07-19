@@ -57,7 +57,7 @@
    <!-- Errors for TAN file structures -->
    <xsl:include href="errors/TAN-core-errors.xsl"/>
    <!-- Regular expressions -->
-   <xsl:include href="regex/TAN-regex.xsl"/>
+   <xsl:include href="regex/TAN-fn-regex-standard.xsl"/>
    <!-- General functions on nodes -->
    <xsl:include href="nodes/TAN-fn-nodes-standard.xsl"/>
    <xsl:include href="nodes/TAN-fn-nodes-extended.xsl" use-when="not($tan:validation-mode-on)"/>
@@ -94,7 +94,7 @@
    <xsl:include href="files/TAN-fn-files-standard.xsl"/>
    <xsl:include href="files/TAN-fn-files-extended.xsl" use-when="not($tan:validation-mode-on)"/>
    <xsl:include href="files/TAN-fn-file-output.xsl" use-when="not($tan:validation-mode-on)"/>
-   <xsl:include href="files/archives/open-and-save-archive.xsl" use-when="not($tan:validation-mode-on)"/>
+   <xsl:include href="files/TAN-fn-file-archive-extended.xsl" use-when="not($tan:validation-mode-on)"/>
    <!-- Statistics -->
    <xsl:include href="statistics/TAN-fn-statistics-extended.xsl" use-when="not($tan:validation-mode-on)"/>
    <!-- HTML -->
