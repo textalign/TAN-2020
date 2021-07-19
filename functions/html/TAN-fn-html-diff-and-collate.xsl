@@ -14,8 +14,8 @@
         concert with diff.cs and diff.js files that are in the output/css and output/js
         directories. It has also been written to support the following core TAN
         applications:
-            * applications/compare/compare texts.xsl
-            * applications/merge/merge work versions.xsl
+            * Diff+
+            * Parabola
     -->
 
 
@@ -38,6 +38,7 @@
         * Collation ids are case-sensitive; diffs, however, must be simply a or b.
         * Any notices or other elements must be inserted before processing.
         -->
+        <!--kw: html, diff, tree manipulation -->
         <xsl:param name="diff-or-collate-results" as="element()?"/>
         <xsl:param name="primary-version-ref" as="xs:string?"/>
         <xsl:param name="primary-version-tree" as="element()*"/>
@@ -149,7 +150,7 @@
     <xsl:template match="tan:stats" mode="diff-or-collate-to-html-output-pass-1">
         <xsl:variable name="witness-ids" as="xs:string*" select="../tan:collation/tan:witness/@id"/>
 
-        <table xmlns="http://www.w3.org/1999/xhtml">
+        <table>
             <xsl:attribute name="class" select="'e-stats'"/>
             <thead>
                 <tr>
@@ -173,7 +174,7 @@
         </table>
 
         <xsl:if test="exists(../tan:collation/tan:witness/tan:commonality)">
-            <div xmlns="http://www.w3.org/1999/xhtml">
+            <div>
                 <div class="label">Pairwise Similarity</div>
                 <div class="explanation">The table below shows the percentage of similarity of each
                     pair of versions, starting with the version that shows the least divergence from
@@ -245,7 +246,7 @@
         
         <xsl:if test="$is-summary">
             <xsl:variable name="prec-wits" select="preceding-sibling::tan:witness"/>
-            <tr class="averages" xmlns="http://www.w3.org/1999/xhtml">
+            <tr class="averages">
                 <td>
                     <div>averages</div>
                 </td>
@@ -277,7 +278,7 @@
                 </td>
             </tr>
         </xsl:if>
-        <tr xmlns="http://www.w3.org/1999/xhtml">
+        <tr>
             <xsl:copy-of select="@class"/>
             <!-- The name of the witness, and the first column, for selection -->
             <td>
@@ -318,20 +319,20 @@
     </xsl:template>
 
     <xsl:template match="tan:stats/tan:witness/* | tan:stats/tan:collation/* | tan:stats/tan:diff/*" mode="diff-or-collate-to-html-output-pass-1">
-        <td xmlns="http://www.w3.org/1999/xhtml">
+        <td>
             <xsl:attribute name="class" select="'e-' || name(.)"/>
             <xsl:apply-templates mode="#current"/>
         </td>
     </xsl:template>
 
     <xsl:template match="tan:note" mode="diff-or-collate-to-html-output-pass-1" priority="1">
-        <div class="note explanation" xmlns="http://www.w3.org/1999/xhtml">
+        <div class="note explanation">
             <xsl:apply-templates mode="#current"/>
         </div>
     </xsl:template>
 
     <xsl:template match="tan:venns" priority="1" mode="diff-or-collate-to-html-output-pass-1">
-        <div class="venns" xmlns="http://www.w3.org/1999/xhtml">
+        <div class="venns">
             <div class="label">Three-way Venns and Analysis</div>
             <div class="explanation">Versions are presented below in sets of three, with a Venn
                 diagram for visualization. Numbers refer to the quantity of characters that diverge
@@ -377,17 +378,17 @@
                 else
                     0"/>
         <xsl:variable name="these-labels" as="element()+">
-            <div class="venn-a" xmlns="http://www.w3.org/1999/xhtml">
+            <div class="venn-a">
                 <xsl:value-of select="tan:a"/>
             </div>
-            <div class="venn-b" xmlns="http://www.w3.org/1999/xhtml">
+            <div class="venn-b">
                 <xsl:value-of select="tan:b"/>
             </div>
-            <div class="venn-c" xmlns="http://www.w3.org/1999/xhtml">
+            <div class="venn-c">
                 <xsl:value-of select="tan:c"/>
             </div>
         </xsl:variable>
-        <div class="venn" xmlns="http://www.w3.org/1999/xhtml">
+        <div class="venn">
             <div class="label">
                 <xsl:copy-of select="$these-labels"/>
             </div>
@@ -524,7 +525,7 @@
             </xsl:if>
             <xsl:apply-templates select="tan:note" mode="#current"/>
         </div>
-        <script xmlns="http://www.w3.org/1999/xhtml">
+        <script>
             <xsl:text>
 var sets = [</xsl:text>
             <xsl:apply-templates select="tan:part" mode="#current">
@@ -886,7 +887,7 @@ div.selectAll(".venn-circle path").style("fill-opacity", .6);
             <xsl:message select="'Primary file adjusted, prepared for infusion: ', $primary-file-adjusted"/>
         </xsl:if>
 
-        <h2 xmlns="http://www.w3.org/1999/xhtml">Comparison</h2>
+        <h2>Comparison</h2>
         <xsl:copy>
             <xsl:if test="not(exists($primary-version-tree))">
                 <xsl:copy-of select="@*"/>
@@ -906,7 +907,7 @@ div.selectAll(".venn-circle path").style("fill-opacity", .6);
         placed just after <stats> -->
         <xsl:param name="witness-ids"/>
         <xsl:variable name="commonality-children" select="tan:commonality"/>
-        <tr xmlns="http://www.w3.org/1999/xhtml">
+        <tr>
             <td>
                 <xsl:value-of select="@id"/>
             </td>
@@ -985,7 +986,7 @@ div.selectAll(".venn-circle path").style("fill-opacity", .6);
             <xsl:copy-of select="@*"/>
             <xsl:attribute name="class" select="string-join($class-values, ' ')"/>
             <!-- This is to populate a tooltip hover device to show which versions attest to the reading -->
-            <div class="wits" xmlns="http://www.w3.org/1999/xhtml">
+            <div class="wits">
                 <xsl:for-each select="$wit-refs">
                     <div class="siglum a-w-{.}">
                         <xsl:value-of select=". || ' '"/>

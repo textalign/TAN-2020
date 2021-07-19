@@ -92,6 +92,7 @@
         With these changes, any witness can be easily reconstructed with the XPath expression 
         tan:collation/()
       -->
+      <!--kw: strings, diff -->
       <xsl:param name="strings-to-collate" as="xs:string*"/>
       <xsl:param name="string-labels" as="xs:string*"/>
       <xsl:param name="preoptimize-string-order" as="xs:boolean"/>

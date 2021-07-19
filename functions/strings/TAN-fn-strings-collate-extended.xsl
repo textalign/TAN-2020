@@ -14,6 +14,7 @@
       <!-- Output: the output, wrapped in a <group> and preceded by statistics. If
          the boolean is true, then 3-way venn statistics will be included. -->
       <!-- For details, see comments at tan:infuse-diff-and-collate-stats(). -->
+      <!--kw: strings -->
       <xsl:param name="collate-input" as="element()?"/>
       <xsl:param name="include-venns" as="xs:boolean"/>
       <xsl:apply-templates select="tan:infuse-diff-and-collate-stats($collate-input, (), $include-venns)" mode="tan:get-diff-stats"/>
@@ -37,6 +38,7 @@
       witness values will not be updated, so that the results can be correlated with the other witness texts if needed.
       Further, if a replacement involves that witness no longer attesting to that fragment, then it is changed to a <u>
       (or the <u> is retained) and the <wit> is dropped. -->
+      <!--kw: strings, diff -->
       <xsl:param name="original-witness-string" as="xs:string?"/>
       <xsl:param name="original-witness-id" as="xs:string?"/>
       <xsl:param name="collate-output-to-replace" as="element()?"/>

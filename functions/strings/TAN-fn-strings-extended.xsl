@@ -17,6 +17,7 @@
    <xsl:function name="tan:segment-string" as="xs:string*" visibility="public">
       <!-- Input: a string, a sequence of doubles from 0 through 1, a regular expression -->
       <!-- Output: the string divided into segments proportionate to the doubles, with divisions allowed only by the regular expression -->
+      <!--kw: strings, sequences -->
       <xsl:param name="string-to-segment" as="xs:string?"/>
       <xsl:param name="segment-portions" as="xs:decimal*"/>
       <xsl:param name="break-at-regex" as="xs:string"/>
@@ -72,6 +73,7 @@
    <xsl:function name="tan:namespace" as="xs:string*" visibility="public">
       <!-- Input: any strings representing a namespace prefix or uri -->
       <!-- Output: the corresponding prefix or uri whenever a match is found in the global variable -->
+      <!--kw: strings, namespaces -->
       <xsl:param name="prefix-or-uri" as="xs:string*"/>
       <xsl:for-each select="$prefix-or-uri">
          <xsl:variable name="this-string" select="."/>
@@ -83,6 +85,7 @@
    <xsl:function name="tan:glob-to-regex" as="xs:string*" visibility="public">
       <!-- Input: any strings that follow a glob-like syntax -->
       <!-- Output: the strings converted to regular expressions -->
+      <!--kw: strings, filenames -->
       <xsl:param name="globs" as="xs:string*"/>
       <xsl:for-each select="$globs">
          <!-- escape special regex characters that aren't special glob characters -->
@@ -100,6 +103,7 @@
       <!-- Input: any strings -->
       <!-- Output: the acronym of those strings (initial letters joined without spaces) -->
       <!-- Example: "The Cat in the Hat" - > "TCitH" -->
+      <!--kw: strings -->
       <xsl:param name="string-input" as="xs:string?"/>
       <xsl:variable name="initials" as="xs:string*" select="
             for $i in tokenize($string-input, '\s+')
@@ -112,7 +116,8 @@
    <xsl:function name="tan:batch-replacement-messages" as="xs:string?" visibility="private">
       <!-- Input: any batch replacement element -->
       <!-- Output: a string explaining what it does -->
-      <!-- This function is useful for reporting back to users in a readable format what changes are rendered -->
+      <!-- This function is useful for reporting back to users in a readable format what 
+         changes are rendered -->
       <xsl:param name="batch-replace-element" as="element()?"/>
       <xsl:variable name="message-components" as="xs:string*">
          <xsl:if
@@ -152,6 +157,7 @@
       <!-- Most often in the TAN function library, a function is preferred over a named template.
          In this case, we have a named template, because the function severs the context of 
          regex-groups() -->
+      <!-- kw: strings, regular expressions -->
       <xsl:param name="number-of-blank-entries-ceiling" as="xs:integer" select="10"/>
       <xsl:iterate select="1 to 100">
          <xsl:param name="number-of-blanks-so-far" as="xs:integer" select="0"/>
@@ -186,6 +192,7 @@
          It also allows for exclusion of matches via @exclude-pattern. That is, if a span of text matches that value,
          the match will be ignored. -->
       <!-- The function was devised to convert raw text into TAN-T. Textual references can be turned into <div n=""/> anchors, and the result can then be changed into a traditional hierarchy. -->
+      <!--kw: strings, tree maniuplation, nodes -->
       <xsl:param name="items-with-strings" as="item()*"/>
       <xsl:param name="replace-elements" as="element()*"/>
       
@@ -355,6 +362,7 @@
       <!-- Input: any items -->
       <!-- Output: the same items, but with all unicode normalized -->
       <!-- This is a surrogate to fn:normalize-unicode(), extending functionality to any item -->
+      <!--kw: strings, tree manipulation -->
       <xsl:param name="input" as="item()*"/>
       <xsl:apply-templates select="$input" mode="tan:normalize-unicode"/>
    </xsl:function>
@@ -381,6 +389,7 @@
          languages that bother with title-case) -->
       <!-- According to Chicago rules of title casing, the first and last words are always capitalized, 
          and interior words are capitalized unless they are a preposition or article -->
+      <!--kw: strings -->
       <xsl:param name="string-to-convert" as="xs:string*"/>
       <xsl:for-each select="$string-to-convert">
          <xsl:variable name="pass-1" as="element()">
@@ -424,6 +433,7 @@
    <xsl:function name="tan:initial-upper-case" as="xs:string*" visibility="public">
       <!-- Input: any strings -->
       <!-- Output: each string with the initial letters capitalized and the rest set lower-case -->
+      <!--kw: strings -->
       <xsl:param name="strings" as="xs:string*"/>
       <xsl:variable name="non-letter-regex">\P{L}</xsl:variable>
       <xsl:for-each select="$strings">
@@ -451,6 +461,7 @@
    <xsl:function name="tan:commas-and-ands" as="xs:string?" visibility="public">
       <!-- Input: sequences of strings -->
       <!-- Output: the strings joined together with , and 'and' -->
+      <!--kw: strings -->
       <xsl:param name="input-strings" as="xs:string*"/>
       <xsl:param name="oxford-comma" as="xs:boolean"/>
       <xsl:variable name="input-string-count" select="count($input-strings)"/>
@@ -516,6 +527,7 @@
       <!-- Input: a string value; an optional regex the string must match; an optional regex the string must not match -->
       <!-- Output: whether the string satisfies the two regex conditions; if either regex is empty, true will be returned -->
       <!-- If the input string is less than zero length, the function returns false -->
+      <!--kw: strings, regular expressions -->
       <xsl:param name="string-to-test" as="xs:string?"/>
       <xsl:param name="string-must-match-regex" as="xs:string?"/>
       <xsl:param name="string-must-not-match-regex" as="xs:string?"/>
@@ -556,6 +568,7 @@
    <xsl:function name="tan:reverse-string" as="xs:string?" visibility="public">
       <!-- Input: any string -->
       <!-- Output: the string in reverse order -->
+      <!--kw: strings -->
       <xsl:param name="string-to-reverse" as="xs:string?"/>
       <xsl:sequence select="codepoints-to-string(reverse(string-to-codepoints($string-to-reverse)))"/>
    </xsl:function>

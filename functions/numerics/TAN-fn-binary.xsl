@@ -25,6 +25,10 @@
    <!-- Bit handling -->
 
    <xsl:function name="tan:pad-bits" as="xs:boolean*" visibility="public">
+      <!--Input: bits as booleans; a boolean; an integer -->
+      <!--Output: the input padded with enough 0 bits (false booleans) at the front or back (depends 
+         on 2nd parameter) to make the output as long as the third integer -->
+      <!--kw: numerics, binary -->
       <xsl:param name="input-bits" as="xs:boolean*"/>
       <xsl:param name="big-endian" as="xs:boolean"/>
       <xsl:param name="item-size" as="xs:integer"/>
@@ -78,6 +82,7 @@
       <!-- Input: a sequence of bits (booleans); a boolean -->
       <!-- Output: the same sequence, but extended to a multiple of 8 bits (a byte). If the 2nd param is true, it is
       big endian and the padding takes place at the beginning, otherwise, at the end. -->
+      <!--kw: numerics, binary -->
       <xsl:param name="input-bits" as="xs:boolean*"/>
       <xsl:param name="big-endian" as="xs:boolean"/>
       <xsl:sequence select="tan:pad-bits($input-bits, $big-endian, 8)"/>
@@ -87,6 +92,7 @@
       <!-- Input: a sequence of bits (booleans); a boolean -->
       <!-- Output: the same sequence, but extended to a multiple of 32 bits (a "word"). If the 2nd param is true, it is
       big endian and the padding takes place at the beginning, otherwise, at the end. -->
+      <!--kw: numerics, binary -->
       <xsl:param name="input-bits" as="xs:boolean*"/>
       <xsl:param name="big-endian" as="xs:boolean"/>
       <xsl:sequence select="tan:pad-bits($input-bits, $big-endian, 32)"/>
@@ -101,6 +107,7 @@
       <!-- Because a hexBinary is eight bits, the input bits are cast to bytes. For defective byte input, little/big endian
       options will likely result in different output. For whole bytes, the results should be the same, since the hexBinary
       will preserve the endianness of the input. -->
+      <!--kw: numerics, binary -->
       <xsl:param name="input-bits" as="xs:boolean*"/>
       <xsl:param name="big-endian" as="xs:boolean"/>
       <xsl:variable name="input-as-bytes" select="tan:bits-to-byte($input-bits, $big-endian)" as="xs:boolean*"/>
@@ -114,6 +121,7 @@
       <!-- Input: a hexBinary -->
       <!-- Output: the value in bits (booleans) -->
       <!-- Because hexBinary works in bytes, the output will be a multiple of 8 -->
+      <!--kw: numerics, binary -->
       <xsl:param name="in" as="xs:hexBinary?"/>
       <xsl:variable name="in-as-bin" select="tan:hexBinary-to-bin($in)" as="xs:string"/>
       <xsl:if test="exists($in)">
@@ -129,6 +137,7 @@
          the results should be the same, since the base64Binary will preserve the endianness of the input. Trailing =
          are padding characters that are neither 0 nor 1
       -->
+      <!--kw: numerics, binary -->
       <xsl:param name="input-bits" as="xs:boolean*"/>
       <xsl:param name="big-endian" as="xs:boolean"/>
       <xsl:variable name="input-as-hexBinary" select="tan:bits-to-hexBinary($input-bits, $big-endian)" as="xs:hexBinary?"/>
@@ -141,6 +150,7 @@
       <!-- Input: a base64Binary -->
       <!-- Output: the value in bits (booleans) -->
       <!-- Because base64Binary works in bytes, the output will be a multiple of 8 -->
+      <!--kw: numerics, binary -->
       <xsl:param name="in" as="xs:base64Binary?"/>
       <xsl:variable name="in-as-bin" select="tan:base64Binary-to-bin($in)" as="xs:string?"/>
       <xsl:if test="exists($in)">
@@ -156,6 +166,7 @@
    <xsl:function name="tan:bits-to-octets" as="xs:integer*" visibility="public">
       <!-- Input: a sequence of bits (booleans) -->
       <!-- Output: a sequence of integers between 0 and 255 representing the Binary value -->
+      <!--kw: numerics, binary -->
       <xsl:param name="in" as="xs:boolean*"/>
       <xsl:variable name="in-count" as="xs:integer" select="count($in)"/>
       <xsl:variable name="byte-count" select="$in-count idiv 8" as="xs:integer"/>
@@ -175,6 +186,7 @@
    <xsl:function name="tan:octets-to-bits" as="xs:boolean*" visibility="public">
       <!-- Input: a sequence of octets (integers in the range 0-255) -->
       <!-- Output: the octets as sequence of bits (booleans) -->
+      <!--kw: numerics, binary -->
       <xsl:param name="in" as="xs:integer*"/>
       <xsl:if test="exists($in)">
          <xsl:sequence select="tan:hexBinary-to-bits(tan:octets-to-hexBinary($in))"/>
@@ -185,6 +197,7 @@
    <xsl:function name="tan:hexBinary-to-octets" as="xs:integer*" visibility="public">
       <!-- Input: a hexBinary -->
       <!-- Output: a sequence of integers between 0 and 255 representing the hexBinary value -->
+      <!--kw: numerics, binary -->
       <xsl:param name="in" as="xs:hexBinary?"/>
       <xsl:variable name="in-as-hex" select="tan:hexBinary-to-hex($in)" as="xs:string?"/>
       <xsl:if test="exists($in)">
@@ -199,6 +212,7 @@
    <xsl:function name="tan:octets-to-hexBinary" as="xs:hexBinary?" visibility="public">
       <!-- Input: a sequence of octets (integers in the range 0-255) -->
       <!-- Output: the octets as hexBinary -->
+      <!--kw: numerics, binary -->
       <xsl:param name="in" as="xs:integer*"/>
       <xsl:variable name="bad-octets" select="$in[. lt 0 or . gt 255]" as="xs:integer*"/>
       <xsl:choose>
@@ -218,6 +232,7 @@
    <xsl:function name="tan:base64Binary-to-octets" as="xs:integer*" visibility="public">
       <!-- Input: a base64Binary -->
       <!-- Output: a sequence of integers between 0 and 255 representing the base64Binary value -->
+      <!--kw: numerics, binary -->
       <xsl:param name="in" as="xs:base64Binary?"/>
       <xsl:variable name="in-as-hexBinary" select="xs:hexBinary($in)" as="xs:hexBinary?"/>
       <xsl:if test="exists($in)">
@@ -228,6 +243,7 @@
    <xsl:function name="tan:octets-to-base64Binary" as="xs:base64Binary?" visibility="public">
       <!-- Input: a sequence of octets (integers in the range 0-255) -->
       <!-- Output: the octets as base64Binary -->
+      <!--kw: numerics, binary -->
       <xsl:param name="in" as="xs:integer*"/>
       <xsl:if test="exists($in)">
          <xsl:sequence select="xs:base64Binary(tan:octets-to-hexBinary($in))"/>
@@ -244,6 +260,7 @@
       <!-- Input: a sequence of bits (booleans) -->
       <!-- Output: a string of 8-bit characters (characters corresponding to codepoints 
             1-255, and character 0 converted to U+2400 SYMBOL FOR NULL)-->
+      <!--kw: numerics, binary -->
       <xsl:param name="in" as="xs:boolean*"/>
       <xsl:variable name="in-count" as="xs:integer" select="count($in)"/>
       <xsl:variable name="byte-count" select="$in-count idiv 8" as="xs:integer"/>
@@ -263,6 +280,7 @@
    <xsl:function name="tan:eight-bit-chars-to-bits" as="xs:boolean*" visibility="public">
       <!-- Input: a sequence of eight-bit-chars (integers in the range 0-255) -->
       <!-- Output: the eight-bit-chars as sequence of bits (booleans) -->
+      <!--kw: numerics, binary -->
       <xsl:param name="in" as="xs:string*"/>
       <xsl:if test="exists($in)">
          <xsl:sequence select="tan:hexBinary-to-bits(tan:eight-bit-chars-to-hexBinary($in))"/>
@@ -274,6 +292,7 @@
       <!-- Input: a hexBinary -->
       <!-- Output: the hexBinary converted to 8-bit characters (characters corresponding to codepoints 
             1-255, and character 0 converted to U+2400 SYMBOL FOR NULL)-->
+      <!--kw: numerics, binary -->
       <xsl:param name="hexBinary" as="xs:hexBinary?"/>
       <xsl:variable name="pass-1" as="xs:string*">
          <xsl:analyze-string select="xs:string($hexBinary)" regex="..">
@@ -300,6 +319,7 @@
    <xsl:function name="tan:eight-bit-chars-to-hexBinary" as="xs:hexBinary?" visibility="public">
       <!-- Input: a string that is encoded in eight-bit chars; a boolean -->
       <!-- Output: the string as a sequence of hexBinary values, one per character -->
+      <!--kw: numerics, binary -->
       <xsl:param name="in" as="xs:string?"/>
       <xsl:variable name="input-codepoints" select="string-to-codepoints($in)" as="xs:integer*"/>
       <xsl:variable name="bad-codepoints"
@@ -332,6 +352,7 @@
    <xsl:function name="tan:base64Binary-to-eight-bit-chars" as="xs:string?" visibility="public">
       <!-- Input: a base64 binary -->
       <!-- Output: the same, converted to an 8-bit character string -->
+      <!--kw: numerics, binary -->
       <xsl:param name="in" as="xs:base64Binary?"/>
       <xsl:variable name="this-as-hexbinary" select="xs:hexBinary($in)" as="xs:hexBinary"/>
       <xsl:if test="exists($in)">
@@ -342,6 +363,7 @@
    <xsl:function name="tan:eight-bit-chars-to-base64Binary" as="xs:base64Binary?" visibility="public">
       <!-- Input: a string that is encoded in eight-bit chars; a boolean -->
       <!-- Output: the string as a sequence of hexBinary values, one per character -->
+      <!--kw: numerics, binary -->
       <xsl:param name="in" as="xs:string?"/>
       <xsl:if test="exists($in)">
          <xsl:sequence select="xs:base64Binary(tan:eight-bit-chars-to-hexBinary($in))"/>
@@ -357,6 +379,7 @@
       <!-- Input: a boolean sequence -->
       <!-- Output: the bitwise complement of the sequence -->
       <!-- e.g., false, true > true, false -->
+      <!--kw: numerics, binary -->
       <xsl:param name="boolean" as="xs:boolean*"/>
       <xsl:for-each select="$boolean">
          <xsl:sequence select="not(.)"/>
@@ -366,6 +389,7 @@
    <xsl:function name="tan:bitwise-or" as="xs:boolean*" visibility="public">
       <!-- Input: two sequences of booleans -->
       <!-- Output: a single sequence as long as the longest input sequence, with pairwise OR computed. -->
+      <!--kw: numerics, binary -->
       <xsl:param name="bit-sequence-a" as="xs:boolean*"/>
       <xsl:param name="bit-sequence-b" as="xs:boolean*"/>
       <xsl:variable name="a-count" select="count($bit-sequence-a)" as="xs:integer"/>
@@ -388,6 +412,7 @@
    <xsl:function name="tan:bitwise-and" as="xs:boolean*" visibility="public">
       <!-- Input: two sequences of booleans -->
       <!-- Output: a single sequence as long as the longest input sequence, with pairwise AND computed. -->
+      <!--kw: numerics, binary -->
       <xsl:param name="bit-sequence-a" as="xs:boolean*"/>
       <xsl:param name="bit-sequence-b" as="xs:boolean*"/>
       <xsl:variable name="a-count" select="count($bit-sequence-a)" as="xs:integer"/>
@@ -409,6 +434,7 @@
    <xsl:function name="tan:bitwise-xor" as="xs:boolean*" visibility="public">
       <!-- Input: two sequences of booleans -->
       <!-- Output: a single sequence as long as the longest input sequence, with pairwise XOR computed. -->
+      <!--kw: numerics, binary -->
       <xsl:param name="bit-sequence-a" as="xs:boolean*"/>
       <xsl:param name="bit-sequence-b" as="xs:boolean*"/>
       <!--<xsl:param name="big-endian" as="xs:boolean"/>-->
@@ -438,6 +464,7 @@
       <!-- If one input is longer than the other, each unpaired boolean at the most significant part 
          of the longest series will be assessed against an assumed counterpart of false.
       -->
+      <!--kw: numerics, binary -->
       <xsl:param name="bit-sequence-a" as="xs:boolean*"/>
       <xsl:param name="bit-sequence-b" as="xs:boolean*"/>
       <xsl:param name="big-endian" as="xs:boolean"/>
@@ -505,7 +532,7 @@ carryover:      +0  +1     +0  +1
          </xsl:iterate>
       </xsl:variable>
       
-      <!-- Output: don't forget, the results might be one digit larger than the longest input string -->
+      <!-- Return output. Don't forget, the results might be one digit larger than the longest input string -->
       <xsl:sequence
          select="
             if ($big-endian) then
@@ -520,6 +547,7 @@ carryover:      +0  +1     +0  +1
       <!-- Output: the sequence, circularly shifted left the number of places specified by the integer; if the integer is
       negative, it will be shifted right. -->
       <!-- It is up to the user to consider whether the bits are big- or little-endian as to the meaning of "left". -->
+      <!--kw: numerics, binary -->
       <xsl:param name="bit-sequence" as="xs:boolean*"/>
       <xsl:param name="rotate-left" as="xs:integer"/>
       <xsl:variable name="bit-sequence-count" select="count($bit-sequence)" as="xs:integer"/>
@@ -562,6 +590,7 @@ carryover:      +0  +1     +0  +1
       <!-- Input: a sequence of booleans -->
       <!-- Output: the last 32 -->
       <!-- Used as a way of doing modulo 2 ^ 32, usually on big-endian bits; little-endian modulo 2 ^ 32 is easy with subsequence(X, 1, 32) -->
+      <!--kw: numerics, binary -->
       <xsl:param name="bit-sequence" as="xs:boolean*"/>
       <xsl:sequence select="subsequence($bit-sequence, count($bit-sequence) - 31)"/>
    </xsl:function>

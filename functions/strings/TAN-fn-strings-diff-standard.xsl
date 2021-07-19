@@ -47,7 +47,8 @@
    </xsl:function>
    
    <xsl:function name="tan:diff-cache" as="element()" _cache="{$tan:advanced-processing-available}" visibility="public">
-      <!-- This is a shadow function for tan:diff(). It uses XSLT 3.0 @cache, so that tan:collate() can avoid repeating 
+      <!-- 4-param version of fuller one below
+         This is a shadow function for tan:diff(). It uses XSLT 3.0 @cache, so that tan:collate() can avoid repeating 
          diffs. Works only if the processor supports advanced features (e.g., Saxon PE, EE, not HE) -->
       <xsl:param name="string-a" as="xs:string?"/>
       <xsl:param name="string-b" as="xs:string?"/>
@@ -58,10 +59,19 @@
    </xsl:function>
    
    <xsl:function name="tan:diff" as="element()" visibility="public">
-      <!-- This function prepares strings for 5-ary tan:diff(), primarily by tending to input strings
-        that are large or really large (giant). Large pairs of strings are parsed to find common characters
-        that might be used to find pairwise congruence of large segments. Giant pairs of strings are passed 
-        to tan:giant-diff(). -->
+      <!-- Input: any two strings; boolean indicating whether results should snap to nearest word; boolean 
+            indicating whether long strings should be pre-processed -->
+      <!-- Output: an element with <a>, <b>, and <common> children showing where strings a and b match 
+            and depart -->
+      <!-- This function was written to assist the validation of <redivision>s quickly find differences 
+            between any two strings. The function has been tested on pairs of strings up to combined lengths of 
+            9M characters. At that scale, the only way to efficiently process the diffs is by chaining smaller 
+            diffs, which are still large, optimally about 350K in length. -->
+      <!--  This function prepares strings for 5-arity tan:diff-engine(), primarily by tending to input strings
+         that are large or really large (giant). Large pairs of strings are parsed to find common characters
+         that might be used to find pairwise congruence of large segments. Giant pairs of strings are passed 
+         to tan:giant-diff(). -->
+      <!-- kw: strings, diff -->
       <xsl:param name="string-a" as="xs:string?"/>
       <xsl:param name="string-b" as="xs:string?"/>
       <xsl:param name="snap-to-word" as="xs:boolean"/>
@@ -103,7 +113,7 @@
          <xsl:when test="
                ($preprocess-long-strings = false()) or
                (($str-a-len lt $tan:diff-preprocess-via-tokenization-trigger-point) or ($str-b-len lt $tan:diff-preprocess-via-tokenization-trigger-point))">
-            <xsl:sequence select="tan:diff($string-a, $string-b, $snap-to-word, (), (), 0)"/>
+            <xsl:sequence select="tan:diff-courtyard($string-a, $string-b, $snap-to-word, (), (), 0)"/>
          </xsl:when>
          <xsl:otherwise>
             <xsl:variable name="str-a-char-count-map" as="map(*)">
@@ -150,7 +160,7 @@
             </xsl:if>
             
             <xsl:sequence
-               select="tan:diff($string-a, $string-b, $snap-to-word, $first-tokenizer-cps, $next-tokenizer-cps, 0)"/>
+               select="tan:diff-courtyard($string-a, $string-b, $snap-to-word, $first-tokenizer-cps, $next-tokenizer-cps, 0)"/>
          </xsl:otherwise>
       </xsl:choose>
    </xsl:function>
@@ -283,21 +293,12 @@
       </xsl:choose>
    </xsl:function>
    
-   <!-- The main diff function -->
-   <xsl:function name="tan:diff" as="element()" visibility="private">
-      <!-- Input: any two strings; boolean indicating whether results should snap to nearest word; boolean 
-            indicating whether long strings should be pre-processed -->
-      <!-- Output: an element with <a>, <b>, and <common> children showing where strings a and b match 
-            and depart -->
-      <!-- This function was written to assist the validation of <redivision>s quickly find differences 
-            between any two strings. The function has been tested on pairs of strings up to combined lengths of 
-            9M characters. At that scale, the only way to efficiently process the diffs is by chaining smaller 
-            diffs, which are still large, optimally about 350K in length. -->
-
+   <xsl:function name="tan:diff-courtyard" as="element()" visibility="private">
+      <!-- The diff process begins here, with any tokenizing preprocessor instructions in hand,
+         and returning any normalized output as requested. The main diff engine is yet to come. -->
       <xsl:param name="string-a" as="xs:string?"/>
       <xsl:param name="string-b" as="xs:string?"/>
       <xsl:param name="snap-to-word" as="xs:boolean"/>
-      <!--<xsl:param name="characters-to-tokenize-on" as="xs:string*"/>-->
       <xsl:param name="current-tokenizer-cps" as="xs:integer*"/>
       <xsl:param name="next-tokenizer-cps" as="xs:integer*"/>
       <xsl:param name="loop-counter" as="xs:integer"/>
@@ -551,30 +552,6 @@
                <xsl:variable name="diagnostics-regex" as="xs:string"
                   select="'Replace this string with a regular expression, to trace it in strings a and b'"/>
                <xsl:variable name="diagnostics-on" select="false()"/>
-               <!--<xsl:if test="$loop-counter eq 0">
-                  <xsl:message select="'START'"/>
-                  <xsl:message select="'all tokenization strings: ', string-join($characters-to-tokenize-on, ' ')"/>
-               </xsl:if>-->
-               <!--<xsl:if test="$this-unique-sequence-count gt 0">
-                  <xsl:message select="'loop', $loop-counter"/>
-                  <xsl:message select="'next (current) tokenization string (', string-to-codepoints($next-tokenization-string), '): ', $next-tokenization-string"/>
-                  <xsl:message select="'all tokenization strings: ', string-join($characters-to-tokenize-on, ' ')"/>
-                  <xsl:message select="
-                        'common strings: ',
-                        for $i in $input-analyzed-2[1]/tan:group/tan:common
-                        return
-                           string-length($i)"/>
-                  <xsl:message select="
-                        'a segments: ',
-                        for $i in $input-analyzed-2[1]/tan:group/tan:distinct
-                        return
-                           string-length($i)"/>
-                  <xsl:message select="
-                        'b segments: ',
-                        for $i in $input-analyzed-2[2]/tan:group/tan:distinct
-                        return
-                           string-length($i)"/>
-               </xsl:if>-->
                <xsl:if test="$diagnostics-on">
                   <xsl:message select="'diagnostics on, tan:diff(), branch to preprocess long strings.'"/>
                   <xsl:message select="'String a (length ' || string($str-a-len) || '): ' || tan:ellipses($string-a, 40)"/>
@@ -610,7 +587,7 @@
 
                <xsl:for-each-group select="$input-analyzed-2/tan:group" group-by="@n">
                   <xsl:copy-of select="
-                        tan:diff(current-group()[@input = '1']/tan:distinct, current-group()[@input = '2']/tan:distinct,
+                        tan:diff-courtyard(current-group()[@input = '1']/tan:distinct, current-group()[@input = '2']/tan:distinct,
                         $snap-to-word, ($current-tokenizer-cps, head($next-tokenizer-cps)), tail($next-tokenizer-cps), $loop-counter + 1)/*"/>
                   <xsl:copy-of select="current-group()[1]/tan:common"/>
                </xsl:for-each-group>
@@ -1358,12 +1335,7 @@
             </xsl:for-each-group>
          </snap2>
       </xsl:variable>
-      <!-- diagnostics, results -->
-      <!--<xsl:copy-of select="$snap1"/>-->
-      <!--<xsl:copy-of select="$strings-prepped"/>-->
-      <!--<xsl:copy-of select="$strings-diffed"/>-->
-      <!--<xsl:copy-of select="$snap2"/>-->
-      <!--<xsl:copy-of select="tan:merge-adjacent-elements($snap2/*)"/>-->
+
       <diff>
          <xsl:for-each-group select="$snap2/*" group-adjacent="name()">
             <xsl:element name="{current-grouping-key()}">
@@ -1432,8 +1404,11 @@
    
    <xsl:function name="tan:diff-to-collation" as="element()" visibility="public">
       <!-- Input: any single output of tan:diff(), two strings for the labels of diff strings a and b -->
-      <!-- Output: a <collation> with the data prepped for merging with other collations -->
-      <!-- This function was written to support the XSLT 3.0 version of tan:collate() -->
+      <!-- Output: the output converted to the output of tan:collate(), namely, a <collation> with <u> and
+         <c> children, wrapping <txt>, <wit>. -->
+      <!-- This function was written to support the XSLT 3.0 version of tan:collate(), to allow tan:diff()
+         to be merged with tan:collate() output -->
+      <!--kw: strings, diff -->
       <xsl:param name="diff-output" as="element()?"/>
       <xsl:param name="diff-text-a-label" as="xs:string?"/>
       <xsl:param name="diff-text-b-label" as="xs:string?"/>
@@ -1533,6 +1508,7 @@
       <!-- Output: the output adjusted, with <a> and <b>s shifted if there are more optimal divisions -->
       <!-- Multiple inputs are presumed to be tan:diff() results that should be concatenated. -->
       <!-- This function is helpful for cases where the common element needs to be adjusted to better respect word or phrase boundaries. -->
+      <!--kw: strings, diff -->
       <xsl:param name="diff-output" as="element(tan:diff)*"/>
       <xsl:variable name="input-consolidated" select="tan:concat-and-sort-diff-output($diff-output)"
          as="element()?"/>
@@ -1825,6 +1801,7 @@
       <!-- Output: each <diff> child stamped with @_len, @_pos-a, @_pos-b indicating
       length and the starting positions for a and b -->
       <!-- This function produces output analogous to tan:stamp-tree-with-text-data() -->
+      <!--kw: strings, tree manipulation, attributes -->
       <xsl:param name="diff-result" as="element(tan:diff)?"/>
       
       <xsl:apply-templates select="$diff-result" mode="tan:stamp-diff-with-text-data"/>
@@ -1899,6 +1876,7 @@
       file with a given redivision. -->
       <!-- This function provides a more complex approach to the generic one
       supported by tan:chop-tree() -->
+      <!--kw: strings, tree manipulation -->
       <xsl:param name="diff-output" as="element(tan:diff)?"/>
       <xsl:param name="chop-points" as="xs:integer*"/>
       <xsl:param name="use-string-a" as="xs:boolean"/>

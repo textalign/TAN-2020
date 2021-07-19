@@ -54,7 +54,10 @@
    
    <xsl:function name="tan:get-doc-history" as="element()*" visibility="public">
       <!-- Input: any TAN document -->
-      <!-- Output: a sequence of elements with @when, @ed-when, @accessed-when, @claim-when, sorted from most recent to least; each element includes @when-sort, a decimal that represents the value of the most recent time-date stamp in that element -->
+      <!-- Output: a sequence of elements with @when, @ed-when, @accessed-when, @claim-when, sorted from 
+         most recent to least; each element includes @when-sort, a decimal that represents the value of 
+         the most recent time-date stamp in that element -->
+      <!--kw: versioning -->
       <xsl:param name="TAN-doc" as="document-node()*"/>
       <xsl:for-each select="$TAN-doc">
          <xsl:variable name="doc-hist-raw" as="element()*">

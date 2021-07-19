@@ -1151,6 +1151,26 @@ ancestor-or-self::*:return[namespace-uri() = "http://www.oxygenxml.com/ns/doc/xs
                         <scenarioAssociation-array>
                             <scenarioAssociation>
                                 <field name="url">
+                                    <String>tests/test%20TAN%20function%20library.xsl</String>
+                                </field>
+                                <field name="scenarioIds">
+                                    <list>
+                                        <String>DEV: Run XSLT against itself</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioTypes">
+                                    <list>
+                                        <String>XML</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioStorageLocations">
+                                    <list>
+                                        <Byte>2</Byte>
+                                    </list>
+                                </field>
+                            </scenarioAssociation>
+                            <scenarioAssociation>
+                                <field name="url">
                                     <String>../SERVER/make%20webpage.xsl</String>
                                 </field>
                                 <field name="scenarioIds">
@@ -3940,7 +3960,50 @@ ancestor-or-self::*:return[namespace-uri() = "http://www.oxygenxml.com/ns/doc/xs
                         <scenarioAssociation-array>
                             <scenarioAssociation>
                                 <field name="url">
-                                    <String>utilities/Updater/Updater.xsl</String>
+                                    <String>maintenance/guidelines/populate%20TAN%20guidelines.xsl</String>
+                                </field>
+                                <field name="scenarioIds">
+                                    <list>
+                                        <String>XSLT quality Kalv</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioTypes">
+                                    <list>
+                                        <String>Validation_scenario</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioStorageLocations">
+                                    <list>
+                                        <Byte>2</Byte>
+                                    </list>
+                                </field>
+                            </scenarioAssociation>
+                            <scenarioAssociation>
+                                <field name="url">
+                                    <String>functions/TAN-function-library.xsl</String>
+                                </field>
+                                <field name="scenarioIds">
+                                    <list>
+                                        <String>TAN function library</String>
+                                        <String>XSLT quality Kalv</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioTypes">
+                                    <list>
+                                        <String>Validation_scenario</String>
+                                        <String>Validation_scenario</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioStorageLocations">
+                                    <list>
+                                        <Byte>2</Byte>
+                                        <Byte>2</Byte>
+                                    </list>
+                                </field>
+                            </scenarioAssociation>
+                            <scenarioAssociation>
+                                <field name="url">
+                                    <String>applications/Diff+/Diff+.xsl</String>
                                 </field>
                                 <field name="scenarioIds">
                                     <list>
@@ -3980,27 +4043,7 @@ ancestor-or-self::*:return[namespace-uri() = "http://www.oxygenxml.com/ns/doc/xs
                             </scenarioAssociation>
                             <scenarioAssociation>
                                 <field name="url">
-                                    <String>utilities/TAN-A-lm%20Builder/TAN-A-lm%20Builder.xsl</String>
-                                </field>
-                                <field name="scenarioIds">
-                                    <list>
-                                        <String>TAN application and utility library</String>
-                                    </list>
-                                </field>
-                                <field name="scenarioTypes">
-                                    <list>
-                                        <String>Validation_scenario</String>
-                                    </list>
-                                </field>
-                                <field name="scenarioStorageLocations">
-                                    <list>
-                                        <Byte>2</Byte>
-                                    </list>
-                                </field>
-                            </scenarioAssociation>
-                            <scenarioAssociation>
-                                <field name="url">
-                                    <String>utilities/File%20Copier/File%20Copier.xsl</String>
+                                    <String>applications/Parabola/Parabola.xsl</String>
                                 </field>
                                 <field name="scenarioIds">
                                     <list>
@@ -4040,26 +4083,6 @@ ancestor-or-self::*:return[namespace-uri() = "http://www.oxygenxml.com/ns/doc/xs
                             </scenarioAssociation>
                             <scenarioAssociation>
                                 <field name="url">
-                                    <String>utilities/Body%20Remodeler/Body%20Remodeler.xsl</String>
-                                </field>
-                                <field name="scenarioIds">
-                                    <list>
-                                        <String>TAN application and utility library</String>
-                                    </list>
-                                </field>
-                                <field name="scenarioTypes">
-                                    <list>
-                                        <String>Validation_scenario</String>
-                                    </list>
-                                </field>
-                                <field name="scenarioStorageLocations">
-                                    <list>
-                                        <Byte>2</Byte>
-                                    </list>
-                                </field>
-                            </scenarioAssociation>
-                            <scenarioAssociation>
-                                <field name="url">
                                     <String>utilities/Body%20Sync/Body%20Sync.xsl</String>
                                 </field>
                                 <field name="scenarioIds">
@@ -4080,7 +4103,7 @@ ancestor-or-self::*:return[namespace-uri() = "http://www.oxygenxml.com/ns/doc/xs
                             </scenarioAssociation>
                             <scenarioAssociation>
                                 <field name="url">
-                                    <String>utilities/Body%20Builder/Body%20Builder.xsl</String>
+                                    <String>utilities/Body%20Remodeler/Body%20Remodeler.xsl</String>
                                 </field>
                                 <field name="scenarioIds">
                                     <list>
@@ -4100,27 +4123,7 @@ ancestor-or-self::*:return[namespace-uri() = "http://www.oxygenxml.com/ns/doc/xs
                             </scenarioAssociation>
                             <scenarioAssociation>
                                 <field name="url">
-                                    <String>applications/Diff+/Diff+.xsl</String>
-                                </field>
-                                <field name="scenarioIds">
-                                    <list>
-                                        <String>TAN application and utility library</String>
-                                    </list>
-                                </field>
-                                <field name="scenarioTypes">
-                                    <list>
-                                        <String>Validation_scenario</String>
-                                    </list>
-                                </field>
-                                <field name="scenarioStorageLocations">
-                                    <list>
-                                        <Byte>2</Byte>
-                                    </list>
-                                </field>
-                            </scenarioAssociation>
-                            <scenarioAssociation>
-                                <field name="url">
-                                    <String>applications/Tangram/Tangram.xsl</String>
+                                    <String>utilities/TAN-A-lm%20Builder/TAN-A-lm%20Builder.xsl</String>
                                 </field>
                                 <field name="scenarioIds">
                                     <list>
@@ -4160,6 +4163,106 @@ ancestor-or-self::*:return[namespace-uri() = "http://www.oxygenxml.com/ns/doc/xs
                             </scenarioAssociation>
                             <scenarioAssociation>
                                 <field name="url">
+                                    <String>applications/Tangram/Tangram.xsl</String>
+                                </field>
+                                <field name="scenarioIds">
+                                    <list>
+                                        <String>TAN application and utility library</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioTypes">
+                                    <list>
+                                        <String>Validation_scenario</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioStorageLocations">
+                                    <list>
+                                        <Byte>2</Byte>
+                                    </list>
+                                </field>
+                            </scenarioAssociation>
+                            <scenarioAssociation>
+                                <field name="url">
+                                    <String>utilities/Updater/Updater.xsl</String>
+                                </field>
+                                <field name="scenarioIds">
+                                    <list>
+                                        <String>TAN application and utility library</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioTypes">
+                                    <list>
+                                        <String>Validation_scenario</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioStorageLocations">
+                                    <list>
+                                        <Byte>2</Byte>
+                                    </list>
+                                </field>
+                            </scenarioAssociation>
+                            <scenarioAssociation>
+                                <field name="url">
+                                    <String>utilities/Body%20Builder/Body%20Builder.xsl</String>
+                                </field>
+                                <field name="scenarioIds">
+                                    <list>
+                                        <String>TAN application and utility library</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioTypes">
+                                    <list>
+                                        <String>Validation_scenario</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioStorageLocations">
+                                    <list>
+                                        <Byte>2</Byte>
+                                    </list>
+                                </field>
+                            </scenarioAssociation>
+                            <scenarioAssociation>
+                                <field name="url">
+                                    <String>utilities/File%20Copier/File%20Copier.xsl</String>
+                                </field>
+                                <field name="scenarioIds">
+                                    <list>
+                                        <String>TAN application and utility library</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioTypes">
+                                    <list>
+                                        <String>Validation_scenario</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioStorageLocations">
+                                    <list>
+                                        <Byte>2</Byte>
+                                    </list>
+                                </field>
+                            </scenarioAssociation>
+                            <scenarioAssociation>
+                                <field name="url">
+                                    <String>functions/files/archives/open-and-save-archive.xsl</String>
+                                </field>
+                                <field name="scenarioIds">
+                                    <list>
+                                        <String>TAN function library</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioTypes">
+                                    <list>
+                                        <String>Validation_scenario</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioStorageLocations">
+                                    <list>
+                                        <Byte>2</Byte>
+                                    </list>
+                                </field>
+                            </scenarioAssociation>
+                            <scenarioAssociation>
+                                <field name="url">
                                     <String>../pre-TAN/perseus-grc/data/tlg0026/tlg002/tlg0026.tlg002.perseus-grc1.xml</String>
                                 </field>
                                 <field name="scenarioIds">
@@ -4181,26 +4284,6 @@ ancestor-or-self::*:return[namespace-uri() = "http://www.oxygenxml.com/ns/doc/xs
                             <scenarioAssociation>
                                 <field name="url">
                                     <String>functions/regex/TAN-regex.xsl</String>
-                                </field>
-                                <field name="scenarioIds">
-                                    <list>
-                                        <String>TAN function library</String>
-                                    </list>
-                                </field>
-                                <field name="scenarioTypes">
-                                    <list>
-                                        <String>Validation_scenario</String>
-                                    </list>
-                                </field>
-                                <field name="scenarioStorageLocations">
-                                    <list>
-                                        <Byte>2</Byte>
-                                    </list>
-                                </field>
-                            </scenarioAssociation>
-                            <scenarioAssociation>
-                                <field name="url">
-                                    <String>functions/files/archives/open-and-save-archive.xsl</String>
                                 </field>
                                 <field name="scenarioIds">
                                     <list>
@@ -4718,7 +4801,6 @@ ancestor-or-self::*:return[namespace-uri() = "http://www.oxygenxml.com/ns/doc/xs
             <file name="schemas/TAN-voc.rng"/>
             <file name="schemas/TAN.sch"/>
             <file name="applications/Tangram/Tangram.xsl"/>
-            <file name="tests/test%20TAN%20function%20library.xsl"/>
             <file name="applications-old/update/update%20TAN-T%20text%20via%20redivided%20copy.xsl"/>
             <file name="applications-old/update/update%20TAN-voc%20via%20TEI%20collection.xsl"/>
             <file name="utilities/Updater/Updater.xsl"/>

@@ -9,6 +9,7 @@
    <xsl:function name="tan:cfn" as="xs:string*" visibility="public">
       <!-- Input: any items -->
       <!-- Output: the Current File Name, without extension, of the host document node of each item, or of the input string if detected as a uri -->
+      <!--kw: uris, filenames -->
       <xsl:param name="item" as="item()*"/>
       <xsl:for-each select="$item">
          <xsl:variable name="this-base" select="
@@ -23,6 +24,7 @@
    <xsl:function name="tan:cfne" as="xs:string*" visibility="public">
       <!-- Input: any items -->
       <!-- Output: the Current File Name, with Extension, of the host document node of each item, or of the input string if detected as a uri -->
+      <!--kw: uris, filenames -->
       <xsl:param name="item" as="item()*"/>
       <xsl:for-each select="$item">
          <xsl:variable name="this-base"
@@ -43,6 +45,7 @@
       <!-- This assumes not only absolute but relative uris will be checked, which means that a wide 
          variety of characters could be fed in, but not ones disallowed in pathnames, and the string must 
          not be zero length. -->
+      <!--kw: uris -->
       <xsl:param name="uri-to-check" as="xs:string?"/>
       <xsl:copy-of select="not(matches($uri-to-check, '[\{\}\|\\\^\[\]`]')) and (string-length($uri-to-check) gt 0)"/>
    </xsl:function>
@@ -53,6 +56,7 @@
       <!-- NB, this function does not assume any URIs have been resolved; its only 
          action is syntactic, ensuring that each URI specifies a directory path, i.e.,
          has a trailing slash. -->
+      <!--kw: uris, filenames -->
       <xsl:param name="uris" as="xs:string*"/>
       <xsl:for-each select="$uris">
          <xsl:choose>
@@ -72,6 +76,7 @@
       <!-- Output: the base uri of the node's document -->
       <!-- An explicit @xml:base has the highest priority over any native base-uri(). If the node is a fragment and has no declared or detected
          base uri, the static-base-uri() will be returned -->
+      <!--kw: uris -->
       <xsl:param name="any-node" as="node()?"/>
       <xsl:variable name="specified-ancestral-xml-base-attrs" select="$any-node/ancestor-or-self::*[@xml:base], root($any-node)/*[@xml:base]"/>
       <xsl:variable name="default-xml-base" select="base-uri($any-node)"/>
@@ -99,6 +104,7 @@
       <!-- Input: two strings representing URIs; a third representing the base against which the first two should be resolved -->
       <!-- Output: the first string in a form relative to the second string -->
       <!-- This function looks for common paths within two absolute URIs and tries to convert the first URI as a relative path -->
+      <!--kw: uris, filenames -->
       <xsl:param name="uri-to-revise" as="xs:string?"/>
       <xsl:param name="uri-to-revise-against" as="xs:string?"/>
       <xsl:param name="base-uri" as="xs:string?"/>
@@ -192,12 +198,14 @@
    <xsl:function name="tan:uri-is-relative" as="xs:boolean?" visibility="public">
       <!-- Input: a string representing a URI -->
       <!-- Output: a boolean indicating whether it is relative -->
+      <!--kw: uris -->
       <xsl:param name="uri-to-test" as="xs:string?"/>
       <xsl:sequence select="not(tan:uri-is-resolved($uri-to-test))"/>
    </xsl:function>
    <xsl:function name="tan:uri-is-resolved" as="xs:boolean?" visibility="public">
       <!-- Input: a string representing a URI -->
       <!-- Output: a boolean indicating whether it is resolved -->
+      <!--kw: uris -->
       <xsl:param name="uri-to-test" as="xs:string?"/>
       <xsl:sequence select="$uri-to-test eq resolve-uri($uri-to-test)"/>
    </xsl:function>
@@ -206,6 +214,7 @@
    <xsl:function name="tan:catalog-uris" as="xs:string*" visibility="public">
       <!-- Input: a node from an XML file -->
       <!-- Output: URLs for locally available TAN catalog files, beginning with the immediate subdirectory and proceeding rootward -->
+      <!--kw: uris, filenames -->
       <xsl:param name="input-node" as="node()?"/>
       <xsl:variable name="this-uri" select="tan:base-uri($input-node)"/>
       <xsl:variable name="doc-uri-steps" select="tokenize(string($this-uri), '/')"/>
@@ -225,6 +234,7 @@
    <xsl:function name="tan:catalogs" as="document-node()*" visibility="public">
       <!-- Input: a node from an XML file; a boolean indicating whether bad @hrefs should be stripped -->
       <!-- Output: the TAN catalog documents available, beginning with the most local path and proceeding rootward -->
+      <!--kw: uris, filenames -->
       <xsl:param name="input-node" as="node()?"/>
       <xsl:param name="strip-bad-hrefs" as="xs:boolean"/>
       <xsl:variable name="these-uris" select="tan:catalog-uris($input-node)" as="xs:string*"/>
@@ -278,6 +288,7 @@
    <xsl:function name="tan:collection" as="document-node()*" visibility="public">
       <!-- Input: one or more catalog.tan.xml files; filtering parameters -->
       <!-- Output: documents that are available -->
+      <!--kw: uris, filenames -->
       <xsl:param name="catalog-docs" as="document-node()*"/>
       <xsl:param name="root-names" as="xs:string*"/>
       <xsl:param name="id-matches" as="xs:string?"/>

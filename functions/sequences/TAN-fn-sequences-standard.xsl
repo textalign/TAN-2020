@@ -12,6 +12,7 @@
    <xsl:function name="tan:item-type" as="xs:string*" visibility="public">
       <!-- Input: any XML items -->
       <!-- Output: the type of each item -->
+      <!--kw: items, datatypes, nodes -->
       <xsl:param name="xml-items" as="item()*"/>
       <xsl:for-each select="$xml-items">
          <xsl:choose>
@@ -102,6 +103,7 @@
       <!-- Input: any sequence of items -->
       <!-- Output: those items that appear in the sequence more than once -->
       <!-- This function parallels the standard fn:distinct-values() -->
+      <!--kw: items, nodes -->
       <xsl:param name="sequence" as="item()*"/>
       <xsl:for-each-group select="$sequence" group-by="tan:item-type(.)">
          <xsl:choose>
@@ -120,7 +122,7 @@
    </xsl:function>
    
    <xsl:function name="tan:duplicate-values" as="item()*" visibility="public">
-      <!-- synonym for tan:duplicate-items() -->
+      <!-- surrogate function for tan:duplicate-items() -->
       <xsl:param name="sequence" as="item()*"/>
       <xsl:sequence select="tan:duplicate-items($sequence)"/>
    </xsl:function>
@@ -129,6 +131,7 @@
       <!-- Input: any sequence of items -->
       <!-- Output: Those items that are not deeply equal to any other item in the sequence -->
       <!-- This function is parallel to distinct-values(), but handles non-string input -->
+      <!--kw: items, nodes -->
       <xsl:param name="items" as="item()*"/>
       <xsl:sequence select="$items[1]"/>
       <xsl:for-each select="$items[position() gt 1]">
@@ -152,6 +155,7 @@
          Output will be:
          ('apple', 'banana', 'carrot', 'dessert')
       -->
+      <!--kw: nodes, sequences -->
       <xsl:param name="elements-with-elements" as="element()*"/>
       <!-- Start with the element that has the greatest number of elements; that will be the grid into which the other sequences will be fit -->
       <xsl:variable name="input-sorted" as="element()*">
@@ -229,6 +233,7 @@
       of the original input. Hence the transformation is lossless, and the original input can be reconstructed
       if needed.
       -->
+      <!--kw: grouping, sequences -->
       <xsl:param name="string-sequence-1" as="xs:string*"/>
       <xsl:param name="string-sequence-2" as="xs:string*"/>
       
@@ -350,6 +355,7 @@
       <!-- Output: the count of the first item that appears most frequently -->
       <!-- If two or more items appear equally frequently, only the first is returned -->
       <!-- Written to help group <u> elements in tan:collate() -->
+      <!--kw: items, sequences -->
       <xsl:param name="sequence" as="item()*"/>
       <xsl:for-each-group select="$sequence" group-by=".">
          <xsl:sort select="count(current-group())" order="descending"/>
@@ -586,7 +592,7 @@
             <xsl:variable name="from-int" select="xs:integer(.)"/>
             <xsl:variable name="to-int" select="xs:integer($this-to)"/>
             <xsl:variable name="this-sequence-expanded"
-               select="tan:expand-numerical-sequence((. || ' - ' || $this-to), max(($from-int, $to-int)))"/>
+               select="tan:expand-numerical-expression((. || ' - ' || $this-to), max(($from-int, $to-int)))"/>
             <xsl:variable name="sequence-errors" select="tan:sequence-error($this-sequence-expanded)"/>
             <xsl:copy-of select="$sequence-errors"/>
             <xsl:for-each select="$this-sequence-expanded[position() gt 1 and position() lt last()]">
@@ -871,7 +877,7 @@
       </xsl:for-each-group>
    </xsl:function>
    
-   <xsl:function name="tan:expand-numerical-sequence" as="xs:integer*" visibility="public">
+   <xsl:function name="tan:expand-numerical-expression" as="xs:integer*" visibility="public">
       <!-- Input: a string representing a TAN selector (used by @pos, @chars), and an integer defining the value of 'last' -->
       <!-- Output: a sequence of numbers representing the positions selected, unsorted, and retaining duplicate values.
             Example: ("2 - 4, last-5 - last, 36", 50) -> (2, 3, 4, 45, 46, 47, 48, 49, 50, 36)
@@ -880,6 +886,7 @@
             -1 = value that surpasses the value of $max;
             -2 = ranges that call for negative steps, e.g., '4 - 2'. -->
       <!-- This function assumes that all numerals are Arabic. -->
+      <!--kw: sequences, numerics, numerals -->
       <xsl:param name="selector" as="xs:string?"/>
       <xsl:param name="max" as="xs:integer?"/>
       <!-- first normalize syntax -->
@@ -949,9 +956,10 @@
       </xsl:for-each>
    </xsl:function>
    
-   <xsl:function name="tan:sequence-collapse" as="xs:string?" visibility="public">
+   <xsl:function name="tan:sequence-collapse" as="xs:string?" visibility="private">
       <!-- Input: a sequence of integers -->
       <!-- Output: a string that puts them in a TAN-like compact string -->
+      <!-- TODO: reconcile with tan:integers-to-sequence() -->
       <xsl:param name="integers" as="xs:integer*"/>
       <xsl:variable name="pass1" as="xs:integer*">
          <xsl:for-each select="$integers">
@@ -1007,6 +1015,7 @@
          arrays are not as easy to construct and extract in XSLT 3.0 as maps are. -->
       <!-- If an input array member consists of the empty sequence, its position impacts the positions that are returned in the output, but
          not the corresponding values (obviously). -->
+      <!--kw: items, sequences -->
       <xsl:param name="integer-sequence" as="item()*"/>
       
       <xsl:variable name="integer-sequence-arrays" as="array(*)*">

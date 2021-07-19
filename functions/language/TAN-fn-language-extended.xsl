@@ -10,6 +10,7 @@
    <xsl:function name="tan:lm-data" as="element()*" visibility="public">
       <!-- Input: token value; a language code -->
       <!-- Output: <lm> data for that token value from any available resources -->
+      <!--kw: language, lexicomorphology -->
       <xsl:param name="token-value" as="xs:string?"/>
       <xsl:param name="lang-codes" as="xs:string*"/>
 
@@ -243,6 +244,7 @@
       <!-- Input: the name of a language -->
       <!-- Output: the 3-letter code for the language -->
       <!-- If no exact match is found, the parameter will be treated as a regular expression, and all case-insensitive matches will be returned -->
+      <!--kw: language -->
       <xsl:param name="lang-name" as="xs:string?"/>
       <xsl:variable name="lang-match"
          select="$tan:iso-639-3/tan:iso-639-3/tan:l[@name = $lang-name]/@id"/>
@@ -265,6 +267,7 @@
       <!-- Input: the code of a language -->
       <!-- Output: the name of the language -->
       <!-- If no exact match is found, the parameter will be treated as a regular expression, and all case-insensitive matches will be returned -->
+      <!--kw: language -->
       <xsl:param name="lang-code" as="xs:string?"/>
       <xsl:variable name="lang-match"
          select="$tan:iso-639-3/tan:iso-639-3/tan:l[@id = $lang-code]/@name"/>
@@ -286,6 +289,7 @@
    <xsl:function name="tan:lang-catalog" as="document-node()*" visibility="public">
       <!-- Input: language codes -->
       <!-- Output: the catalogs for those languages -->
+      <!--kw: language -->
       <xsl:param name="lang-codes" as="xs:string*"/>
       <xsl:variable name="lang-codes-rev" select="
             if ((count($lang-codes) lt 1) or $lang-codes = '*') then
@@ -395,6 +399,7 @@
          (singular noun) and NP (proper noun), both of which are true. It is up to users to discern on a
          case-by-case basis the best way to resolve ambiguity and incommensurability.
       -->
+      <!--kw: language, lexicomorphology -->
       <xsl:param name="source-TAN-mor-resolved" as="document-node()"/>
       <xsl:param name="target-TAN-mor-resolved" as="document-node()"/>
       
@@ -606,6 +611,7 @@
       <!-- This function does not change the vocabulary or @morphology codes. That must be done separately. -->
       <!-- See comments at tan:morphological-code-conversion-maps() regarding difficulties inherent in mapping 
          grammatical systems to each other. -->
+      <!--kw: language, lexicomorphology -->
       <xsl:param name="TAN-A-lm-to-convert" as="document-node()?"/>
       <xsl:param name="morphology-ids-to-convert" as="xs:string"/>
       <xsl:param name="morphology-code-conversion-maps" as="map(*)*"/>
@@ -902,6 +908,7 @@
    <xsl:function name="tan:greek-graves-to-acutes" as="xs:string?" visibility="public">
       <!-- Input: text with Greek -->
       <!-- Output: the same, but with grave accents changed to acutes -->
+      <!--kw: language, Greek -->
       <xsl:param name="greek-to-change" as="xs:string?"/>
       <xsl:variable name="this-text-nfkd" select="normalize-unicode($greek-to-change, 'nfkd')"/>
       <xsl:variable name="this-text-fixed" select="replace($this-text-nfkd, '&#x300;', '&#x301;')"/>
@@ -915,6 +922,7 @@
       <!-- Output: the string with Syriac marks placed at the end, in codepoint order -->
       <!-- This function was written to assist in comparing Syriac words that match. Which letter a 
          particular dot is placed should not matter, in most cases. -->
+      <!--kw: language, Syriac -->
       <xsl:param name="input-syriac-text" as="xs:string?"/>
       <xsl:variable name="output-parts" as="xs:string*">
          <xsl:analyze-string select="$input-syriac-text" regex="[\p{{L}}\p{{M}}]+">

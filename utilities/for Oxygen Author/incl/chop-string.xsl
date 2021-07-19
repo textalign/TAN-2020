@@ -24,7 +24,7 @@
     </xsl:template>
     <xsl:template match="text()">
         <xsl:variable name="text-chopped" select="tan:chop-string(., $chop-at-regex)"/>
-        <xsl:variable name="keep-nos" select="tan:expand-numerical-sequence($keep, count($text-chopped))"/>
+        <xsl:variable name="keep-nos" select="tan:expand-numerical-expression($keep, count($text-chopped))"/>
         <xsl:value-of select="string-join($text-chopped[position() = $keep-nos], '')"/>
     </xsl:template>
 </xsl:stylesheet>

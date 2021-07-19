@@ -12,6 +12,7 @@
       <!-- Input: any sequence of numbers -->
       <!-- Output: the median value -->
       <!-- It is assumed that the input has already been sorted by tan:numbers-sorted() vel sim -->
+      <!--kw: statistics -->
       <xsl:param name="numbers" as="xs:anyAtomicType*"/>
       <xsl:variable name="number-count" select="count($numbers)"/>
       <xsl:variable name="mid-point" select="$number-count div 2"/>
@@ -30,6 +31,7 @@
    <xsl:function name="tan:outliers" as="xs:anyAtomicType*" visibility="public">
       <!-- Input: any sequence of numbers -->
       <!-- Output: outliers in the sequence -->
+      <!--kw: statistics -->
       <xsl:param name="numbers" as="xs:anyAtomicType*"/>
       <xsl:variable name="numbers-sorted" select="tan:number-sort($numbers)" as="xs:anyAtomicType*"/>
       <xsl:variable name="half-point" select="count($numbers) idiv 2"/>
@@ -67,6 +69,7 @@
    <xsl:function name="tan:no-outliers" as="xs:anyAtomicType*" visibility="public">
       <!-- Input: any sequence of numbers -->
       <!-- Output: the same sequence, without outliers -->
+      <!--kw: statistics -->
       <xsl:param name="numbers" as="xs:anyAtomicType*"/>
       <xsl:variable name="outliers" select="tan:outliers($numbers)"/>
       <xsl:copy-of select="$numbers[not(. = $outliers)]"/>

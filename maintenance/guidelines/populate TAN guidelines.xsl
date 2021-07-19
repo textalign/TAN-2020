@@ -3,6 +3,7 @@
    xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xs="http://www.w3.org/2001/XMLSchema"
    xmlns:math="http://www.w3.org/2005/xpath-functions/math"
    xmlns:saxon="http://icl.com/saxon"
+   xmlns:xslq="https://github.com/mricaud/xsl-quality"
    xmlns:lxslt="http://xml.apache.org/xslt" xmlns:redirect="http://xml.apache.org/xalan/redirect"
    xmlns:exsl="http://exslt.org/common" xmlns:doc="http://nwalsh.com/xsl/documentation/1.0"
    xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:tei="http://www.tei-c.org/ns/1.0"
@@ -39,10 +40,10 @@
    <!--<xsl:include href="../../applications/get%20inclusions/XSLT%20analysis.xsl"/>-->
    <xsl:include href="XSLT%20analysis.xsl"/>
 
-   <xsl:param name="max-examples" select="4"/>
-   <xsl:param name="qty-contextual-siblings" select="1"/>
-   <xsl:param name="qty-contextual-children" select="3"/>
-   <xsl:param name="max-example-size" select="2000"/>
+   <xsl:param name="max-examples" as="xs:integer" select="4"/>
+   <xsl:param name="qty-contextual-siblings" as="xs:integer" select="1"/>
+   <xsl:param name="qty-contextual-children" as="xs:integer" select="3"/>
+   <xsl:param name="max-example-size" as="xs:integer" select="2000"/>
 
    <xsl:variable name="chapter-caveat" as="element()">
       <para>The contents of this chapter have been generated automatically. Although much effort has
@@ -51,16 +52,17 @@
          RELAX-NG, compact syntax) are to be given priority.</para>
    </xsl:variable>
 
-   <xsl:variable name="target-uri-1" select="resolve-uri('../../guidelines/inclusions/elements-attributes-and-patterns.xml',static-base-uri())"/>
+   <xsl:variable name="target-uri-1" as="xs:anyURI" select="resolve-uri('../../guidelines/inclusions/elements-attributes-and-patterns.xml',static-base-uri())"/>
 
-   <xsl:variable name="ex-collection"
+   <xsl:variable name="ex-collection" as="document-node()*"
       select="collection('../../examples/?select=*.xml;recurse=yes'), collection('../../vocabularies/?select=*.xml;recurse=yes')"/>
-   <xsl:variable name="fn-collection"
+   <xsl:variable name="fn-collection" as="document-node()*"
       select="collection('../../functions/?select=*.xsl;recurse=yes')"/>
-   <xsl:variable name="vocabulary-collection"
+   <xsl:variable name="vocabulary-collection" as="document-node()*"
       select="collection('../../vocabularies/?select=*voc.xml;recurse=yes')"/>
-   <xsl:variable name="elements-excl-TEI" select="$tan:rng-collection-without-TEI//rng:element[@name]"/>
-   <xsl:variable name="attributes-excl-TEI"
+   <xsl:variable name="elements-excl-TEI" as="element()*"
+      select="$tan:rng-collection-without-TEI//rng:element[@name]"/>
+   <xsl:variable name="attributes-excl-TEI" as="element()*"
       select="$tan:rng-collection-without-TEI//rng:attribute[@name]"/>
 
    <xsl:variable name="sequence-of-sections" as="element()">
@@ -90,42 +92,42 @@
       select="$function-docs-picked/xsl:stylesheet/xsl:function[@visibility eq 'public']"/>
    <xsl:variable name="names-of-functions-to-append" as="xs:string*">
       <xsl:for-each-group select="$function-library-functions" group-by="@name">
-         <xsl:variable name="these-file-names" select="distinct-values(tan:cfn(current-group()))"/>
+         <xsl:variable name="these-file-names" as="xs:string*"
+            select="distinct-values(tan:cfn(current-group()))"/>
          <xsl:if test="count($these-file-names) gt 1">
             <xsl:value-of select="current-grouping-key()"/>
          </xsl:if>
       </xsl:for-each-group>
    </xsl:variable>
    
-   <xsl:variable name="function-library-templates"
+   <xsl:variable name="function-library-templates" as="element()*"
       select="$function-docs-picked/xsl:stylesheet/xsl:template"/>
    
-   <xsl:variable name="function-library-variables"
+   <xsl:variable name="function-library-variables" as="element()*"
       select="$function-docs-picked/xsl:stylesheet/xsl:variable"/>
-   <xsl:variable name="function-library-duplicate-variable-names"
+   <xsl:variable name="function-library-duplicate-variable-names" as="xs:string*"
       select="tan:duplicate-items($function-library-variables/@name)"/>
-   <xsl:variable name="function-library-variables-duplicate"
+   <xsl:variable name="function-library-variables-duplicate" as="element()*"
       select="$function-library-variables[@name = $function-library-duplicate-variable-names]"/>
-   <xsl:variable name="function-library-variables-unique"
+   <xsl:variable name="function-library-variables-unique" as="element()*"
       select="$function-library-variables[not(@name = $function-library-duplicate-variable-names)]"/>
 
-   <xsl:variable name="lf" select="'&#xA;'"/>
-   <xsl:variable name="lt" select="'&lt;'"/>
-   <xsl:variable name="ellipses" select="'.........&#xA;'"/>
+   <xsl:variable name="lf" as="xs:string" select="'&#xA;'"/>
+   <xsl:variable name="lt" as="xs:string" select="'&lt;'"/>
+   <xsl:variable name="ellipses" as="xs:string" select="'.........&#xA;'"/>
 
    <!--<xsl:template match="*" mode="errors-to-docbook context-errors-to-docbook"/>-->
    <xsl:template match="docbook:squelch"/>
    
-   <xsl:variable name="indent"
+   <xsl:variable name="indent" as="xs:string"
       select="
          string-join(for $i in (1 to $tan:default-indent-value)
          return
             ' ')"/>
-   <xsl:variable name="distinct-element-names" select="distinct-values($elements-excl-TEI/@name)"/>
-   <xsl:variable name="distinct-attribute-names"
+   <xsl:variable name="distinct-element-names" as="xs:string*" select="distinct-values($elements-excl-TEI/@name)"/>
+   <xsl:variable name="distinct-attribute-names" as="xs:string*"
       select="distinct-values($attributes-excl-TEI/@name)"/>
-   <xsl:variable name="function-library-template-names-and-modes"
-      select="
+   <xsl:variable name="function-library-template-names-and-modes" as="xs:string*" select="
          for $i in $function-library-templates/(@name, @mode)
          return
             tokenize($i, '\s+')"/>
@@ -133,10 +135,10 @@
    <xsl:function name="tan:prep-string-for-docbook" as="item()*">
       <xsl:param name="text" as="xs:string*"/>
       <!-- we assume that all components defined in component syntax.xml are to be marked -->
-      <xsl:variable name="capture-group-replacement"
+      <xsl:variable name="capture-group-replacement" as="xs:string"
          select="'(' || $component-syntax/*/@name-replacement || ')'"/>
-      <xsl:variable name="string-regexes" select="$component-syntax/*/*/@string-matching-pattern"/>
-      <xsl:variable name="master-regex"
+      <xsl:variable name="string-regexes" as="xs:string*" select="$component-syntax/*/*/@string-matching-pattern"/>
+      <xsl:variable name="master-regex" as="xs:string"
          select="
             string-join(for $i in $string-regexes
             return
@@ -155,9 +157,9 @@
             <xsl:for-each select="$text">
                <xsl:analyze-string select="." regex="{$master-regex}">
                   <xsl:matching-substring>
-                     <xsl:variable name="first-match"
+                     <xsl:variable name="first-match" as="xs:integer?"
                         select="((1 to 11)[string-length(regex-group(.)) gt 0])[1]"/>
-                     <xsl:variable name="match-type"
+                     <xsl:variable name="match-type" as="xs:string?"
                         select="tokenize($component-syntax/*/*[$first-match]/@type, ' ')[1]"/>
                      <!-- The regex group sometimes has to be massaged -->
                      <xsl:variable name="match-name-parts" as="xs:string*">
@@ -170,9 +172,7 @@
                            </xsl:non-matching-substring>
                         </xsl:analyze-string>
                      </xsl:variable>
-                     <xsl:variable name="match-name" select="$match-name-parts[1]"/>
-                     <!-- 
-                     -->
+                     <xsl:variable name="match-name" as="xs:string?" select="$match-name-parts[1]"/>
                      <xsl:variable name="is-valid-link" as="xs:boolean">
                         <xsl:choose>
                            <xsl:when
@@ -189,7 +189,7 @@
                            </xsl:otherwise>
                         </xsl:choose>
                      </xsl:variable>
-                     <xsl:variable name="linkend"
+                     <xsl:variable name="linkend" as="xs:string"
                         select="$match-type || '-' || replace($match-name, '[:#]|(tan|rgx):', '')"/>
                      
                      <code>
@@ -241,13 +241,14 @@
    <xsl:mode name="adjust-parentheses" on-no-match="shallow-skip"/>
    
    <xsl:template match="text()" mode="adjust-parentheses">
-      <xsl:variable name="next-text" select="ancestor::*/following-sibling::node()[1]/self::text()"/>
+      <xsl:variable name="next-text" as="text()*" select="ancestor::*/following-sibling::node()[1]/self::text()"/>
       <xsl:variable name="ends-with-separated-opening-paren"
+         as="xs:boolean"
          select="
             ancestor::docbook:code and ends-with(., '(') and (some $i in $next-text
                satisfies starts-with($i, ')'))"
       />
-      <xsl:variable name="starts-with-separated-closing-paren"
+      <xsl:variable name="starts-with-separated-closing-paren" as="xs:boolean"
          select="starts-with(., ')') and ends-with(preceding-sibling::*[1], '(')"/>
       <xsl:choose>
          <xsl:when test="$ends-with-separated-opening-paren">
@@ -278,7 +279,7 @@
          </xsl:if>
          <xsl:for-each select="comment()[not(preceding-sibling::*)]">
             <xsl:for-each select="tokenize(., '\n(\s+\n)+')">
-               <xsl:variable name="this-para-norm" select="tan:rewrap-para(., 72)"/>
+               <xsl:variable name="this-para-norm" as="xs:string" select="tan:rewrap-para(., 72)"/>
                <programlisting>
                <xsl:copy-of select="tan:prep-string-for-docbook($this-para-norm)"/>
             </programlisting>
@@ -290,14 +291,15 @@
       <!-- Output: the string with new lines inserted at the first word break possible after the integer length has been reached -->
       <xsl:param name="input-text" as="xs:string?"/>
       <xsl:param name="break-after-what-column" as="xs:integer"/>
-      <xsl:variable name="this-input-normalized" select="normalize-space($input-text)"/>
-      <xsl:variable name="these-input-words" select="tokenize($this-input-normalized, ' ')"/>
+      <xsl:variable name="this-input-normalized" as="xs:string" select="normalize-space($input-text)"/>
+      <xsl:variable name="these-input-words" as="xs:string*"
+         select="tokenize($this-input-normalized, ' ')"/>
       <xsl:variable name="words-marked-for-wrapping" as="xs:string*">
          <xsl:iterate select="$these-input-words">
-            <xsl:param name="col-count-so-far" select="0"/>
-            <xsl:variable name="this-word" select="."/>
-            <xsl:variable name="this-word-length" select="string-length($this-word)"/>
-            <xsl:variable name="new-col-count" select="$this-word-length + $col-count-so-far"/>
+            <xsl:param name="col-count-so-far" as="xs:integer" select="0"/>
+            <xsl:variable name="this-word" as="xs:string" select="."/>
+            <xsl:variable name="this-word-length" as="xs:integer" select="string-length($this-word)"/>
+            <xsl:variable name="new-col-count" as="xs:integer" select="$this-word-length + $col-count-so-far"/>
             <xsl:choose>
                <xsl:when test="$new-col-count ge $break-after-what-column">
                   <xsl:value-of select="$lf || $this-word || ' '"/>
@@ -310,7 +312,7 @@
                </xsl:otherwise>
             </xsl:choose>
             <xsl:next-iteration>
-               <xsl:with-param name="col-count-so-far"
+               <xsl:with-param as="xs:integer" name="col-count-so-far"
                   select="
                      if ($new-col-count lt $break-after-what-column) then
                         $new-col-count
@@ -326,12 +328,12 @@
       <!-- Input: one or more XSLT elements -->
       <!-- Output: one docbook <para> per type listing other components that depend upon the input component -->
       <xsl:param name="xslt-element" as="element()?"/>
-      <xsl:variable name="this-type-of-component" select="name($xslt-element)"/>
-      <xsl:variable name="what-depends-on-this"
+      <xsl:variable name="this-type-of-component" as="xs:string?" select="name($xslt-element)"/>
+      <xsl:variable name="what-depends-on-this" as="element()*"
          select="tan:xslt-dependencies($xslt-element/(@name, @mode, @xml:id)[1], $this-type-of-component, exists($xslt-element/@mode), $tan:all-functions)[name() = ('xsl:function', 'xsl:variable', 'xsl:template', 'xsl:key')]"/>
       <xsl:for-each-group select="$what-depends-on-this" group-by="name()">
          <xsl:sort select="name()" order="descending"/>
-         <xsl:variable name="component-type" select="current-grouping-key()"/>
+         <xsl:variable name="component-type" as="xs:string" select="current-grouping-key()"/>
          <para>
             <xsl:text>Used by </xsl:text>
             <xsl:value-of select="replace(current-grouping-key(), 'xsl:', '') || ' '"/>
@@ -374,9 +376,9 @@
                   tan:prep-string-for-docbook(tan:string-representation-of-component($k/@mode, 'template', true()))"
          />
       </xsl:variable>
-      <xsl:variable name="what-this-depends-on-pass-2"
+      <xsl:variable name="what-this-depends-on-pass-2" as="element()*"
          select="$what-this-depends-on-pass-1/descendant-or-self::docbook:code[docbook:link[not(matches(@linkend, '^attribute-'))]]"/>
-      <xsl:variable name="what-this-depends-on"
+      <xsl:variable name="what-this-depends-on" as="element()*"
          select="tan:distinct-items($what-this-depends-on-pass-2)"/>
       <xsl:choose>
          <xsl:when test="exists($what-this-depends-on-pass-2)">
@@ -418,12 +420,12 @@
    </xsl:template>
    
    <xsl:template match="tan:error | tan:warning | tan:fatal" priority="1" mode="errors-to-docbook">
-      <xsl:variable name="affected-attributes"
+      <xsl:variable name="affected-attributes" as="xs:string*"
          select="
             for $i in ancestor-or-self::*/@affects-attribute
             return
                tokenize($i, '\s+')"/>
-      <xsl:variable name="affected-elements"
+      <xsl:variable name="affected-elements" as="xs:string*"
          select="
             for $i in ancestor-or-self::*/@affects-element
             return
@@ -456,7 +458,7 @@
    
    <xsl:template match="a:documentation[parent::rng:element or parent::rng:attribute]"
       mode="rng-to-docbook">
-      <xsl:variable name="parent-type" select="lower-case(name(..))"/>
+      <xsl:variable name="parent-type" as="xs:string" select="lower-case(name(..))"/>
       <para>
          <xsl:if test="not(preceding-sibling::a:documentation)">
             <xsl:value-of select="'The ' || $parent-type || ' '"/>
@@ -471,7 +473,7 @@
    </xsl:template>
    
    <xsl:template match="a:documentation[parent::rng:define]" mode="rng-to-docbook">
-      <xsl:variable name="this-name" select="replace(base-uri(.), '.+/(.+)\.rng$', '$1')"/>
+      <xsl:variable name="this-name" as="xs:string" select="replace(base-uri(.), '.+/(.+)\.rng$', '$1')"/>
       <para>
          <xsl:value-of select="$this-name || ': '"/>
          <xsl:copy-of select="tan:prep-string-for-docbook(.)"/>
@@ -512,27 +514,27 @@
    <xsl:template name="rng-node-to-docbook-section">
       <!-- This is the main mechanism for populating sections that document the definition of an element, attribute, pattern, or global variable -->
       <xsl:param name="rng-element-or-attribute-group" as="element()*"/>
-      <xsl:variable name="this-group" select="$rng-element-or-attribute-group"/>
+      <xsl:variable name="this-group" as="element()*" select="$rng-element-or-attribute-group"/>
       <!-- We prefer the term 'pattern' to 'define' to describe general patterns. -->
-      <xsl:variable name="this-node-type"
+      <xsl:variable name="this-node-type" as="xs:string"
          select="replace(name($this-group[1]), 'define', 'pattern')"/>
-      <xsl:variable name="this-node-name" select="$this-group[1]/@name"/>
-      <xsl:variable name="containing-definitions" select="$this-group/parent::rng:define"/>
-      <xsl:variable name="these-target-element-names"
+      <xsl:variable name="this-node-name" as="xs:string" select="$this-group[1]/@name"/>
+      <xsl:variable name="containing-definitions" as="element()*" select="$this-group/parent::rng:define"/>
+      <xsl:variable name="these-target-element-names" as="xs:string*"
          select="tan:target-element-names(xs:string($this-node-name))"/>
-      <xsl:variable name="possible-parents-of-this-node"
-         select="$this-group/(ancestor::rng:element, rng:define)[last()], $tan:rng-collection-without-TEI//rng:ref[@name = ($this-node-name, $containing-definitions/@name)]/(ancestor::rng:element, ancestor::rng:define)[last()]"/>
+      <xsl:variable name="possible-parents-of-this-node" as="element()*"
+         select="$this-group/(ancestor::rng:element, rng:define)[last()], $tan:rng-collection-without-TEI//rng:ref[@name = ($this-node-name, $containing-definitions/@name)]/(ancestor::rng:element, ancestor::rng:define)[last()]"
+      />
       <xsl:variable name="these-base-uris"
+         as="xs:anyURI*"
          select="
             distinct-values(for $i in $this-group
             return
                base-uri($i))"
       />
-      <xsl:variable name="catalog-is-of-interest"
-         select="
+      <xsl:variable name="catalog-is-of-interest" as="xs:boolean" select="
             some $i in $these-base-uris
-               satisfies matches($i, 'catalog')"
-      />
+               satisfies matches($i, 'catalog')"/>
 
       <section xml:id="{$this-node-type || '-' || replace($this-node-name,':','')}">
          <title>
@@ -543,8 +545,8 @@
             </code>
          </title>
          <xsl:for-each-group select="$rng-element-or-attribute-group" group-by="base-uri(.)">
-            <xsl:variable name="this-base-uri" select="current-grouping-key()"/>
-            <xsl:variable name="this-group-count" select="count(current-group())"/>
+            <xsl:variable name="this-base-uri" as="xs:string" select="current-grouping-key()"/>
+            <xsl:variable name="this-group-count" as="xs:integer" select="count(current-group())"/>
             
             <para>
                <emphasis>
@@ -599,7 +601,8 @@
                <xsl:text>Used by: </xsl:text>
                <xsl:for-each-group select="$possible-parents-of-this-node"
                   group-by="name() || '_' || @name">
-                  <xsl:variable name="this-key" select="tokenize(current-grouping-key(), '_')"/>
+                  <xsl:variable name="this-key" as="xs:string+"
+                     select="tokenize(current-grouping-key(), '_')"/>
                   <xsl:if test="position() gt 1">
                      <xsl:text>, </xsl:text>
                   </xsl:if>
@@ -631,7 +634,7 @@
    <xsl:output method="xml" indent="true" use-when="$output-diagnostics-on"/>
    
    <xsl:template match="/*" use-when="$output-diagnostics-on">
-      <xsl:variable name="rng-file-picked" select="$tan:rng-collection-without-TEI[4]"/>
+      <xsl:variable name="rng-file-picked" as="document-node()" select="$tan:rng-collection-without-TEI[4]"/>
       <diagnostics>
          <rng-coll-uri><xsl:sequence select="$tan:schema-uri-collection"></xsl:sequence></rng-coll-uri>
          <rng-coll-count><xsl:value-of select="count($tan:rng-collection-without-TEI)"/></rng-coll-count>
@@ -666,20 +669,20 @@
             <xsl:for-each
                select="$tan:rng-collection-without-TEI[tan:cfn(.) = $sequence-of-sections/descendant-or-self::*/@n]">
                <xsl:sort>
-                  <xsl:variable name="this-cfn" select="tan:cfn(.)"/>
+                  <xsl:variable name="this-cfn" as="xs:string?" select="tan:cfn(.)"/>
                   <xsl:copy-of
                      select="count($sequence-of-sections//*[@n = $this-cfn]/(preceding::*, ancestor-or-self::*))"
                   />
                </xsl:sort>
-               <xsl:variable name="this-name" select="tan:cfn(.)"/>
+               <xsl:variable name="this-name" as="xs:string?" select="tan:cfn(.)"/>
                <para>
                   <emphasis>
                      <xsl:value-of select="$this-name"/>
                   </emphasis>
                   <xsl:for-each-group select=".//(rng:element, rng:attribute)[@name]" group-by="name(.) || ' ' || @name">
                      <xsl:sort select="lower-case(@name)"/>
-                     <xsl:variable name="node-type" select="name(current-group()[1])"/>
-                     <xsl:variable name="node-name" select="current-group()[1]/@name"/>
+                     <xsl:variable name="node-type" as="xs:string" select="name(current-group()[1])"/>
+                     <xsl:variable name="node-name" as="xs:string" select="current-group()[1]/@name"/>
                      <xsl:copy-of
                         select="tan:prep-string-for-docbook(tan:string-representation-of-component($node-name, $node-type))"/>
                      <xsl:text> </xsl:text>
@@ -693,7 +696,7 @@
                <xsl:for-each-group select="$attributes-excl-TEI" group-by="@name">
                   <xsl:sort select="lower-case(current-grouping-key())"/>
                   <xsl:call-template name="rng-node-to-docbook-section">
-                     <xsl:with-param name="rng-element-or-attribute-group" select="current-group()"
+                     <xsl:with-param as="element()*" name="rng-element-or-attribute-group" select="current-group()"
                      />
                   </xsl:call-template>
                </xsl:for-each-group>
@@ -703,7 +706,7 @@
                <xsl:for-each-group select="$elements-excl-TEI" group-by="@name">
                   <xsl:sort select="lower-case(current-grouping-key())"/>
                   <xsl:call-template name="rng-node-to-docbook-section">
-                     <xsl:with-param name="rng-element-or-attribute-group" select="current-group()"
+                     <xsl:with-param as="element()*" name="rng-element-or-attribute-group" select="current-group()"
                      />
                   </xsl:call-template>
                </xsl:for-each-group>
@@ -713,7 +716,7 @@
                <xsl:for-each-group select="$tan:rng-collection-without-TEI//rng:define" group-by="@name">
                   <xsl:sort select="lower-case(@name)"/>
                   <xsl:call-template name="rng-node-to-docbook-section">
-                     <xsl:with-param name="rng-element-or-attribute-group" select="current-group()"
+                     <xsl:with-param name="rng-element-or-attribute-group" as="element()*" select="current-group()"
                      />
                   </xsl:call-template>
                </xsl:for-each-group>
@@ -779,7 +782,7 @@
                      return
                         substring(replace($i, '^\w+:', ''), 1, 1)">
                <xsl:sort select="lower-case(current-grouping-key())"/>
-               <xsl:variable name="this-letter" select="lower-case(current-grouping-key())"/>
+               <xsl:variable name="this-letter" as="xs:string" select="lower-case(current-grouping-key())"/>
                
                <!-- alphabetical index -->
                <para>
@@ -793,7 +796,7 @@
                               (name() || ' ' || $i)">
                      <xsl:sort
                         select="lower-case(replace(tokenize(current-grouping-key(), '\s+')[2], '^\w+:', ''))"/>
-                     <xsl:variable name="node-type-and-name"
+                     <xsl:variable name="node-type-and-name" as="xs:string+"
                         select="tokenize(current-grouping-key(), '\s+')"/>
                      <xsl:copy-of
                         select="tan:prep-string-for-docbook(tan:string-representation-of-component($node-type-and-name[2], $node-type-and-name[1], exists(current-group()/@mode)))"/>
@@ -813,8 +816,9 @@
                <xsl:sort
                   select="count($sequence-of-sections//*[@n = current-grouping-key()]/(preceding::*, ancestor-or-self::*))"
                />
-               <xsl:variable name="this-file-name" select="current-grouping-key()"/>
-               <xsl:variable name="these-components-to-traverse" select="current-group()"/>
+               <xsl:variable name="this-file-name" as="xs:string" select="current-grouping-key()"/>
+               <xsl:variable name="these-components-to-traverse" as="element()*"
+                  select="current-group()"/>
                <section xml:id="vkft-{$this-file-name}">
                   <title>
                      <xsl:value-of
@@ -825,7 +829,7 @@
                      <!-- This is a group of variables, keys, functions, and named templates, but not template modes, which are handled later -->
                      <xsl:sort
                         select="index-of(('xsl:variable', 'xsl:key', 'xsl:function', 'xsl:template'), current-grouping-key())"/>
-                     <xsl:variable name="this-type-of-component"
+                     <xsl:variable name="this-type-of-component" as="xs:string"
                         select="replace(current-grouping-key(), 'xsl:(.+)', '$1')"/>
                      <section>
                         <title>
@@ -835,9 +839,9 @@
                            <!-- This is a group of variables, keys, functions, or named templates that share the same 
                               name (grouping is mainly for functions) -->
                            <xsl:sort select="lower-case(@name)"/>
-                           <xsl:variable name="what-depends-on-this"
+                           <xsl:variable name="what-depends-on-this" as="element()*"
                               select="tan:xslt-dependencies(current-grouping-key(), $this-type-of-component, false(), $tan:all-functions)[name() = ('xsl:function', 'xsl:variable', 'xsl:template', 'xsl:key')]"/>
-                           <xsl:variable name="this-group-count" select="count(current-group())"/>
+                           <xsl:variable name="this-group-count" as="xs:integer" select="count(current-group())"/>
                            <section
                               xml:id="{$this-type-of-component || '-' || replace(current-grouping-key(),'^\w+:','')}">
                               <title>
@@ -872,7 +876,7 @@
                                        </para>
                                     </xsl:when>
                                     <xsl:when test="$this-type-of-component = 'function'">
-                                       <xsl:variable name="these-params" select="xsl:param"/>
+                                       <xsl:variable name="these-params" as="element()*" select="xsl:param"/>
                                        <xsl:variable name="param-text" as="xs:string*"
                                           select="
                                              for $i in $these-params
@@ -948,7 +952,7 @@
             <xsl:for-each-group
                select="($function-library-templates[@mode], $function-library-variables-duplicate, $function-library-functions[@name = $names-of-functions-to-append])"
                group-by="name()">
-               <xsl:variable name="this-type-of-component"
+               <xsl:variable name="this-type-of-component" as="xs:string"
                   select="replace(current-grouping-key(), '^.+:', '')"/>
                <section>
                   <xsl:choose>
@@ -970,7 +974,7 @@
                   </xsl:choose>
                   <xsl:for-each-group select="current-group()" group-by="tokenize((@mode, @name)[1], '\s+')">
                      <xsl:sort select="lower-case(current-grouping-key())"/>
-                     <xsl:variable name="this-template-id"
+                     <xsl:variable name="this-template-id" as="xs:string"
                         select="$this-type-of-component || '-' || replace(current-grouping-key(), '#|^.+:', '')"
                      />
                      <section xml:id="{$this-template-id}">
@@ -1015,5 +1019,11 @@
          </chapter>
       </xsl:result-document>
    </xsl:template>
+   
+   
+   <xslq:parameters>
+      <xslq:use-oxygen-documentation>false</xslq:use-oxygen-documentation>
+      <xslq:allow-no-namespace>true</xslq:allow-no-namespace>
+   </xslq:parameters>
 
 </xsl:stylesheet>

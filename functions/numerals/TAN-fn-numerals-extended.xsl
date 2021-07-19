@@ -32,6 +32,7 @@
    <xsl:function name="tan:ara-to-int" as="xs:integer*" visibility="public">
       <!-- Input: Arabic-indic numerals -->
       <!-- Output: Integer values, if the input conforms to the correct pattern -->
+      <!--kw: numerals, Arabic, numerics -->
       <xsl:param name="arabic-indic-numerals" as="xs:string*"/>
       <xsl:for-each
          select="$arabic-indic-numerals[matches(., '^' || $tan:arabic-indic-numeral-regex || '$')]">
@@ -75,6 +76,7 @@
       <!-- Input: any sequence of strings that represent alphabetic numerals -->
       <!-- Output: those numerals as integers -->
       <!-- Works only for letter patterns that have been defined; anything else produces null results -->
+      <!--kw: numerals, numerics -->
       <xsl:param name="numerical-letters" as="xs:anyAtomicType*"/>
       <xsl:for-each select="$numerical-letters">
          <xsl:choose>
@@ -114,6 +116,7 @@
       <!-- Input: Greek letters that represent numerals -->
       <!-- Output: the numerical value of the letters -->
       <!-- NB, this does not take into account the use of letters representing numbers 1000 and greater -->
+      <!--kw: numerals, numerics, Greek -->
       <xsl:param name="greek-numerals" as="xs:string*"/>
       <xsl:sequence select="tan:letter-to-number($greek-numerals)"/>
    </xsl:function>
@@ -122,6 +125,7 @@
       <!-- Input: Syriac letters that represent numerals -->
       <!-- Output: the numerical value of the letters -->
       <!-- NB, this does not take into account the use of letters representing numbers 1000 and greater -->
+      <!--kw: numerals, numerics, Syriac -->
       <xsl:param name="syriac-numerals" as="xs:string*"/>
       <xsl:for-each select="$syriac-numerals">
          <xsl:variable name="orig-numeral-seq" as="xs:string*">
@@ -147,6 +151,7 @@
    <xsl:function name="tan:int-to-aaa" as="xs:string*" visibility="public">
       <!-- Input: any integers -->
       <!-- Output: the alphabetic representation of those numerals -->
+      <!--kw: numerals, numerics -->
       <xsl:param name="integers" as="xs:integer*"/>
       <xsl:for-each select="$integers">
          <xsl:variable name="this-integer" select="."/>
@@ -164,6 +169,7 @@
    <xsl:function name="tan:int-to-grc" as="xs:string*" visibility="public">
       <!-- Input: any integers -->
       <!-- Output: the integers expressed as lowercase Greek alphabetic numerals, with numeral marker(s) -->
+      <!--kw: numerals, numerics, Greek -->
       <xsl:param name="integers" as="xs:integer*"/>
       <xsl:variable name="arabic-numerals" select="'123456789'"/>
       <xsl:variable name="greek-units" select="'αβγδεϛζηθ'"/>
@@ -204,10 +210,11 @@
    </xsl:function>
    
    
-   <xsl:function name="tan:integers-to-sequence" as="xs:string?" visibility="public">
+   <xsl:function name="tan:integers-to-expression" as="xs:string?" visibility="public">
       <!-- Input: any integers -->
       <!-- Output: a string that compactly expresses those integers, sorted -->
       <!-- Example: (1, 3, 6, 1, 2) - > "1-3, 6" -->
+      <!--kw: numerals, numerics, sequences -->
       <xsl:param name="input-integers" as="xs:integer*"/>
       <xsl:variable name="input-sorted" as="element()">
          <sorted>
@@ -220,7 +227,7 @@
          </sorted>
       </xsl:variable>
       <xsl:variable name="input-analyzed" as="element()">
-         <xsl:apply-templates select="$input-sorted" mode="tan:integers-to-sequence"/>
+         <xsl:apply-templates select="$input-sorted" mode="tan:integers-to-expression"/>
       </xsl:variable>
       <xsl:variable name="output-atoms" as="xs:string*">
          <xsl:for-each-group select="$input-analyzed/*" group-starting-with="*[@start]">
@@ -243,9 +250,9 @@
    </xsl:function>
    
    
-   <xsl:mode name="tan:integers-to-sequence" on-no-match="shallow-copy"/>
+   <xsl:mode name="tan:integers-to-expression" on-no-match="shallow-copy"/>
    
-   <xsl:template match="tan:n" mode="tan:integers-to-sequence">
+   <xsl:template match="tan:n" mode="tan:integers-to-expression">
       <xsl:variable name="preceding-n" select="preceding-sibling::tan:n[1]"/>
       <xsl:variable name="this-n-val" select="xs:integer(.)"/>
       <xsl:variable name="preceding-n-val" select="xs:integer($preceding-n)"/>

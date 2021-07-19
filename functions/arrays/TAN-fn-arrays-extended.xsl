@@ -68,6 +68,7 @@
       <!-- Output: any arrays in each item serialized as XML elements; each 
          member of the array will be wrapped by an <array:member> with @type
          specifying the item type it encloses. -->
+      <!--kw: arrays, serialization, nodes -->
       <xsl:param name="arrays-to-convert" as="array(*)*"/>
       <xsl:apply-templates select="$arrays-to-convert" mode="tan:map-and-array-to-xml"/>
    </xsl:function>
@@ -79,6 +80,7 @@
          to arrays. Anything in the input tree not matching array:array or array:member
          will be skipped, unless it is a member an array:array or array:member. Anything in 
          the array:member will be bound as the type assigned by the value of @type -->
+      <!--kw: arrays, tree manipulation, nodes -->
       <xsl:param name="items-to-array" as="item()*"/>
       <xsl:apply-templates select="$items-to-array" mode="tan:xml-to-map-and-array"/>
    </xsl:function>
@@ -97,6 +99,7 @@
          and the tail of each member becomes the value of the map entry. Otherwise, the constructed
          map has integers from 1 onward as keys with each array member becoming the value of the
          map entry. -->
+      <!--kw: arrays, maps -->
       <xsl:param name="array-to-convert" as="array(*)?"/>
       <xsl:param name="use-first-items-as-keys" as="xs:boolean"/>
       
@@ -157,6 +160,7 @@
       <!-- Example: [(1, 2), 'dog'] becomes [(1, 'dog'), (2, 'dog')] -->
       <!-- The output array will always have a size equal to the product of the item count in each input array member, and the 
          output array's members will share the exact same item count. -->
+      <!--kw: arrays -->
       <xsl:param name="input-array" as="array(*)"/>
       <xsl:variable name="array-size" as="xs:integer" select="array:size($input-array)"/>
       <xsl:variable name="array-parts" as="array(*)*">

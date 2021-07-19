@@ -8,9 +8,12 @@
    <!-- TAN Function Library extended URI functions. -->
    
    <xsl:function name="tan:absolutize-hrefs" as="item()*" visibility="public">
-      <!-- Input: any items that should have urls converted to absolute URIs; a string representing the base uri -->
-      <!-- Output: the items with each @href (also in processing instructions) and html:*/src resolved against the input base uri -->
-      <xsl:param name="items-to-resolve" as="item()?"/>
+      <!-- Input: any items that should have urls converted to absolute URIs; a string 
+         representing the base uri -->
+      <!-- Output: the items with each @href (also in processing instructions) and html:*/src 
+         resolved against the input base uri -->
+      <!--kw: uris, filenames, tree manipulation -->
+      <xsl:param name="items-to-resolve" as="item()*"/>
       <xsl:param name="items-base-uri" as="xs:string"/>
       <xsl:apply-templates select="$items-to-resolve" mode="tan:revise-hrefs">
          <xsl:with-param name="original-url" select="$items-base-uri" tunnel="yes"/>
@@ -21,6 +24,7 @@
    <xsl:function name="tan:revise-hrefs" as="item()*" visibility="public">
       <!-- Input: an item that should have urls resolved; the original url of the item; the target url (the item's destination) -->
       <!-- Output: the item with each @href (including those in processing instructions) and html:*/@src resolved -->
+      <!--kw: uris, filenames, tree manipulation -->
       <xsl:param name="items-to-resolve" as="item()?"/>
       <xsl:param name="items-original-url" as="xs:string"/>
       <xsl:param name="items-destination-url" as="xs:string"/>
@@ -104,6 +108,7 @@
    <xsl:function name="tan:parse-urls" as="element()*" visibility="public">
       <!-- Input: any sequence of strings -->
       <!-- Output: one element per string, parsed into children <non-url> and <url> -->
+      <!--kw: uris -->
       <xsl:param name="input-strings" as="xs:string*"/>
       <xsl:for-each select="$input-strings">
          <string>
@@ -125,7 +130,7 @@
    
    
    <xsl:function name="tan:get-uuid" visibility="public">
-      <!-- zero-param version of the full one -->
+      <!-- zero-param version of the full one below -->
       <xsl:sequence select="tan:get-uuid(1)"/>
    </xsl:function>
    
@@ -133,6 +138,7 @@
       <!-- Input: a digit -->
       <!-- Output: that digit's quantity of UUIDs -->
       <!-- Code courtesy D. Novatchev, https://stackoverflow.com/questions/8126963/xslt-generate-uuid/64792196#64792196 -->
+      <!--kw: uris -->
       <xsl:param name="quantity" as="xs:integer"/>
       <xsl:sequence select="
             for $i in 1 to $quantity
@@ -147,6 +153,7 @@
          to be relative to the target base uri. -->
       <!-- This function is intended to serve output that is going to a particular destination,
       and that needs to have links to nearby resources revised to their relative form. -->
+      <!--kw: uris, filenames, tree manipulation -->
       <xsl:param name="input-items" as="item()*"/>
       <xsl:param name="target-base-uri-resolved" as="xs:string"/>
       
@@ -207,6 +214,7 @@
          of read conflicts, so a file can be overwritten. -->
       <!-- An alternative to this is to make sure that when writing a secondary result document the last / is doubled;
          the string will not be recognized as a duplicate of what was read. -->
+      <!-- kw: files, uris -->
       <xsl:param name="uri" as="xs:string?"/>
       <xsl:variable name="doc-available-transform-map" as="map(*)" select="
             map {
@@ -223,6 +231,7 @@
       <!-- Input: a string representing a resolved uri, with patterns -->
       <!-- Output: a uri collection based on the string as an input pattern -->
       <!-- This function was written to support glob-like patterns for files. -->
+      <!--kw: uris -->
       <xsl:param name="resolved-patterned-uri" as="xs:string?"/>
       
       <xsl:variable name="pattern-parts" as="element()">

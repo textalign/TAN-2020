@@ -27,6 +27,7 @@
       <!-- Input: any output from tan:diff() -->
       <!-- Output: the output, wrapped in a <group> and preceded by statistics. -->
       <!-- For details, see comments at tan:infuse-diff-and-collate-stats(). -->
+      <!--kw: diff, statistics -->
       <xsl:param name="diff-input" as="element()?"/>
       <xsl:apply-templates select="tan:infuse-diff-and-collate-stats($diff-input, (), false())" mode="tan:get-diff-stats"/>
    </xsl:function>
@@ -752,6 +753,7 @@
          (=$b) and for your purposes, alternate spellings and case should be ignored, then make 
          appropriate changes to the strings (=$a2, $b2) then tan:reconcile-diff($a, $b, 
          tan:diff($a2, $b2)) will result in <diff><common>Gray</common><b>s</b></diff> -->
+      <!--kw: strings, diff -->
       <xsl:param name="original-string-a" as="xs:string?"/>
       <xsl:param name="original-string-b" as="xs:string?"/>
       <xsl:param name="diff-to-replace" as="element()?"/>
@@ -927,7 +929,7 @@
    
    
    
-   <xsl:function name="tan:get-diff-output-slices" as="map(*)" visibility="public">
+   <xsl:function name="tan:get-diff-output-slices" as="map(*)" visibility="private">
       <!-- Input: any output from tan:diff(); an integer; two decimals (each from 0 to 1); a boolean -->
       <!-- Output: a map; for each map entry, the key is the integer representing a string 
          position in the original output, and the corresponding value is a slice of the original
@@ -1088,6 +1090,7 @@
          of the transpositions. It is up to you to interpret those transpositions and use them as you
          see fit.
       -->
+      <!--kw: strings, diff -->
       <xsl:param name="diff-output" as="element(tan:diff)"/>
       <xsl:param name="minimum-transposition-length" as="xs:integer"/>
       <xsl:param name="minimum-commonality" as="xs:decimal"/>

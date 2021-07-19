@@ -19,6 +19,7 @@
    <xsl:function name="tan:search-for-scripta" as="item()*" visibility="public">
       <!-- Input: a search expression, an integer indicating the number of records requested -->
       <!-- Output: that number of records using the search expression in the Library of Congress -->
+      <!--kw: search, vocabulary -->
       <xsl:param name="search-expression" as="xs:string?"/>
       <xsl:param name="max-records" as="xs:integer"/>
       <!--<xsl:variable name="search-parsed" select=""/>-->
@@ -34,6 +35,7 @@
    <xsl:function name="tan:search-for-persons" as="item()*" visibility="public">
       <!-- Input: a search expression, an integer indicating the number of records requested -->
       <!-- Output: that number of records using the search expression in the Virtual International Authority File -->
+      <!--kw: search, vocabulary -->
       <xsl:param name="search-expression" as="xs:string?"/>
       <xsl:param name="max-records" as="xs:integer"/>
       <xsl:variable name="params" as="element()+">
@@ -49,6 +51,7 @@
    <xsl:function name="tan:search-wikipedia" as="item()*" visibility="public">
       <!-- Input: a search expression, an integer indicating the number of records requested -->
       <!-- Output: that number of records using the search expression in Wikipedia -->
+      <!--kw: search, vocabulary -->
       <xsl:param name="search-expression" as="xs:string?"/>
       <xsl:param name="max-records" as="xs:integer"/>
       <xsl:variable name="params" as="element()+">
@@ -62,6 +65,7 @@
    <xsl:function name="tan:search-morpheus" as="document-node()?" visibility="public">
       <!-- Input: a token in Greek or Latin -->
       <!-- Output: lexico-morphological data using Morpheus's service -->
+      <!--kw: search, lexicomorphology -->
       <xsl:param name="search-expression" as="xs:string?"/>
       <xsl:variable name="lang-code" as="xs:string">
          <xsl:choose>
@@ -97,6 +101,7 @@
    <xsl:function name="tan:search-for-entities" as="item()*" visibility="public">
       <!-- Input: a sequence of strings (search keywords), a string (options: loc), a string (options: marcxml, dc, mods), a positive integer -->
       <!-- Output: up to N records (N = integer parameter) in the protocol of the 3rd paramater, using the SRU protocol of the library catalog specified in the 2nd parameter based on search words in the 1st -->
+      <!--kw: search, lexicomorphology -->
       <xsl:param name="server-idref" as="xs:string"/>
       <xsl:param name="params" as="element()+"/>
       <xsl:variable name="server-info" select="$search-services/*/service[name = $server-idref]"/>
@@ -187,6 +192,7 @@
       <!-- Input: search results from tan:search-for-entities() -->
       <!-- Output: for every entity found, an <item> with <IRI>, <name>, and perhaps <desc> -->
       <!-- Note, this is intended to format results from searches that result in identifiers and descriptions of entities, not claims. -->
+      <!--kw: search, vocabulary -->
       <xsl:param name="search-results" as="item()*"/>
       <xsl:param name="format-results" as="xs:boolean"/>
       <xsl:variable name="iri-name-results" as="item()*">
@@ -315,6 +321,7 @@
       <!-- Input: XML representing a search result that is a claim; a string indicating which vendor supplied the results -->
       <!-- Output: the claim represented in TAN elements -->
       <!-- This experimental function, so far only supporting results from tan:search-morpheus() -->
+      <!--kw: search, lexicomorphology -->
       <xsl:param name="search-results" as="item()*"/>
       <xsl:param name="results-vendor" as="xs:string"/>
       <xsl:choose>

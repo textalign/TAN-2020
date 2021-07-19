@@ -12,10 +12,16 @@
       a comparable mechanism. Some of the components of the package may be accessed directly, as well. See 
       documentation in each enclosed file. -->
 
-   <!-- A sharp distinction is made between validation mode an non-validation mode. As many components as possible
-   are removed during validation mode, to improve efficiency. Because the validation mode is explicitly turned on 
-   only when Schematron validation occurs, any application that includes this file should have access to the entire
-   library. Some parts may have restrictions if advanced processing features are not supported.
+   <!-- A sharp distinction is made between validation mode and non-validation mode. As many components as possible
+      are removed during validation mode, to improve efficiency. Because the validation mode is explicitly turned on 
+      only when Schematron validation occurs, any application that includes this file should have access to the entire
+      library. Some parts may have restrictions if advanced processing features are not supported.
+   -->
+   
+   <!-- Maintenance notes:
+      * During development this stylesheet is checked with validation scerarios
+      drawn from /maintenance, as well as Matthieu Ricaud-Dussarget's XSLT Quality,
+      modified. That can be a time-consuming process, so it may be turned off.
    -->
 
    <!-- STATIC PARAMETERS -->

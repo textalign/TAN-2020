@@ -14,6 +14,7 @@
       <!-- Class 2 merging: TBD -->
       <!-- Class 3 merging: TBD -->
       <!-- NB: Class 1 files must have their hierarchies in proper order; use reset-hierarchy beforehand if you're unsure -->
+      <!--kw: merging, files -->
       <xsl:param name="expanded-docs" as="document-node()*"/>
       <xsl:apply-templates select="$expanded-docs[1]" mode="tan:merge-tan-docs">
          <xsl:with-param name="documents-to-merge" select="$expanded-docs[position() gt 1]"/>
@@ -373,13 +374,13 @@
 
 
    <xsl:function name="tan:merge-divs" as="item()*" visibility="public">
-      <!-- See fuller version below -->
+      <!-- one-parameter version of the fuller one below -->
       <xsl:param name="expanded-class-1-fragment" as="item()*"/>
       <xsl:copy-of select="tan:merge-divs($expanded-class-1-fragment, true(), (), ())"/>
    </xsl:function>
    
    <xsl:function name="tan:merge-divs" as="item()*" visibility="public">
-      <!-- See fuller version below -->
+      <!-- two-parameter version of the fuller one below -->
       <xsl:param name="expanded-class-1-fragment" as="item()*"/>
       <xsl:param name="itemize-leaf-divs" as="xs:boolean"/>
       <xsl:copy-of select="tan:merge-divs($expanded-class-1-fragment, $itemize-leaf-divs, (), ())"/>
@@ -390,6 +391,7 @@
       <!-- Output: the fragment with the <div>s grouped according to their <ref> values -->
       <!-- If the 2nd parameter is true, for each leaf <div> in a group there will be a separate <div type="#version">; otherwise leaf divs will be merely copied -->
       <!-- For merging multiple files normally the value should be true; if they are misfits from a single source, false -->
+      <!--kw: merging, tree manipulation -->
       <xsl:param name="expanded-class-1-fragment" as="item()*"/>
       <xsl:param name="itemize-leaf-divs" as="xs:boolean"/>
       <xsl:param name="exclude-elements-with-duplicate-values-of-what-attribute" as="xs:string?"/>
@@ -407,6 +409,7 @@
       <!-- Input: expanded <div>s -->
       <!-- Output: those <div>s grouped in <group>s according to their <ref> values -->
       <!-- Attempt is made to preserve original div order -->
+      <!--kw: merging, grouping, tree manipulation -->
       <xsl:param name="divs-to-group" as="element()*"/>
       <!-- Begin looking for overlaps between divs by creating <div>s with only <ref> and the plain text reference -->
       <xsl:variable name="ref-group-prep" as="element()*">

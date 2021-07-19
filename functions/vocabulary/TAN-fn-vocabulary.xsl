@@ -11,6 +11,7 @@
       <!-- Input: elements, assumed to be tethered to their resolved document context -->
       <!-- Output: the vocabulary items for that element's attributes (@which, etc.) -->
       <!-- See full tan:vocabulary() function below -->
+      <!--kw: vocabulary, nodes -->
       <xsl:param name="element" as="element()*"/>
       <xsl:choose>
          <xsl:when test="exists($element/tan:IRI) and exists($element/tan:name)">
@@ -28,6 +29,7 @@
       <!-- Input: attributes, assumed to be still tethered to their resolved document context -->
       <!-- Output: the vocabulary items for that element's attributes (@which, etc.) -->
       <!-- See full tan:vocabulary() function below -->
+      <!--kw: vocabulary, attributes -->
       <xsl:param name="attributes" as="attribute()*"/>
       <xsl:variable name="pass-1" as="element()*">
          <xsl:for-each-group select="$attributes[tan:takes-idrefs(.)]" group-by="tan:base-uri(.)">
@@ -119,6 +121,7 @@
       <!-- This function does not mark apparant errors, e.g., vocabulary items missing, or more than one for a single value -->
       <!-- If you are trying to work with vocabulary from an included document, the $resolved-vocabulary-ancestors should point 
          exclusively to content (not self) of the appropriate resolved tan:include -->
+      <!--kw: vocabulary -->
       <xsl:param name="target-element-names" as="xs:string*"/>
       <xsl:param name="target-values" as="xs:string*"/>
       <xsl:param name="resolved-vocabulary-ancestors" as="element()*"/>
@@ -350,6 +353,7 @@
       <!-- The local vocabulary will be checked. If no vocabulary is returned, a check will be made based upon the standard
       TAN vocabulary -->
       <!-- This was written to make XPath predicate expressions easier. -->
+      <!--kw: vocabulary -->
       <xsl:param name="attr-to-check" as="attribute()?"/>
       <xsl:param name="ids-and-names" as="xs:string*"/>
       

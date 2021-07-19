@@ -55,6 +55,7 @@
          one TAN-A_merge file per work detected. TAN-A_merge files collate into a single master reference system all <source>s of 
          the TAN-A file that are versions of that work.  
       -->
+      <!--kw: expansion, files -->
       <xsl:param name="tan-doc" as="document-node()?"/>
       <xsl:param name="target-phase" as="xs:string"/>
       <xsl:param name="use-validation-mode" as="xs:boolean"/>
@@ -1734,7 +1735,7 @@
    <xsl:template match="*[@val]/@chars" priority="1" mode="tan:core-expansion-terse-attributes-to-elements">
       <xsl:variable name="this-val" select="../@val"/>
       <xsl:variable name="this-val-length" select="count(tan:chop-string($this-val))"/>
-      <xsl:variable name="these-integers" select="tan:expand-numerical-sequence(., $this-val-length)"/>
+      <xsl:variable name="these-integers" select="tan:expand-numerical-expression(., $this-val-length)"/>
       <xsl:copy-of select="tan:sequence-error($these-integers, ($this-val || ' has only ' || string($this-val-length) || ' characters.'))"/>
    </xsl:template>
    

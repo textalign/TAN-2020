@@ -11,6 +11,7 @@
       <!-- Input: a string, an integer -->
       <!-- Output: a string with the first parameter repeated the number of times specified by the integer -->
       <!-- This function was written to facilitate indentation -->
+      <!--kw: strings, spacing -->
       <xsl:param name="string-to-fill" as="xs:string?"/>
       <xsl:param name="times-to-repeat" as="xs:integer"/>
       <xsl:if test="$times-to-repeat gt 0">
@@ -25,6 +26,7 @@
       <!-- Input: a string, a sequence of:
          <[ANY NAME] pattern="" replacement="" [flags=""] [message=""]> -->
       <!-- Output: the string, after those replaces are processed in order -->
+      <!--kw: strings -->
       <xsl:param name="string-to-replace" as="xs:string?"/>
       <xsl:param name="replace-elements" as="element()*"/>
       
@@ -68,6 +70,7 @@
    <xsl:function name="tan:string-length" as="xs:integer" visibility="public">
       <!-- Input: any string -->
       <!-- Output: the number of characters in the string, as defined by TAN (i.e., modifiers are counted with the preceding base character) -->
+      <!--kw: strings -->
       <xsl:param name="input" as="xs:string?"/>
       <xsl:copy-of select="count(tan:chop-string($input))"/>
    </xsl:function>
@@ -80,7 +83,7 @@
    </xsl:function>
 
    <xsl:function name="tan:normalize-name" as="xs:string*" visibility="public">
-      <!-- one-parameter, name-normalizing version of tan:normalize-text() -->
+      <!-- one-parameter version of fuller one, below -->
       <xsl:param name="text" as="xs:string*"/>
       <xsl:sequence select="tan:normalize-text($text, true())"/>
    </xsl:function>
@@ -90,6 +93,7 @@
       <!-- Output: that sequence, with each item's space normalized, and removal of any help requested -->
       <!-- In name-normalization, the string is converted to lower-case, and spaces replace hyphens, underscores, and illegal characters. -->
       <!-- Special end div characters are not removed in this operation, nor is tail-end space adjusted according to TAN rules; for that, see tan:normalize-div-text(). -->
+      <!--kw: strings -->
       <xsl:param name="text" as="xs:string*"/>
       <xsl:param name="treat-as-name-values" as="xs:boolean"/>
       <xsl:for-each select="$text">
@@ -111,7 +115,7 @@
    </xsl:function>
 
    <xsl:function name="tan:atomize-string" as="xs:string*" visibility="public">
-      <!-- alias for tan:-chop-string(), but only on individual characters, as TAN defines them -->
+      <!-- surrogate function for tan:chop-string() -->
       <xsl:param name="input" as="xs:string?"/>
       <xsl:copy-of select="tan:chop-string($input)"/>
    </xsl:function>
@@ -120,6 +124,7 @@
    <xsl:function name="tan:chop-string" as="xs:string*" visibility="public">
       <!-- Input: any string -->
       <!-- Output: that string chopped into a sequence of individual characters, following TAN rules (modifying characters always join their preceding base character) -->
+      <!--kw: strings, sequences -->
       <xsl:param name="input" as="xs:string?"/>
       <xsl:if test="string-length($input) gt 0">
          <xsl:analyze-string select="$input" regex="{$tan:char-regex}">
@@ -135,7 +140,9 @@
 
    <xsl:function name="tan:chop-string" as="xs:string*" visibility="public" use-when="$tan:validation-mode-on">
       <!-- Input: any string -->
-      <!-- Output: that string chopped into a sequence of individual characters, following TAN rules (modifying characters always join their preceding base character) -->
+      <!-- Output: that string chopped into a sequence of individual characters, following TAN rules 
+         (modifying characters always join their preceding base character) -->
+      <!--kw: strings, sequences -->
       <xsl:param name="input" as="xs:string?"/>
       <xsl:param name="chop-after-regex" as="xs:string"/>
       <xsl:if test="string-length($input) gt 0">
@@ -164,6 +171,7 @@
       <!-- Output: the input string cut into a sequence of strings using the regular expression as the cut marker -->
       <!-- If the last boolean is true, then nested clauses (parentheses, direct quotations, etc.) will be preserved. -->
       <!-- This function differs from the 1-parameter version in that it is used to chop the string not into individual characters but into words, clauses, sentences, etc. -->
+      <!--kw: strings -->
       <xsl:param name="input" as="xs:string?"/>
       <xsl:param name="chop-after-regex" as="xs:string"/>
       <xsl:param name="preserve-nested-clauses" as="xs:boolean"/>
@@ -366,6 +374,7 @@
    <xsl:function name="tan:tokenize-text" as="element()*" visibility="public">
       <!-- Input: any number of strings; a <token-definition>; a boolean indicating whether tokens should be counted and labeled. -->
       <!-- Output: a <result> for each string, tokenized into <tok> and <non-tok>, respectively. If the counting option is turned on, the <result> contains @tok-count and @non-tok-count, and each <tok> and <non-tok> have an @n indicating which <tok> group it belongs to. -->
+      <!--kw: strings, sequences -->
       <xsl:param name="text" as="xs:string*"/>
       <xsl:param name="token-definition" as="element(tan:token-definition)?"/>
       <xsl:param name="count-toks" as="xs:boolean?"/>
@@ -479,13 +488,16 @@
    <xsl:function name="tan:unique-char" as="xs:string?" visibility="public">
       <!-- Input: any sequence of strings -->
       <!-- Output: a single character that is not to be found in those strings -->
-      <!-- This function, written to support tan:collate-sequences(), provides unique way to join any sequence strings in such a way that it can later be tokenized. -->
+      <!-- This function, written to support tan:collate-sequences(), provides unique 
+         way to join any sequence strings in such a way that it can later be tokenized. -->
+      <!--kw: strings -->
       <xsl:param name="context-strings" as="xs:string*"/>
-      <xsl:variable name="codepoints-used" as="xs:integer*" select="
-            for $i in ($context-strings)
-            return
-               string-to-codepoints($i)"/>
-      <xsl:copy-of select="codepoints-to-string(max($codepoints-used) + 1)"/>
+      <xsl:for-each select="string-join($context-strings) => string-to-codepoints()">
+         <xsl:sort select="." order="descending"/>
+         <xsl:if test="position() eq 1">
+            <xsl:sequence select="codepoints-to-string(. + 1)"/>
+         </xsl:if>
+      </xsl:for-each> 
    </xsl:function>
    
    <xsl:function name="tan:ellipses" as="xs:string*" visibility="public">
@@ -505,7 +517,7 @@
       />
    </xsl:function>
    
-   <xsl:function name="tan:ellipses" as="xs:string*">
+   <xsl:function name="tan:ellipses" as="xs:string*" visibility="public">
       <!-- Input: any sequence of strings; two integers; a boolean -->
       <!-- Output: the sequence of strings, but with any initial substring beyond the first requested length and 
          any terminal substring beyond the last requested length replaced by ellipses. If the boolean is true, then
@@ -516,6 +528,7 @@
          "abcd", 1, 1, true > "abcd"
          "abcdefghijk", 1, 1, true > "a…[9]…k"
       -->
+      <!-- kw: strings -->
       <xsl:param name="strings-to-truncate" as="xs:string*"/>
       <xsl:param name="initial-string-length-to-retain" as="xs:integer"/>
       <xsl:param name="terminal-string-length-to-retain" as="xs:integer"/>
@@ -595,19 +608,20 @@
    
    
    <xsl:function name="tan:common-start-string" as="xs:string?" visibility="public">
-      <!-- See full function below -->
+      <!-- 1-parameter version of fuller function below -->
       <xsl:param name="strings" as="xs:string*"/>
       <xsl:sequence select="tan:common-start-or-end-string($strings, true())"/>
    </xsl:function>
    
    <xsl:function name="tan:common-end-string" as="xs:string?" visibility="public">
-      <!-- See full function below -->
+      <!-- 1-parameter version of fuller function below -->
       <xsl:param name="strings" as="xs:string*"/>
       <xsl:sequence select="tan:common-start-or-end-string($strings, false())"/>
    </xsl:function>
    
    <xsl:function name="tan:common-start-or-end-string" as="xs:string?" visibility="public">
-      <!-- See full function, which deals with pairs of strings, below -->
+      <!-- 2-parameter version of fuller function below -->
+      <!-- This one deals with many strings; the full one, with pairs of them -->
       <xsl:param name="strings" as="xs:string*"/>
       <xsl:param name="find-common-start" as="xs:boolean"/>
       <xsl:variable name="string-count" select="count($strings)"/>
@@ -650,6 +664,7 @@
    <xsl:function name="tan:common-start-or-end-string" as="xs:string?" visibility="public">
       <!-- Input: two strings; a boolean -->
       <!-- Output: the longest common start (param 2 is true) or end (param 2 is false) portion of the two strings. -->
+      <!--kw: strings -->
       <xsl:param name="string-a" as="xs:string?"/>
       <xsl:param name="string-b" as="xs:string?"/>
       <xsl:param name="find-common-start" as="xs:boolean"/>
@@ -857,6 +872,7 @@
       <!-- All special leaf-div-end characters will be stripped including the last -->
       <!-- Do not apply this function to class-1 files that have been expanded, because normalization will have already occurred. -->
       <!-- Do not apply this function to TEI elements within leaf divs. -->
+      <!--kw: strings, nodes -->
       <xsl:param name="items" as="item()*"/>
       <xsl:param name="set-divs-on-new-line" as="xs:boolean"/>
       <xsl:variable name="results" as="element()">
@@ -917,6 +933,7 @@
       <!-- Output: the same sequence, normalized according to TAN rules. Each item in the sequence is space normalized and then if its end matches one of the special div-end characters, ZWJ U+200D or SOFT HYPHEN U+AD, the character is removed; otherwise a space is added at the end. Zero-length strings are skipped. -->
       <!-- This function is designed specifically for TAN's commitment to nonmixed content. That is, every TAN element contains either elements or non-space text but not both, which also means that space-only text nodes are effectively ignored. It is assumed that every TAN element is followed by a notional space. -->
       <!-- The second parameter is important, because output will be used to normalize and repopulate leaf <div>s (where special div-end characters should be retained) or to concatenate leaf <div> text (where those characters should be deleted) -->
+      <!--kw: strings -->
       <xsl:param name="single-leaf-div-text-nodes" as="xs:string*"/>
       <xsl:param name="remove-special-div-end-chars" as="xs:boolean"/>
       <xsl:variable name="nodes-joined-and-normalized" select="normalize-space(string-join($single-leaf-div-text-nodes, ''))"/>
@@ -950,6 +967,7 @@
    <xsl:function name="tan:tokenize-div" as="item()*" visibility="public">
       <!-- Input: any items, a <token-definition> -->
       <!-- Output: the items with <div>s in tokenized form -->
+      <!--kw: strings -->
       <xsl:param name="input" as="item()*"/>
       <xsl:param name="token-definitions" as="element(tan:token-definition)"/>
       <xsl:apply-templates select="$input" mode="tan:tokenize-div">
@@ -1015,6 +1033,7 @@
             the substring of the value of $arg1 that precedes in the value of $arg1 the first occurrence of the value $arg2 .
          if false: the last occurrence -->
       <!-- This function provides extra flexibility not available in fn:substring-before() -->
+      <!--kw: strings -->
       <xsl:param name="arg1" as="xs:string?"/>
       <xsl:param name="arg2" as="xs:string?"/>
       <xsl:param name="return-first-match" as="xs:boolean"/>
@@ -1036,6 +1055,7 @@
             the substring of the value of $arg1 that follows in the value of $arg1 the first occurrence of the value of $arg2 .
          if false: the last occurrence -->
       <!-- This function provides extra flexibility not available in fn:substring-before() -->
+      <!--kw: strings -->
       <xsl:param name="arg1" as="xs:string?"/>
       <xsl:param name="arg2" as="xs:string?"/>
       <xsl:param name="return-first-match" as="xs:boolean"/>
@@ -1057,6 +1077,7 @@
       <!-- Output: true() if and only if the first string contains the second, only one time -->
       <!-- This function was introduced to support tan:diff(), to ensure that unique common tokens
          between two strings are not substrings of any other unique common tokens. -->
+      <!--kw: strings -->
       <xsl:param name="arg1" as="xs:string?"/>
       <xsl:param name="arg2" as="xs:string?"/>
       <xsl:sequence select="contains($arg1, $arg2) and not(contains(substring-after($arg1, $arg2), $arg2))"/>

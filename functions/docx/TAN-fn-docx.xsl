@@ -14,6 +14,7 @@
    <xsl:function name="tan:docx-to-text" as="xs:string?" visibility="public">
       <!-- Input: docx component as document nodes -->
       <!-- Output: the string value of the component -->
+      <!--kw: docx, files, strings, tree manipulation -->
       <xsl:param name="docx-component" as="item()*"/>
       <xsl:variable name="pass-1" as="xs:string*">
          <xsl:apply-templates select="$docx-component" mode="tan:archive-to-plain-text"/>

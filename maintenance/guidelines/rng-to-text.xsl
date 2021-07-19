@@ -160,11 +160,11 @@
         </xsl:if>
     </xsl:template>
 
-    <xsl:template match="rng:define" mode="formaldef-temp-disable">
+    <!--<xsl:template match="rng:define" mode="formaldef-temp-disable">
         <xsl:param name="current-indent" tunnel="yes"/>
 
         <xsl:choose>
-            <!--  or not(rng:element or rng:attribute) -->
+            <!-\-  or not(rng:element or rng:attribute) -\->
             <xsl:when test="count(rng:*) gt 1">
                 <xsl:for-each select="rng:*">
                     <xsl:variable name="pos" select="position()"/>
@@ -174,16 +174,16 @@
                     </xsl:apply-templates>
                 </xsl:for-each>
 
-                <!--<xsl:apply-templates mode="formaldef" select="rng:*[position() gt 1]">
+                <!-\-<xsl:apply-templates mode="formaldef" select="rng:*[position() gt 1]">
                     <xsl:with-param name="is-new-line" select="true()"/>
                     <xsl:with-param name="is-part-of-a-series" select="true()"/>
-                </xsl:apply-templates>-->
+                </xsl:apply-templates>-\->
             </xsl:when>
             <xsl:otherwise>
                 <xsl:apply-templates mode="formaldef"/>
             </xsl:otherwise>
         </xsl:choose>
-    </xsl:template>
+    </xsl:template>-->
     <!--<xsl:template match="rng:define[count(rng:*) le 1]" mode="formaldef">
         <xsl:apply-templates mode="formaldef"></xsl:apply-templates>
     </xsl:template>-->
@@ -233,7 +233,7 @@
     </xsl:template>
     <xsl:template match="text()" mode="formaldef"/>
 
-    <xsl:function name="tan:comma-check" as="xs:string*">
+    <xsl:function name="tan:comma-check" as="xs:string*" visibility="private">
         <xsl:param name="rng-nodes" as="element()*"/>
         <xsl:for-each select="$rng-nodes">
             <xsl:call-template name="comma-check"/>

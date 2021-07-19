@@ -19,6 +19,7 @@
       <!-- Maps and arrays will be discarded. -->
       <!-- This function was written to truncate large trees for output to messages and diagnostic
          result trees. -->
+      <!--kw: nodes, tree manipulation -->
       <xsl:param name="items" as="item()*"/>
       <xsl:param name="depth" as="xs:integer"/>
       <xsl:apply-templates select="$items" mode="tan:fn-shallow-copy">
@@ -43,6 +44,7 @@
    
    
    <xsl:function name="tan:xml-to-string" as="xs:string?" visibility="public">
+      <!-- one-parameter version of the fuller one, below -->
       <xsl:param name="fragment" as="item()*"/>
       <xsl:value-of select="tan:xml-to-string($fragment, false())"/>
    </xsl:function>
@@ -51,6 +53,7 @@
       <!-- Input: any fragment of XML; boolean indicating whether whitespace nodes should be ignored -->
       <!-- Output: a string representation of the fragment -->
       <!-- This function is a proxy of serialize(), used to represent XML fragments in plain text, useful in validation reports or in generating guidelines -->
+      <!--kw: nodes, serialization -->
       <xsl:param name="fragment" as="item()*"/>
       <xsl:param name="ignore-whitespace-text-nodes" as="xs:boolean"/>
       <xsl:variable name="results" as="xs:string*">
@@ -110,6 +113,7 @@
    <xsl:function name="tan:trim-long-text" as="item()*" visibility="public">
       <!-- Input: an XML fragment; an integer -->
       <!-- Output: the fragment with text nodes longer than the integer value abbreviated with an ellipsis -->
+      <!--kw: nodes, tree manipulation -->
       <xsl:param name="xml-fragment" as="item()*"/>
       <xsl:param name="too-long" as="xs:integer"/>
       <xsl:variable name="input-as-node" as="element()">
@@ -156,6 +160,7 @@
       <!-- Input: any document fragment; sequences of strings specifying names of elements to exclude, names of attributes to exclude, and names of attributes whose parent elements should be excluded; an integer beyond which depth copies should not be made -->
       <!-- Output: the same fragment, altered -->
       <!-- This function was written primarily to service the merge of TAN-A sources, where realigned divs could be extracted from their source documents -->
+      <!--kw: nodes, tree manipulation -->
       <xsl:param name="doc-fragment" as="item()*"/>
       <xsl:param name="exclude-elements-named" as="xs:string*"/>
       <xsl:param name="exclude-attributes-named" as="xs:string*"/>
@@ -292,6 +297,7 @@
          order of their original elements -->
       <!-- Transitivity is assumed. Suppose elements X, Y, and Z have children values A and B; B and C; and C and D, respectively. All 
          three elements will be grouped, even though Y and Z do not directly share children values.  -->
+      <!--kw: nodes, grouping -->
       <xsl:param name="elements-to-group" as="element()*"/>
       <xsl:param name="regex-of-names-of-nodes-to-group-by" as="xs:string?"/>
       <xsl:param name="group-by-shallow-node-value" as="xs:boolean"/>
@@ -433,6 +439,7 @@
       <!-- Output: for each element the string value of its name, its namespace, its attributes, and all descendant nodes -->
       <!-- This function is useful for determining whether any number of elements are deeply equal -->
       <!-- The built-in function deep-equal() works for pairs of elements; this looks for a way to evaluate sequences of elements -->
+      <!--kw: nodes, identifiers -->
       <xsl:param name="element" as="element()*"/>
       <xsl:for-each select="$element">
          <xsl:variable name="results" as="xs:string*">
@@ -480,6 +487,7 @@
    <xsl:function name="tan:stamp-q-id" as="item()*" visibility="public">
       <!-- Input: any XML fragments -->
       <!-- Output: the fragments with @q added to each element via generate-id() -->
+      <!--kw: nodes, identifiers -->
       <xsl:param name="items-to-stamp" as="item()*"/>
       <xsl:param name="stamp-shallowly" as="xs:boolean"/>
       <xsl:apply-templates select="$items-to-stamp" mode="tan:stamp-q-id">
@@ -543,6 +551,7 @@
       <!-- If the third parameter is 'full', the last indentation after the series will be like the first; if it is 'short', it will
       be one indentation less than full (appropriate for the last child of a wrapping element); if it is 'none' no final indentation
       will be supplied. This parameter affects only the topmost sequence, not the children, which are formatted as demanded. -->
+      <!--kw: nodes, tree manipulation, spacing-->
       <xsl:param name="items-to-indent" as="item()*"/>
       <xsl:param name="model-element" as="element()"/>
       <xsl:param name="tail-indentation-type" as="xs:string?"/>
@@ -613,6 +622,7 @@
    <xsl:function name="tan:attr" as="attribute()?" visibility="public">
       <!-- Input: two strings -->
       <!-- Output: an attribute by the name of the first string, with the value of the second -->
+      <!--kw: nodes, attributes -->
       <xsl:param name="attribute-name" as="xs:string?"/>
       <xsl:param name="attribute-value" as="xs:string?"/>
       <xsl:choose>
@@ -628,6 +638,7 @@
    <xsl:function name="tan:path" as="xs:string*" visibility="public">
       <!-- Input: any nodes -->
       <!-- Output: the path of each node -->
+      <!--kw: nodes -->
       <xsl:param name="nodes" as="node()*"/>
       <xsl:for-each select="$nodes">
          <xsl:variable name="this-node" select="."/>
@@ -717,6 +728,7 @@
    <xsl:function name="tan:last-change-agent" as="element()*" visibility="public">
       <!-- Input: any TAN document -->
       <!-- Output: the <person>, <organization>, or <algorithm> who made the last change -->
+      <!--kw: nodes-->
       <xsl:param name="TAN-doc" as="document-node()*"/>
       <xsl:for-each select="$TAN-doc">
          <xsl:variable name="this-doc" select="."/>
@@ -828,7 +840,7 @@
       <!-- @m-has-how-many-features was renamed @m-has-how-many-codes in 2021; the older name is 
          retained for legacy -->
       <xsl:param name="context" tunnel="yes"/>
-      <xsl:variable name="this-val" select="tan:expand-numerical-sequence(., 999)"/>
+      <xsl:variable name="this-val" select="tan:expand-numerical-expression(., 999)"/>
       <xsl:attribute name="{name()}">
          <xsl:value-of select="count($context/tan:f[text()]) = $this-val"/>
       </xsl:attribute>
@@ -883,6 +895,7 @@
       <!-- Input: an item and a string naming a data type -->
       <!-- Output: a boolean indicating whether the item can be cast into that data type -->
       <!-- If the first parameter doesn't match a data type, the function returns false -->
+      <!--kw: nodes, datatypes -->
       <xsl:param name="item" as="item()?"/>
       <xsl:param name="data-type" as="xs:string"/>
       <xsl:choose>
@@ -1053,7 +1066,7 @@
    </xsl:function>
    
    
-   <xsl:function name="tan:stamp-tree-with-text-data" as="item()*" visibility="public">
+   <xsl:function name="tan:stamp-tree-with-text-data" as="item()*" visibility="private">
       <!-- 2-parameter version for the main one below -->
       <xsl:param name="tree-fragment" as="item()*"/>
       <xsl:param name="ignore-outer-indentations" as="xs:boolean"/>
@@ -1220,6 +1233,7 @@
       <!-- Output: each element with a copy of the attributes -->
       <!-- This function helps simplify code where one wishes merely to return a copy of an element with perhaps
       diagnostic information in an attribute -->
+      <!--kw: nodes, attributes, tree manipulation -->
       <xsl:param name="elements-to-adjust" as="element()*"/>
       <xsl:param name="attributes-to-insert" as="attribute()*"/>
       <xsl:for-each select="$elements-to-adjust">
@@ -1238,6 +1252,7 @@
       <!-- Output: a flattened sequence of XML nodes representing the original fragment. Each element is given a new @_level 
          specifying the level of hierarchy the element had in the original. Closing tags are specified by <_close-at id=""/>
          with a corresponding @_close-at in the opening tag. Empty elements are retained as-is. -->
+      <!--kw: nodes, tree manipulation -->
       <xsl:param name="xml-fragment" as="item()*"/>
       <xsl:apply-templates select="$xml-fragment" mode="tan:tree-to-sequence">
          <xsl:with-param name="current-level" select="1"/>
@@ -1282,6 +1297,7 @@
          with empty <div>s, each one with @n and @type correctly assessed based on the match, and a @_level to 
          specify where in the hierarchy it should sit. -->
       <!-- You may wish to run the results of this output through tan:consolidate-identical-adjacent-divs() -->
+      <!--kw: nodes, tree manipulation -->
       <xsl:param name="sequence-to-reconstruct" as="item()*"/>
       <xsl:param name="fix-orphan-text" as="xs:boolean"/>
       <xsl:variable name="sequence-prepped" as="element()">
@@ -1415,6 +1431,7 @@
    <xsl:function name="tan:strip-outer-indentation" as="item()*" visibility="public">
       <!-- Input: any XML fragment -->
       <!-- Output: the same, but without outer indentation -->
+      <!--kw: nodes, tree manipulation, spacing -->
       <xsl:param name="tree-fragment" as="item()*"/>
       <xsl:apply-templates select="$tree-fragment" mode="tan:strip-outer-indentation"/>
    </xsl:function>
@@ -1473,6 +1490,7 @@
          running them again. In fact, it can introduce errors (because special div-end characters 
          have already been removed).
       -->
+      <!--kw: nodes, spacing, tree manipulation -->
       <xsl:param name="input-tree" as="item()*"/>
       <xsl:param name="remove-special-end-div-chars" as="xs:boolean"/>
       
@@ -1776,6 +1794,7 @@
       <!-- The integer 1 is always inferred, and returned. Any integers greater than the string length of the
          tree will be ignored. -->
       <!-- For a similar, but more complex function, see tan:chop-diff-output() -->
+      <!--kw: nodes, tree manipulation -->
       <xsl:param name="tree-to-chop" as="item()*"/>
       <xsl:param name="chop-points" as="xs:integer*"/>
       

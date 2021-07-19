@@ -11,6 +11,7 @@
       <!-- Input: any sequence of items -->
       <!-- Output: the one item that appears most frequently -->
       <!-- If two or more items appear equally frequently, only the first is returned -->
+      <!-- kw: sequences, items -->
       <xsl:param name="sequence" as="item()*"/>
       <xsl:for-each-group select="$sequence" group-by=".">
          <xsl:sort select="count(current-group())" order="descending"/>

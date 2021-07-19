@@ -10,6 +10,7 @@
    <!-- TAN Function Library: functions for TAN output -->
    
    <xsl:function name="tan:update-TAN-change-log" as="document-node()?" visibility="public">
+      <!-- one-parameter version of fuller one, below -->
       <xsl:param name="TAN-file" as="document-node()?"/>
       <xsl:sequence select="tan:update-TAN-change-log($TAN-file, $tan:stylesheet-iri,
          $tan:stylesheet-name, $tan:stylesheet-url, 'algorithm', 'stylesheet', $tan:stylesheet-change-message, $tan:doc-uri)"/>
@@ -22,6 +23,7 @@
       <!-- It is presumed that the TAN file is in its raw state, and that indentation
          should be respected. -->
       <!-- If an agent type is not recognized, the default will be algorithm. -->
+      <!--kw: nodes, versioning -->
       <xsl:param name="TAN-file" as="document-node()?"/>
       <xsl:param name="agent-IRIs" as="xs:string+"/>
       <xsl:param name="agent-names" as="xs:string+"/>

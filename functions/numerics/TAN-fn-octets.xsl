@@ -38,6 +38,7 @@
       <!-- Output: integer values of the string, after conversion to UTF-8 bytes (0..255) -->
       <!-- This function was written to ensure that checksums of Unicode values do not cause repeating values. -->
       <!-- Anything below codepoint 128 will be simply the output of string-to-codepoints() -->
+      <!--kw: numerics, codepoints -->
       <xsl:param name="str" as="xs:string"/>
       <xsl:for-each select="string-to-codepoints($str)">
          <xsl:choose>
@@ -60,6 +61,7 @@
    <xsl:function name="tan:utf-8-octets-to-string" as="xs:string?" visibility="public">
       <!-- Input: a sequence of octets (integers in the range 0-255) -->
       <!-- Output: the octets converted into a Unicode string. -->
+      <!--kw: numerics, codepoints -->
       <xsl:param name="in" as="xs:integer*"/>
       <xsl:variable name="string-components" as="element()">
          <string>
@@ -226,6 +228,7 @@
    <xsl:function name="tan:unicode-to-eight-bit-chars" as="xs:string?" visibility="public">
       <!-- Input: any Unicode string -->
       <!-- Output: the string, with upper characters (greater than dec 126, ~) converted to 8-bit-bytes -->
+      <!--kw: numerics, codepoints -->
       <xsl:param name="unicode-string" as="xs:string?"/>
       <xsl:variable name="str-8bit-codepoints" select="tan:string-to-utf-8-octets($unicode-string)"/>
       <xsl:sequence select="codepoints-to-string($str-8bit-codepoints)"/>

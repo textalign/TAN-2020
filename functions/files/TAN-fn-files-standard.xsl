@@ -9,6 +9,7 @@
    <xsl:function name="tan:first-loc-available" as="xs:string?" visibility="public">
       <!-- Input: An element that is or contains one or more tan:location elements -->
       <!-- Output: the value of the first tan:location/@href to point to a document available, resolved. If no location is available nothing is returned. -->
+      <!--kw: files -->
       <xsl:param name="element-with-href-in-self-or-descendants" as="element()?"/>
       <xsl:variable name="context-base-uri"
          select="tan:base-uri($element-with-href-in-self-or-descendants)" as="xs:anyURI"/>
@@ -31,12 +32,13 @@
             </xsl:otherwise>
          </xsl:choose>
       </xsl:iterate>
-      
-      <!--<xsl:value-of select="tan:first-loc-available-loop($element-with-href-in-self-or-descendants//@href, 0)"/>-->
    </xsl:function>
    
    
    <xsl:function name="tan:url-is-local" as="xs:boolean" visibility="public">
+      <!--Input: a string representing a URL-->
+      <!--Output: true if the URL syntactically appears to be local -->
+      <!--kw: files, filenames -->
       <xsl:param name="url-to-test" as="xs:string?"/>
       <xsl:variable name="url-norm" select="normalize-space($url-to-test)" as="xs:string"/>
       <xsl:sequence
@@ -47,6 +49,7 @@
    <xsl:function name="tan:get-1st-doc" as="document-node()*" visibility="public">
       <!-- Input: any TAN elements naming files (e.g., <source>, <see-also>, <inclusion>, <vocabulary> -->
       <!-- Output: the first document available for each element, plus any relevant error messages. -->
+      <!--kw: files -->
       <xsl:param name="TAN-elements" as="element()*"/>
       <xsl:for-each select="$TAN-elements">
          <xsl:variable name="this-element" select="."/>

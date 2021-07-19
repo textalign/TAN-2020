@@ -9,6 +9,7 @@
    <xsl:function name="tan:blend-color-channel-value" as="xs:double?" visibility="public">
       <!-- Input: two integers and a double between zero and 1 -->
       <!-- Output: a double representing a blend between the first two numbers, interpreted as RGB values -->
+      <!--kw: html, colors -->
       <xsl:param name="color-a" as="xs:double"/>
       <xsl:param name="color-b" as="xs:double"/>
       <xsl:param name="blend-mid-point" as="xs:double"/>
@@ -32,6 +33,7 @@
    <xsl:function name="tan:blend-alpha-value" as="xs:double?" visibility="public">
       <!-- Input: three doubles between zero and 1 -->
       <!-- Output: the blend of the first two doubles, interpreted as alpha values and the third interpreted as a midpoint -->
+      <!--kw: html, colors -->
       <xsl:param name="alpha-a" as="xs:double"/>
       <xsl:param name="alpha-b" as="xs:double"/>
       <xsl:param name="blend-mid-point" as="xs:double"/>
@@ -47,6 +49,7 @@
    <xsl:function name="tan:blend-colors" as="xs:double*" visibility="public">
       <!-- Input: two sequences of doubles (the first three items being from 0 through 255 and the fourth and last between 0 and 1); a double between zero and 1 -->
       <!-- Output: a sequence of doubles representing a blend of the first two sequences, interpreted as RGB colors, and the last double as a desired midpoint -->
+      <!--kw: html, colors -->
       <xsl:param name="rgb-color-1" as="item()+"/>
       <xsl:param name="rgb-color-2" as="item()+"/>
       <xsl:param name="blend-mid-point" as="xs:double"/>

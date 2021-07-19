@@ -6,7 +6,7 @@
     xmlns:rng="http://relaxng.org/ns/structure/1.0" xmlns:docbook="http://docbook.org/ns/docbook" 
     xmlns:math="http://www.w3.org/2005/xpath-functions/math" xmlns:tan="tag:textalign.net,2015:ns"
     exclude-result-prefixes="#all" version="3.0">
-    <xsl:function name="tan:examples" as="element()*">
+    <xsl:function name="tan:examples" as="element()*" visibility="private">
         <!-- Input: any element or attribute name; a parameter indicating whether it is an attribute (true) or an element (false) -->
         <!-- Output: a docbook representation of the context of specific examples drawn from the TAN examples directory -->
         <!-- Used primarily to populate the TAN guidelines with examples -->
@@ -72,6 +72,7 @@
         </xsl:for-each-group>
     </xsl:function>
     
+    <xsl:mode name="emph-string-for-docbook" on-no-match="shallow-copy"/>
     <xsl:template match="xpath:analyze-string-result | xpath:group | xpath:non-match" mode="emph-string-for-docbook">
         <xsl:apply-templates mode="#current"/>
     </xsl:template>
@@ -80,7 +81,7 @@
     </xsl:template>
     
     
-    <xsl:function name="tan:element-to-example-text" as="xs:string?">
+    <xsl:function name="tan:element-to-example-text" as="xs:string?" visibility="private">
         <!-- Input: XML elements -->
         <!-- Output: a text representation -->
         <xsl:param name="example-elements" as="element()*"/>
@@ -98,7 +99,7 @@
         </xsl:variable>
         <xsl:value-of select="string-join($raw, '')"/>
     </xsl:function>
-    <xsl:function name="tan:lca" as="node()?">
+    <xsl:function name="tan:lca" as="node()?" visibility="private">
         <!-- Input: any nodes -->
         <!-- Output: the least (first) common ancestor to the nodes -->
         <xsl:param name="pSet" as="node()*"/>
@@ -119,6 +120,8 @@
                             tan:lca($pSet/..)"
         />
     </xsl:function>
+    
+    <xsl:mode name="tree-to-text" on-no-match="shallow-copy"/>
     <xsl:template match="*" mode="tree-to-text" as="xs:string*">
         <xsl:param name="example-elements" as="element()*" tunnel="yes"/>
         <xsl:param name="is-contextual-sibling" as="xs:boolean" select="false()"/>
@@ -241,7 +244,7 @@
         <xsl:value-of select="concat(' ', name(.), '=&quot;', replace(.,'\s(\s+)','&#xa;$1'), '&quot;')"/>
     </xsl:template>
 
-    <xsl:function name="tan:indent" as="xs:string?">
+    <xsl:function name="tan:indent" as="xs:string?" visibility="private">
         <xsl:param name="element" as="element()?"/>
         <xsl:value-of
             select="
@@ -251,7 +254,7 @@
                     $indent)"
         />
     </xsl:function>
-    <xsl:function name="tan:first-tag-to-text" as="xs:string?">
+    <xsl:function name="tan:first-tag-to-text" as="xs:string?" visibility="private">
         <xsl:param name="element" as="element()?"/>
         <xsl:variable name="raw" as="xs:string*">
             <xsl:value-of select="concat(tan:indent($element), '&lt;', name($element))"/>
@@ -274,7 +277,7 @@
         </xsl:variable>
         <xsl:value-of select="string-join($raw)"/>
     </xsl:function>
-    <xsl:function name="tan:last-tag-to-text" as="xs:string?">
+    <xsl:function name="tan:last-tag-to-text" as="xs:string?" visibility="private">
         <xsl:param name="element" as="element()?"/>
         <xsl:value-of
             select="
@@ -284,7 +287,7 @@
                     (), '&lt;/', name($element), '>&#xA;')"
         />
     </xsl:function>
-    <xsl:function name="tan:guidelines-shallow-copy" as="xs:string?">
+    <xsl:function name="tan:guidelines-shallow-copy" as="xs:string?" visibility="private">
         <xsl:param name="element" as="element()?"/>
         <xsl:variable name="raw" as="xs:string*">
             <xsl:value-of select="tan:first-tag-to-text($element)"/>

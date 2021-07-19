@@ -56,6 +56,7 @@
    <!-- CONVERSION FUNCTIONS -->
 
    <xsl:function name="tan:map-to-xml" as="element()*" visibility="public">
+      <!-- one-parameter version of fuller one below -->
       <xsl:param name="items-to-convert" as="item()*"/>
       <xsl:sequence select="tan:map-to-xml($items-to-convert, false())"/>
    </xsl:function>
@@ -68,6 +69,7 @@
       <!-- For those accustomed to handling ordinary XML nodes, maps can be frustrating to work with.
         This function allows one to change a map to XML, and do fun things with it, without requiring
         map functions. -->
+      <!--kw: maps, serialization, nodes -->
       <xsl:param name="items-to-convert" as="map(*)*"/>
       <xsl:param name="sort-keys" as="xs:boolean"/>
       <xsl:apply-templates select="$items-to-convert" mode="tan:map-and-array-to-xml">
@@ -132,6 +134,7 @@
          it is a member of <map:key> or <map:value>. Anything in the key or value will be bound as the type
          assigned by the values of @type.
       -->
+      <!--kw: maps, nodes, tree manipulation -->
       <xsl:param name="items-to-map" as="item()*"/>
       <xsl:apply-templates select="$items-to-map" mode="tan:xml-to-map-and-array"/>
    </xsl:function>
@@ -446,6 +449,7 @@
       <!-- Output: the map as an array, one member of the array per map entry, with the first item in the member
          constituting the key and its second items onward the values. If the boolean is true, then the keys will
          be sorted, otherwise the order of the array is implementation-dependent. -->
+      <!--kw: maps, arrays -->
       <xsl:param name="map-to-convert" as="map(*)?"/>
       <xsl:param name="sort-keys" as="xs:boolean"/>
       <xsl:variable name="map-keys" as="xs:anyAtomicType*">
@@ -484,6 +488,7 @@
       <!-- Output: one singleton map per map entry. -->
       <!-- This function was written to support templates or functions that use predicates to restrict a
          particular map's entries to only select ones. -->
+      <!--kw: maps -->
       <xsl:param name="source-map" as="map(*)*"/>
       <xsl:param name="keys-to-keep" as="xs:anyAtomicType*"/>
 
@@ -509,7 +514,7 @@
    
    
    <xsl:function name="tan:map-put" as="map(*)" visibility="public">
-      <!-- 4-parameter function of the complete one below. -->
+      <!-- 4-parameter version of the complete function below. -->
       <!-- Here the 2nd parameter is simply a map, all of whose map entries are intended 
          insertions. This allows the user of the function to make multiple insertions at once.
       -->
@@ -557,6 +562,7 @@
          map entry with a key corresponding to an id (perhaps via fn:generate-id()) with an empty value.
          That empty map entry then can serve as a hook equivalent to @xml:id in an element.
       -->
+      <!--kw: maps -->
       <xsl:param name="map" as="map(*)"/>
       <xsl:param name="key" as="xs:anyAtomicType"/>
       <xsl:param name="value" as="item()*"/>
@@ -644,6 +650,7 @@
       <!-- Output: true if the map, or any map it contains, has a key identical to one of the items,
          otherwise false. -->
       <!-- This function parallels map:contains() but permits multiple inputs and deep searching -->
+      <!--kw: maps -->
       <xsl:param name="map-of-interest" as="map(*)*"/>
       <xsl:param name="keys-of-interest" as="xs:anyAtomicType*"/>
       
@@ -658,6 +665,7 @@
       <!-- Input: a map -->
       <!-- Output: all map keys, both at the top level and at any depth -->
       <!-- This function parallels map:keys() but permits recursion -->
+      <!--kw: maps -->
       <xsl:param name="map-of-interest" as="map(*)*"/>
       <xsl:apply-templates select="$map-of-interest" mode="tan:map-keys"/>
    </xsl:function>
@@ -681,6 +689,7 @@
       <!-- Output: the map, but without entries of the specified key, at any depth -->
       <!-- This function parallels map:remove(), but affects contained maps at any 
          depth, even those embedded within an array. -->
+      <!--kw: maps -->
       <xsl:param name="map-of-interest" as="map(*)"/>
       <xsl:param name="keys" as="xs:anyAtomicType*"/>
       <xsl:apply-templates select="$map-of-interest" mode="tan:map-remove">
@@ -715,6 +724,7 @@
          value are the keys in the original map that point to it. -->
       <!-- This function was written to provide a kind of reverse lookup on any map. Any value that is not an atomic
          item will be discarded. -->
+      <!--kw: maps -->
       <xsl:param name="map-to-invert" as="map(*)"/>
       
       <xsl:variable name="input-map-keys" as="xs:anyAtomicType*" select="map:keys($map-to-invert)"/>

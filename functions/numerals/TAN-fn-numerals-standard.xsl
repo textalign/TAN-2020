@@ -33,6 +33,7 @@
    <xsl:function name="tan:rom-to-int" as="xs:integer*" visibility="public">
       <!-- Input: any roman numeral less than 5000 -->
       <!-- Output: the numeral converted to an integer -->
+      <!--kw: numerals, numerics, Latin -->
       <xsl:param name="arg" as="xs:string*"/>
       <xsl:variable name="rom-cp" select="
             (109,
@@ -78,6 +79,7 @@
       <!-- Input: any numerals in the supported letter numeral system -->
       <!-- Output: the integer equivalent -->
       <!-- Sequence goes a, b, c, ... z, aa, bb, ..., aaa, bbb, ....  E.g., 'ccc' - > 55 -->
+      <!--kw: numerals, numerics -->
       <xsl:param name="arg" as="xs:string*"/>
       <xsl:for-each select="$arg">
          <xsl:variable name="arg-lower" select="lower-case(.)"/>
@@ -101,6 +103,7 @@
          indicating whether only numeral matches should be returned -->
       <!-- Output: the string with parts that look like numerals converted to Arabic numerals -->
       <!-- Does not take into account requests for help -->
+      <!--kw: numerals -->
       <xsl:param name="string-to-analyze" as="xs:string?"/>
       <xsl:param name="ambig-is-roman" as="xs:boolean?"/>
       <xsl:param name="return-only-numerals" as="xs:boolean?"/>
@@ -226,6 +229,7 @@
       <!-- Input: one or more numerals -->
       <!-- Output: one or more strings with the English form of the ordinal form of the input number -->
       <!-- Example: (1, 4, 17)  ->  ('first', 'fourth', '17th') -->
+      <!--kw: numerals, numerics -->
       <xsl:param name="in" as="xs:integer*"/>
       <xsl:variable name="ordinals" select="
             ('first',
@@ -266,6 +270,7 @@
    <xsl:function name="tan:cardinal" as="xs:string?" visibility="public">
       <!-- Input: an integer -->
       <!-- Output: the English term for the number -->
+      <!--kw: numerals, numerics -->
       <xsl:param name="integer-to-convert" as="xs:integer?"/>
       
       <xsl:variable name="integer-rev" as="xs:string*"
@@ -360,111 +365,7 @@
    </xsl:function>
    
    
-   <xsl:function name="tan:best-integer-pair" as="xs:integer*" visibility="private">
-      <!-- Input: two sequences of integers; two integers -->
-      <!-- Output: two integers representing the position of the integer from the first sequence and the position 
-         of the integer from the second that are proportionately closest to each other, given the maximum ceilings 
-         set by the last two parameters. -->
-      <!-- This function was written to support tan:diff() in making better choices when a match is found in multiple
-         places in either the short or the long string. -->
-      <xsl:param name="integer-sequence-a" as="xs:integer*"/>
-      <xsl:param name="integer-sequence-b" as="xs:integer*"/>
-      <xsl:param name="population-size-a" as="xs:integer"/>
-      <xsl:param name="population-size-b" as="xs:integer"/>
-      
-      <xsl:variable name="seq-a-sorted" as="xs:integer*" select="sort($integer-sequence-a)"/>
-      <xsl:variable name="seq-b-sorted" as="xs:integer*" select="sort($integer-sequence-b)"/>
-      <xsl:variable name="seq-a-portions" as="xs:decimal*" select="
-            for $i in $seq-a-sorted
-            return
-               $i div $population-size-a"/>
-      <xsl:variable name="seq-b-portions" as="xs:decimal*" select="
-            for $i in $seq-b-sorted
-            return
-               $i div $population-size-b"/>
-      
-      <xsl:variable name="diagnostics-on" as="xs:boolean" select="false()"/>
-      <xsl:if test="$diagnostics-on">
-         <xsl:message select="'Diagnostics on, tan:best-integer-pair()'"/>
-         <xsl:message select="'Seq a sorted:', $seq-a-sorted"/>
-         <xsl:message select="'Seq b sorted:', $seq-b-sorted"/>
-         <xsl:message select="'Seq a portions:', $seq-a-portions"/>
-         <xsl:message select="'Seq b portions:', $seq-b-portions"/>
-      </xsl:if>
-      
-      <xsl:iterate select="$seq-a-portions">
-         <xsl:param name="best-a-pos-so-far" as="xs:integer" select="1"/>
-         <xsl:param name="best-b-pos-so-far" as="xs:integer" select="1"/>
-         <xsl:param name="score-to-beat" as="xs:decimal" select="xs:decimal(max(($population-size-a, $population-size-b)))"/>
-         
-         <xsl:on-completion>
-            <xsl:sequence select="$best-a-pos-so-far, $best-b-pos-so-far"/>
-         </xsl:on-completion>
-         
-         <xsl:variable name="this-a" select="." as="xs:decimal"/>
-         <xsl:variable name="this-a-pos" select="position()" as="xs:integer"/>
-         
-         <xsl:variable name="best-b-pos" as="xs:decimal?">
-            <xsl:iterate select="$seq-b-portions">
-               <xsl:param name="inner-best-b-pos-so-far" as="xs:integer?"/>
-               <xsl:param name="inner-score-to-beat" as="xs:decimal" select="$score-to-beat"/>
-               
-               <xsl:on-completion>
-                  <xsl:sequence select="$inner-best-b-pos-so-far"/>
-               </xsl:on-completion>
-
-               <xsl:variable name="this-b" select="." as="xs:decimal"/>
-               <xsl:variable name="this-b-pos" select="position()"/>
-               <xsl:variable name="this-diff" as="xs:decimal" select="$this-b - $this-a"/>
-               <xsl:variable name="good-choice" as="xs:boolean" select="abs($this-diff) lt $inner-score-to-beat"/>
-               <xsl:choose>
-                  <xsl:when test="$this-diff gt $inner-score-to-beat">
-                     <xsl:sequence select="$inner-best-b-pos-so-far"/>
-                     <xsl:break/>
-                  </xsl:when>
-                  <xsl:otherwise>
-                     <xsl:next-iteration>
-                        <xsl:with-param name="inner-best-b-pos-so-far" select="
-                              if ($good-choice) then
-                                 $this-b-pos
-                              else
-                                 $inner-best-b-pos-so-far"/>
-                        <xsl:with-param name="inner-score-to-beat" select="
-                              if ($good-choice) then
-                                 abs($this-diff)
-                              else
-                                 $inner-score-to-beat"/>
-                     </xsl:next-iteration>
-                  </xsl:otherwise>
-               </xsl:choose>
-            </xsl:iterate>
-         </xsl:variable>
-         
-         <xsl:if test="$diagnostics-on">
-            <xsl:message select="'best a pos so far:', $best-a-pos-so-far"/>
-            <xsl:message select="'best b pos so far:', $best-b-pos-so-far"/>
-            <xsl:message select="'score to beat:', $score-to-beat"/>
-            <xsl:message select="'this a, pos:', $this-a, $this-a-pos"/>
-            <xsl:message select="'best b pos:', $best-b-pos"/>
-         </xsl:if>
-         
-         <xsl:next-iteration>
-            <xsl:with-param name="best-a-pos-so-far" select="
-                  if (exists($best-b-pos)) then
-                     $this-a-pos
-                  else
-                     $best-a-pos-so-far"/>
-            <xsl:with-param name="best-b-pos-so-far" select="($best-b-pos, $best-b-pos-so-far)[1]"/>
-            <xsl:with-param name="score-to-beat" select="
-                  if (exists($best-b-pos)) then
-                     abs($seq-b-portions[$best-b-pos] - $this-a)
-                  else
-                     $score-to-beat"/>
-         </xsl:next-iteration>
-      </xsl:iterate>
-      
-      
-   </xsl:function>
+   
    
 
 </xsl:stylesheet>

@@ -257,6 +257,7 @@
             No attribute beginning with _ is rendered as an element, and it is retained as-is. (It is your responsibility
                 to get rid of temporary attributes you do not want, either before or after this function runs.)
         -->
+        <!--kw: html, nodes, tree manipulation -->
         
         <xsl:param name="fragment-to-convert" as="item()*"/>
         <xsl:param name="parse-a-hrefs" as="xs:boolean"/>
@@ -392,6 +393,7 @@
         <!-- Output: a sequence mixing text nodes and elements, with elements
             being HTML <a href=""/> wrappers for URIs.
         -->
+        <!--kw: html, strings, filenames -->
         <xsl:param name="string-to-parse" as="xs:string?"/>
         <xsl:analyze-string select="$string-to-parse" regex="(file|https?|ftp)://?\S+">
             <xsl:matching-substring>
@@ -402,7 +404,7 @@
                     </xsl:matching-substring>
                     <xsl:non-matching-substring>
                         <xsl:variable name="href-norm" select="replace(., '\.$', '')"/>
-                        <a href="{$href-norm}" xmlns="http://www.w3.org/1999/xhtml">
+                        <a href="{$href-norm}">
                             <xsl:sequence select="."/>
                         </a>
                     </xsl:non-matching-substring>

@@ -27,6 +27,7 @@
       <!-- Input: two integers -->
       <!-- Output: a string that represents the first numeral in base N, where N is the second numeral (must be 2-16, 26, or 64) -->
       <!-- No padding is performed on the output (e.g., = in base-64, or initial zeroes in hexadecimal) -->
+      <!--kw: numerics -->
       <xsl:param name="in" as="xs:integer?"/>
       <xsl:param name="base" as="xs:integer"/>
       <xsl:variable name="in-abs" select="abs($in)" as="xs:integer?"/>
@@ -69,6 +70,7 @@
    <xsl:function name="tan:n-to-dec" as="xs:integer?" visibility="public">
       <!-- Input: string representation of some number; an integer -->
       <!-- Output: an integer representing the first parameter in the base system of the 2nd parameter -->
+      <!--kw: numerics -->
       <xsl:param name="input" as="xs:string?"/>
       <xsl:param name="base" as="xs:integer"/>
       <xsl:variable name="this-key" as="xs:string*">
@@ -149,6 +151,7 @@
       <!-- Input: a binary -->
       <!-- Output: the number in decimal form, as an integer -->
       <!-- Input is assumed to be big-endian -->
+      <!--kw: numerics -->
       <xsl:param name="in" as="xs:string?"/>
       <xsl:sequence select="tan:n-to-dec($in, 2)"/>
    </xsl:function>
@@ -157,6 +160,7 @@
    <xsl:function name="tan:dec-to-hex" as="xs:string?" visibility="public">
       <!-- Input: xs:integer -->
       <!-- Output: the hexadecimal equivalent as a string, e.g., 31 - > '1F' -->
+      <!--kw: numerics -->
       <xsl:param name="in" as="xs:integer?"/>
       <xsl:sequence select="tan:dec-to-n($in, 16)"/>
    </xsl:function>
@@ -164,6 +168,7 @@
    <xsl:function name="tan:hex-to-dec" as="xs:integer?" visibility="public">
       <!-- Input: a string representing a hexadecimal number -->
       <!-- Output: the integer value, e.g., '1F' - > 31 -->
+      <!--kw: numerics -->
       <xsl:param name="in" as="xs:string?"/>
       <xsl:sequence select="tan:n-to-dec($in, 16)"/>
    </xsl:function>
@@ -172,6 +177,7 @@
    <xsl:function name="tan:dec-to-base26" as="xs:string?" visibility="public">
       <!-- Input: xs:integer -->
       <!-- Output: the base 26 equivalent as a string, e.g., 31 - > 'BF' -->
+      <!--kw: numerics -->
       <xsl:param name="in" as="xs:integer?"/>
       <xsl:sequence select="tan:dec-to-n($in, 26)"/>
    </xsl:function>
@@ -179,6 +185,7 @@
    <xsl:function name="tan:base26-to-dec" as="xs:integer?" visibility="public">
       <!-- Input: a string representation of a base-26 number -->
       <!-- Output: an integer representing the base-10 value of the input -->
+      <!--kw: numerics -->
       <xsl:param name="in" as="xs:string?"/>
       <xsl:sequence select="tan:n-to-dec($in, 26)"/>
    </xsl:function>
@@ -187,6 +194,7 @@
    <xsl:function name="tan:dec-to-base64" as="xs:string?" visibility="public">
       <!-- Input: xs:integer -->
       <!-- Output: the base 64 equivalent as a string, e.g., 31 - > 'f' -->
+      <!--kw: numerics -->
       <xsl:param name="in" as="xs:integer?"/>
       <xsl:sequence select="tan:dec-to-n($in, 64)"/>
    </xsl:function>
@@ -194,6 +202,7 @@
    <xsl:function name="tan:base64-to-dec" as="xs:integer?" visibility="public">
       <!-- Input: a string representation of a base-64 number -->
       <!-- Output: an integer representing the base-10 value of the input -->
+      <!--kw: numerics -->
       <xsl:param name="in" as="xs:string?"/>
       <xsl:sequence select="tan:n-to-dec($in, 64)"/>
    </xsl:function>
@@ -207,6 +216,7 @@
    <xsl:function name="tan:bin-to-hex" as="xs:string?" visibility="public">
       <!-- Input: a string representing a base 2 binary -->
       <!-- Output: a string representing the number in hexadecimal -->
+      <!--kw: numerics -->
       <xsl:param name="in" as="xs:string?"/>
       <xsl:variable name="in-length" select="string-length(replace($in, '^-', ''))" as="xs:integer"/>
       <xsl:variable name="raw-numeral" select="tan:dec-to-hex(tan:bin-to-dec($in))" as="xs:string?"/>
@@ -220,6 +230,7 @@
    <xsl:function name="tan:hex-to-bin" as="xs:string?" visibility="public">
       <!-- Input: a string representation of a hexadecimal number -->
       <!-- Output: a string representing the datum in binary code -->
+      <!--kw: numerics -->
       <xsl:param name="in" as="xs:string?"/>
       <xsl:variable name="in-length" select="string-length(replace($in, '^-', ''))" as="xs:integer"/>
       <xsl:variable name="raw-numeral" select="tan:dec-to-bin(tan:hex-to-dec($in))" as="xs:string?"/>
@@ -233,6 +244,7 @@
    <xsl:function name="tan:bin-to-base64" as="xs:string?" visibility="public">
       <!-- Input: a string representing a base 2 binary -->
       <!-- Output: a string representing the number in base 64 -->
+      <!--kw: numerics -->
       <xsl:param name="in" as="xs:string?"/>
       <xsl:variable name="in-length" select="string-length(replace($in, '^-', ''))" as="xs:integer"/>
       <xsl:variable name="raw-numeral" select="tan:dec-to-base64(tan:bin-to-dec($in))" as="xs:string?"/>
@@ -246,6 +258,7 @@
    <xsl:function name="tan:base64-to-bin" as="xs:string?" visibility="public">
       <!-- Input: a string representation of a base-64 number -->
       <!-- Output: a string representing the datum in binary code -->
+      <!--kw: numerics -->
       <xsl:param name="in" as="xs:string?"/>
       <xsl:variable name="in-length" select="string-length(replace($in, '^-|=', ''))" as="xs:integer"/>
       <xsl:variable name="raw-numeral" select="tan:dec-to-bin(tan:base64-to-dec($in))" as="xs:string?"/>
@@ -261,6 +274,7 @@
    <xsl:function name="tan:hex-to-base64" as="xs:string?" visibility="public">
       <!-- Input: a string representing a hexadecimal number -->
       <!-- Output: a string representing the number in base 64 -->
+      <!--kw: numerics -->
       <xsl:param name="in" as="xs:string?"/>
       <xsl:variable name="in-length" select="string-length(replace($in, '^-', ''))" as="xs:integer"/>
       <xsl:variable name="raw-numeral" select="tan:dec-to-base64(tan:hex-to-dec($in))" as="xs:string?"/>
@@ -274,6 +288,7 @@
    <xsl:function name="tan:base64-to-hex" as="xs:string?" visibility="public">
       <!-- Input: a string representation of a base-64 number -->
       <!-- Output: a string representing the datum in hexadecimal -->
+      <!--kw: numerics -->
       <xsl:param name="in" as="xs:string?"/>
       <xsl:variable name="in-length" select="string-length(replace($in, '^-|=', ''))" as="xs:integer"/>
       <xsl:variable name="raw-numeral" select="tan:dec-to-hex(tan:base64-to-dec($in))" as="xs:string?"/>
@@ -295,6 +310,7 @@
    <xsl:function name="tan:bin-to-bits" as="xs:boolean*" visibility="public">
       <!-- Input: any string representing base-2 binary -->
       <!-- Output: a sequence of booleans representing the bits of the binary -->
+      <!--kw: numerics -->
       <xsl:param name="base-2-binary" as="xs:string?"/>
       <xsl:choose>
          <xsl:when test="string-length($base-2-binary) lt 1"/>
@@ -319,6 +335,7 @@
       <!-- Input: a sequence of booleans -->
       <!-- Output: a base-2 binary representation of the sequence -->
       <!-- Example: false, true, true > '011' -->
+      <!--kw: numerics -->
       <xsl:param name="bits" as="xs:boolean*"/>
       <xsl:if test="exists($bits)">
          <xsl:sequence
@@ -336,6 +353,7 @@
    <xsl:function name="tan:bin-to-hexBinary" as="xs:hexBinary?" visibility="public">
       <!-- Input: a string representing base-2 binary -->
       <!-- Output: the number as xs:hexBinary -->
+      <!--kw: numerics -->
       <xsl:param name="in" as="xs:string?"/>
       <xsl:variable name="in-as-hex" as="xs:string?" select="tan:bin-to-hex($in)"/>
       <xsl:if test="string-length($in) gt 0">
@@ -346,6 +364,7 @@
    <xsl:function name="tan:hexBinary-to-bin" as="xs:string?" visibility="public">
       <!-- Input: a hexBinary -->
       <!-- Output: a string with the value in base 2 -->
+      <!--kw: numerics -->
       <xsl:param name="in" as="xs:hexBinary?"/>
       <xsl:variable name="in-as-hex" as="xs:string?" select="string($in)"/>
       <xsl:if test="string-length($in-as-hex) gt 0">
@@ -356,6 +375,7 @@
    <xsl:function name="tan:bin-to-base64Binary" as="xs:base64Binary?" visibility="public">
       <!-- Input: a string representing base-2 binary -->
       <!-- Output: the number as xs:base64Binary -->
+      <!--kw: numerics -->
       <xsl:param name="in" as="xs:string?"/>
       <xsl:variable name="in-as-hex" as="xs:string?" select="tan:bin-to-hex($in)"/>
       <xsl:variable name="in-as-hexBinary" as="xs:hexBinary?" select="tan:hex-to-hexBinary($in-as-hex)"/>
@@ -367,6 +387,7 @@
    <xsl:function name="tan:base64Binary-to-bin" as="xs:string?" visibility="public">
       <!-- Input: a base64Binary -->
       <!-- Output: a string with the value in base 2 -->
+      <!--kw: numerics -->
       <xsl:param name="in" as="xs:base64Binary?"/>
       <xsl:variable name="in-as-hex" as="xs:string?" select="string(xs:hexBinary($in))"/>
       <xsl:if test="string-length($in-as-hex)">
@@ -380,6 +401,7 @@
    <xsl:function name="tan:hex-to-bits" as="xs:boolean*" visibility="public">
       <!-- Input: any string representing base-2 binary -->
       <!-- Output: a sequence of booleans representing the bits of the binary -->
+      <!--kw: numerics -->
       <xsl:param name="in" as="xs:string?"/>
       <xsl:if test="string-length($in) gt 0">
          <xsl:sequence select="tan:hex-to-bin($in) => tan:bin-to-bits()"/>
@@ -389,6 +411,7 @@
    <xsl:function name="tan:bits-to-hex" as="xs:string?" visibility="public">
       <!-- Input: a sequence of booleans -->
       <!-- Output: a base-2 binary representation of the sequence -->
+      <!--kw: numerics -->
       <xsl:param name="in" as="xs:boolean*"/>
       <xsl:if test="exists($in)">
          <xsl:sequence select="tan:bits-to-bin($in) => tan:bin-to-hex()"/>
@@ -398,6 +421,7 @@
    <xsl:function name="tan:hex-to-hexBinary" as="xs:hexBinary?" visibility="public">
       <!-- Input: a hexadecimal string -->
       <!-- Output: the string cast to xs:hexBinary, if possible -->
+      <!--kw: numerics -->
       <xsl:param name="in" as="xs:string?"/>
       <xsl:variable name="in-adjusted" select="replace($in, '^-', '')" as="xs:string?"/>
       <xsl:variable name="in-length" select="string-length($in-adjusted)" as="xs:integer"/>
@@ -419,6 +443,7 @@
    <xsl:function name="tan:hexBinary-to-hex" as="xs:string?" visibility="public">
       <!-- Input: a base64Binary -->
       <!-- Output: a string with the value in hexadecimal -->
+      <!--kw: numerics -->
       <xsl:param name="in" as="xs:hexBinary?"/>
       <xsl:if test="string-length(string($in)) gt 0">
          <xsl:sequence select="string($in)"/>
@@ -428,6 +453,7 @@
    <xsl:function name="tan:hex-to-base64Binary" as="xs:base64Binary?" visibility="public">
       <!-- Input: a hexadecimal string -->
       <!-- Output: the string cast to xs:base64Binary, if possible -->
+      <!--kw: numerics -->
       <xsl:param name="in" as="xs:string?"/>
       <xsl:variable name="in-adjusted" select="replace($in, '^-', '')" as="xs:string?"/>
       <xsl:variable name="in-length" select="string-length($in-adjusted)" as="xs:integer"/>
@@ -450,6 +476,7 @@
    <xsl:function name="tan:base64Binary-to-hex" as="xs:string?" visibility="public">
       <!-- Input: a base64Binary -->
       <!-- Output: a string with the value in hexadecimal -->
+      <!--kw: numerics -->
       <xsl:param name="in" as="xs:base64Binary?"/>
       <xsl:if test="string-length(string($in))">
          <xsl:sequence select="string(xs:hexBinary($in))"/>
@@ -466,6 +493,7 @@
       base64binary as follows:
       000001 01[0000] [padding] [padding]
       -->
+      <!--kw: numerics -->
       <xsl:param name="in" as="xs:string?"/>
       <xsl:variable name="in-adjusted" select="replace($in, '^-', '')" as="xs:string?"/>
       <xsl:variable name="in-as-hex" select="tan:base64-to-hex($in-adjusted)" as="xs:string?"/>
@@ -489,6 +517,7 @@
       <!-- Input: a base64Binary -->
       <!-- Output: the item as a base-64 number -->
       <!-- The output should have no more initial zeroes (A) than the input -->
+      <!--kw: numerics -->
       <xsl:param name="in" as="xs:base64Binary?"/>
       <xsl:variable name="in-as-string" select="string($in)" as="xs:string?"/>
       <xsl:variable name="initial-zeroes" as="xs:string?">
@@ -509,6 +538,7 @@
    <xsl:function name="tan:base64binary-to-bin" as="xs:string?" visibility="public">
       <!-- Input: a base64binary -->
       <!-- Output: the number converted to a base 2 binary string -->
+      <!--kw: numerics -->
       <xsl:param name="in" as="xs:base64Binary?"/>
       <xsl:variable name="in-as-hexBinary" select="xs:hexBinary($in)" as="xs:hexBinary?"/>
       <xsl:variable name="in-as-hex" select="string($in-as-hexBinary)" as="xs:string?"/>

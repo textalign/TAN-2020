@@ -14,6 +14,7 @@
       <!-- Input: any document fragment or element; a number indicating a level in the hierarchy of the fragment; a boolean indicating whether leaf elements that fall short of the previous parameter should be included -->
       <!-- Output: the fragment of the tree that is beyond the point indicated, and perhaps (depending upon the third parameter) with other leafs that are not quite at that level -->
       <!-- This function was written primarily to serve tan:convert-ref-to-div-fragment(), to get a slice of divs that correspond to a range, without the ancestry of those divs -->
+      <!--kw: nodes, tree manipulation -->
       <xsl:param name="fragment" as="item()*"/>
       <xsl:param name="pluck-beyond-level" as="xs:integer"/>
       <xsl:param name="keep-short-branch-leaves" as="xs:boolean"/>
@@ -60,6 +61,7 @@
       <!-- Input: items to be changed; items to be inserted; strings representing the names of the elements that should receive the insertion -->
       <!-- Output: the first items, with the second items inserted in the appropriate place -->
       <!-- This function allows the deep insertion of content -->
+      <!--kw: nodes, tree manipulation -->
       <xsl:param name="items-to-be-changed" as="item()*"/>
       <xsl:param name="items-to-insert-as-first-child" as="item()*"/>
       <xsl:param name="names-of-elements-to-receive-action" as="xs:string*"/>
@@ -77,6 +79,7 @@
       <!-- Output: the first items, with the second items inserted in the appropriate place -->
       <!-- This function allows the deep insertion of content -->
       <!-- This function was first written to aid a 2019 version of tan:vocabulary() -->
+      <!--kw: nodes, tree manipulation -->
       <xsl:param name="items-to-be-changed" as="item()*"/>
       <xsl:param name="items-to-insert-as-last-child" as="item()*"/>
       <xsl:param name="names-of-elements-to-receive-action" as="xs:string*"/>
@@ -163,14 +166,16 @@
    
    
    <xsl:function name="tan:remove-duplicate-siblings" as="item()*" visibility="public">
+      <!-- one-parameter version of larger one, below -->
       <xsl:param name="items-to-process" as="item()*"/>
-      <xsl:apply-templates select="$items-to-process" mode="tan:remove-duplicate-siblings"/>
+      <xsl:sequence select="tan:remove-duplicate-siblings($items-to-process, ())"/>
    </xsl:function>
    
    <xsl:function name="tan:remove-duplicate-siblings" as="item()*" visibility="public">
       <!-- Input: any items -->
       <!-- Output: the same documents after removing duplicate elements whose names match the second parameter. -->
       <!-- This function is applied during document resolution, to prune duplicate elements that might have been included -->
+      <!--kw: nodes, tree manipulation -->
       <xsl:param name="items-to-process" as="document-node()*"/>
       <xsl:param name="element-names-to-check" as="xs:string*"/>
       <xsl:apply-templates select="$items-to-process" mode="tan:remove-duplicate-siblings">
@@ -204,11 +209,13 @@
    
    
 
-   <xsl:function name="tan:reset-hierarchy" as="document-node()*" visibility="public">
-      <!-- Input: any expanded class-1 documents whose <div>s may be in the wrong place, because <rename> or <reassign> have altered the <ref> values; a boolean indicating whether misplaced leaf divs should be flagged -->
+   <xsl:function name="tan:reset-hierarchy" as="document-node()*" visibility="private">
+      <!-- Input: any expanded class-1 documents whose <div>s may be in the wrong place, because 
+         <rename> or <reassign> have altered the <ref> values; a boolean indicating whether misplaced 
+         leaf divs should be flagged -->
       <!-- Output: the same documents, with <div>s restored to their proper place in the hierarchy -->
-      <!-- This function's templates are in the standard set of files; the function wrapper is in
-      the extended set of functions, in case functionality is needed. -->
+      <!-- This function's templates are in the standard file corresponding to this one; the function 
+         wrapper is in the extended set of functions, in case functionality is needed. -->
       <xsl:param name="expanded-class-1-docs" as="document-node()*"/>
       <xsl:param name="flag-misplaced-leaf-divs" as="xs:boolean?"/>
       <xsl:apply-templates select="$expanded-class-1-docs" mode="tan:reset-hierarchy">
@@ -221,11 +228,12 @@
    
    <xsl:function name="tan:make-non-mixed" as="item()*" visibility="public">
       <!-- Input: any items that need to be converted to non-mixed content -->
-      <!-- The output, but with any text nodes that have siblings and are not outer 
+      <!-- Output: the input, but with any text nodes that have siblings and are not outer 
          indentations wrapped in <_text> elements, with a @q containing the value
          of generate-id() for the text node in question. The identifier can be used
          to facilitate comparison with the original.
       -->
+      <!--kw: nodes, tree manipulation -->
       <xsl:param name="input-to-adjust" as="item()*"/>
       <xsl:apply-templates select="$input-to-adjust" mode="tan:make-non-mixed"/>
    </xsl:function>
@@ -276,6 +284,7 @@
          containing the value of generate-id() for the text node in question. -->
       <!-- This function is similar to tan:make-non-mixed() but applies wrapping
          universally -->
+      <!--kw: nodes, tree manipulation -->
       <xsl:param name="input-to-adjust" as="item()*"/>
       <xsl:apply-templates select="$input-to-adjust" mode="tan:wrap-text-nodes"/>
    </xsl:function>
@@ -292,7 +301,11 @@
    
    <xsl:function name="tan:replace-expanded-class-1-body" as="document-node()?" visibility="public">
       <!-- Input: An expanded class-1 file; a string -->
-      <!-- Output: the class-1 file, but with the body text replaced with the string, allocated according to tan:diff() -->
+      <!-- Output: the class-1 file, but with the body text replaced with the string, allocated 
+         according to tan:diff() -->
+      <!-- This function was written to replace a text with a very similar version of itself, perhaps
+         altered via normalization, or selective changes. -->
+      <!--kw: nodes, diff -->
       <xsl:param name="expanded-class-1-file" as="document-node()?"/>
       <xsl:param name="new-body-text" as="xs:string?"/>
       <xsl:variable name="current-text"
@@ -372,6 +385,7 @@
       <!-- Note: if the regular expression allows breaks within words, then a word may be broken
       across two <div>s, which, because of space normalization rules, then winds up inserting a
       space that was not there before. Be sure to use a good regular expression to avoid bad breaks.-->
+      <!--kw: nodes, tree manipulation -->
       <xsl:param name="string-to-infuse" as="xs:string?"/>
       <xsl:param name="tree-to-infuse" as="item()*"/>
       <xsl:param name="break-at-regex" as="xs:string"/>
@@ -466,6 +480,7 @@
       of the URI, the other with the two items reversed. -->
       <!-- Items are collected deeply through the tree structure, with precedence, in case of contradiction,
       given to the namespaces closest to the root -->
+      <!--kw: nodes, namespaces -->
       <xsl:param name="input-tree-fragment" as="item()*"/>
       
       <xsl:variable name="pass-1" as="element()">
@@ -516,6 +531,7 @@
       string-joined by the hierarchy separator. -->
       <!-- This function is useful for handling raw or resolved class 1 files, and you need to 
          get references -->
+      <!--kw: nodes, pointers, identifiers -->
       <xsl:param name="class-1-element" as="element()?"/>
       <xsl:variable name="these-attr-ns" as="attribute()*" select="$class-1-element/ancestor-or-self::*/@n"/>
       <xsl:iterate select="$these-attr-ns[matches(., '\S')]">
@@ -536,6 +552,7 @@
    
    
    <xsl:function name="tan:sort-change-log" as="item()*" visibility="public">
+      <!-- one-parameter version of the fuller one, below -->
       <xsl:param name="TAN-fragment" as="item()*"/>
       <xsl:sequence select="tan:sort-change-log($TAN-fragment, true(), false())"/>
    </xsl:function>
@@ -544,6 +561,7 @@
       <!-- Input: a TAN fragment; two booleans -->
       <!-- Output: the TAN fragment but with the change log sorted, either by time or agent (1st boolean)
       and either ascending or descending (2nd boolean) -->
+      <!--kw: nodes, versioning -->
       <xsl:param name="TAN-fragment" as="item()*"/>
       <xsl:param name="sort-by-time-then-agent" as="xs:boolean?"/>
       <xsl:param name="sort-ascending" as="xs:boolean?"/>
@@ -599,6 +617,7 @@
             indicate how many nodes were shallow-copied or deep-skipped.
         -->
       <!-- This function was written to truncate large diagnostic output -->
+      <!--kw: nodes, tree manipulation -->
       <xsl:param name="tree-to-trim" as="item()*"/>
       <xsl:param name="shallow-copy-point" as="xs:integer"/>
       <xsl:param name="deep-skip-point" as="xs:integer"/>
@@ -634,7 +653,7 @@
    
    
    
-   <xsl:function name="tan:restore-chopped-tree" as="item()*">
+   <xsl:function name="tan:restore-chopped-tree" as="item()*" visibility="public">
       <!-- Input: a sequence of items -->
       <!-- Output: sequence that attempts to restore the items in a single tree -->
       <!-- This function reverses the effects of tan:chop-tree(), but does so on
@@ -642,6 +661,7 @@
          of the same node type are fused into a single node of the same type, except
          for elements, which must have the same name, namespace, and attributes for
          them to be fused. -->
+      <!-- kw: nodes, tree manipulation -->
       <xsl:param name="tree-slices" as="item()*"/>
       
       <xsl:for-each-group select="$tree-slices" group-adjacent="tan:item-type(.)">

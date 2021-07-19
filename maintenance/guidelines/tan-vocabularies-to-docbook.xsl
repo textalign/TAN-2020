@@ -8,7 +8,10 @@
     <!-- Input: a TAN-voc file or fragment -->
     <!-- Output: a docbook representation of those vocabularies -->
     <!-- Written primarily to support creation of TAN guideline content -->
-    <xsl:template match="*" mode="deep-skip"/>
+    <!--<xsl:template match="*" mode="deep-skip"/>-->
+    
+    <xsl:mode name="vocabularies-to-docbook" on-no-match="shallow-copy"/>
+    
     <xsl:template match="tan:head" mode="vocabularies-to-docbook">
         <xsl:apply-templates select="tan:name | tan:desc | tan:master-location" mode="#current"/>
     </xsl:template>
@@ -24,6 +27,8 @@
             <xsl:text>)</xsl:text>
         </title>
     </xsl:template>
+    
+    <xsl:mode name="adjust-docbook-vocabulary-desc" on-no-match="shallow-copy"/>
     <xsl:template match="docbook:code" mode="adjust-docbook-vocabulary-desc">
         <xsl:choose>
             <xsl:when
@@ -38,6 +43,7 @@
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
+    
     <xsl:template match="tan:desc" mode="vocabularies-to-docbook">
         <para>
             <xsl:copy-of select="tan:prep-string-for-docbook(.)"/>

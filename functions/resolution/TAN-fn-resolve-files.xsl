@@ -6,6 +6,7 @@
    xmlns:sch="http://purl.oclc.org/dsdl/schematron" exclude-result-prefixes="#all" version="3.0">
 
    <xsl:function name="tan:resolve-doc" as="document-node()?" visibility="public">
+      <!-- One-parameter version of fuller one below -->
       <xsl:param name="TAN-document" as="document-node()?"/>
       <xsl:copy-of select="tan:resolve-doc($TAN-document, true(), ())"/>
    </xsl:function>
@@ -13,6 +14,7 @@
    <xsl:function name="tan:resolve-doc" as="document-node()?" visibility="public">
       <!-- Input: any TAN document; a boolean indicating whether each element should be stamped with a unique id in @q; attributes that should be added to the root element -->
       <!-- Output: the TAN document, resolved, as explained in the associated loop function below -->
+      <!--kw: resolution, files -->
       <xsl:param name="TAN-document" as="document-node()?"/>
       <xsl:param name="add-q-ids" as="xs:boolean"/>
       <xsl:param name="attributes-to-add-to-root-element" as="attribute()*"/>
@@ -1242,6 +1244,7 @@
       <!-- Input: any XML node, a boolean, a string -->
       <!-- Output: the same node, but with @href in itself and all descendant elements resolved to absolute form, with @orig-href inserted preserving the original if there is a change -->
       <!-- The second parameter is provided because this function works closely with tan:resolve-doc(). -->
+      <!--kw: resolution, irs, filenames -->
       <xsl:param name="xml-node" as="node()?"/>
       <xsl:param name="add-q-ids" as="xs:boolean"/>
       <xsl:param name="this-base-uri" as="xs:string"/>

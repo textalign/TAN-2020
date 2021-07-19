@@ -11,6 +11,7 @@
       <!-- Input: any number of q-refs, any number of q-reffed documents -->
       <!-- Output: the elements corresponding to the q-refs -->
       <!-- This function is used by the core validation routine, mainly to find errors in expanded output -->
+      <!--kw: identifiers -->
       <xsl:param name="q-ref" as="xs:string*"/>
       <xsl:param name="q-reffed-document" as="document-node()*"/>
       <xsl:for-each select="$q-reffed-document">

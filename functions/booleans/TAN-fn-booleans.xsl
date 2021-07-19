@@ -7,7 +7,9 @@
    
    <xsl:function name="tan:true" as="xs:boolean*" visibility="public">
       <!-- Input: a sequence of strings representing truth values -->
-      <!-- Output: the same number of booleans; if the string is some approximation of y, yes, 1, or true, then it is true, and false otherwise -->
+      <!-- Output: the same number of booleans; if the string is some approximation 
+         of y, yes, 1, or true, then it is true, and false otherwise -->
+      <!-- kw: binary, booleans -->
       <xsl:param name="string" as="xs:string*"/>
       <xsl:for-each select="$string">
          <xsl:choose>

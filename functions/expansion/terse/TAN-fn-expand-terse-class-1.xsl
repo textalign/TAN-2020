@@ -1982,7 +1982,7 @@
                <xsl:variable name="these-poses" select="tan:pos"/>
                <xsl:for-each select="$these-poses">
                   <xsl:variable name="this-pos-value"
-                     select="tan:expand-numerical-sequence(., $hit-count)"/>
+                     select="tan:expand-numerical-expression(., $hit-count)"/>
                   <xsl:variable name="this-tok-match" select="$these-hits[$this-pos-value]"/>
                   <xsl:copy>
                      <xsl:copy-of select="@*"/>
@@ -2007,7 +2007,7 @@
                <xsl:variable name="these-chars" select="tan:chars"/>
                <xsl:for-each select="$these-poses">
                   <xsl:variable name="this-pos-value"
-                     select="tan:expand-numerical-sequence(., $hit-count)"/>
+                     select="tan:expand-numerical-expression(., $hit-count)"/>
                   <xsl:variable name="this-tok-match" select="$these-hits[$this-pos-value]"/>
                   <xsl:copy>
                      <xsl:copy-of select="@*"/>
@@ -2023,7 +2023,7 @@
                      <xsl:variable name="this-tok-match-length" select="string-length($this-tok-match)"/>
                      <xsl:for-each select="$these-chars">
                         <xsl:variable name="this-char-int"
-                           select="tan:expand-numerical-sequence(., $this-tok-match-length)"/>
+                           select="tan:expand-numerical-expression(., $this-tok-match-length)"/>
                         <xsl:copy>
                            <xsl:copy-of select="@*"/>
                            <xsl:if test="$this-char-int le 0">
@@ -2071,7 +2071,7 @@
             <xsl:variable name="these-poses" select="tan:pos"/>
             <xsl:for-each select="$these-poses">
                <xsl:variable name="this-pos-value"
-                  select="tan:expand-numerical-sequence(., $hit-count)"/>
+                  select="tan:expand-numerical-expression(., $hit-count)"/>
                <xsl:variable name="this-tok-match" select="$these-hits[$this-pos-value]"/>
                <xsl:copy>
                   <xsl:copy-of select="@*"/>
@@ -2097,7 +2097,7 @@
             <xsl:variable name="these-chars" select="tan:chars"/>
             <xsl:for-each select="$these-poses">
                <xsl:variable name="this-pos-value"
-                  select="tan:expand-numerical-sequence(., $hit-count)"/>
+                  select="tan:expand-numerical-expression(., $hit-count)"/>
                <xsl:variable name="this-tok-match" select="$these-hits[$this-pos-value]"/>
                <xsl:copy>
                   <xsl:copy-of select="@*"/>
@@ -2113,7 +2113,7 @@
                   <xsl:variable name="this-tok-match-length" select="string-length($this-tok-match)"/>
                   <xsl:for-each select="$these-chars">
                      <xsl:variable name="this-char-int"
-                        select="tan:expand-numerical-sequence(., $this-tok-match-length)"/>
+                        select="tan:expand-numerical-expression(., $this-tok-match-length)"/>
                      <xsl:copy>
                         <xsl:copy-of select="@*"/>
                         <xsl:if test="$this-char-int le 0">

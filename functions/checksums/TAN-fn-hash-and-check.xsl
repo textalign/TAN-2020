@@ -30,28 +30,34 @@
    <!-- FLETCHER -->
 
    <xsl:function name="tan:checksum-fletcher-16" as="xs:string?" visibility="public">
+      <!-- one-parameter version of the fuller one, below -->
       <xsl:param name="str" as="xs:string?"/>
       <xsl:sequence select="tan:checksum-fletcher($str, 1, true())"/>
    </xsl:function>
    <xsl:function name="tan:checksum-fletcher-16" as="item()?" visibility="public">
+      <!-- two-parameter version of the fuller one, below -->
       <xsl:param name="str" as="xs:string?"/>
       <xsl:param name="output-hex" as="xs:boolean"/>
       <xsl:sequence select="tan:checksum-fletcher($str, 1, $output-hex)"/>
    </xsl:function>
    <xsl:function name="tan:checksum-fletcher-32" as="xs:string?" visibility="public">
+      <!-- one-parameter version of the fuller one, below -->
       <xsl:param name="str" as="xs:string?"/>
       <xsl:sequence select="tan:checksum-fletcher($str, 2, true())"/>
    </xsl:function>
    <xsl:function name="tan:checksum-fletcher-32" as="item()?" visibility="public">
+      <!-- two-parameter version of the fuller one, below -->
       <xsl:param name="str" as="xs:string?"/>
       <xsl:param name="output-hex" as="xs:boolean"/>
       <xsl:sequence select="tan:checksum-fletcher($str, 2, $output-hex)"/>
    </xsl:function>
    <xsl:function name="tan:checksum-fletcher-64" as="xs:string?" visibility="public">
+      <!-- one-parameter version of the fuller one, below -->
       <xsl:param name="str" as="xs:string?"/>
       <xsl:sequence select="tan:checksum-fletcher($str, 4, true())"/>
    </xsl:function>
    <xsl:function name="tan:checksum-fletcher-64" as="item()?" visibility="public">
+      <!-- two-parameter version of the fuller one, below -->
       <xsl:param name="str" as="xs:string?"/>
       <xsl:param name="output-hex" as="xs:boolean"/>
       <xsl:sequence select="tan:checksum-fletcher($str, 4, $output-hex)"/>
@@ -64,12 +70,12 @@
          duplicate checksums). In tests on a 4MB file, Fletcher-16 took 2.1 seconds; Fletcher-32: 5.5; Fletcher-64: 4.3. It seems that
          the processor better handles four-byte blocks than it does two-byte ones.
       -->
-
+      <!-- kw: checksums -->
       <xsl:param name="str" as="xs:string?"/>
       <xsl:param name="byte-size" as="xs:integer"/>
       <xsl:param name="output-hex" as="xs:boolean"/>
       <!-- In the Fletcher checksum, applied blindly on codepoints-to-string(), " " and "ğ" return the same checksum,
-      because they are 255 apart. So UTF-8 needs to be converted to byte form. -->
+      because their codpoint values are 255 apart. So UTF-8 needs to be converted to byte form. -->
       <xsl:variable name="str-8bit"
          select="
             if (string-length($str) gt 0) then
@@ -242,6 +248,7 @@
    <xsl:function name="tan:md5" as="item()*" visibility="public">
       <!-- Input: a string -->
       <!-- Output: an MD5 checksum for the string -->
+      <!--kw: checksums -->
       <xsl:param name="input" as="xs:string?"/>
       <xsl:variable name="input-as-8-bit-chars" select="tan:unicode-to-eight-bit-chars($input)" as="xs:string?"/>
       <!-- The each character's bits gets reversed, because we are converting from big to little endian -->

@@ -106,6 +106,8 @@ Added:
 * `tan:restore-chopped-tree()`. Stitches together the output of `tan:chop-tree()`.
 * Template named `tan:regex-group-count()`. Retrieves the current number of regex groups, without breaking the cycle of templates and tunnel parameters.
 * `tan:log2()`. Returns the binary logarithm of the input.
+* `tan:integers-to-sequence()` renamed `tan:integers-to-expression()`
+* `tan:expand-numerical-sequence()` renamed `tan:expand-numerical-expression()`
 
 Altered:
 * `tan:diff()` has been greatly simplified and improved. It runs about 40% faster, and easily handles pairs of strings 3M characters in length.

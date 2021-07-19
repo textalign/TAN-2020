@@ -6,7 +6,7 @@
 
    <xsl:variable name="component-syntax" select="doc('component%20syntax.xml')"/>
 
-   <xsl:function name="tan:string-representation-of-component" as="xs:string*">
+   <xsl:function name="tan:string-representation-of-component" as="xs:string*" visibility="private">
       <!-- 2-param version of the full function, below -->
       <xsl:param name="component-name" as="xs:string*"/>
       <xsl:param name="component-type" as="xs:string?"/>
@@ -15,7 +15,7 @@
       />
    </xsl:function>
 
-   <xsl:function name="tan:string-representation-of-component" as="xs:string*">
+   <xsl:function name="tan:string-representation-of-component" as="xs:string*" visibility="private">
       <!-- Input: the string name of an XSL component, perhaps the string name of an xsl:template mode, the string name of the component type -->
       <!-- Output: a string that renders the name of the component in the appropriate syntax -->
       <!-- Example: ('arg','variable', false) - > '$arg' -->
@@ -32,7 +32,7 @@
       </xsl:for-each>
    </xsl:function>
 
-   <xsl:function name="tan:regex-for-component" as="xs:string?">
+   <xsl:function name="tan:regex-for-component" as="xs:string?" visibility="private">
       <!-- Input: strings representing a component name and type; a boolean indicating whether the regular expression sought is for ordinary text (default) or an xpath expression -->
       <!-- Output: the string to be used for a regular expression on that component and name -->
       <!-- If none is found, nothing is returned; by default, the name will be put inside parentheses, to serve as a capturing group -->
@@ -52,7 +52,7 @@
       </xsl:if>
    </xsl:function>
 
-   <xsl:function name="tan:xslt-dependencies" as="element()*">
+   <xsl:function name="tan:xslt-dependencies" as="element()*" visibility="private">
       <!-- Input: two strings, representing a name and a type (e.g., function, key, variable, template), a boolean indicating whether the name describes a template mode, and a series of XSLT files to interrogate -->
       <!-- Output: from the XSLT files, those top-level components that depend upon that function, key, variable, or template -->
       <!-- If the type is unknown, nothing will be returned -->

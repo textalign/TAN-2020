@@ -7,7 +7,7 @@
    <!-- TAN Function Library extended file functions. -->
 
    <xsl:function name="tan:open-file" visibility="public">
-      <!-- 1-parameter function of the main one below -->
+      <!-- 1-parameter version of the main one below -->
       <xsl:param name="resolved-urls"/>
       <xsl:sequence select="tan:open-file($resolved-urls, $tan:fallback-encoding)"/>
    </xsl:function>
@@ -22,6 +22,7 @@
       <!-- If the file is plain text that is not XML, it will be wrapped by a root element of an
         XML document. That root node will have @xml:base pointing to the source url. -->
       <!-- If it is a .docx file, the components XML documents of the Word document will be returned. -->
+      <!--kw: files -->
       <xsl:param name="resolved-urls"/>
       <xsl:param name="target-fallback-encoding" as="xs:string*"/>
 
@@ -90,6 +91,7 @@
    <xsl:function name="tan:zip-uris" as="xs:anyURI*" visibility="public">
       <!-- Input: any string representing a uri -->
       <!-- Output: the same string with 'zip:' prepended if it represents a uri to a file in an archive (docx, jar, zip, etc.) -->
+      <!--kw: files, archives -->
       <xsl:param name="uris" as="xs:string*"/>
       <xsl:for-each select="$uris">
          <xsl:value-of select="

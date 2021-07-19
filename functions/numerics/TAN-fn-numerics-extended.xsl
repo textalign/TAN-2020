@@ -9,9 +9,10 @@
    <!-- TAN Function Library extended numeric functions. -->
 
    <xsl:function name="tan:counts-to-lasts" xml:id="f-counts-to-lasts" as="xs:integer*" visibility="public">
-      <!-- Input: sequence of numbers representing counts of items. 
-         Output: sequence of numbers representing the last position of each item within the total count.
+      <!-- Input: sequence of numbers representing counts of items. -->
+      <!-- Output: sequence of numbers representing the last position of each item within the total count.
       E.g., (4, 12, 0, 7) - > (4, 16, 16, 23)-->
+      <!--kw: numerics, sequences -->
       <xsl:param name="seq" as="xs:integer*"/>
       <xsl:copy-of select="
             for $i in (1 to count($seq))
@@ -25,6 +26,7 @@
       <!-- Input: sequence of numbers representing legnths of items.  -->
       <!-- Output: sequence of numbers representing the first position of each input item, if the sequence concatenated.
       E.g., (4, 12, 0, 7) - > (1, 5, 17, 17)-->
+      <!--kw: numerics, sequences -->
       <xsl:param name="seq" as="xs:integer*"/>
       <xsl:copy-of select="
             for $i in (1 to count($seq))
@@ -37,6 +39,7 @@
    <xsl:function name="tan:product" as="xs:anyAtomicType?" visibility="public">
       <!-- Input: a sequence of numbers -->
       <!-- Output: the product of those numbers -->
+      <!--kw: numerics -->
       <xsl:param name="numbers" as="xs:anyAtomicType*"/>
       <xsl:iterate select="$numbers">
          <xsl:param name="product-so-far" as="xs:anyAtomicType" select="1"/>
@@ -51,6 +54,7 @@
    <xsl:function name="tan:number-sort" as="xs:double*" visibility="public">
       <!-- Input: any sequence of items -->
       <!-- Output: the same sequence, sorted with string numerals converted to numbers -->
+      <!--kw: numerics -->
       <xsl:param name="numbers" as="xs:anyAtomicType*"/>
       <xsl:variable name="numbers-norm" as="item()*" select="
             for $i in $numbers
@@ -70,6 +74,7 @@
       <!-- Input: any integers -->
       <!-- Output: an array, with each member containing a sequence of integers that are collectively contiguous -->
       <!-- Array members and their contents will be sorted; duplicates will be ignored -->
+      <!--kw: numerics, grouping -->
       <xsl:param name="integers-to-group" as="xs:integer*"/>
       
       <xsl:variable name="ints-sorted" as="xs:integer*"
