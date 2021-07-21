@@ -11,7 +11,7 @@
     <component type="pattern define" syntax="~name" string-matching-pattern="~name"/>
     <component type="key xsl:key" syntax="ʞ name" string-matching-pattern="ʞ ?name"
         xpath-matching-pattern="key\(\Cname"/>
-    <component type="function xsl:function" syntax="name()" string-matching-pattern="name\("
+    <component type="function xsl:function" syntax="name()" string-matching-pattern="name\(\)?"
         xpath-matching-pattern="name\("/>
     <component type="variable xsl:variable param xsl:param" syntax="$name" string-matching-pattern="\$name"
         xpath-matching-pattern="\$name"/>

@@ -79,10 +79,10 @@
                The TAN-mor format allows anyone to write their own rules describing the grammar of
                human languages, to report errors in linguistic data.</para>
             <para><emphasis role="bold">Time-saving utilities</emphasis>. TAN's function library
-               drives Schematron Quick Fixes and an Oxygen framework, enhancing both its Text and
-               Author modes. Several other more complex utilities assist in creating and editing TEI
-               and TAN files. For example:
-               </para>
+               drives Schematron Quick Fixes and a framework, enhancing Text and Author modes in
+               Oxygen XML Editor. Many corrections are a simple keystroke or two away.</para>
+            <para>Several special XSLT utilities help you create and edit your TEI and TAN files.
+               For example: </para>
             <para><itemizedlist>
                   <listitem>
                      <para><emphasis>Body Builder</emphasis>: write rules to convert plain text or
@@ -102,11 +102,8 @@
                         for a TAN/TEI file.</para>
                   </listitem>
                </itemizedlist></para>
-            <para><emphasis role="bold">Novel applications</emphasis>. TAN is built upon an
-               extensive and robust XSLT library, one of the few of its kind, facilitating
-               development of applications for TAN/TEI files. Some cutting-edge applications are
-               already available, for example:
-               </para>
+            <para><emphasis role="bold">Novel applications</emphasis>. Standard TAN applications in
+               XSLT provide cutting-edge tools for textual research and analysis, for example: </para>
             <para><itemizedlist>
                   <listitem>
                      <para><emphasis>Diff+</emphasis>: find and statistically analyze text
@@ -125,6 +122,15 @@
                other markup systems that rely heavily upon identifiers that can be difficult to
                navigate, edit, and maintain, TAN uses a text pointer syntax based upon the reference
                systems already customarily used when referencing texts in ordinary prose.</para>
+            <para><emphasis role="bold">Development</emphasis>. TAN is built upon an extensive and
+               robust XSLT function library, one of the few of its kind, facilitating development of
+               applications for TAN/TEI files. Do you already use <link
+                  xlink:href="https://www.nltk.org/">Natural Language Toolkit</link>, <link
+                  xlink:href="http://cltk.org/">Classical Language Toolkit</link>, or comparable
+               packages to program tools for textual and linguistic research? The TAN function
+               library might have everything you need, and more, to do it within an XSLT / XPath
+               environment. Many of the functions have significant widespread application, well
+               beyond TAN or TEI files.</para>
             <para><emphasis role="bold">Semantic Web compatibility</emphasis>. TAN was designed at
                the outset to ensure that texts and their annotations would be rooted in the
                disciplines of the Semantic Web. Unlike TEI, whose attribute values are almost always
@@ -2516,8 +2522,7 @@
                      an extensive function library written in XSLT. For the most part, the
                      Schematron files arbitrate between the file and the validation results
                      calculated by the TAN function library. For a detailed overview of this
-                     process, see <xref xlink:href="#validating_tan_files"/> and <xref
-                        linkend="tan-stylesheets-and-function-library"/>.</para>
+                     process, see <xref xlink:href="#validating_tan_files"/>.</para>
                   <para>Some validation engines that process a valid TAN-compliant TEI file may
                      return an error such as <code>conflicting ID-types for attribute "who" of
                         element "comment" from namespace "tag:textalign.net,2015:ns"</code>. Such a
@@ -3064,7 +3069,7 @@ tag:bbrb@example.org,1995-04-01:pos-grc</programlisting>
                      xlink:href="http://www.w3.org/TR/xslt-30/#regular-expressions">recommendation
                      of XSLT 3.0</link> (XML Schema Datatypes plus some extensions), and outlined in
                      <link xlink:href="https://www.w3.org/TR/xpath-functions-31/#regex-syntax">XPath
-                     Fuctions 3.1</link>. <caution>
+                     Functions 3.1</link>. <caution>
                      <para>XML Schema Datatypes define regular expressions differently than do Perl,
                         one of the most common forms of regular expression. For example, the pipe
                         symbol, |, is treated as a word character in XML regular expressions
@@ -6717,18 +6722,16 @@ tag:bbrb@example.org,1995-04-01:pos-grc</programlisting>
       </chapter>
    </part>
    <part xml:id="working_with_tan">
-      <title>Working with the Text Alignment Network</title>
+      <title>Using the Text Alignment Network</title>
       <chapter>
-         <title>Working with TAN Files</title>
-         <para>This chapter presents ways to manage, create, edit, and share TAN files. The material
-            discussed here is non-normative. That is, these are suggestions based upon the
-            experience of users. </para>
-         <para>Descriptions in this chapter are both brief and general. To understand better the
-            underlying framework, study the files in the subdirectory <code>functions</code>, or
-            their reformatted versions in the chapter <xref
+         <title>Working with TAN files</title>
+         <para>This chapter presents ways to manage, create, edit, and share TAN files—suggestions
+            based upon the experience of users. Descriptions in this chapter are both brief and
+            general. To understand better the underlying framework, study the files in the
+            subdirectory <code>functions</code>, or their reformatted versions in the chapter <xref
                xlink:href="#variables-keys-functions-and-templates"/>. </para>
          <section xml:id="local_setup">
-            <title>Local Setup</title>
+            <title>Local setup</title>
             <para>TAN can be downloaded from a master data repository listed at <link
                   xlink:href="http://textalign.net/"/>. The project has been developed using the
                version-control software Git. Whether you download the files directly or you use Git,
@@ -6737,17 +6740,17 @@ tag:bbrb@example.org,1995-04-01:pos-grc</programlisting>
                files are meant to be shared and interlinked, it is beneficial to develop predictable
                directory structures. However you organize your TAN files, keep them separate from
                the core TAN files.</para>
-            <para>Many TAN projects will find it necessary to work with dozens of versions of a
-               particular work, and it is easy to get confused as to what file does what. Naming
-               files becomes a challenge. In projects with many text versions, it is recommendad
-               that your names for class-1 files (the filename, not the <code><link
-                     linkend="attribute-id">@id</link></code>; see <xref xlink:href="#tan-file-id"
-               />) start with an acronym or short abbreviation for the author and work, followed by
-               the language code, the last name of the editor/author of the scriptum, the date when
-               the scriptum was created or published. If you have a transcription that has been
-               redivided into multiple TAN files linked to each other via <code><link
-                     linkend="element-redivision">&lt;redivision&gt;</link></code>, the reference
-               system might need to be reflected in the filename. Some examples:<itemizedlist>
+            <para>Many TAN projects will involve dozens of versions of a particular work, and it is
+               easy to get confused as to what file does what. Naming files becomes a challenge. In
+               projects with many text versions, it is recommendad that your names for class-1 files
+               (the filename, not the <code><link linkend="attribute-id">@id</link></code>; see
+                  <xref xlink:href="#tan-file-id"/>) start with an acronym or short abbreviation for
+               the author and work, followed by the language code, the last name of the
+               editor/author of the scriptum, the date when the scriptum was created or published.
+               If you have a transcription that has been redivided into multiple TAN files linked to
+               each other via <code><link linkend="element-redivision"
+                  >&lt;redivision&gt;</link></code>, the reference system might need to be reflected
+               in the filename. Some examples:<itemizedlist>
                   <listitem>
                      <para><code>ar.cat.grc.1949.minio-paluello.ref-logical.xml</code>: Aristotle's
                         Categories, in Greek, 1949, edition by Minio Paluello, following a reference
@@ -6838,23 +6841,21 @@ tag:bbrb@example.org,1995-04-01:pos-grc</programlisting>
                have downloaded. If the <code><link linkend="element-master-location"
                      >&lt;master-location></link></code> is intact, you will be notified of any
                updates.</para>
-            <section>
-               <title>Using TAN with Oxygen XML Editor</title>
-               <para>If you use an advanced XML editor such as Oxygen, you can set up a project so
-                  that TAN validation files can be easily located and validation automatically
-                  applied. A sample Oxygen project file is included within the TAN library to get
-                  you started. You may wish to create a copy of that project file for yourself
-                  before developing it.</para>
-               <para>TAN also includes select Oxygen frameworks files, which provides editing tools
-                  for Oxygen's Author mode. The Author mode includes a variety of editing tools,
-                  primarily for class-1 files. After opening the supplied Oxygen project file,
-                     <code>tan.xpr</code>, use Author mode to view at a sample TAN file and look at
-                  the options in the menu, the toolbars, and the context-click menu, to see what is
-                  possible.</para>
-               <para>Both the project file and the frameworks files are in their early infancy, and
-                  are therefore incomplete and imperfect. They have tremendous potential for
-                  development, slated for future versions of TAN.</para>
-            </section>
+         </section>
+         <section>
+            <title>Working with Oxygen XML Editor</title>
+            <para>If you use an advanced XML editor such as Oxygen, you can set up a project so that
+               TAN validation files can be easily located and validation automatically applied. You
+               may wish to create a copy of the main Oxygen project file, <code>tan.xpr</code>, for
+               TAN before trying to configure Oxygen settings.</para>
+            <para>TAN also includes select Oxygen frameworks files, which provides editing tools for
+               Oxygen's Author mode. The Author mode includes a variety of editing tools, primarily
+               for class-1 files. After opening the main Oxygen project file use Author mode to view
+               a sample TAN file and look at the options in the menu, the toolbars, and the
+               context-click menu, to see what is possible. In a future version of TAN more
+               documentation will be provided on how to use these tools.</para>
+            <para>While using the TAN Oxygen project file, look around at options for configuring
+               validation scenarios and configuring transformation scenarios.</para>
          </section>
          <section>
             <title>Creating and populating TAN files</title>
@@ -6904,7 +6905,7 @@ tag:bbrb@example.org,1995-04-01:pos-grc</programlisting>
                subdirectory <code>applications</code>).</para>
          </section>
          <section xml:base="validating_tan_files">
-            <title>The TAN Validation Process</title>
+            <title>The TAN validation process</title>
             <section>
                <title>Overview</title>
             <para>TAN files are validated when the file, along with its associated TAN schemas, are
@@ -7147,61 +7148,772 @@ tag:bbrb@example.org,1995-04-01:pos-grc</programlisting>
                you send a resolved version, which does not require any other dependencies (see <xref
                   xlink:href="#resolution"/>). </para>
          </section>
+         
+      </chapter>
+      <chapter xml:id="tan-applications-and-utilities">
+         <title>Using TAN Applications and Utilities</title>
+         <para>TAN files are suited for dozens of types of applications, many of which at this point
+            are only imagined or being written. The subdirectories <code>applications</code> and
+               <code>utilities</code> are populated with some very powerful material. Utilities are
+            designed for getting material into the TAN format, or for doing complex editing.
+            Applications serve research by creating HTML resources that let you study textual
+            features in detail. Utilities tend to support straightforward tasks, and the code is
+            relatively stable. Applications on the other hand support high-end analysis, and the
+            code is stable in its core, but under development.</para>
+         <para>In this chapter, you will be introduced to TAN utilities and applications, which are
+            based upon code written in XSLT. An XSLT application is rather different from other
+            applications that may be familiar to you. So the we begin with an introduction to
+            running an XSLT application, before introducing the utilities and applications
+            themselves.</para>
          <section xml:id="tan-stylesheets-and-function-library">
-            <title>Doing things with TAN files</title>
-            <para>TAN files are suited for dozens of types of applications, many of which at this
-               point are only imagined or being written. The subdirectory <code>applications</code>
-               is populated with folders named with actions you might want to perform on a TAN file,
-               and they contain XSLT stylesheets that give you but a taste of what is possible.
-               Because the applications in that directory are still under development, and really
-               they only illustrate the many types of other applications you could write, this
-               section is devoted not to the specifics but to the general principles behind building
-               TAN applications. This section is aimed particularly at those readers who are
-               comfortable working with XSLT or related XML technologies, and want to do something
-               important and useful with their TAN files.</para>
-            <para>TAN's extensive function library, which drives the validation process, provides a
-               foundation for application development in XSLT. When writing an XSLT application,
-               point via <code>&lt;xsl:include></code> or <code>&lt;xsl:import></code> to
-                  <code>functions/TAN-function-library.xsl</code>. That's it. You now have access to
-               the complete TAN function library.</para>
-            <para>You should also pay attention to the files in the subdirectory
-                  <code>parameters</code>. Some of the global parameters there can be used
-               profitably to change the way an application runs.</para>
-            <para>All XSLT transformations require at least four components:<orderedlist>
-                  <listitem>
-                     <para>an input XML file, which catalyzes the process</para>
-                  </listitem>
-                  <listitem>
-                     <para>a master XSLT file, which determines the rules that will be
-                        followed</para>
-                  </listitem>
-                  <listitem>
-                     <para>a URL for the output</para>
-                  </listitem>
-                  <listitem>
-                     <para>an XSLT engine (e.g., Saxon HE) to process #1 against #2 and send the
-                        output to #3.</para>
-                  </listitem>
-               </orderedlist></para>
-            <para>Although #1 is the principal or catalyzing input, it need not be the main input.
-               Sometimes an XSLT application is written with an eye toward non-XML as the main
-               input. In such cases, it is impossible for the main input to be the catalyzing input.
-               Furthermore, although there is only one principal output document, an application may
-               need to create many other output documents. Those secondary output files are normally
-               created through <code>&lt;xsl:result-document></code>. </para>
-            <para>So in any XSLT operation, there are really two possible types of input and two
-               types of output. We use the terms <emphasis>catalyzing input</emphasis> for #1 and
-                  <emphasis>secondary input</emphasis> for input that is added during the process.
-               We use the term <emphasis>primary output</emphasis> for #3 and <emphasis>secondary
-                  output</emphasis> for any other output created along the way. The terms
-                  <emphasis>primary</emphasis> and <emphasis>secondary</emphasis> refer only to
-               their position in the process, not their importance to the application. Indeed, there
-               are XSLT applications where the secondary input and secondary output are far more
-               important than the catalyzing input or primary output. </para>
-            <para>All TAN applications specify in their documentation whether the <emphasis>main
-                  input</emphasis> is the catalyzing input, the secondary input, or both, and
-               whether the <emphasis>main output</emphasis> is the primary output, the secondary
-               output, or both.</para>
+            <title>Getting started with XSLT applications</title>
+            <para>TAN applications and utilities, and even TAN's validation routines, rely upon
+               XSLT, XML Stylesheet Language for Transformation, version 3.0. XSLT is a very
+               powerful language, and rather unlike most programming languages. People approaching
+               the language for the first time, even seasoned programmers, can find it baffling or
+               impenetrable. Other people find it comprehensible, but they do not know how even to
+               begin to use it.</para>
+            <para>This section is written for anyone who is new to XSLT and wants to run an
+               application.</para>
+            <section>
+               <title>First things to know about XSLT</title>
+               <section>
+                  <title>The Process</title>
+                  <para>In many other computer applications, the expected rules are rather
+                     straightforward. Given zero or more inputs, zero or more outputs are returned.
+                     Many times the application is driven by a graphical user interface (GUI), to
+                     allow the user to configure the application.</para>
+                  <para>XSLT applications do not have a GUI. They also have a somewhat different
+                     approach to input and output, as depicted here:</para>
+                  <figure>
+                     <title>The classic XSLT process </title>
+                     <mediaobject>
+                        <imageobject>
+                           <imagedata fileref="img/xslt.jpeg"/>
+                        </imageobject>
+                     </mediaobject>
+                  </figure>
+                  <para>In the classic XSLT process, there are three key requirements:<orderedlist>
+                        <listitem>
+                           <para>an XML file, to catalyze the process;</para>
+                        </listitem>
+                        <listitem>
+                           <para>a master XSLT file, to declare the rules that should be
+                              followed;</para>
+                        </listitem>
+                        <listitem>
+                           <para>an XSLT processor.</para>
+                        </listitem>
+                     </orderedlist></para>
+                  <para>The process begins, actually, with the processor, which is normally given
+                     URLs that specify where to find the input, the stylesheet, and where to place
+                     the output. The processor gets the XSLT stylesheet, and looks for any
+                     associated components. After compiling the master stylesheet and its
+                     components, the rules are applied to the catalyzing XML file. Along the way,
+                     the processor may fetch secondary input documents, depending upon the XSLT
+                     instructions.</para>
+                  <para>After all the rules have been applied, if there is any content to the
+                     primary result document, the processor saves it to the specified target URL.
+                     During the evaluation of the XSLT rules, if there are instructions to save
+                     constructed result documents at certain locations, the processor does
+                     so.</para>
+                  <para>So in any XSLT operation, there are really two possible types of input and
+                     two types of output. We use the terms <emphasis>primary input</emphasis> for
+                     the catalyzing XML file and <emphasis>secondary input</emphasis> for input that
+                     is added during the process. We use the term <emphasis>primary
+                        output</emphasis> for the main result tree and <emphasis>secondary
+                        output</emphasis> for any other output created along the way. The terms
+                        <emphasis>primary</emphasis> and <emphasis>secondary</emphasis> refer only
+                     to their position in the process, not their importance to the application.
+                     Indeed, there are XSLT applications where the secondary input and secondary
+                     output are far more important than the catalyzing input or primary output. </para>
+                  <para>The classic view presented above does not take into account another way of
+                     configuring an XSLT application, where a particular starting point is
+                     designated, the initial template. In that case, the primary input might be
+                     unnecessary.</para>
+                  <para>When you get an XSLT file, it is important to understand what kinds of input
+                     and output are returned. In general, if there is not good documentation and the
+                     XSLT does not come from a trusted source, do not try to run it.</para>
+               </section>
+               <section>
+                  <title>Syntax</title>
+                  <para>XSLT is itself an XML document, and can be treated in every way as an XML
+                     document. If there is something you can do to an XML document, you can do it to
+                     an XSLT file too.</para>
+                  <para>Because of this principle, an XSLT file might interleave elements from
+                     different namespaces. Unless otherwise specified, white space is flexible, and
+                     the document can be reformatted and indented as one likes. It might include
+                     comments and processing instructions.</para>
+                  <para>Because an XSLT file is itself XML, then it can be designed to be the
+                     primary input of an XSLT process, including its own. Running an XSLT file
+                     against itself can be useful in cases where the primary input is unimportant,
+                     only the secondary input is of interest.</para>
+               </section>
+               <section>
+                  <title>Modular design</title>
+                  <para>An XSLT file may invoke other XSLT files, or be invoked by them, through the
+                        <code>&lt;xsl:import></code> and <code>&lt;xsl:include></code> instructions.
+                     Inclusions and imports are recursive: the stylesheet attracts not just the ones
+                     it imports/includes, but the ones they import/include, and so forth.</para>
+                  <para>The modular approach to XSLT allows developers to be more efficient and
+                     effective when writing code. Routines that serve one process well can serve
+                     another. But it also means that when you first open up an XSLT file, you should
+                     try to understand its place relative to other XSLT files. You can find the
+                        <code>&lt;xsl:import></code> and <code>&lt;xsl:include></code> instructions,
+                     to find the stylesheets it depends upon, but you will not easily be able to
+                     tell what other stylesheets depend upon it.</para>
+                  <para>Tracing those lines of dependencies is an important task, because it will
+                     help you find the XSLT files that are appropriate starting points for the
+                     process you want.</para>
+               </section>
+               <section>
+                  <title>Declarative statements</title>
+                  <para>In most programming languages, you write a list of things for the computer
+                     to do, with conditional branching inserted, to make sure that the steps are
+                     applied in the correct order, under the correct conditions. This list-like
+                     approach to programming is called imperative programming.</para>
+                  <para>XSLT has imperative components, but at its heart, it is a declarative
+                     programming language. That is, it provides not a list of steps to be followed
+                     but rather a set of rules or principles that should be observed. It is up to
+                     the processor to determine the most efficient path to execute those rules or
+                     principles.</para>
+                  <para>The difference between imperative and declarative programming can be
+                     compared to real-world examples. Suppose you have a pile of candies that need
+                     to be sorted. Imperative programming is like telling a child: get one candy; if
+                     it is like such-and-such, put it here; repeat. Declarative programming like
+                     telling that same child, I do not care how you approach the task, but make sure
+                     that the final groups look like such-and-such.</para>
+                  <para>If you are familiar with Cascading Style Sheets (CSS) you might have a
+                     better sense of how XSLT is set up. In CSS, styling instructions are provided
+                     by selector patterns that match certain elements within the HTML file. CSS
+                     instructions can frequently be placed in different groups and orders, to help
+                     the writer manage the project better. It is up to the browser to take those
+                     rules and find the most efficient way to apply the styles.</para>
+                  <para>Because of its declarative approach, the order of an XSLT's root element
+                     children is flexible. Most often, order does not matter. The children of the
+                     root element, called declarations, are special, because they stipulate the
+                     rules or principles that should be followed. All of the declarations of the
+                     stylesheet's modules are also taken into consideration. Which means that when
+                     you are reading a particular section of an XSLT file, you might think you
+                     understand what is being done. But there may be declarations in other parts of
+                     the file or its inclusions/imports that affect the particular component you are
+                     looking at.</para>
+                  <para>As a general rule of thumb, when you read an XSLT file to understand what it
+                     does, do not put much importance on the order of its declarations. They will
+                     not be followed in that order. There are cases where order is important, but as
+                     a new reader, you should try to get a bird's-eye overview of the declarations,
+                     wherever they are found. You should be looking for the XSLT's intended outcome,
+                     not its steps.</para>
+               </section>
+               <section>
+                  <title>Variables and parameters</title>
+                  <para>In most programming languages, you can write something like the following
+                     pseudocode...</para>
+                  <para>
+                     <programlisting>x = 1
+x = x - 1
+return x</programlisting>
+                  </para>
+                  <para>...and expect the output 0, as the variable x changes values, because
+                     variables are mutable.</para>
+                  <para>In XSLT, variables and parameters are immutable. Within the life of a
+                     variable (its scope), its assigned value never changes. That variable can be
+                     destroyed (and along with it, its value), and then a new instatiation of that
+                     same variable can be invoked, but once again, within its life, it does not
+                     change. If you see two <code>&lt;xsl:param></code> or two
+                        <code>&lt;xsl:variable></code> instructions that create variables with the
+                     same name, they must be in a different scope.</para>
+                  <para>Both variables and parameters might be in a namespace. If there is a colon
+                     in the name, the variable or parameter is defined by a particular namespace.
+                     Check the prefix to see what namespace it is bound to.</para>
+                  <para>As a user of an XSLT stylesheet, you should not worry much about any XSLT
+                     variables. Certainly, you can change them if you want, but at that point you
+                     are becoming a developer. We assume here you are interested primarily in using,
+                     not adjusting, an XSLT application.</para>
+                  <para>Your focus should be, instead, upon parameters, but only a certain kind:
+                     global, relevant parameters.</para>
+                  <para>Global parameters are found exclusively as children of a root element. That
+                     is, they are declarations (see previous section). Any parameters that are more
+                     deeply nested are local parameters, and you shouldn't worry about them.</para>
+                  <para>Not all global parameters are relevant. If you have a master stylesheet that
+                     includes another one, that stylesheet may have global parameters that are
+                     designed to accommodate some other including XSLT application. Normally, you
+                     will know which global parameters are relevant for your purposes only by
+                     studying the file's documentation, or its code.</para>
+                  <para>Every global parameter is the developer's invitation to the user to
+                     configure the XSLT application. Some parameters exercise an enormous influence
+                     over the type of output. But before you try to change a parameter, you should
+                     understand something about data types, covered in the next section.</para>
+               </section>
+               <section xml:id="xpath-language">
+                  <title>XPath language</title>
+                  <para>XSLT relies upon a sublanguage called XPath, which is itself a proper subset
+                     of another powerful XML programming language called XQuery. You will most
+                     commonly come into contact, or use XPath in the context of the
+                        <code>@select</code> attribute in various XSLT instruction elements.</para>
+                  <para>XPath itself is an enormous topic, and well worth learning. Because this
+                     chapter is geared to helping new users quickly get comfortable with using and
+                     configuring an XSLT application, we introduce here some very common, useful
+                     XPath expressions. They are grouped here in four basic concepts: navigation,
+                     filter expressions (predicates), operators, and functions.</para>
+                  <section>
+                     <title>Navigation</title>
+                     <para>Every XML file is a tree, and at the heart of XPath is a language for
+                        traversing that tree. XSLT instructions that use XPath always begin with
+                        some kind of context. Very often that context is a node inside a
+                        tree.</para>
+                     <para>Because this short guide is aimed at users who are configuring global
+                        parameters, we will assume in our examples here that the context is the
+                        primary input XML document, starting at the document level.</para>
+                     <para>When an XPath expression begins with a single slash, the document node is
+                        selected. The following example shows how to bind to the global parameter
+                           <code>$doc-a</code> the document node of the primary input.</para>
+                     <programlisting>&lt;xsl:param name="doc-a" as="document-node()" select="/"/></programlisting>
+                     <para>One traverses downward through the tree most frequently by element name.
+                        Simply use the name of the element. If it is in a namespace, you either need
+                        to start with the appropriate prefix or an asterisk (represents any prefix)
+                        followed by a colon. The following example selects the
+                           <code>&lt;tei:TEI></code> root element of the primary input XML document.
+                        If the root element is not named TEI and it is not in the namespace bound to
+                        the prefix tei, then you will get an error, because this global parameter
+                        expects exactly one item, no more, no less.</para>
+                     <programlisting>&lt;xsl:param name="tei-root-element" as="element()" select="tei:TEI"/></programlisting>
+                     <para>The previous example would have worked as well with
+                        <code>/tei:TEI</code>, which says, in effect, go to the document node (even
+                        though the context is already there), then go to the element TEI. Another
+                        alternative would be <code>*:TEI</code>, which selects the root element if
+                        its name is TEI, regardless of what namespace it is in.</para>
+                     <para>The nested elements of the tree can be traversed by separating element
+                        names with the slash. The following example chooses the TEI's body, three
+                        levels deep. This example also shows how to use the asterisk alone, to
+                        represent any element.</para>
+                     <programlisting>&lt;xsl:param name="tei-text" as="element()?" select="tei:TEI/*/tei:body"/></programlisting>
+                     <para>If you want to go deeply into the document, and select a variety of
+                        elements, you can do so with the double-slash operator, which navigates down
+                        to all descendants.</para>
+                     <programlisting>&lt;xsl:param name="tei-abs" as="element()*" select="tei:TEI//tei:ab"/></programlisting>
+                     <para>The example above selects every <code>&lt;ab></code> in a TEI document.
+                        If one <code>&lt;ab></code> nests inside another, both are picked.</para>
+                     <para>To select an attribute, use the @ sign. Note in the following example the
+                        use of a namespace prefix xml in the attribute. Most attributes do not have
+                        namespaces.</para>
+                     <programlisting>&lt;xsl:param name="tan-t-lang" as="attibute()" select="tan:TAN-T/tan:body/@xml:lang"/></programlisting>
+                     <para>To select any attribute, use <code>@*</code>. The following example
+                        selects all the attributes in <code>&lt;change></code> elements. Note the
+                        use of the asterisk for the root element. This will find all such attributes
+                        no matter what the TAN file is named.</para>
+                     <programlisting>&lt;xsl:param name="change-attrs" as="attribute()+" select="*/tan:head//tan:change/@*"/></programlisting>
+                     <para>You can use parentheses and commas to group and add nodes. In this
+                        example, the XPath expression points to the TAN <code>&lt;body></code>, then
+                        selects all the children comment nodes, text nodes, and elements.</para>
+                     <programlisting>&lt;xsl:param name="interesting-nodes" as="item()*" select="*/tan:body/(text(), comment(), *)"/></programlisting>
+                     <para>There is a slightly simpler way to do the preceding example, and also
+                        finds any processing instructions:</para>
+                     <programlisting>&lt;xsl:param name="interesting-nodes" as="item()*" select="*/tan:body/node()"/></programlisting>
+                     <para>The <code>node()</code> instruction finds everything except
+                        attributes.</para>
+                     <para>There is much, much more about XPath navigation, but the samples above
+                        should get you started. See <link
+                           xlink:href="https://www.w3.org/TR/2017/REC-xpath-31-20170321/">XPath
+                           3.1</link> for comprehensive, technical coverage.</para>
+                  </section>
+                  <section>
+                     <title>Filter expressions (predicates)</title>
+                     <para>An XPath expression that traverses a tree might return more nodes than
+                        you want. You can reduce what is captured by applying a predicate, which is
+                        an XPath expression that filters results. A predicate consists of an XPath
+                        filter expression set between two square brackets, placed just to the right
+                        of the predicate's context node. A predicate will return a true or false
+                        value for every context node. If the predicate is true, the node is
+                        retained, otherwise it is discarded. A very simple example shows how to pick
+                        the second &lt;div> in the body of a TAN-T file:</para>
+                     <programlisting>&lt;xsl:param name="second-div" as="element()?" select="tan:TAN-T/tan:body/tan:div[2]"/></programlisting>
+                     <para>This predicate, <code>[2]</code>, which returns true if a given
+                           <code>&lt;div></code> is the second child div, is actually shorthand for
+                           <code>[position() eq 2]</code>, which provides a taste of XPath operators
+                        and functions, discussed below.</para>
+                     <para>This example finds every <code>&lt;div></code> that has an attribute of
+                           <code>@xml:lang</code>.</para>
+                     <programlisting>&lt;xsl:param name="second-div" as="element()*" select="tan:TAN-T/tan:body//tan:div[@xml:lang]"/></programlisting>
+                     <para>This predicate, too is shorthand for <code>[exists(@xml:lang)]</code>,
+                        another XPath function.</para>
+                     <para>Predicates may nest. Any nesting predicate still takes as its context the
+                        step immediately to the left. This example finds every TEI
+                           <code>&lt;div></code> tag, but only if it has a <code>&lt;p></code> that
+                        has a <code>&lt;quote></code>.</para>
+                     <programlisting>&lt;xsl:param name="divs-with-quoting-ps" as="element()*" 
+          select="tei:TEI/tei:text/tei:body//tei:div[tei:p[tei:quote]]"/></programlisting>
+                     <para>Predicates may chain, simply by appending predicates. The following
+                        example reduces the previous example to the first instance.</para>
+                     <programlisting>&lt;xsl:param name="divs-with-quoting-ps" as="element()*" 
+          select="tei:TEI/tei:text/tei:body//tei:div[tei:p[tei:quote]][1]"/></programlisting>
+                     <para>The position of chained predicates is important. Whereas the preceding
+                        example filtered the <code>&lt;div></code>s then picked the first one, the
+                        following finds the first <code>&lt;div></code> (one that does not have a
+                        preceding sibling <code>&lt;div></code>), and retains it only if it has a
+                           <code>&lt;p></code> with a <code>&lt;quote></code>.</para>
+                     <programlisting>&lt;xsl:param name="divs-with-quoting-ps" as="element()*" 
+          select="tei:TEI/tei:text/tei:body//tei:div[1][tei:p[tei:quote]]"/></programlisting>
+                     <para>Predicates may be placed anywhere in an XPath expression. The following
+                        gets all top-level &lt;div>s only if in a TAN-T or TAN-TEI with a declared
+                        TAN version.</para>
+                     <programlisting>&lt;xsl:param name="top-level-divs" as="element()*" 
+          select="*[@TAN-version]/*/*:body/*:div"/></programlisting>
+                  </section>
+                  <section>
+                     <title>Operators</title>
+                     <para>We have already seen some basic XPath expressions, in the comma and the
+                        parentheses. XPath has many more expressions, many of which should be
+                        familiar: <code>+</code> for addition, <code>-</code> for subtraction,
+                           <code>*</code> for multiplication, and <code>div</code> for division.
+                        (The slash is not used, to avoid clashes with the step separator.) The
+                        keyword to, with an integer on either side (the smaller on the left),
+                        creates a range.</para>
+                     <para>XPath also has comparison expressions. Although <code>&lt;</code> and
+                           <code>></code> can be used for "less than" and "greater than", it is
+                        recommended to use the expressions <code>lt</code> and <code>gt</code>. The
+                        expressions <code>le</code> and <code>ge</code> mean less than or equal to,
+                        and greater than or equal to, respectively.</para>
+                     <para>For checking equality, you will most often use the <code>=</code>
+                        expression, but there is also an <code>eq</code> version, but this can be
+                        used only when comparing exactly two items. The <code>=</code> is very
+                        powerful in XPath, because it will return true if there is any item on the
+                        left hand side that is equal to any item on the right hand side. Consider
+                        for example, the XPath statement <code>(1, 2) = (2, 3)</code>. On each side
+                        is a sequence of two integers. The statement is true because there is at
+                        least one pair of equal items. Because the expression is used so frequently
+                        to compare sequences, you might think of <code>=</code> as meaning "overlaps
+                        with."</para>
+                     <para>Complex expressions can be combined with <code>and</code>,
+                           <code>or</code>, and parentheses, as needed.</para>
+                     <para>As you work with XSLT global parameters, you will find that most
+                        expressions are placed within the filtering predicates. The following finds
+                        all <code>&lt;div></code>s with an attribute <code>@type</code> whose value
+                        is "chapter".</para>
+                     <programlisting>&lt;xsl:param name="chapter-divs" as="element()*" select="//*:div[@type = 'chapter']"/></programlisting>
+                     <para>This expression finds the top-level divs in 2nd, 3rd, 4th, and 8th
+                        place:</para>
+                     <programlisting>&lt;xsl:param name="some-divs" as="element()*" select="//*:body/*:div[position() = (2 to 4, 8)]"/></programlisting>
+                     <para>The following example returns any <code>&lt;div></code> whose values of
+                           <code>@n</code> and <code>@type</code> match.</para>
+                     <programlisting>&lt;xsl:param name="dupl-n-and-type-divs" as="element()*" select="//*:div[@type = @n]"/></programlisting>
+                  </section>
+                  <section>
+                     <title>Functions</title>
+                     <para>XPath expressions become enormously powerful when combined with the 155
+                        functions that are a standard part of XPath. You have already seen two of
+                        them, <code>position()</code> and <code>exists()</code>.</para>
+                     <para>In a brief survey like this, it is possible to illustrate only a few of
+                        the most common standard functions you are likely to use when configuring
+                        the global parameters of an XSLT application.</para>
+                     <para><emphasis role="bold">last()</emphasis>: returns an integer representing
+                        the size of the context. The following examples contain an implicit
+                           <code>position()</code>, as with the filter expression examples above
+                        with only an integer.</para>
+                     <programlisting>&lt;xsl:param name="last-div" as="element()?" select="//*:body/*:div[last()]"/>
+      &lt;xsl:param name="penultimate-div" as="element()?" select="//*:body/*:div[last() - 1]"/></programlisting>
+                     <para><emphasis role="bold">count()</emphasis>: returns the number of items in
+                        a sequence. The following returns all TAN-T <code>&lt;div></code>s that have
+                        more than three children <code>&lt;div></code>s.</para>
+                     <programlisting>&lt;xsl:param name="populous-divs" as="element()*" select="//tan:div[count(tan:div) gt 3]"/></programlisting>
+                     <para><emphasis role="bold">not()</emphasis>: returns true if the expression it
+                        contains is false, or false if it is true. This function is very widely
+                        used, to great effect. These examples finds all leaf divs, and then all leaf
+                        elements:</para>
+                     <programlisting>&lt;xsl:param name="leaf-divs" as="element()*" select="//*:div[not(*:div)]"/>
+      &lt;xsl:param name="leaf-elements" as="element()*" select="//*[not(*)]"/></programlisting>
+                     <para>Whereas the <code>=</code> operator is very popular, its counterpart,
+                           <code>!=</code>, is not used very much, because its results tend to be
+                        uninteresting. The true complement of <code>=</code> comes with
+                           <code>not()</code>, as illustrated in this example, which retrieves all
+                           <code>&lt;div></code>s that are not of a certain type:</para>
+                     <para>
+                        <programlisting>&lt;xsl:param name="certain-divs" as="element()*" 
+             select="//*:div[not(@type = ('ep', 'title', 'pref'))]"/></programlisting>
+                     </para>
+                     <para><emphasis role="bold">lower-case() / upper-case()</emphasis>: converts a
+                        string to all lowercase / uppercase values. This example looks for any text
+                        node that has a certain value, after it has been rendered lowercase.</para>
+                     <programlisting>&lt;xsl:param name="some-elements" as="text()*" select="//text()[lower-case(.) = 'a b c']"/></programlisting>
+                     <para>Note the use of the period, which means the context item.</para>
+                     <para><emphasis role="bold">normalize-space()</emphasis>: takes a string,
+                        removing all space from the beginning and end, and replacing any consecutive
+                        block of intermediary space with a single space. This function is very
+                        useful when you wish to compare texts that may be indented. The preceding
+                        example might have missed some text nodes that had initial or trailing
+                        space. It can be adjusted as follows:</para>
+                     <programlisting>&lt;xsl:param name="some-elements" as="text()*" 
+            select="//text()[normalize-space(lower-case(.)) = 'a b c']"/></programlisting>
+                     <para>Many times XPath functions must call each other. You may nest them, as in
+                        the example above, or you may use pointing syntax. The choice is a matter of
+                        preference.</para>
+                     <programlisting>&lt;xsl:param name="some-elements" as="text()*" 
+            select="//text()[(lower-case(.) => normalize-space()) = 'a b c']"/></programlisting>
+                     <para><emphasis role="bold">contains() / starts-with() /
+                        ends-with()</emphasis>: tests to see if the string in the first parameter
+                        contains / starts with / ends with the string in the second. The following
+                        finds all elements that contain a certain text:</para>
+                     <programlisting>&lt;xsl:param name="some-elements" as="element()*" select="//*[contains(., 'straw')]"/></programlisting>
+                     <para><emphasis role="bold">contains-token()</emphasis>: tests to see if the
+                        string in the first parameter has as one of its "words" the string in the
+                        second. Here a "word" is based on segmenting the first string at any block
+                        of space. The preceding example would have picked up "strawberry" but
+                           <code>contains-token()</code> fixes that:</para>
+                     <programlisting>&lt;xsl:param name="some-elements" as="element()*" select="//*[contains-token(., 'straw')]"/></programlisting>
+                     <para><emphasis role="bold">matches()</emphasis>: tests to see if the string in
+                        the first parameter matches the second, which is a regular expression.
+                        Several TAN applications rely heavily upon regular expressions, which
+                        provide very powerful way of finding and replacing text. See <xref
+                           xlink:href="#regular_expressions"/>. The following example finds any text
+                        node with one of the seven weekday names in English:</para>
+                     <programlisting>&lt;xsl:param name="text-nodes-with-weekdays" as="text()*" 
+           select="//text()[matches(., '(Sun|Mon|Tue|Wednes|Thurs|Fri|Satur)day')]"/></programlisting>
+                     <para>There are, of course, many, many more XPath functions. For the complete
+                        list, along with all the specifications, see <link
+                           xlink:href="https://www.w3.org/TR/xpath-functions-31/">XPath Functions
+                           and Operators 3.1</link>.</para>
+                  </section>
+               </section>
+            </section>
+         </section>
+         <section>
+            <title>Configuring and running an XSLT application</title>
+            <section>
+               <title>Configuring global parameters</title>
+               <para>Once you have determined the master XSLT stylesheet for the application, you
+                  may want to reconfigure it, via global parameters. You have several possible strategies:<orderedlist>
+                     <listitem>
+                        <para><emphasis role="bold">Overwrite the values directly</emphasis>. This
+                           method is quick, but it also means that you might not easily restore the
+                           original settings, unless you make a backup copy.</para>
+                     </listitem>
+                     <listitem>
+                        <para><emphasis role="bold">Work from a copy of the file</emphasis>. This
+                           method allows you to restore the file to its original settings, when you
+                           need to. It also allows you to make one copy per situation you might
+                           encounter. You should  make certain that any working copies are in the
+                           same subdirectory as the original, to keep links intact.</para>
+                     </listitem>
+                     <listitem>
+                        <para><emphasis role="bold">Create a new XSLT file that imports the
+                              master</emphasis>. If you are comfortable writing XSLT code, you might
+                           create a small XSLT file that has nothing but an
+                              <code>&lt;xsl:import></code> pointing to the original stylesheet, and
+                           only those <code>&lt;xsl:param></code>s that focus on the values you
+                           intend to change. This method is quick to set up and easy to use, but it
+                           also means that you do not have immediate access to documentation.</para>
+                     </listitem>
+                     <listitem>
+                        <para><emphasis role="bold">Manage transformations from Oxygen</emphasis>.
+                           Oxygen XML Editor has a powerful feature, Configure Transformation
+                           Scenarios, which allows you to create custom configurations for an XSLT
+                           application. Oxygen has good documentation on how to use this feature,
+                           which provides enormous flexibility and convenience, not merely for
+                           configuring the parameters, but for managing the flow of input and
+                           output, and how it should be handled after the process is finished. The
+                           transformation scenario dialogue allows you to set global parameters. One
+                           drawback is that you are presented with all the global parameters that
+                           can be found, whether or not they are really relevant. Documentation
+                           associated with the parameter may be missing or truncated. This option
+                           can be combined with any of the preceding ones.</para>
+                     </listitem>
+                  </orderedlist></para>
+               <para>Whatever method you adopt for configuration, you find the relevant global
+                  parameters. Once you have them, you should always ensure you understand what type
+                  of data is expected, and in what quantity. </para>
+               <para><emphasis>Data types</emphasis>. XSLT is a strongly typed programming language.
+                  The data that is bound to variables and parameters are always at least implicitly
+                  typed. Many variables or parameters specify exactly what kind of data is expected.
+                  Those that do not are assigned some default type by the XSLT processor. Most data
+                  types you encounter will be of two sorts: atomic types, and nodes. Examples of
+                  atomic types are integers, booleans, strings, and dates. Examples of nodes are
+                  elements, attributes, comments, and processing instructions. There are other
+                  types, but we will focus here on the most common.</para>
+               <para><emphasis>Quantities</emphasis>. In XSLT, there are four quantity categories:
+                  (1) zero or one; (2) exactly one; (3) zero or more; (4) one or more. Each of these
+                  are specified by adding to a data-type declaration a quantifier: ?, nothing, *,
+                  and +. </para>
+               <table frame="all">
+                  <title>Quantifiers and data types</title>
+                  <tgroup cols="4">
+                     <colspec colname="c1" colnum="1" colwidth="1*"/>
+                     <colspec colname="c2" colnum="2" colwidth="1*"/>
+                     <colspec colname="c3" colnum="3" colwidth="1*"/>
+                     <colspec colname="c4" colnum="4" colwidth="1*"/>
+                     <thead>
+                        <row>
+                           <entry>Quantity</entry>
+                           <entry>Symbol used</entry>
+                           <entry>Atomic type example</entry>
+                           <entry>Node type example</entry>
+                        </row>
+                     </thead>
+                     <tbody>
+                        <row>
+                           <entry>zero or one</entry>
+                           <entry><code>?</code></entry>
+                           <entry><code>xs:string?</code></entry>
+                           <entry><code>element()?</code></entry>
+                        </row>
+                        <row>
+                           <entry>exactly one</entry>
+                           <entry>none</entry>
+                           <entry><code>xs:boolean</code></entry>
+                           <entry><code>document-node()</code></entry>
+                        </row>
+                        <row>
+                           <entry>zero or more</entry>
+                           <entry><code>*</code></entry>
+                           <entry><code>xs:dateTime*</code></entry>
+                           <entry><code>attribute()*</code></entry>
+                        </row>
+                        <row>
+                           <entry>one or more</entry>
+                           <entry><code>+</code></entry>
+                           <entry><code>xs:integer+</code></entry>
+                           <entry><code>comment()+</code></entry>
+                        </row>
+                     </tbody>
+                  </tgroup>
+               </table>
+               <para>Below are some of the more common data types you will find in global
+                  parameters, along with examples, from simple values, to more complex assignments
+                  based upon XPath expressions or XSLT. For more background, see <xref
+                     xlink:href="#xpath-language"/>. Focus is placed upon data types and quantities
+                  expected in select TAN applications and utilities.</para>
+               <para><emphasis role="bold">Strings</emphasis>. A string is a sequence of characters.
+                  Even when the value consists only of Arabic numerals, it will be read and
+                  interpreted as a text, not as an integer.</para>
+               <para>In this example, the string value is specified by the single quotation marks
+                  within the double quotation marks. If you did not include the single quotation
+                  marks, it would be interpreted as an XPath expression.</para>
+               <programlisting>&lt;xsl:param name="text-a-to-compare" as="xs:string?" select="'Every day'"/></programlisting>
+               <para>When more than one string is expected,  the strings should be separated by a
+                  comma. It is also common to surround the series with parentheses, for visual
+                  clarity. This example attaches to the parameter two strings.</para>
+               <programlisting>&lt;xsl:param name="text-a-to-compare" as="xs:string+" select="('day', 'night')"/></programlisting>
+               <para>In the next example, <code>@select</code> is replaced by the text node within
+                  the parameter. This technique can be useful if the value expected will be
+                  space-normalized, and you want to wrap text, and you do not need to create
+                  multiple strings.</para>
+               <programlisting>&lt;xsl:param name="text-a-to-compare" as="xs:string?">Every day&lt;/xsl:param></programlisting>
+               <para>The next example takes the primary input XML and converts it to a string. Such
+                  conversion is called <emphasis>casting</emphasis>. Keep in mind that the context
+                  node of any global parameter is the primary input XML document.</para>
+               <programlisting>&lt;xsl:param name="text-a-to-compare" as="xs:string" select="string(/)"/></programlisting>
+               <para>Perhaps you need to supply a path to some input. The following example looks for
+                  a relative URL within the primary input file, then resolves it relative to where
+                  that file is.)</para>
+               <programlisting>&lt;xsl:param name="path-to-source" as="xs:string" 
+     select="resolve-uri(/*/tan:head/tan:predecessor/tan:location/@href, base-uri(/))"/></programlisting>
+               <para>If a parameter allows multiple values, and you need to change them frequently,
+                  you might want to bind options to global parameters or global variables of your
+                  own creation... </para>
+               <programlisting>&lt;xsl:variable name="dir-1-path" as="xs:string" select="'../../novels/book-a'"/>
+&lt;xsl:variable name="dir-2-path" as="xs:string" select="'test/comparanda'"/>
+&lt;xsl:variable name="dir-3-path" as="xs:string" select="'test/logs'"/>
+&lt;xsl:variable name="dir-4-path" as="xs:string" select="'../brown/texts'"/></programlisting>
+               <para>...then update the values in the master global parameter on a
+                  case-by-case-basis.</para>
+               <programlisting>&lt;xsl:param name="secondary-input-relative-uri-directories" as="xs:string+"
+   select="$dir-1-path, $dir-4-path"/></programlisting>
+               <para><emphasis role="bold">Booleans</emphasis>. A boolean is a true/false value. If
+                  a parameter expects a boolean, you should use some XPath expression that can be
+                  cast to a boolean, even if it is a simple one, such as <code>true()</code> or
+                     <code>false()</code>. If you need to express the value as a string, it should
+                  be either "true", "false", "0", or "1".</para>
+               <programlisting>&lt;param name="ignore-comments" as="xs:boolean" select="false()"/>
+&lt;param name="preoptimize-string-order" as="xs:boolean" select="'true'"/></programlisting>
+               <para><emphasis role="bold">Integers</emphasis>. To supply an integer, you need only
+                  use the plain numerals. You should not use quotation marks, or the parameter's
+                  child text node. There will be no confusion of the integer with an XPath step,
+                  because no element's name may begin with a digit.</para>
+               <programlisting>&lt;xsl:param name="start-at-depth" as="xs:integer" select="1"/>
+&lt;xsl:param name="ngram-auras" as="xs:integer+" select="(2, 1)"/></programlisting>
+               <para><emphasis role="bold">Decimals</emphasis>. Decimals are much like integers, but
+                  require decimal points. If the decimal is between 1.0 and -1.0, the first numeral
+                  must be a zero.</para>
+               <programlisting>&lt;xsl:param name="diff-threshold-of-interest" as="xs:decimal" select="0.2"/></programlisting>
+               <para><emphasis role="bold">Elements</emphasis>. If a global parameter expects
+                  elements as input, you must construct them inline, or provide an XPath expression
+                  that directs the processor to the elements in question. The following example
+                  shows how to construct a parameter that might be fed into <code><link
+                        linkend="function-batch-replace">tan:batch-replace()</link></code>.</para>
+               <programlisting>&lt;xsl:param name="additional-batch-replacements" as="element()">
+   &lt;replace pattern="(\d\d)/(\d\d)/(\d\d\d\d)" replacement="$3-$1-$2"
+      message="Converted U.S.-style date to ISO-style"/>
+&lt;/xsl:param></programlisting>
+               <para>The previous example might need numerous elements, already placed in some other
+                  file. An XPath expression can be built to point to it:</para>
+               <programlisting>&lt;xsl:param name="additional-batch-replacements" as="element()"
+   select="doc('batch-replacements.xml')/*/tan:replace"/></programlisting>
+            </section>
+            <section>
+               <title>Starting the XSLT process</title>
+               <para>Running an XSLT application can be done in several ways. As noted above, at the
+                  heart of the process is the XSLT processor. The goal is to find the means to feed
+                  the primary input and the master stylesheet into the processor, and to specify to
+                  the processor where to place the output.</para>
+               <para><emphasis role="bold">From the command line</emphasis>. Processors such as
+                  Saxon allow you to initiate the process from the command line.<itemizedlist>
+                     <listitem>
+                        <para><emphasis>Windows</emphasis>:<orderedlist>
+                              <listitem>
+                                 <para>Press the Windows key;</para>
+                              </listitem>
+                              <listitem>
+                                 <para>Type "cmd" and click "Command Prompt";</para>
+                              </listitem>
+                              <listitem>
+                                 <para>Type the letter of the drive where you plan to run the
+                                    process, followed by a colon, e.g., <code>e:</code></para>
+                              </listitem>
+                              <listitem>
+                                 <para>Using the command cd navigate to the directory where your
+                                    files are, e.g., <code>cd myfiles</code>.</para>
+                              </listitem>
+                           </orderedlist></para>
+                     </listitem>
+                     <listitem>
+                        <para><emphasis>Macintosh</emphasis>:<orderedlist>
+                              <listitem>
+                                 <para>Open the Shell app;</para>
+                              </listitem>
+                              <listitem>
+                                 <para>Using the command cd navigate to the directory where your
+                                    files are, e.g., <code>cd E:/myfiles</code>.</para>
+                              </listitem>
+                           </orderedlist>From there, follow the instructions provided by the vendor
+                           of the XSLT processor. For example, Saxon provides instructions at <link
+                              xlink:href="https://www.saxonica.com/documentation10/index.html#!using-xsl/commandline"
+                           />, and a simple command might look like the
+                           following:<programlisting>java -cp "E:/xslt processors/saxon-he-10.0.jar" -s:init.xml -xsl:app.xsl
+   -o:primary-output.xml</programlisting></para>
+                     </listitem>
+                  </itemizedlist></para>
+               <para><emphasis role="bold">From Oxygen XML Editor</emphasis>. Oxygen provides
+                  numerous ways to initiate the XSLT process, including the following:<itemizedlist>
+                     <listitem>
+                        <para><emphasis>XSLT Debugger Perspective</emphasis>. This editing mode
+                           changes Oxygen altogether, putting possible primary input files on the
+                           left side of the pane and XSLT files in the middle, and an output pane on
+                           the right. You can choose the processor you prefer, and pick your primary
+                           input and master stylesheet. Running the application provides interactive
+                           output, with many diagnostic tools, letting you learn how the output came
+                           about.</para>
+                     </listitem>
+                     <listitem>
+                        <para><emphasis>Transformation Scenarios</emphasis>. You can choose
+                           configure transformation scenarios, and create a highly customized set of
+                           conditions for running an XSLT application.</para>
+                     </listitem>
+                  </itemizedlist>These methods, and other more sophisticated approaches, are
+                  described in the vendor's documentation, <link
+                     xlink:href="https://www.oxygenxml.com/"/>.</para>
+            </section>
+            <section>
+               <title>TAN utilities and applications</title>
+               <para>All TAN utilities and applications share the same basic architecture. Once you
+                  have figured out how to use one TAN application, you are well on your way to being
+                  able to use the others as well. But TAN utilities and applications differ quite a
+                  bit from each other. Understand the common features, so you know what to
+                  expect.</para>
+               <section>
+                  <title>Application setup</title>
+                  <para>All TAN utilities are in the <code>utilities</code> directory of the TAN
+                     files; the applications are in the <code>applications</code> directory. Within
+                     those directories, there is one subdirectory per utility or application. And
+                     within that subdirectory, there is only one XSLT file, accompanied perhaps by
+                     further subdirectories. That XSLT file is the master stylesheet for the utility
+                     or application in question, and it has the same name as its parent directory.
+                     Subdirectories contain the heart of the code, and other important
+                     dependencies.</para>
+                  <para>The file structure is designed to make quite clear the main point of entry.
+                     It also makes it easier for a user to make copies and administer them, for
+                     specific situations.</para>
+               </section>
+               <section>
+                  <title>The master stylesheet</title>
+                  <para>All master stylesheets for TAN utilities and applications share a common
+                     structure. They are designed to be as user-friendly as possible, and to
+                     restrict the content of the file exclusively to configuration settings that the
+                     user may want to change.<orderedlist>
+                        <listitem>
+                           <para><emphasis role="bold">Preamble</emphasis>. Every master stylesheet
+                              begins with a long series of comments, indicating the name of the
+                              application, its version (an ISO date), its name, and a brief
+                              description of what it does. The preamble includes a statement of the
+                              intended primary input, secondary input, primary output, and secondary
+                              output. Cautionary notes may be included. If the utility or
+                              application has areas that are known to need development, these will
+                              be listed.</para>
+                        </listitem>
+                        <listitem>
+                           <para><emphasis role="bold">Global parameters</emphasis>. After the
+                              preamble a series of global parameters are presented. Each one is
+                              preceded by a comment that explains the expected value. The parameters
+                              may be organized in blocks according to stages or topics. Some of the
+                              parameters may be localized versions of global parameters that are
+                              defined in standard TAN parameters whose default definition is in an
+                              XSLT file located in the main directory <code>parameters</code>. The
+                              values in the master stylesheet of the application will take
+                              precedence over the default values.</para>
+                        </listitem>
+                        <listitem>
+                           <para><emphasis role="bold">Import statement</emphasis>. At the end of
+                              the master stylesheet is an <code>&lt;xsl:import></code> statement,
+                              pointing to the core stylesheet. That instruction may be followed as
+                              well by other instructions that users should not change.</para>
+                        </listitem>
+                     </orderedlist></para>
+               </section>
+               <section>
+                  <title>The core stylesheet</title>
+                  <para>Every master stylesheet points via its import statement to a single XSLT
+                     file in the <code>incl</code> subdirectory. That XSLT file is the core
+                     stylesheet. As an everyday user of the application, this core stylesheet will
+                     be of little or no importance to you. But anyone doing any kind of
+                     customization or development should be aware of how it works. The description
+                     in this short section is aimed primarily at users who want to understand the
+                     mechanics of a TAN utility or application.</para>
+                  <para>Each core stylesheet follows a common structure. It begins with
+                        <code>&lt;xsl:include></code> instructions that point to the TAN function
+                     library, and perhaps other important components.</para>
+                  <para>Next come metadata about the application: its name, its IRI, a change
+                     message to be reported, and a variety of descriptions about the application,
+                     and its expected input and output. A change log and a list of features to work
+                     on may be included. The dates within those parameters dictate the version of
+                     the application. All this metadata is used in several ways: to populate the
+                     comments of the master stylesheet, to populate the contents of these
+                     guidelines, and perhaps to supplement the output. The master data is here in
+                     the stylesheet, and in the TAN maintenance resources there is a Schematron file
+                     that makes sure that it is coordinated with the dependent master stylesheet. </para>
+                  <para>After the metadata come the XSLT declarations that drive the process.
+                     Normally these are signposted by global variables whose names signal their
+                     stage in the process.</para>
+                  <para>At the end of the core stylesheet are two unnamed templates. Each one points
+                     to the document node of the primary input XML file, and so one of the two will
+                     always be the starting point for the processor. The first of these templates is
+                     for diagnostics and is controlled by a static parameter that can turn it on or
+                     off. If that first template is turned off, then the second one takes over, and
+                     it drives the messaging system, the primary output tree (bound to some global
+                     variable), and any <code>&lt;xsl:result-document></code> instructions required
+                     to generate secondary output.</para>
+                  <para>Any primary or secondary output that results in a TAN file
+                        <emphasis>must</emphasis> be credited to or blamed upon the application or
+                     utility. The metadata for the application will be added to the output TAN
+                     file's vocabulary, and an appropriate entry will be added to the change
+                     log.</para>
+               </section>
+            </section>
+         </section>
+         <xi:include href="inclusions/utilities.xml"/>
+         <xi:include href="inclusions/applications.xml"/>
+      </chapter>
+      <chapter>
+         <title>Application development</title>
+         <section xml:id="tan-for-developers">
+            <title>Using the TAN library outside the network</title>
             <para>When developing an application where the main input is a TAN file, it is often
                best to start with it in its resolved or expanded state. (See <xref
                   xlink:href="#resolution"/> and <xref xlink:href="#expansion"/>.) If that TAN file
@@ -7340,36 +8052,41 @@ tag:bbrb@example.org,1995-04-01:pos-grc</programlisting>
                imprinted with the corresponding IRI + name pattern for the referred vocabulary item.
                Exercise this option with care: such repetition will result in an expanded document
                considerably larger than the original.</para>
-         </section>
-         <section xml:id="tan-applications">
-            <title>Using the TAN library outside the network</title>
+            <para>TAN's extensive function library, which drives the validation process, provides a
+               foundation for application development in XSLT. When writing an XSLT application,
+               point via <code>&lt;xsl:include></code> or <code>&lt;xsl:import></code> to
+                  <code>functions/TAN-function-library.xsl</code>. That's it. You now have access to
+               the complete TAN function library.</para>
+            <para>You should also pay attention to the files in the subdirectory
+                  <code>parameters</code>. Some of the global parameters there can be used
+               profitably to change the way an application runs.</para>
             <para>The function library behind TAN is quite powerful, and it can be used in non-TAN
                applications. Below is a list of some functions that have been extremely helpful.
                Some of the functions are not central to validation, so must be retrieved through
-                  <link xlink:href="../functions/TAN-extra-functions.xsl"/>. For a complete list of
+               <link xlink:href="../functions/TAN-extra-functions.xsl"/>. For a complete list of
                all functions, see <xref xlink:href="#variables-keys-functions-and-templates"
                />.</para>
             <para>
                <orderedlist>
                   <listitem>
                      <para><code><link linkend="function-batch-replace"
-                           >tan:batch-replace()</link></code>: runs a sequence of regular expression
+                        >tan:batch-replace()</link></code>: runs a sequence of regular expression
                         replacements on any string. The sequence is prepared by constructing a
                         series of <code>&lt;replace pattern="" replacement="" [flags=""]></code>
                         whose attributes follow the rules of <code><link linkend="function-replace"
-                              >tan:replace()</link></code> or <code>fn:replace()</code>.</para>
+                           >tan:replace()</link></code> or <code>fn:replace()</code>.</para>
                   </listitem>
                   <listitem>
                      <para><code><link linkend="function-chop-string"
-                           >tan:chop-string()</link></code>: changes a string into a sequence of
+                        >tan:chop-string()</link></code>: changes a string into a sequence of
                         characters, as defined in TAN (i.e., combining characters are always kept
                         with the base character). It is roughly equivalent to the XPath expression
-                           <code>for $i in fn:string-to-codepoints(.) return
+                        <code>for $i in fn:string-to-codepoints(.) return
                            fn:codepoints-to-string($i)</code>.</para>
                   </listitem>
                   <listitem>
                      <para><code><link linkend="function-collate">tan:collate()</link></code>: like
-                              <code><link linkend="function-diff">tan:diff()</link></code>, but
+                        <code><link linkend="function-diff">tan:diff()</link></code>, but
                         applied to any number of strings. The results are treated much like a
                         collation of manuscript readings, with the output xml fragment tethered to
                         sigla corresponding to the input strings. The function can be used to
@@ -7378,7 +8095,7 @@ tag:bbrb@example.org,1995-04-01:pos-grc</programlisting>
                   </listitem>
                   <listitem>
                      <para><code><link linkend="function-copy-indentation"
-                              >tan:copy-indentation</link>()</code>: applies the white-space
+                        >tan:copy-indentation</link>()</code>: applies the white-space
                         indentation of an element to any other XML fragment. Useful for when you
                         want to insert items in an XML file and preserve/imitate its
                         indentation.</para>
@@ -7393,15 +8110,15 @@ tag:bbrb@example.org,1995-04-01:pos-grc</programlisting>
                   </listitem>
                   <listitem>
                      <para><code><link linkend="function-duplicate-items"
-                              >tan:duplicate-items()</link></code>: like <code><link
-                              linkend="function-duplicate-values"
+                        >tan:duplicate-items()</link></code>: like <code><link
+                           linkend="function-duplicate-values"
                            >tan:duplicate-values()</link></code>, but applied to any item. If a
                         node, duplication is determined based on whether it is deeply equal to any
                         other node.</para>
                   </listitem>
                   <listitem>
                      <para><code><link linkend="function-duplicate-values"
-                              >tan:duplicate-values()</link></code>: finds distinct items in a
+                        >tan:duplicate-values()</link></code>: finds distinct items in a
                         sequence whose values are repeated in the sequence. This function
                         complements <code>fn:distinct-values()</code>.</para>
                   </listitem>
@@ -7412,14 +8129,14 @@ tag:bbrb@example.org,1995-04-01:pos-grc</programlisting>
                   </listitem>
                   <listitem>
                      <para><code><link linkend="function-get-chars-by-name"
-                              >tan:get-chars-by-name()</link></code>: retrieves Unicode characters
+                        >tan:get-chars-by-name()</link></code>: retrieves Unicode characters
                         based upon words in their name.</para>
                   </listitem>
                   <listitem>
                      <para><code><link linkend="function-glob-to-regex"
-                           >tan:glob-to-regex()</link></code>: changes a glob-like expression
+                        >tan:glob-to-regex()</link></code>: changes a glob-like expression
                         (normally used for filenames) into a regular expression (e.g.,
-                           <code>*.*</code> becomes <code>.*\..*</code>).</para>
+                        <code>*.*</code> becomes <code>.*\..*</code>).</para>
                   </listitem>
                   <listitem>
                      <para><code><link linkend="function-lang-code">tan:lang-code()</link></code>:
@@ -7435,17 +8152,17 @@ tag:bbrb@example.org,1995-04-01:pos-grc</programlisting>
                   </listitem>
                   <listitem>
                      <para><code><link linkend="function-most-common-item"
-                              >tan:most-common-item()</link></code>: from a sequence of items,
+                        >tan:most-common-item()</link></code>: from a sequence of items,
                         returns the one that occurs most frequently</para>
                   </listitem>
                   <listitem>
                      <para><code><link linkend="function-most-common-item-count"
-                              >tan:most-common-item-count</link>()</code>: returns the number of
+                        >tan:most-common-item-count</link>()</code>: returns the number of
                         times the most common item appears in a sequence</para>
                   </listitem>
                   <listitem>
                      <para><code><link linkend="function-no-outliers"
-                           >tan:no-outliers()</link></code>: removes outliers from a sequence of
+                        >tan:no-outliers()</link></code>: removes outliers from a sequence of
                         numbers</para>
                   </listitem>
                   <listitem>
@@ -7454,60 +8171,60 @@ tag:bbrb@example.org,1995-04-01:pos-grc</programlisting>
                   </listitem>
                   <listitem>
                      <para><code><link linkend="function-search-morpheus"
-                              >tan:search-morpheus()</link></code>: retrieves lexico-morphological
+                        >tan:search-morpheus()</link></code>: retrieves lexico-morphological
                         data for Greek and Latin from the Morpheus service</para>
                   </listitem>
                   <listitem>
                      <para><code><link linkend="function-search-wikipedia"
-                              >tan:search-wikipedia()</link></code>: retrieves a set number of
+                        >tan:search-wikipedia()</link></code>: retrieves a set number of
                         records from Wikipedia</para>
                   </listitem>
                   <listitem>
                      <para><code><link linkend="function-shallow-copy"
-                           >tan:shallow-copy()</link></code>: returns a copy of a node to a set
+                        >tan:shallow-copy()</link></code>: returns a copy of a node to a set
                         depth. Useful for messages, to provide feedback on a particular element and
                         its attributes, without any descendants (which would make the message hard
                         to read).</para>
                   </listitem>
                   <listitem>
                      <para><code><link linkend="function-uri-relative-to"
-                              >tan:uri-relative-to()</link></code>: converts an absolute URI to a
+                        >tan:uri-relative-to()</link></code>: converts an absolute URI to a
                         relative one, based on some context URI</para>
                   </listitem>
                </orderedlist>
             </para>
             <para>Some numeral functions might prove useful:<orderedlist>
-                  <listitem>
-                     <para>Letter numerals ↔ integers: <code><link linkend="function-aaa-to-int"
-                              >tan:aaa-to-int()</link></code>, <code><link
-                              linkend="function-int-to-aaa">tan:int-to-aaa()</link></code></para>
-                  </listitem>
-                  <listitem>
-                     <para>Roman numerals → integers: <code><link linkend="function-rom-to-int"
-                              >tan:rom-to-int()</link></code> (reverse not available)</para>
-                  </listitem>
-                  <listitem>
-                     <para>Greek numerals ↔ integers: <code><link linkend="function-grc-to-int"
-                              >tan:grc-to-int()</link></code>, <code><link
-                              linkend="function-int-to-grc">tan:int-to-grc()</link></code></para>
-                  </listitem>
-                  <listitem>
-                     <para>Syriac numerals → integers: <code><link linkend="function-syr-to-int"
-                              >tan:syr-to-int()</link></code> (reverse not available)</para>
-                  </listitem>
-                  <listitem>
-                     <para>Hexadecimal ↔ decimal: <code><link linkend="function-hex-to-dec"
-                              >tan:hex-to-dec()</link></code>, <code><link
-                              linkend="function-dec-to-hex">tan:dec-to-hex()</link></code></para>
-                  </listitem>
-                  <listitem>
-                     <para>String range ↔ integers: <code><link
-                              linkend="function-expand-numerical-sequence"
-                              >tan:expand-numerical-sequence()</link></code>, <code><link
-                              linkend="function-integers-to-sequence"
-                              >tan:integers-to-sequence()</link></code></para>
-                  </listitem>
-               </orderedlist></para>
+               <listitem>
+                  <para>Letter numerals ↔ integers: <code><link linkend="function-aaa-to-int"
+                     >tan:aaa-to-int()</link></code>, <code><link
+                        linkend="function-int-to-aaa">tan:int-to-aaa()</link></code></para>
+               </listitem>
+               <listitem>
+                  <para>Roman numerals → integers: <code><link linkend="function-rom-to-int"
+                     >tan:rom-to-int()</link></code> (reverse not available)</para>
+               </listitem>
+               <listitem>
+                  <para>Greek numerals ↔ integers: <code><link linkend="function-grc-to-int"
+                     >tan:grc-to-int()</link></code>, <code><link
+                        linkend="function-int-to-grc">tan:int-to-grc()</link></code></para>
+               </listitem>
+               <listitem>
+                  <para>Syriac numerals → integers: <code><link linkend="function-syr-to-int"
+                     >tan:syr-to-int()</link></code> (reverse not available)</para>
+               </listitem>
+               <listitem>
+                  <para>Hexadecimal ↔ decimal: <code><link linkend="function-hex-to-dec"
+                     >tan:hex-to-dec()</link></code>, <code><link
+                        linkend="function-dec-to-hex">tan:dec-to-hex()</link></code></para>
+               </listitem>
+               <listitem>
+                  <para>String range ↔ integers: <code><link
+                     linkend="function-expand-numerical-sequence"
+                     >tan:expand-numerical-sequence()</link></code>, <code><link
+                        linkend="function-integers-to-sequence"
+                        >tan:integers-to-sequence()</link></code></para>
+               </listitem>
+            </orderedlist></para>
          </section>
       </chapter>
    </part>

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?><section xmlns="http://docbook.org/ns/docbook" xml:id="tan-applications" version="5.0"><title>TAN Applications</title><para>Standard TAN applications are designed to take TAN or TEI files and create HTML 
+               assets that allow users to study particular aspects of the text through interaction, statistics,
+               and visualization. These are advanced, complex programs, and not all the intended features may have
+               been planned. </para><para>Because of their power, these applications feature numerous parameters for
+               configuration. You are encouraged to read closely the documentation in the
+               application to determine how to make the application work for your particular
+               goals.</para><para>Each section below is generated automatically from the master file that drives the
+               process. Any global parameters that are referred to in the discussion are explained in
+               the file itself. </para><section><title>Diff+</title><para><emphasis>Location: </emphasis><link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="../applications/Diff+/Diff+.xsl">applications/Diff+/Diff+.xsl</link></para><para> Version 2021-07-13</para><para> Take any number of versions of a text, compare them, and view and study all the text
+        differences in an HTML page. The HTML output allows you to see precisely where one version
+        differs from the other. A small Javascript library allows you to change focus, remove
+        versions, and explore statistics that show quantitatively how close the versions are to each
+        other. Parameters allow you to make normalizations before making the comparison, and to weigh
+        statistics accordingly. This application has been used not only for individual comparisons,
+        but for more demanding needs: to analyze changes in documents passing through a multistep
+        editorial workflow, to compare the quality of OCR results, and to study the relationship
+        between ancient/medieval manuscripts (stemmatology).</para><para> Examples of output:
+        <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://textalign.net/output/CFR-2017-title1-vol1-compared.xml">https://textalign.net/output/CFR-2017-title1-vol1-compared.xml</link>
+            XML master output file, comparing four years of the United States Code of Federal Regulations,
+            vol. 1
+        <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://textalign.net/output/CFR-2017-title1-vol1-compared.html">https://textalign.net/output/CFR-2017-title1-vol1-compared.html</link>
+            HTML comparison of four years of the United States Code of Federal Regulations, vol. 1
+        <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://textalign.net/output/diff-grc-2021-02-08-five-versions.html">https://textalign.net/output/diff-grc-2021-02-08-five-versions.html</link>
+            Comparison of results from four OCR processes against a benchmark,
+            classical Greek
+        <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://textalign.net/clio/darwin-3diff.html">https://textalign.net/clio/darwin-3diff.html</link>
+            Comparison of three editions of Darwin's works, sample
+        <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://textalign.net/clio/hom-01-coll-ignore-uv.html">https://textalign.net/clio/hom-01-coll-ignore-uv.html</link>
+            Comparison of five versions of Griffolini's translation of John Chrysostom's Homily 1 on 
+            the Gospel of John
+    </para><para><emphasis role="bold"> Description </emphasis></para><para> This is a MIRU Stylesheet (MIRU = Main Input Resolved URIs) </para><para><emphasis>Primary input:</emphasis> any XML file, including this one (input is ignored) </para><para><emphasis>Secondary input:</emphasis> one or more files </para><para><emphasis>Primary output:</emphasis> perhaps diagnostics </para><para><emphasis>Secondary output:</emphasis> for each detectable language in the secondary input: (1) an XML file with
+      the results of <code><link linkend="function-diff">tan:diff()</link></code> or <code><link linkend="function-collate">tan:collate()</link></code>, infused with select statistical analyses; (2) a
+      rendering of #1 in an interactive, visually engaging HTML form </para><para><emphasis>Nota bene:</emphasis> </para><para><itemizedlist><listitem><para>This application is useful only if the input files have different versions of the same text 
+        in the same language. </para></listitem></itemizedlist></para><para><itemizedlist><listitem><para>The XML output is a straightforward result of <code><link linkend="function-diff">tan:diff()</link></code> or <code><link linkend="function-collate">tan:collate()</link></code>, perhaps wrapped by
+        an element that also includes prepended statistical analysis. </para></listitem></itemizedlist></para><para><itemizedlist><listitem><para>The HTML output has been designed to work with specific JavaScript and CSS files, and the HTML 
+        output will not render correctly unless you have set up dependencies correctly. Currently, the 
+        HTML output is directed to the TAN output subdirectory, with the HTML pointing to the appropriate
+        javascript and CSS files in the js and css directories. </para></listitem></itemizedlist></para><para><emphasis role="bold"> Warning: certain features have yet to be implemented</emphasis></para><para><itemizedlist><listitem><para>Revise process that reinfuses a class 1 file with a diff/collate into a standard extra
+        TAN function.</para></listitem></itemizedlist></para><para> This application currently just scratches the surface of what is possible. New features are
+        planned! Some desiderata:<orderedlist><listitem><para>Support a single TAN-A as the catalyst or MIRU provider, allowing <code><link linkend="element-alias">&lt;alias&gt;</link></code> to define the groups.</para></listitem><listitem><para>Support MIRUs that point to non-TAN files, e.g., plain text, docx, xml.</para></listitem><listitem><para>Allow one to decide whether Venn diagrams should adjust the common area or not.</para></listitem><listitem><para>Enhance options on statistics.
+    </para></listitem></orderedlist></para></section><section><title>Parabola</title><para><emphasis>Location: </emphasis><link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="../applications/Parabola/Parabola.xsl">applications/Parabola/Parabola.xsl</link></para><para> Version 2021-07-07</para><para> This application allows you to take a library of TAN/TEI files with multiple versions of
+      each work and present them in an interactive HTML page.</para><para><emphasis role="bold"> Output examples </emphasis></para><para><link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://textalign.net/output/aristotle-categories-ref-bekker-page-col-line.html">http://textalign.net/output/aristotle-categories-ref-bekker-page-col-line.html</link>
+      Aristotle, Categories, in eight versions, six languages</para><para><link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://textalign.net/output/cpg%204425.TAN-A-div-2018-03-09.html">https://textalign.net/output/cpg%204425.TAN-A-div-2018-03-09.html</link>
+      Homilies on the Gospel of John, John Chrysostom, four versions, two languages</para><para><link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://evagriusponticus.net/cpg2430/cpg2430-full-for-reading.html">https://evagriusponticus.net/cpg2430/cpg2430-full-for-reading.html</link>
+      The Praktikos by Evagrius of Pontus, three languages, with Bible quotations</para><para><link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://textalign.net/quran/quran.ara+grc+syr+lat+deu+eng.html">https://textalign.net/quran/quran.ara+grc+syr+lat+deu+eng.html</link>
+      Qur'an in eighteen versions, six languages</para><para><emphasis role="bold"> Description </emphasis></para><para><emphasis>Primary input:</emphasis> a TAN-A file </para><para><emphasis>Secondary input:</emphasis> its sources expanded </para><para><emphasis>Primary output:</emphasis> an interactive HTML page with the versions of the chosen work grouped and arranged
+      in parallel, with annotations </para><para><emphasis>Secondary output:</emphasis> none </para><para> This application is one of the most significant for TAN files, because it allows one to juxtapose any
+      number of versions of a work in the same reading space, and to situate quotations or annotations.
+      It is useful both in the middle stages of a project, where you might need to check on and adjust
+      the alignment of a text in light of its peers, or at the end stages of a project, where you might
+      be publishing a parallel edition, or using one in for study or teaching. </para><para> Nota bene:<itemizedlist><listitem><para>This application has many fine-tuned configuration options. Read through the whole file
+      to see what is available.</para></listitem><listitem><para>This application processes a single work, assumed to be the work of the first <code><link linkend="element-source">&lt;source&gt;</link></code> in the
+      catalyzing TAN-A file. If you want a different source, promote the relevant <code><link linkend="element-source">&lt;source&gt;</link></code> to the first
+      position.
+   </para></listitem></itemizedlist></para><para><emphasis role="bold"> Warning: certain features have yet to be implemented </emphasis></para><para><itemizedlist><listitem><para>Simplify the routine. This was converted from an inferior workflow, and it is admittedly wretched
+      in the number of passes that are needed to be used to get to the output. * Annotations need a lot of
+      work. They should be placed into the merge early. In fact, the whole workflow needs to be revised,
+      with most structural work done before attempting to convert to HTML. * Develop output option using
+      nested HTML divs, to parallel the existing output that uses HTML tables * Integrate diff/collate
+      into cells, on both the global and local level. * Support in the css bar clicking source id labels
+      on and off. * Add labels for divs higher than version wrappers. </para></listitem></itemizedlist></para></section><section><title>TAN to HTML</title><para><emphasis>Location: </emphasis><link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="../applications/TAN%20to%20HTML/TAN%20to%20HTML.xsl">applications/TAN%20to%20HTML/TAN%20to%20HTML.xsl</link></para><para> Version 2021-07-07</para><para> This utility quickly renders a TAN or TEI file as HTML. It has been optimized for JavaScript and CSS
+      within the output/js and output/css in the TAN file structure. </para><para><emphasis role="bold"> Description </emphasis></para><para><emphasis>Primary input:</emphasis> any TAN or TEI file </para><para><emphasis>Secondary input:</emphasis> none </para><para><emphasis>Primary output:</emphasis> if no destination filename is specified, an HTML file </para><para><emphasis>Secondary output:</emphasis> if a destination filename is specified, an HTML file at the target location </para><para> Nota bene:<itemizedlist><listitem><para>This application can be used to generate primary or secondary output, depending upon how
+      parameters are configured (see below).
+   </para></listitem></itemizedlist></para><para><emphasis role="bold"> Warning: certain features have yet to be implemented </emphasis></para><para><itemizedlist><listitem><para>Need to wholly overhaul the default CSS and JavaScript files in output/css and output/js * Need to
+      build parameters to allow users to drop elements from the HTML DOM. </para></listitem></itemizedlist></para></section><section><title>Tangram</title><para><emphasis>Location: </emphasis><link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="../applications/Tangram/Tangram.xsl">applications/Tangram/Tangram.xsl</link></para><para> This application searches for and scores clusters of words shared across two groups of texts, allowing
+      you to look for quotations, paraphrases, or shared topics. When configured correctly, Tangram can
+      also find idioms and collocations. Each input file, which may come in a variety of formats (TAN,
+      TEI, other XML formats, plain text, Word documents) must be assigned to one or both of two groups,
+      each group representing a work. Members of a work-group can be from different languages. Users can
+      specify how many ngrams ("words") should be found, and how far apart they can be from each other.
+      Ngram order is disregarded (e.g., ngram "shear", "blue", "sheep" would match ngram "sheep", "blue",
+      "shear"). Tangram first normalizes and tokenizes each text according to language rules. Each token
+      is converted to one or more aliases. If lexico-morphological data is available through a TAN-A-lm
+      file, or if there is a TAN-A-lm language library for the language of the text being processed, a
+      token may be replaced by multiple lexemes (e.g., "rung" would attract aliases "ring" and "rung");
+      otherwise, a case-insensitive generic form of the word is used. Then each text in group 1 is
+      compared to each text in group 2 that shares the same language. For each pair of texts, Tangram
+      identifies clusters of tokens that share the same alias. It then consolidates adjacent clusters of
+      ngrams, and scores the results based upon several criteria. Grouped clusters are then converted
+      into a primitive TAN-A file consisting of claims that identify parallel passages of each pair of
+      texts, and the output is rendered as sortable HTML, to facilitate better study of the results.
+      Tangram was written primarily to support quotation detection in ancient Greek and Latin texts,
+      which has rather demanding requirements. Because of these objectives, Tangram frequently operates
+      in quadratic or cubic time, so can be quite time-consuming to run. A feature allows the user to
+      save intermediate stages as temporary files, to reduce processing time. </para><para> Version 2021-07-07</para><para><emphasis role="bold"> Description </emphasis></para><para><emphasis>Primary input:</emphasis> any XML file, including this one (input is ignored) </para><para><emphasis>Secondary input:</emphasis> one or more files allocated to two groups; perhaps temporary files; perhaps
+      TAN-A-lm files, either associated with secondary input, or part of a language catalog </para><para><emphasis>Primary output:</emphasis> perhaps diagnostics </para><para><emphasis>Secondary output:</emphasis> (1) an XML file with TAN-A claims identifying quotations or parallels, with the
+      most likely at the top; (2) an HTML file that renders #1 in a more legible format. </para><para><emphasis role="bold"> Warning: certain features have yet to be implemented</emphasis></para><para><itemizedlist><listitem><para>Support the method pioneered by Shmidman, Koppel, and Porat:
+      <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://arxiv.org/abs/1602.08715v2">https://arxiv.org/abs/1602.08715v2</link> * Make sure texts run against themselves work.</para></listitem></itemizedlist></para><para><emphasis>Nota bene:</emphasis> </para><para><itemizedlist><listitem><para>A file may be placed in both groups, to explore cases of self-quotation or 
+      repetition. </para></listitem></itemizedlist></para><para><itemizedlist><listitem><para>This process can take a very long time for lengthy texts, particuarly at the stage where a 1gram gets
+      added to an Ngram, because the process takes quadratic time. Many messages could appear during
+      <code>tan:add-1gram()</code>, updating progress through perhaps long routines. It is recommended that you save
+      intermediate steps, to avoid having to repeat steps on subsequent runs.
+         By way of comparison, two texts in group 1 of about 4.4K and 2.6K words against a single text in
+      group 2 of about 137K words took 319 seconds to build up to a set of unconsolidated token aliases.
+      One text from group 1 had an associated TAN-A-lm annotation and the text from group 2 did as well.
+      There was a TAN-A-lm library associated with the language (Greek). When the program was run again
+      without changing parameters, it took only 11 seconds to get to that same stage, because of the
+      saved temporary files.
+         That same set of texts took 1,219 seconds (20 minutes) to develop into a 3gram, with chops at
+      common Greek stop words and skipping the most common 1% token aliases. When run again, based on
+      temporary files, it took only 23 seconds. That is, saving intermediate steps could save you hours
+      of time. </para></listitem></itemizedlist></para></section></section>
