@@ -12,6 +12,10 @@
    <sch:let name="top-level-comments" value="/*/comment()"/>
    <sch:let name="welcome-message" value="/*/comment()[contains(normalize-space(.), $tan:welcome-message-starter)]"/>
    <sch:let name="app-description" value="/*/comment()[contains(normalize-space(.), normalize-space($tan:app-description))]"/>
+   <sch:let name="app-primary-input-message" value="/*/comment()[matches(normalize-space(.), '^(Primary|Catalyzing) input:')]"/>
+   <sch:let name="app-secondary-input-message" value="/*/comment()[matches(normalize-space(.), '^Secondary input:')]"/>
+   <sch:let name="app-primary-output-message" value="/*/comment()[matches(normalize-space(.), '^Primary output:')]"/>
+   <sch:let name="app-secondary-output-message" value="/*/comment()[matches(normalize-space(.), '^Secondary output:')]"/>
    <sch:let name="app-to-do-warning" value="
          /*/comment()[let $i := normalize-space(.)
          return
@@ -46,6 +50,18 @@
          <sch:assert test="exists($tan:app-name)">Every TAN application must include in the main
             stylesheet an xsl:param whose name is tan:stylesheet-name, declaring the name of the
             application.</sch:assert>
+         <sch:assert test="exists($tan:app-primary-input-desc)">Every TAN application must include
+            in the main stylesheet an xsl:param whose name is tan:stylesheet-primary-input-desc,
+            describing the expected primary input.</sch:assert>
+         <sch:assert test="exists($tan:app-secondary-input-desc)">Every TAN application must include
+            in the main stylesheet an xsl:param whose name is tan:stylesheet-secondary-input-desc,
+            describing the expected secondary input.</sch:assert>
+         <sch:assert test="exists($tan:app-primary-output-desc)">Every TAN application must include
+            in the main stylesheet an xsl:param whose name is tan:stylesheet-primary-output-desc,
+            describing the expected primary output.</sch:assert>
+         <sch:assert test="exists($tan:app-secondary-output-desc)">Every TAN application must include
+            in the main stylesheet an xsl:param whose name is tan:stylesheet-secondary-output-desc,
+            describing the expected secondary output.</sch:assert>
          <sch:assert test="exists($tan:app-change-message)">Every TAN application must include in the main
             stylesheet an xsl:param whose name is tan:stylesheet-change-message, declaring the change being 
             performed by the application.</sch:assert>
@@ -65,6 +81,18 @@
          
          <sch:report test="exists($tan:app-description) and not(exists($app-description))" sqf:fix="add-description-comment">Every TAN
             application must include a comment describing the application.</sch:report>
+         <sch:report test="not(exists($app-primary-input-message))"
+            sqf:fix="add-primary-input-comment">Every TAN application must include a message stating
+            describing its primary input</sch:report>
+         <sch:report test="not(exists($app-secondary-input-message))"
+            sqf:fix="add-secondary-input-comment">Every TAN application must include a message
+            stating describing its secondary input</sch:report>
+         <sch:report test="not(exists($app-primary-output-message))"
+            sqf:fix="add-primary-output-comment">Every TAN application must include a message
+            stating describing its primary output</sch:report>
+         <sch:report test="not(exists($app-secondary-output-message))"
+            sqf:fix="add-secondary-output-comment">Every TAN application must include a message
+            stating describing its secondary output</sch:report>
          <sch:assert test="exists($welcome-message)" sqf:fix="add-welcome-comment">Every TAN
             application must include a comment welcoming the user to the application, identifiable
             by its starter: <sch:value-of select="$tan:welcome-message-starter"/></sch:assert>
@@ -72,6 +100,9 @@
             application must include a version statement.</sch:assert>
          <sch:assert test="exists($app-preamble)" sqf:fix="std-app-preamble">Every TAN application
             must include the standard preamble.</sch:assert>
+         
+         <sch:assert test="exists(comment()[contains(., 'PARAMETERS')])">There must be a comment
+            with the text PARAMETERS, preceding all parameters</sch:assert>
          
          <sch:report test="exists($tan:app-to-do-list) and not(exists($app-to-do-warning))"
             sqf:fix="add-to-do-list">Every TAN application with an active list of development points
@@ -86,6 +117,7 @@
                <xsl:comment><xsl:value-of select="string-join($sqf:current/*, '&#xa;')"/></xsl:comment>
             </sqf:add>
          </sqf:fix>
+         
          <sqf:fix id="add-description-comment">
             <sqf:description>
                <sqf:title>Add description to TAN application</sqf:title>
@@ -93,6 +125,42 @@
             <sqf:add match="/*/comment()[1]" position="after">
                <xsl:value-of select="'&#xa;'"/>
                <xsl:copy-of select="$tan:app-description-comment"/>
+            </sqf:add>
+         </sqf:fix>
+         <sqf:fix id="add-primary-input-comment">
+            <sqf:description>
+               <sqf:title>Add primary input description to TAN application</sqf:title>
+            </sqf:description>
+            <sqf:add match="/*/comment()[1]" position="after">
+               <xsl:value-of select="'&#xa;'"/>
+               <xsl:copy-of select="$tan:app-primary-input-comment"/>
+            </sqf:add>
+         </sqf:fix>
+         <sqf:fix id="add-secondary-input-comment">
+            <sqf:description>
+               <sqf:title>Add secondary input description to TAN application</sqf:title>
+            </sqf:description>
+            <sqf:add match="/*/comment()[1]" position="after">
+               <xsl:value-of select="'&#xa;'"/>
+               <xsl:copy-of select="$tan:app-secondary-input-comment"/>
+            </sqf:add>
+         </sqf:fix>
+         <sqf:fix id="add-primary-output-comment">
+            <sqf:description>
+               <sqf:title>Add primary output description to TAN application</sqf:title>
+            </sqf:description>
+            <sqf:add match="/*/comment()[1]" position="after">
+               <xsl:value-of select="'&#xa;'"/>
+               <xsl:copy-of select="$tan:app-primary-output-comment"/>
+            </sqf:add>
+         </sqf:fix>
+         <sqf:fix id="add-secondary-output-comment">
+            <sqf:description>
+               <sqf:title>Add secondary output description to TAN application</sqf:title>
+            </sqf:description>
+            <sqf:add match="/*/comment()[1]" position="after">
+               <xsl:value-of select="'&#xa;'"/>
+               <xsl:copy-of select="$tan:app-secondary-output-comment"/>
             </sqf:add>
          </sqf:fix>
          <sqf:fix id="add-welcome-comment">
@@ -159,6 +227,25 @@
          <sch:let name="parameters-referred-to" value="analyze-string(., '\$([a-zA-Z][\w-]+)')"/>
          <sch:let name="parameters-mentioned-but-not-here"
             value="$parameters-referred-to/*:match/*:group[not(. = $all-parameter-names)]"/>
+         <sch:let name="is-primary-input-desc" value=". is $app-primary-input-message"/>
+         <sch:let name="is-secondary-input-desc" value=". is $app-secondary-input-message"/>
+         <sch:let name="is-primary-output-desc" value=". is $app-primary-output-message"/>
+         <sch:let name="is-secondary-output-desc" value=". is $app-secondary-output-message"/>
+         <sch:let name="expected-message" value="
+               if ($is-primary-input-desc) then
+                  ($tan:app-primary-input-comment)
+               else
+                  if ($is-secondary-input-desc) then
+                     ($tan:app-secondary-input-comment)
+                  else
+                     if ($is-primary-output-desc) then
+                        ($tan:app-primary-output-comment)
+                     else
+                        if ($is-secondary-output-desc) then
+                           ($tan:app-secondary-output-comment)
+                        else
+                           ()
+               "/>
          <sch:report
             test="$is-version-statement and not(contains(., $tan:main-app-history/*[1]/@when))"
             sqf:fix="replace-with-version-statement">The version of this application should be
@@ -174,6 +261,15 @@
             are not here: <sch:value-of select="string-join($parameters-referred-to/*:match, ', ')"
             />. If a parameter is mentioned by name in the stylesheet, it should be seen
             here.</sch:report>
+         <sch:report sqf:fix="replace-with-expected-message"
+            test="string-length($expected-message) gt 0 and not(contains(normalize-space(.), normalize-space($expected-message)))"
+            > Comment is expected to contain the following message: <sch:value-of
+               select="$expected-message"/>
+         </sch:report>
+         
+         <sch:report test="contains(., 'PARAMETERS') and exists(preceding-sibling::xsl:param)">The
+            PARAMETERS header must precede any xsl:param</sch:report>
+         
          
          <sqf:fix id="replace-with-version-statement">
             <sqf:description>
@@ -188,6 +284,12 @@
             <sqf:replace xml:space="preserve"
                select="tan:reformat-comment(., $total-indentation, $maximum-column-width-for-comments)"
             />
+         </sqf:fix>
+         <sqf:fix id="replace-with-expected-message">
+            <sqf:description>
+               <sqf:title>Replace with expected message</sqf:title>
+            </sqf:description>
+            <sqf:replace select="$expected-message"/>
          </sqf:fix>
       </sch:rule>
       

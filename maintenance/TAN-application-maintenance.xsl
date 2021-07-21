@@ -20,6 +20,10 @@
    <xsl:variable name="tan:app-iri" as="element()?" select="$tan:main-application/*/xsl:param[@name eq 'tan:stylesheet-iri']"/>
    <xsl:variable name="tan:app-name" as="element()?" select="$tan:main-application/*/xsl:param[@name eq 'tan:stylesheet-name']"/>
    <xsl:variable name="tan:app-description" as="element()?" select="$tan:main-application/*/xsl:param[@name eq 'tan:stylesheet-description']"/>
+   <xsl:variable name="tan:app-primary-input-desc" as="element()?" select="$tan:main-application/*/xsl:param[@name eq 'tan:stylesheet-primary-input-desc']"/>
+   <xsl:variable name="tan:app-secondary-input-desc" as="element()?" select="$tan:main-application/*/xsl:param[@name eq 'tan:stylesheet-secondary-input-desc']"/>
+   <xsl:variable name="tan:app-primary-output-desc" as="element()?" select="$tan:main-application/*/xsl:param[@name eq 'tan:stylesheet-primary-output-desc']"/>
+   <xsl:variable name="tan:app-secondary-output-desc" as="element()?" select="$tan:main-application/*/xsl:param[@name eq 'tan:stylesheet-secondary-output-desc']"/>
    <xsl:variable name="tan:app-output-examples" as="element()?" select="$tan:main-application/*/xsl:param[@name eq 'tan:stylesheet-output-examples']"/>
    <xsl:variable name="tan:app-activity" as="element()?" select="$tan:main-application/*/xsl:param[@name eq 'tan:stylesheet-activity']"/>
    <xsl:variable name="tan:app-change-message" as="element()?" select="$tan:main-application/*/xsl:param[@name eq 'tan:stylesheet-change-message']"/>
@@ -39,6 +43,18 @@
    
    <xsl:variable name="tan:app-description-comment" as="comment()"
       select="tan:text-to-comment($tan:app-description, $total-indentation, $maximum-column-width-for-comments)"
+   />
+   <xsl:variable name="tan:app-primary-input-comment" as="comment()"
+      select="tan:text-to-comment('Primary input: ' || $tan:app-primary-input-desc, $total-indentation, $maximum-column-width-for-comments)"
+   />
+   <xsl:variable name="tan:app-secondary-input-comment" as="comment()"
+      select="tan:text-to-comment('Secondary input: ' || $tan:app-secondary-input-desc, $total-indentation, $maximum-column-width-for-comments)"
+   />
+   <xsl:variable name="tan:app-primary-output-comment" as="comment()"
+      select="tan:text-to-comment('Primary output: ' || $tan:app-primary-output-desc, $total-indentation, $maximum-column-width-for-comments)"
+   />
+   <xsl:variable name="tan:app-secondary-output-comment" as="comment()"
+      select="tan:text-to-comment('Secondary output: ' || $tan:app-secondary-output-desc, $total-indentation, $maximum-column-width-for-comments)"
    />
    
    <xsl:variable name="tan:main-app-history" as="element()*" select="tan:get-doc-history($tan:main-application)"/>
@@ -80,11 +96,18 @@
    
    <xsl:variable name="tan:example-locations-not-available" as="element()*"
       select="$tan:app-output-examples//*:location[not(unparsed-text-available(.))]"/>
-   
-   <xsl:variable name="tan:to-do-list-comment" as="comment()+" select="
-         tan:text-to-comment('WARNING: CERTAIN FEATURES HAVE YET TO BE IMPLEMENTED', $total-indentation, $maximum-column-width-for-comments),
-         tan:text-to-comment('* ' || string-join($tan:app-to-do-list//text()[matches(., '\S')], ' * '), $total-indentation, $maximum-column-width-for-comments)"
+
+   <xsl:variable name="tan:to-do-list-items" as="comment()*" select="
+         for $i in $tan:app-to-do-list//text()[matches(., '\S')]
+         return
+            tan:text-to-comment('* ' || $i, $total-indentation, $maximum-column-width-for-comments)"
    />
+   <xsl:variable name="tan:to-do-list-comment" as="comment()+">
+      <xsl:sequence
+         select="tan:text-to-comment('WARNING: CERTAIN FEATURES HAVE YET TO BE IMPLEMENTED', $total-indentation, $maximum-column-width-for-comments)"
+      />
+      <xsl:comment><xsl:value-of select="string-join($tan:to-do-list-items, '&#xa;' || tan:fill(' ', $total-indentation))"/></xsl:comment>
+   </xsl:variable>
    
    <xsl:function name="tan:text-to-comment" as="comment()">
       <xsl:param name="input-text" as="xs:string"/>
@@ -196,7 +219,7 @@
             <xsl:variable name="is-initial-line" as="xs:boolean" select="position() eq 1"/>
             <xsl:variable name="first-line-offset" as="xs:integer" select="
                   if ($is-initial-line) then
-                     5
+                     $indentation-length + 5
                   else
                      0"/>
             

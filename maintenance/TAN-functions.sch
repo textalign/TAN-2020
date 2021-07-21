@@ -20,8 +20,8 @@
          approach has been adopted instead of Git submodule because of the difficulty for
          nonexperienced users to make sure submodules are included. </sch:p>
       <sch:rule
-         context="xsl:stylesheet[contains(base-uri(.), 'open-and-save-archive.xsl')]/* | 
-         xsl:stylesheet[contains(base-uri(.), 'open-and-save-archive.xsl')]/comment()">
+         context="xsl:stylesheet[contains(base-uri(.), 'TAN-fn-file-archive-extended.xsl')]/* | 
+         xsl:stylesheet[contains(base-uri(.), 'TAN-fn-file-archive-extended.xsl')]/comment()">
          <sch:let name="current-path" value="path(.)"/>
          <sch:let name="corresponding-element"
             value="$master-open-and-save-archive-file/*/node()[path(.) eq $current-path]"/>
@@ -32,8 +32,8 @@
                select="serialize(tan:diff(serialize(.), serialize($corresponding-element))/*)"/></sch:assert>
       </sch:rule>
       <sch:rule
-         context="xsl:stylesheet[contains(base-uri(.), 'TAN-regex.xsl')]/* | 
-         xsl:stylesheet[contains(base-uri(.), 'TAN-regex.xsl')]/comment()">
+         context="xsl:stylesheet[contains(base-uri(.), 'TAN-fn-regex-standard.xsl')]/* | 
+         xsl:stylesheet[contains(base-uri(.), 'TAN-fn-regex-standard.xsl')]/comment()">
          <sch:let name="current-path" value="path(.)"/>
          <sch:let name="corresponding-element"
             value="$master-regex-function-file/*/node()[path(.) eq $current-path]"/>
