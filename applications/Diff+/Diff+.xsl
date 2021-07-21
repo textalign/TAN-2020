@@ -18,17 +18,17 @@
         between ancient/medieval manuscripts (stemmatology).-->
     
     <!-- Examples of output:
-        https://textalign.net/output/CFR-2017-title1-vol1-compared.xml
+        * https://textalign.net/output/CFR-2017-title1-vol1-compared.xml
             XML master output file, comparing four years of the United States Code of Federal Regulations,
             vol. 1
-        https://textalign.net/output/CFR-2017-title1-vol1-compared.html
+        * https://textalign.net/output/CFR-2017-title1-vol1-compared.html
             HTML comparison of four years of the United States Code of Federal Regulations, vol. 1
-        https://textalign.net/output/diff-grc-2021-02-08-five-versions.html
+        * https://textalign.net/output/diff-grc-2021-02-08-five-versions.html
             Comparison of results from four OCR processes against a benchmark,
             classical Greek
-        https://textalign.net/clio/darwin-3diff.html
+        * https://textalign.net/clio/darwin-3diff.html
             Comparison of three editions of Darwin's works, sample
-        https://textalign.net/clio/hom-01-coll-ignore-uv.html
+        * https://textalign.net/clio/hom-01-coll-ignore-uv.html
             Comparison of five versions of Griffolini's translation of John Chrysostom's Homily 1 on 
             the Gospel of John
     -->
@@ -45,13 +45,12 @@
     <!-- DESCRIPTION -->
     
     <!-- This is a MIRU Stylesheet (MIRU = Main Input Resolved URIs) -->
-    <!-- Primary (catalyzing) input: any XML file, including this one (input is ignored) -->
-    <!-- Secondary (main) input: resolved URIs to one or more files, each one a text to be compared 
-        to others -->
+    <!-- Primary input: any XML file, including this one (input is ignored) -->
+    <!-- Secondary input: one or more files -->
     <!-- Primary output: perhaps diagnostics -->
-    <!-- Secondary output: for each detectable group of texts: (1) an XML file with the results
-        of tan:diff() or tan:collate(), along with select statistical analyses; (2) an HTML file 
-        rendering the differences and statistics more legibly. -->
+    <!-- Secondary output: for each detectable language in the secondary input: (1) an XML file with
+      the results of tan:diff() or tan:collate(), infused with select statistical analyses; (2) a
+      rendering of #1 in an interactive, visually engaging HTML form -->
 
     <!-- Nota bene: -->
     <!-- * This application is useful only if the input files have different versions of the same text 

@@ -19,6 +19,14 @@
     <xsl:param name="tan:stylesheet-name" as="xs:string" select="'Catalog Creator'"/>
     <xsl:param name="tan:stylesheet-activity"
         select="'creates an XML or TAN catalog of files'"/>
+    
+    <xsl:param name="tan:stylesheet-primary-input-desc" as="xs:string">any XML file</xsl:param>
+    <xsl:param name="tan:stylesheet-secondary-input-desc" as="xs:string">none</xsl:param>
+    <xsl:param name="tan:stylesheet-primary-output-desc" as="xs:string">perhaps diagnostics</xsl:param>
+    <xsl:param name="tan:stylesheet-secondary-output-desc" as="xs:string">a new catalog file for
+        select files in the input file's directory, and perhaps subdirectories; if the collection is
+        TAN-only, the filename will be catalog.tan.xml, otherwise it will be catalog.xml</xsl:param>
+
     <xsl:param name="tan:stylesheet-url" select="static-base-uri()"/>
     <xsl:param name="tan:stylesheet-is-core-tan-application" select="true()"/>
     <xsl:param name="tan:stylesheet-change-log">

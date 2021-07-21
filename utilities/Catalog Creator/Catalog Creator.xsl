@@ -17,12 +17,12 @@
     
     <!-- DESCRIPTION -->
     
-    <!-- Primary (catalyzing and main) input: any XML file -->
+    <!-- Primary input: any XML file -->
     <!-- Secondary input: none -->
     <!-- Primary output: perhaps diagnostics -->
-    <!-- Secondary output: a new catalog file for select files in the input file's directory, and perhaps 
-        subdirectories. If the collection is TAN-only, the filename will be catalog.tan.xml, otherwise
-        catalog.xml. -->
+    <!-- Secondary output: a new catalog file for select files in the input file's directory, and perhaps
+        subdirectories; if the collection is TAN-only, the filename will be catalog.tan.xml, otherwise it
+        will be catalog.xml -->
     
     <!-- Every catalog file is an XML file with a root element <collection> with children elements <doc>.
         Both <collection> and <doc> are in no namespace. <doc> can contain anything, but it is arbitrary. -->

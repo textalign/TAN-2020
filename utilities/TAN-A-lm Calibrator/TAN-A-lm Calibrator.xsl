@@ -33,7 +33,7 @@
     
     <!-- DESCRIPTION -->
     
-    <!-- Primary (catalyzing) input: any TAN-A-lm file -->
+    <!-- Primary input: any TAN-A-lm file -->
     <!-- Secondary input: none -->
     <!-- Primary output: the TAN-A-lm file with certainty recalibrated -->
     <!-- Secondary output: none. -->
@@ -42,12 +42,18 @@
     <!-- WARNING: CERTAIN FEATURES HAVE YET TO BE IMPLEMENTED -->
     <!-- * Look at ways to adjust tok certainty -->
 
-    <!-- Nota bene: -->
-    <!-- * Input is not resolved ahead of time, so inclusions are ignored. -->
-    <!-- * Calibration is not applied to <tok>, only to <lm>s within any <ana>. The certainty
+    <!-- Nota bene: 
+        * Input is not resolved ahead of time, so inclusions are ignored. 
+        * Calibration is not applied to <tok>, only to <lm>s within any <ana>. The certainty
         of <tok> is difficult to calibrate because of the complexities involved in @ref, @rgx, 
         and @chars. A future version of this application may support that feature. --> 
     
+
+    <!-- PARAMETERS -->
+    
+    <!-- No parameters affect the behavior of this version of this application. -->
+
+
     <!-- THE APPLICATION -->
     
     <!-- The main engine for the application is in this file, and in other files it links to. Feel free to 

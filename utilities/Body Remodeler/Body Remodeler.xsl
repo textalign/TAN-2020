@@ -31,18 +31,15 @@
    
 
    <!-- DESCRIPTION -->
-
-   <!-- Primary (catalyzing) input: any XML file -->
-   <!-- Secondary input: a TAN-T(EI) that exemplifies a model reference system that 
-        the input should follow -->
-   <!-- Primary output: the model, with its <div> structure intact, but the text replaced with the 
-        text of the input. Text will be allocated to the new <div> structure proportionate 
-        to the text length in the model. -->
+   <!-- Primary input: preferably a TAN-T or TAN-TEI file -->
+   <!-- Secondary input: a TAN-T or TAN-TEI file that has model div and reference system -->
+   <!-- Primary output: the model, with its div structure intact, but the text replaced with the text of the
+      input, allocated to the new div structure proportionate to the model's text length -->
    <!-- Secondary output: none -->
 
    <!-- Nota bene:
       * If the catalyzing input file is not a class-1 file, but just an XML file, it will be read
-      for its string value, the output will be a copy of the model with the string proportionately
+      for its string value. The output will be a copy of the model with the string proportionately
       allocated to its body components.
       * If you remodel a set of sibling leaf divs but exclude certain intervening leaf divs from 
       being remodeled, the entire remodel will be placed at the location of the first leaf div only. 
@@ -55,49 +52,34 @@
       * Although the model can be a TAN-TEI file, refining the output will not be possible using 
       the TAN Oxygen editor tools, because pushing a word, clause, or sentence from one leaf div to
       another will inevitably require splitting and rejoining the host elements. Such a utility is
-      possible, but would require further development of the editing tools. 
+      possible, but would require resources for development. 
    -->
    
    <!-- WARNING: CERTAIN FEATURES HAVE YET TO BE IMPLEMENTED -->
-   <!-- * Support the complete-the-square method * Test, troubleshoot against various TEI models-->
+   <!-- * Support the complete-the-square method (model has a redivision that matches the input's div 
+      structure) 
+      * Test, troubleshoot against various TEI models -->
    
-   
-   <!-- Strategies for use:
-    
-    Method: gentle increments
+   <!-- STRATEGIES FOR USE -->
+   <!-- Method: gentle increments -->
+   <!-- Use this method in tandem with the TAN editing tools in Oxygen, where you can easily push and 
+    pull entire words, clauses, and sentences from one leaf div to another. When you are editing 
+    (##2, 5), place the model in a parallel window.
+    --> 
+   <!-- 
     1. Run plain text against the model.
     2. Edit the output, focusing only on getting the top-level divisions correct.
     3. Change the parameter $preserve-matching-ref-structures-up-to-what-level to 1.
     4. Run the edited input against the model again. Your top-level divisions should remain intact.
     5. Edit the output, focusing only on getting the 2nd-level divisions correct.
-    6. Repeat ##3-5 through the rest of the hierarchy.
-    Use this method in tandem with the TAN editing tools in Oxygen, where you can easily push and 
-    pull entire words, clauses, and sentences from one leaf div to another. When you are editing 
-    (##2, 5), place the model in a parallel window.
-    
-    Method: complete the square (not yet supported)
-    Sometimes you have a model text in version A that is in two different reference systems (A1 and 
-    A2). You now want to work on version B, and set up TAN-T(EI) versions in both reference systems 
-    (B1 and B2).
-    1. Apply the gentle increments method to version B on ref system 1.
-    2. Make sure that A1 and A2 point to each other through mutual <redivision>s.
-    3. Add to version B1 a <model> that points to A1.
-    4. Run B1 against A2 with this application. It will check to see if there is an intermediate 
-    version (A1) against which it can more precisely calibrate the portions of B1.
-    5. Edit B2 along the lines discussed under gentle increments.
-    The method is called complete the square, because #4 assumes this:
-    A1   A2
-    B1  [  ]
-    The version A1 becomes instrumental in making its catacorner counterpart more accurate. This method 
-    was first introduced in the stable 2020 application, but as of March 2021, after two major revisions, 
-    the complete the square method has not been implemented. 
-    
-    Working with non-XML input
-       You might have text from some non-XML source that you want to feed into this method. If you can 
-    get down to the plain text, put it into any XML file, and run it through this application, changing 
-    the parameter $model-uri-relative-to-catalyzing-input to specify exactly where the model is. You'll 
-    get the model with the text infused. It will need a lot of metadata editing, but at least you'll 
-    have a good start for structuring the body. -->
+    6. Repeat ##3-5 through the rest of the hierarchy. -->
+
+
+   <!-- Working with non-XML input: You might have text from some non-XML source that you want to feed
+      into this method. If you can get down to the plain text, put it into any XML file, and run it
+      through this application, changing the parameter $model-uri-relative-to-catalyzing-input to specify
+      exactly where the model is. You'll get the model with the text infused. It will need a lot of
+      metadata editing, but at least you'll have a good start for structuring the body. -->
    
 
    <!-- PARAMETERS -->

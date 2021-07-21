@@ -53,6 +53,17 @@
         in quadratic or cubic time, so can be quite time-consuming to run. A feature allows the user
         to save intermediate stages as temporary files, to reduce processing time.
     </xsl:param>
+    
+    <xsl:param name="tan:stylesheet-primary-input-desc" as="xs:string">any XML file, including this
+        one (input is ignored)</xsl:param>
+    <xsl:param name="tan:stylesheet-secondary-input-desc" as="xs:string">one or more files allocated
+        to two groups; perhaps temporary files; perhaps TAN-A-lm files, either associated with
+        secondary input, or part of a language catalog</xsl:param>
+    <xsl:param name="tan:stylesheet-primary-output-desc" as="xs:string">perhaps diagnostics</xsl:param>
+    <xsl:param name="tan:stylesheet-secondary-output-desc" as="xs:string"> (1) an XML file with
+        TAN-A claims identifying quotations or parallels, with the most likely at the top; (2) an
+        HTML file that renders #1 in a more legible format. </xsl:param>
+    
     <xsl:param name="tan:stylesheet-url" select="static-base-uri()"/>
     <xsl:param name="tan:stylesheet-is-core-tan-application" select="true()"/>
     <xsl:param name="tan:stylesheet-to-do-list">

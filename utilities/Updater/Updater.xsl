@@ -19,16 +19,21 @@
     
     <!-- DESCRIPTION -->
     
-    <!-- Primary (catalyzing) input: any TAN file version 2020 -->
-    <!-- Secondary (main) input: none. -->
-    <!-- Primary output: the TAN file converted to 2021. -->
+    <!-- Primary input: any TAN file version 2020 -->
+    <!-- Secondary input: none -->
+    <!-- Primary output: the TAN file converted to the latest version -->
     <!-- Secondary output: none -->
     
 
     <!-- Nota bene: -->
     <!-- * To convert TAN files from a version earlier than 2020, use applications released with  
         prior alpha versions. -->
-
+    
+    
+    <!-- PARAMETERS -->
+    
+    <!-- No parameters affect the behavior of this version of this application. -->
+    
 
     <!-- The main engine for the application is in this file, and in other files it links to. Feel
         free to explore, but make alterations only if you know what you are doing. If you make

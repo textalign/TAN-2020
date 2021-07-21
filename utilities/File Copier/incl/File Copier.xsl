@@ -24,6 +24,13 @@
     <xsl:param name="tan:stylesheet-activity"
         select="'copies a file to a location, updating internal relative URLs'"/>
     
+    <xsl:param name="tan:stylesheet-primary-input-desc" as="xs:string">any XML file</xsl:param>
+    <xsl:param name="tan:stylesheet-secondary-input-desc" as="xs:string">none</xsl:param>
+    <xsl:param name="tan:stylesheet-primary-output-desc" as="xs:string">none</xsl:param>
+    <xsl:param name="tan:stylesheet-secondary-output-desc" as="xs:string">the file copied to the
+        target location, but with all relative @hrefs revised in light of the target
+        location</xsl:param>
+    
     <xsl:param name="tan:stylesheet-url" select="static-base-uri()"/>
     <xsl:param name="tan:stylesheet-change-log">
         <change xmlns="tag:textalign.net,2015:ns" who="kalvesmaki" when="2021-07-07">Edited,

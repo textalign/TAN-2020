@@ -21,15 +21,29 @@
     <xsl:param name="tan:stylesheet-name" as="xs:string" select="'TAN-A-lm Builder'"/>
     <xsl:param name="tan:stylesheet-activity"
         select="'creates a TAN-A-lm file for a class 1 file'"/>
+    <xsl:param name="tan:stylesheet-description" as="xs:string">Well-curated lexico-morphological
+        data is highly valuable for a variety of applications such as quotation detection,
+        stylometric analysis, and machine translation. This application will process any TAN-T or
+        TAN-TEI file through existing TAN-A-lm language libraries, and online search services,
+        looking for the best lexico-morphological profiles for the file's tokens.</xsl:param>
+    
+    <xsl:param name="tan:stylesheet-primary-input-desc" as="xs:string">a class 1 file</xsl:param>
+    <xsl:param name="tan:stylesheet-secondary-input-desc" as="xs:string">a TAN-A-lm template;
+        language catalogs; perhaps language search services</xsl:param>
+    <xsl:param name="tan:stylesheet-primary-output-desc" as="xs:string">a new TAN-A-lm file freshly
+        populated with lexicomorphological data, sorted with unmatched tokens at the top, followed by 
+        ambiguous ones, followed by non-ambiguous ones</xsl:param>
+    <xsl:param name="tan:stylesheet-secondary-output-desc" as="xs:string">none</xsl:param>
+    
     <xsl:param name="tan:stylesheet-url" select="static-base-uri()"/>
     <xsl:param name="tan:stylesheet-is-core-tan-application" select="true()"/>
     <xsl:param name="tan:stylesheet-to-do-list">
         <to-do xmlns="tag:textalign.net,2015:ns">
             <comment who="kalvesmaki" when="2021-04-10">What if the @xml:lang of the input doesn't
                 match TAN-mor or language catalog files?</comment>
-            <comment who="kalvesmaki" when="2021-04-10">what if a morphology has @which? Will it
+            <comment who="kalvesmaki" when="2021-04-10">What if a morphology has @which? Will it
                 still work?</comment>
-            <comment who="kalvesmaki" when="2021-04-10">ensure the responsible repopulation of the
+            <comment who="kalvesmaki" when="2021-04-10">Ensure the responsible repopulation of the
                 metadata of the template</comment>
             
         </to-do>

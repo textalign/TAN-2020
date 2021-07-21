@@ -42,36 +42,36 @@
 
    <!-- DESCRIPTION -->
 
-   <!-- This is a MIRU Stylesheet (MIRU = Main Input Resolved URIs) -->
-   <!-- Primary (catalyzing) input: any XML file, including this one (input is ignored) -->
-   <!-- Secondary (main) input: resolved URIs to one or more files, each one a text being explored 
-      for parallels in at least some of the others. -->
+   <!-- Primary input: any XML file, including this one (input is ignored) -->
+   <!-- Secondary input: one or more files allocated to two groups; perhaps temporary files; perhaps
+      TAN-A-lm files, either associated with secondary input, or part of a language catalog -->
    <!-- Primary output: perhaps diagnostics -->
-   <!-- Secondary output: (1) an XML file with TAN-A claims, most likely parallels first; (2) an 
-      HTML file the renders #1 in a more legible format. -->
+   <!-- Secondary output: (1) an XML file with TAN-A claims identifying quotations or parallels, with the
+      most likely at the top; (2) an HTML file that renders #1 in a more legible format. -->
    
    
    <!-- WARNING: CERTAIN FEATURES HAVE YET TO BE IMPLEMENTED-->
    <!-- * Support the method pioneered by Shmidman, Koppel, and Porat:
-      https://arxiv.org/abs/1602.08715v2 * Make sure texts run against themselves work.-->
+      https://arxiv.org/abs/1602.08715v2 
+      * Make sure texts run against themselves work.-->
 
    <!-- Nota bene: -->
    <!-- * A file may be placed in both groups, to explore cases of self-quotation or 
-      repetition. -->
-   <!-- * This process can take a very long time for lengthy texts, particuarly at the stage where a 1gram gets
-      added to an Ngram, because the process takes quadratic time. Many messages could appear during
+      repetition. 
+      * This process can take a very long time for lengthy texts, particuarly at the stage where a 1gram 
+      gets added to an Ngram, because the process takes quadratic time. Many messages could appear during
       tan:add-1gram(), updating progress through perhaps long routines. It is recommended that you save
-      intermediate steps, to avoid having to repeat steps on subsequent runs.
-         By way of comparison, two texts in group 1 of about 4.4K and 2.6K words against a single text in
-      group 2 of about 137K words took 319 seconds to build up to a set of unconsolidated token aliases.
-      One text from group 1 had an associated TAN-A-lm annotation and the text from group 2 did as well.
-      There was a TAN-A-lm library associated with the language (Greek). When the program was run again
-      without changing parameters, it took only 11 seconds to get to that same stage, because of the
-      saved temporary files.
-         That same set of texts took 1,219 seconds (20 minutes) to develop into a 3gram, with chops at
-      common Greek stop words and skipping the most common 1% token aliases. When run again, based on
-      temporary files, it took only 23 seconds. That is, saving intermediate steps could save you hours
-      of time. -->
+      intermediate steps, to avoid having to repeat steps on subsequent runs. -->
+   
+   <!-- Processing time example: two texts in group 1 of about 4.4K and 2.6K words against a single
+      text in group 2 of about 137K words took 319 seconds to build up to a set of unconsolidated token
+      aliases. One text from group 1 had an associated TAN-A-lm annotation and the text from group 2 did
+      as well. There was a TAN-A-lm library associated with the language (Greek). When the program was
+      run again without changing parameters, it took only 11 seconds to get to that same stage, because
+      of the saved temporary files. That same set of texts took 1,219 seconds (20 minutes) to develop
+      into a 3gram, with chops at common Greek stop words and skipping the most common 1% token aliases.
+      When run again, based on temporary files, it took only 23 seconds. That is, saving intermediate
+      steps could save you hours of time. -->
    
    
 

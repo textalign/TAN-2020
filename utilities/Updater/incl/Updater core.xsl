@@ -21,6 +21,12 @@
     <xsl:param name="tan:stylesheet-name" as="xs:string" select="'Updater'"/>
     <xsl:param name="tan:stylesheet-activity"
         select="'converts TAN files from older versions to the current version'"/>
+    <xsl:param name="tan:stylesheet-primary-input-desc" as="xs:string">any TAN file version 2020</xsl:param>
+    <xsl:param name="tan:stylesheet-secondary-input-desc" as="xs:string">none</xsl:param>
+    <xsl:param name="tan:stylesheet-primary-output-desc" as="xs:string">the TAN file converted to
+        the latest version</xsl:param>
+    <xsl:param name="tan:stylesheet-secondary-output-desc" as="xs:string">none</xsl:param>
+    
     <xsl:param name="tan:stylesheet-url" select="static-base-uri()"/>
     <xsl:param name="tan:stylesheet-is-core-tan-application" select="true()"/>
     <xsl:param name="tan:stylesheet-to-do-list">

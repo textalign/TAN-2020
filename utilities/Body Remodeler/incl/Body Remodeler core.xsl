@@ -31,6 +31,16 @@
         certain parts of a text. When used in tandem with the TAN editing tools for Oxygen, which
         allow you to push and pull words, clauses, and sentences from one leaf div to another, you
         will find that Body Builder can save you hours of editorial work. </xsl:param>
+
+    <xsl:param name="tan:stylesheet-primary-input-desc" as="xs:string">preferably a TAN-T or TAN-TEI
+        file</xsl:param>
+    <xsl:param name="tan:stylesheet-secondary-input-desc" as="xs:string">a TAN-T or TAN-TEI file
+        that has model div and reference system</xsl:param>
+    <xsl:param name="tan:stylesheet-primary-output-desc" as="xs:string">the model, with its div
+        structure intact, but the text replaced with the text of the input, allocated
+        to the new div structure proportionate to the model's text length</xsl:param>
+    <xsl:param name="tan:stylesheet-secondary-output-desc" as="xs:string">none</xsl:param>
+
     <xsl:param name="tan:stylesheet-url" select="static-base-uri()"/>
     <xsl:param name="tan:stylesheet-change-message"
         select="'Remodeling ' || $tan:doc-uri || ' against ' || $current-model-uri-resolved"/>
@@ -41,7 +51,8 @@
     <xsl:param name="tan:stylesheet-is-core-tan-application" select="true()"/>
     <xsl:param name="tan:stylesheet-to-do-list">
         <to-do xmlns="tag:textalign.net,2015:ns">
-            <comment who="kalvesmaki" when="2021-07-13">Support the complete-the-square method</comment>
+            <comment who="kalvesmaki" when="2021-07-13">Support the complete-the-square method
+                (model has a redivision that matches the input's div structure)</comment>
             <comment who="kalvesmaki" when="2021-07-13">Test, troubleshoot against various TEI models</comment>
         </to-do>
     </xsl:param>

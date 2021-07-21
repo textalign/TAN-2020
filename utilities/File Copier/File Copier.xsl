@@ -19,15 +19,16 @@
 
    <!-- DESCRIPTION -->
 
-   <!-- Primary (catalyzing) input: any file -->
+   <!-- Primary input: any XML file -->
    <!-- Secondary input: none (but see parameters) -->
    <!-- Primary output: none -->
-   <!-- Secondary output: the file copied to the target location, revising any relative @hrefs in light of
-      the target location -->
+   <!-- Secondary output: the file copied to the target location, but with all relative @hrefs revised in
+      light of the target location -->
 
    <!-- Nota bene:
-      * Links are based on common constructs: @href everywhere, but @src only in HTML files. Processing
-      instructions will be parsed for @href values.
+      * Links are based on common constructs. Resolution of @href is applied everywhere, but @src, only 
+      in HTML files. 
+      * Processing instructions will be parsed for values assigned to any href pseudo-attribute.
    -->
 
    <!-- PARAMETERS -->

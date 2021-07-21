@@ -28,33 +28,32 @@
 
    <!-- DESCRIPTION -->
 
-   <!-- Primary (catalyzing) input: any XML file, ideally the TAN file that should be used
-         as the target template into which the source file should be converted. -->
-   <!-- Secondary input: a non-TAN file in plain text, XML, or Word format (docx), provided
-         through parameters explained below -->
-   <!-- Primary output: the TAN file with its contents replaced by a parsed analysis of the
-         source -->
+   <!-- Primary input: a TAN-T or TAN-TEI file that represents a target template for the parsed content
+      coming from the secondary input -->
+   <!-- Secondary input: one or more non-TAN files in plain text, XML, or Word format (docx); perhaps
+      configuration files for the parameters -->
+   <!-- Primary output: the primary output with its contents replaced by a tree parsed by applying rules to
+      the source -->
    <!-- Secondary output: none -->
 
    <!-- This application is intended to help users convert a text to TAN-T, TAN-TEI, or TAN-A.
       This is a difficult task, mainly because the source text could be either plain text, 
-      an XML file, or a Word document. If a Word document, the formatting *might* mean something,
+      an XML file, or a Word document. If a Word document, the formatting might mean something,
       or it might not. Users tend to be inconsistent and incomplete in such formatting, and
       the Word format provides difficult challenges. The XML structure in a Word file might 
       break up adjacent text identically formatted, because it is preserving a record of editing 
-      history, or noting where the cursor was when the document was last edited. 
-         The "plain" text itself poses challenges. We assume that there are in the text various 
+      history, or noting where the cursor was when the document was last edited. -->
+   <!-- The "plain" text itself poses challenges. We assume that there are in the text various 
       numerals or words that signal reference numbers. But there are thousands of ways an editor
       might choose to use those reference numbers. Some editors combine into a single document 
       multiple overlapping or competing reference systems. A TAN file allows only one primary
-      tree, so only one of those reference systems can be used to build that tree.
-         The answer adopted here is to allow the editor to declare patterns in the text that 
+      tree, so only one of those reference systems can be used to build that tree. -->
+   <!-- The answer adopted here is to allow the editor to declare patterns in the text that 
       should be used to build the textual hierarchy correctly. To use it properly, you must
       have a very good command of regular expressions. To get you started, some examples have 
-      been provided, based on actual conversions into TAN from challenging real-world documents.
-         This application has been designed based on select test cases. Your particular needs 
-      will no doubt vary, and this application has many areas where it could be developed. If 
-      you encounter a problem, raise a ticket in the GitHub account.-->
+      been provided, based on actual conversions into TAN from challenging real-world documents. -->
+   <!-- This utility has been designed based on select test cases, and there are no doubt many ways it
+      could be developed and enhanced. If you encounter a problem, raise a ticket in the GitHub account. -->
    
    <!-- Some assumptions:
       * If the catalyzing input file is not a TAN file, then a fallback, generic TAN file should 
@@ -104,10 +103,12 @@
       issue via GitHub.
  -->
 
-   <!-- WARNING: CERTAIN FEATURES HAVE YET TO BE IMPLEMENTED-->
-   <!-- * Allow comments to be anchored in zero width. * Support HTML input * Support ODT input *
-      Let the default template be a document with the root element body. * Demonstrate how to
-      convert a raw index to TAN-A.-->
+   <!-- WARNING: CERTAIN FEATURES HAVE YET TO BE IMPLEMENTED -->
+   <!-- * Allow comments to be anchored in zero width. 
+      * Support HTML input 
+      * Support ODT input 
+      * Let the default template be a document with the root element body. 
+      * Demonstrate how to convert a raw index to TAN-A.-->
    
    
 

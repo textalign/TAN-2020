@@ -32,6 +32,14 @@
         being slightly more probable, but you do not want to recalculate all the values so they add
         to 1.0. You can increase or decrease the @cert value of an option, then run the file through
         this application to recalibrate all entries so they add to 1.0 certainty.</xsl:param>
+    
+    <xsl:param name="tan:stylesheet-primary-input-desc" as="xs:string">any TAN-A-lm file</xsl:param>
+    <xsl:param name="tan:stylesheet-secondary-input-desc" as="xs:string">none</xsl:param>
+    <xsl:param name="tan:stylesheet-primary-output-desc" as="xs:string">the TAN-A-lm file with
+        certainty recalibrated</xsl:param>
+    <xsl:param name="tan:stylesheet-secondary-output-desc" as="xs:string">none</xsl:param>
+    
+    
     <xsl:param name="tan:stylesheet-is-core-tan-application" select="true()"/>
     <xsl:param name="tan:stylesheet-change-log">
         <change xmlns="tag:textalign.net,2015:ns" who="kalvesmaki" when="2021-07-07">Edited,

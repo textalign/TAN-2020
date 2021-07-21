@@ -29,6 +29,16 @@
         to analyze changes in documents passing through a multistep editorial workflow, to compare
         the quality of OCR results, and to study the relationship between ancient/medieval
         manuscripts (stemmatology).</xsl:param>
+    
+    <xsl:param name="tan:stylesheet-primary-input-desc" as="xs:string">any XML file, including this
+        one (input is ignored)</xsl:param>
+    <xsl:param name="tan:stylesheet-secondary-input-desc" as="xs:string">one or more files</xsl:param>
+    <xsl:param name="tan:stylesheet-primary-output-desc" as="xs:string">perhaps diagnostics</xsl:param>
+    <xsl:param name="tan:stylesheet-secondary-output-desc" as="xs:string">for each detectable
+        language in the secondary input: (1) an XML file with the results of tan:diff() or
+        tan:collate(), infused with select statistical analyses; (2) a rendering of #1 in an interactive,
+        visually engaging HTML form</xsl:param>
+    
     <xsl:param name="tan:stylesheet-output-examples" as="element()*">
         <example>
             <location>https://textalign.net/output/CFR-2017-title1-vol1-compared.xml</location>

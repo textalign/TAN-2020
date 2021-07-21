@@ -7,6 +7,8 @@
 
    <!-- Welcome to TAN to HTML, the TAN application that converts TAN / TEI files to HTML -->
    <!-- Version 2021-07-07-->
+   <!-- This utility quickly renders a TAN or TEI file as HTML. It has been optimized for JavaScript and CSS
+      within the output/js and output/css in the TAN file structure. -->
 
    <!-- This is the public interface for the application. The code that runs the application can
       be found by following the links in the <xsl:include> or <xsl:import> at the bottom of this
@@ -19,22 +21,19 @@
 
    <!-- DESCRIPTION -->
 
-   <!-- Primary (catalyzing) input: a TAN file -->
+   <!-- Primary input: any TAN or TEI file -->
    <!-- Secondary input: none -->
    <!-- Primary output: if no destination filename is specified, an HTML file -->
    <!-- Secondary output: if a destination filename is specified, an HTML file at the target location -->
 
-   <!-- This application quickly renders a TAN or TEI file as HTML. It has been optimized for JavaScript
-      and CSS within the output subdirectory of the TAN structure. -->
-   
    <!-- Nota bene:
       * This application can be used to generate primary or secondary output, depending upon how
       parameters are configured (see below).
    -->
    
    <!-- WARNING: CERTAIN FEATURES HAVE YET TO BE IMPLEMENTED -->
-   <!-- * Need to wholly overhaul the default CSS and JavaScript files in output/css and output/js * Need to
-      build parameters to allow users to drop elements from the HTML DOM. -->
+   <!-- * Need to wholly overhaul the default CSS and JavaScript files in output/css and output/js 
+      * Need to build parameters to allow users to drop elements from the HTML DOM. -->
    
 
    <!-- PARAMETERS -->

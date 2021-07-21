@@ -18,9 +18,9 @@
    
    <!-- DESCRIPTION -->
    
-   <!-- Initial (main) input: a class 1 file -->
-   <!-- Secondary input: none (but see parameters) -->
-   <!-- Main output: the main input, with the text of its body revised to match the text in the chosen
+   <!-- Primary input: a class 1 file with a redivision element in the head -->
+   <!-- Secondary input: the redivision -->
+   <!-- Primary output: the primary input, with the text of its body revised to match the text in the chosen
       redivision -->
    <!-- Secondary output: none -->
    

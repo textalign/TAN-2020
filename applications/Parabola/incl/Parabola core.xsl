@@ -10,7 +10,7 @@
 
     <xsl:import href="../../../functions/TAN-function-library.xsl"/>
     
-    <!-- Note: this stylesheet's default namespace is HTML, because it exclusively builds HTML output. -->
+    <!-- Note: this stylesheet's default namespace is HTML, because it builds only HTML output. -->
 
     <!-- About this stylesheet -->
     
@@ -22,6 +22,14 @@
     <xsl:param name="tan:stylesheet-description" as="xs:string">This application allows you to take
         a library of TAN/TEI files with multiple versions of each work and present them in an
         interactive HTML page.</xsl:param>
+    
+    <xsl:param name="tan:stylesheet-primary-input-desc" as="xs:string">a TAN-A file</xsl:param>
+    <xsl:param name="tan:stylesheet-secondary-input-desc" as="xs:string">its sources expanded</xsl:param>
+    <xsl:param name="tan:stylesheet-primary-output-desc" as="xs:string">an interactive HTML page
+        with the versions of the chosen work grouped and arranged in parallel, with
+        annotations</xsl:param>
+    <xsl:param name="tan:stylesheet-secondary-output-desc" as="xs:string">none</xsl:param>
+    
     <xsl:param name="tan:stylesheet-output-examples" as="element()*">
         <example>
             <location>http://textalign.net/output/aristotle-categories-ref-bekker-page-col-line.html</location>
@@ -45,19 +53,21 @@
     <xsl:param name="tan:stylesheet-to-do-list">
         <to-do xmlns="tag:textalign.net,2015:ns">
             <comment who="kalvesmaki" when="2021-03-09">Simplify the routine. This was converted
-                from an inferior workflow, and it is admittedly wretched in the number of passes
-                that are needed to be used to get to the output. </comment>
+                from an inferior workflow, and still takes too many passes to get to the output.
+            </comment>
             <comment who="kalvesmaki" when="2021-03-10">Annotations need a lot of work. They should
                 be placed into the merge early. In fact, the whole workflow needs to be revised,
-                with most structural work done before attempting to convert to HTML.</comment>
+                with most structural work finished before attempting to convert to HTML.</comment>
             <comment who="kalvesmaki" when="2020-07-28">Develop output option using nested HTML
                 divs, to parallel the existing output that uses HTML tables</comment>
             <comment who="kalvesmaki" when="2020-09-23">Integrate diff/collate into cells, on both
                 the global and local level.</comment>
-            <comment who="kalvesmaki" when="2020-09-23">Support in the css bar clicking source id
-                labels on and off.</comment>
+            <comment who="kalvesmaki" when="2020-09-23">Develop the css bar to allow users to click
+                source id labels on and off.</comment>
             <comment who="kalvesmaki" when="2020-09-23">Add labels for divs higher than version
                 wrappers.</comment>
+            <comment who="kalvesmaki" when="2021-07-20">Consider merging based upon the resolved
+                file, not its expansion.</comment>
         </to-do>
     </xsl:param>
     <xsl:param name="tan:stylesheet-change-log">

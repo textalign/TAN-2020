@@ -19,6 +19,16 @@
     <xsl:param name="tan:stylesheet-name" as="xs:string" select="'TAN to HTML'"/>
     <xsl:param name="tan:stylesheet-activity"
         select="'converts TAN / TEI files to HTML'"/>
+    <xsl:param name="tan:stylesheet-description">This utility quickly renders a TAN or TEI file
+        as HTML. It has been optimized for JavaScript and CSS within the output/js and output/css
+        in the TAN file structure.</xsl:param>
+    <xsl:param name="tan:stylesheet-primary-input-desc" as="xs:string">any TAN or TEI
+        file</xsl:param>
+    <xsl:param name="tan:stylesheet-secondary-input-desc" as="xs:string">none</xsl:param>
+    <xsl:param name="tan:stylesheet-primary-output-desc" as="xs:string">if no destination filename
+        is specified, an HTML file</xsl:param>
+    <xsl:param name="tan:stylesheet-secondary-output-desc" as="xs:string">if a destination filename
+        is specified, an HTML file at the target location</xsl:param>
     <xsl:param name="tan:stylesheet-url" select="static-base-uri()"/>
     <xsl:param name="tan:stylesheet-is-core-tan-application" select="true()"/>
     <xsl:param name="tan:stylesheet-to-do-list">

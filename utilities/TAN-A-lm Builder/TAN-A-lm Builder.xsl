@@ -6,6 +6,10 @@
     
     <!-- Welcome to TAN-A-lm Builder, the TAN application that creates a TAN-A-lm file for a class 1 file -->
     <!-- Version 2021-07-07-->
+    <!-- Well-curated lexico-morphological data is highly valuable for a variety of applications such
+      as quotation detection, stylometric analysis, and machine translation. This application will
+      process any TAN-T or TAN-TEI file through existing TAN-A-lm language libraries, and online search
+      services, looking for the best lexico-morphological profiles for the file's tokens. -->
     
     <!-- This is the public interface for the application. The code that runs the application can
         be found by following the links in the <xsl:include> or <xsl:import> at the bottom of this
@@ -18,38 +22,31 @@
     
     <!-- DESCRIPTION -->
     
-    <!-- Primary (catalyzing) input: any class 1 TAN file -->
-    <!-- Secondary (main) input: a TAN-A-lm file populated with values that best resemble the intended 
-        final output; language catalogs; perhaps language search services. -->
-    <!-- Primary output: a new TAN-A-lm file freshly populated with lexicomorphological data, sorted with 
-        the data most likely in need of editing at the top. -->
+    <!-- Primary input: a class 1 file -->
+    <!-- Secondary input: a TAN-A-lm template; language catalogs; perhaps language search services -->
+    <!-- Primary output: a new TAN-A-lm file freshly populated with lexicomorphological data, sorted with
+        unmatched tokens at the top, followed by ambiguous ones, followed by non-ambiguous ones -->
     <!-- Secondary output: none -->
     
-    <!-- Well-curated lexico-morphological data is highly valuable for a variety of applications such as quotation
-      detection, stylometric analysis, and machine translation. This application will process any TAN-T
-      or TAN-TEI file through existing TAN-A-lm language libraries, and online search services, looking
-      for the best lexico-morphological profiles for the file's tokens.
- -->
-    
-    <!-- OPTIMIZATION STRATEGIES ADOPTED -->
-    <!-- Minimize the number of times files in the language catalog must be consulted and resolved -->
-    <!-- In the interests of efficient processing, if a hit on @val be taken as the best answer, and preclude 
-        searches on @rgx or via online search services -->
-    <!-- We assume that a search for lexico-morphological data will entail a lot of different TAN-A-lm files with
-      a number of conventions. Codes found in language catalogs must be converted to TAN-standardized
-      feature names, and then reconverted into the codeset of choice, dictated by the <morphology> in the
-      template TAN-A-lm file. -->
+    <!-- Optimization strategies adopted: 
+        * Minimize the number of times files in the language catalog must be consulted and resolved 
+        * A hit on @val in a local TAN-A-lm file precludes any follow-up searches based @rgx or 
+        online search services -->
 
-    <!-- Nota bene: -->
-    <!-- * There must be access to a language catalog, i.e., a collection of TAN-A-lm files that are 
-        language specific. -->
-    <!-- * The TAN-A-lm is relied upon as dictating the settings for the file, e.g., tokenization pattern,
-        TAN-mor morphology, etc. -->
+    <!-- Nota bene:  
+        * There must be access to a language catalog, i.e., a collection of TAN-A-lm files that are 
+        language specific.  
+        * The TAN-A-lm is relied upon as dictating the settings for the file, e.g., tokenization pattern,
+        TAN-mor morphology, etc. 
+        * We assume that a search for lexico-morphological data will entail a lot of different
+        TAN-A-lm files with a number of conventions. Codes found in language catalogs must be converted to
+        TAN-standardized feature names, and then reconverted into the codeset of choice, dictated by the
+        <morphology> in the template TAN-A-lm file. -->
 
     <!-- WARNING: CERTAIN FEATURES HAVE YET TO BE IMPLEMENTED -->
-    <!-- * What if the @xml:lang of the input doesn't match TAN-mor or language catalog files? * what if a
-      morphology has @which? Will it still work? * ensure the responsible repopulation of the metadata of
-      the template -->
+    <!-- * What if the @xml:lang of the input doesn't match TAN-mor or language catalog files? 
+        * What if a morphology has @which? Will it still work? 
+        * Ensure the responsible repopulation of the metadata of the template -->
     
     
     

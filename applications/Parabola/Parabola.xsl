@@ -2,12 +2,13 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="tag:textalign.net,2015:ns"
    xmlns:html="http://www.w3.org/1999/xhtml" xmlns:xs="http://www.w3.org/2001/XMLSchema"
    xmlns:tei="http://www.tei-c.org/ns/1.0" xmlns:tan="tag:textalign.net,2015:ns"
-   xmlns:array="http://www.w3.org/2005/xpath-functions/array"
-   exclude-result-prefixes="#all" version="3.0">
+   xmlns:array="http://www.w3.org/2005/xpath-functions/array" exclude-result-prefixes="#all"
+   version="3.0">
 
    <!-- Welcome to Parabola, the TAN application that arranges work versions in parallel for the
       web -->
-   <!-- Version 2021-07-07-->
+   
+   <!-- Version 2021-07-20-->
    <!-- This application allows you to take a library of TAN/TEI files with multiple versions of
       each work and present them in an interactive HTML page.-->
 
@@ -18,57 +19,66 @@
       about making changes, make a copy of this file before changing it, or configure a
       transformation scenario in Oxygen. If you are comfortable with XSLT, try creating your own
       stylesheet, then import this one, selectively changing the parameters as needed.-->
-   
-   <!-- OUTPUT EXAMPLES --> 
-   <!--http://textalign.net/output/aristotle-categories-ref-bekker-page-col-line.html
-      Aristotle, Categories, in eight versions, six languages-->
-   <!--https://textalign.net/output/cpg%204425.TAN-A-div-2018-03-09.html
-      Homilies on the Gospel of John, John Chrysostom, four versions, two languages-->
-   <!--https://evagriusponticus.net/cpg2430/cpg2430-full-for-reading.html
-      The Praktikos by Evagrius of Pontus, three languages, with Bible quotations-->
-   <!--https://textalign.net/quran/quran.ara+grc+syr+lat+deu+eng.html
-      Qur'an in eighteen versions, six languages-->
+
+   <!-- Examples of output: 
+      * http://textalign.net/output/aristotle-categories-ref-bekker-page-col-line.html
+         Aristotle, Categories, in eight versions, six languages
+      * https://textalign.net/output/cpg%204425.TAN-A-div-2018-03-09.html
+         Homilies on the Gospel of John, John Chrysostom, four versions, two languages
+      * https://evagriusponticus.net/cpg2430/cpg2430-full-for-reading.html
+         The Praktikos by Evagrius of Pontus, three languages, with Bible quotations
+      * https://textalign.net/quran/quran.ara+grc+syr+lat+deu+eng.html
+         Qur'an in eighteen versions, six languages-->
 
    <!-- DESCRIPTION -->
 
-   <!-- Primary (catalyzing) input: a TAN-A file -->
-   <!-- Secondary input: the file and its sources expanded -->
-   <!-- Primary output: an HTML page with the versions of the chosen work arranged in parallel columns in
-      groups and sequences determined by parameters explained below. -->
+   <!-- Primary input: a TAN-A file -->
+   <!-- Secondary input: its sources expanded -->
+   <!-- Primary output: an interactive HTML page with the versions of the chosen work grouped and arranged
+      in parallel, with annotations -->
    <!-- Secondary output: none -->
 
-   <!-- This application is one of the most significant for TAN files, because it allows one to juxtapose any
-      number of versions of a work in the same reading space, and to situate quotations or annotations.
-      It is useful both in the middle stages of a project, where you might need to check on and adjust
-      the alignment of a text in light of its peers, or at the end stages of a project, where you might
-      be publishing a parallel edition, or using one in for study or teaching. -->
-   
+   <!-- This application is the flagship TAN application, and was the catalyst for TAN itself. It was
+      developed not only for highly polished, finalized web publication, but for complex editorial
+      processes. The test case that laid the groundwork was a project of five scholars translating into
+      English an ancient text that survives only fragmentarily in its original Greek, and that was
+      translated into Syriac several times. The team intended to translate into English the Greek
+      fragments that survive, as well as the Syriac translations, and to do so with rigorous consistency.
+      In passages where the author (Evagrius of Pontus) quoted from Scripture or Aristotle, they needed
+      to be able to consult the Greek or Syriac text behind the quoted source. Such demands required a
+      shared digital infrastructure to coordinate roughly forty different versions, including the team's
+      working English translations, which were changing week to week. Parabola was indispensible.
+   -->
+
    <!-- Nota bene:
       * This application has many fine-tuned configuration options. Read through the whole file
       to see what is available.
-      * This application processes a single work, assumed to be the work of the first <source> in the
-      catalyzing TAN-A file. If you want a different source, promote the relevant <source> to the first
+      * This application processes a single work, assumed to be that of the first <source> in the
+      catalyzing TAN-A file. If you want a different source, move the relevant <source> to the first
       position.
    -->
-   
-   <!-- WARNING: CERTAIN FEATURES HAVE YET TO BE IMPLEMENTED -->
-   <!-- * Simplify the routine. This was converted from an inferior workflow, and it is admittedly wretched
-      in the number of passes that are needed to be used to get to the output. * Annotations need a lot of
-      work. They should be placed into the merge early. In fact, the whole workflow needs to be revised,
-      with most structural work done before attempting to convert to HTML. * Develop output option using
-      nested HTML divs, to parallel the existing output that uses HTML tables * Integrate diff/collate
-      into cells, on both the global and local level. * Support in the css bar clicking source id labels
-      on and off. * Add labels for divs higher than version wrappers. -->
-   
 
-   <!-- PARAMETERS -->
+   <!-- WARNING: CERTAIN FEATURES HAVE YET TO BE IMPLEMENTED -->
+   <!-- * Simplify the routine. This was converted from an inferior workflow, and still takes too many
+      passes to get to the output. 
+      * Annotations need a lot of work. They should be placed into the merge early. In fact, the whole
+      workflow needs to be revised, with most structural work finished before attempting to convert to
+      HTML. 
+      * Develop output option using nested HTML divs, to parallel the existing output that uses HTML
+      tables 
+      * Integrate diff/collate into cells, on both the global and local level. 
+      * Develop the css bar to allow users to click source id labels on and off. 
+      * Add labels for divs higher than version wrappers. 
+      * Consider merging based upon the resolved file, not its expansion. -->
    
+   <!-- PARAMETERS -->
+
    <!-- Any parameter below whose name begins "tan:" is a global parameter. It is repeated here from
       the master location in the parameters subdirectory, because one commonly wishes to adjust them
       for this particular application. -->
-   
+
    <!-- STEP 1: PICK, PRUNE, AND ARRANGE THE SOURCES -->
-   
+
    <!-- Which sources do you want? Expected is a regular expression, matching against the
       @xml:id of a <source>. If blank, every source for the work will be fetched. -->
    <xsl:param name="src-ids-must-match-regex" as="xs:string?"/>
@@ -85,7 +95,7 @@
    <!-- Selective removal of source content. -->
    <!-- For the following parameters, you may find the process more efficient if you use <adjustments> 
       in the TAN-A file -->
-   
+
    <!-- Which <div>s do you want? Expected is a regular expression, matching the @type of every
       <div> in each selected source. If blank, no <div>s will be excluded. -->
    <xsl:param name="div-types-must-match-regex" as="xs:string?"/>
@@ -109,7 +119,7 @@
    <!-- Do you want to exclude any leaf divs that do not have a certain number of counterparts
       in the other versions? Anything 1 or below will be ignored. -->
    <xsl:param name="leaf-div-must-have-at-least-how-many-versions" as="xs:integer?" select="()"/>
-   
+
    <!-- Should the process terminate if there are fewer than two sources? -->
    <xsl:param name="terminate-if-fewer-than-two-sources" as="xs:boolean" select="true()"/>
 
@@ -117,22 +127,23 @@
       used to build sequences and groups of sources. An <alias> may point to other <alias>es that
       allow you to create nested sorted groups. The result is an alias tree, with sources in 
       nested groups, and re-sorted. -->
-   
+
    <!-- What sequence of alias idrefs should be used to group and sort sources? If an alias is
       not pointed to, the ordinary sequence of <source>s will be adopted, treated as a single
       flat group. -->
-   <xsl:param name="sort-and-group-by-what-alias-idrefs" as="xs:string*" select="tokenize(/*/tan:head/tan:vocabulary-key/tan:alias[1]/@idrefs, '\s+')"/>
+   <xsl:param name="sort-and-group-by-what-alias-idrefs" as="xs:string*"
+      select="tokenize(/*/tan:head/tan:vocabulary-key/tan:alias[1]/@idrefs, '\s+')"/>
    <!-- If, when grouping and sorting by aliases, should every source encountered be treated as 
       belonging to the primary work, regardless of whether its <work> declaration says it is? 
       This is useful for including things like commentaries, which may follow the primary reference 
       system but be defined as a different work. -->
    <xsl:param name="let-alias-groups-equate-works" as="xs:boolean" select="true()"/>
-   
-   
 
-   
+
+
+
    <!-- STEP TWO: EXCLUDE, INCLUDE, OR ADJUST MERGE INPUT -->
-   
+
    <!-- Many of these parameters add, remove, or change content from the output of 
       tan:merge-expanded-docs(). That function has extensive commentary on what happens when one 
       merges multiple class 1 documents. See ../../functions/merging/TAN-fn-merging.xsl
@@ -153,9 +164,9 @@
       should be labeled by @n, by ref, or some other text, because needs changes from situation to 
       situation. 
    -->
-   
+
    <!-- Source adjustments -->
-   
+
    <!-- Keep in mind, you may be working with work versions that adopt different conventions for @n. A
       merge file reconciles all detectable numerical schemes to Arabic numerals, and strings are retained
       as-is. This applies not only to @n but calculated ref values (which concatenate @n of any div and
@@ -176,15 +187,15 @@
    <xsl:param name="add-display-n" as="xs:boolean" select="false()"/>
    <!-- Should the most common value for @type (div type) be added to a display n? -->
    <xsl:param name="add-div-type-to-display-n" as="xs:boolean" select="true()"/>
-   
+
 
    <!-- Should any references to vocabulary items (by idref or by name) be supplemented with the 
       actual IRI + name vocabulary? Note, this can lead to much larger files, since every <div> @type will
       include IRI + name vocabulary. Such information can be filtered and controlled by CSS. -->
    <xsl:param name="tan:distribute-vocabulary" as="xs:boolean" select="false()"/>
-   
+
    <!-- Merge anomalies -->
-   
+
    <!-- If a merge has defective leaf divs (those that do not have every source) should they be filled 
       with a filler place-holder? -->
    <xsl:param name="fill-defective-merges" as="xs:boolean" select="true()"/>
@@ -200,51 +211,52 @@
    <!-- Should a leaf div with multiple numerical values be retained in whole at the first reference, or 
       should it be proportionately distributed? -->
    <xsl:param name="distribute-spanning-divs-proportionately" as="xs:boolean" select="true()"/>
-   
-   
-   
+
+
+
    <!-- TEI adjustments -->
-   
+
    <xsl:param name="tei-should-be-plain-text" as="xs:boolean" select="false()"/>
    <!-- Do you wish to omit any TEI elements that have no text nodes? If false, the output may include 
       text or other items that break up the main text, making searching difficult. -->
-   <xsl:param name="omit-tei-elements-without-text" as="xs:boolean" select="$tei-should-be-plain-text"/>
-   
+   <xsl:param name="omit-tei-elements-without-text" as="xs:boolean"
+      select="$tei-should-be-plain-text"/>
+
    <!-- Some TEI elements are of variable interest in the output. You may want to signal that a particular
       element is available, but hide it with some siglum that the user can click to get more details. -->
-   
+
    <!-- What replacement character should mark a TEI <app> that has no lemma? -->
    <xsl:param name="marker-for-tei-app-without-lem" as="xs:string?">+</xsl:param>
    <!-- What replacement character should mark a TEI <note>? -->
    <xsl:param name="tei-note-signal-default" as="xs:string?">n</xsl:param>
    <!-- What replacement character should mark a TEI <add>? -->
    <xsl:param name="tei-add-signal-default" as="xs:string?">+</xsl:param>
-   
-   
+
+
    <!-- TAN-A components -->
-   
+
    <!-- Should TAN-A adjustment actions be suppressed in the results? -->
    <xsl:param name="suppress-display-of-adjustment-actions" select="false()"/>
    <!-- Do you wish to convert leaf-div TEI items to plain text? If false, the display will be populated 
       with TEI elements instead of plain text, but this may result in unexpected appearance of the HTML.
       Normally this can be attended to through CSS. -->
-   
+
    <!-- What batch replacements should be applied to claim components? Batch replacements are a sequence of
       elements (any name), each with @pattern, @replacement, and perhaps @flags and @message. The
       attributes imitate the behavior of fn:replace(). -->
    <xsl:param name="claim-component-batch-replacements" as="element()*"/>
-   
+
 
 
 
 
    <!-- STEP THREE: ADJUST THE HTML OUTPUT -->
-   
+
 
    <!-- Where is the HTML template that should be used as the basis for the output? Expected: a 
       resolved uri, e.g., file:/c:/users/~user/documents/my-template.html -->
    <xsl:param name="html-template-uri-resolved" select="$tan:default-html-template-uri-resolved"/>
-   
+
    <!-- What is the preferred title to put in the HTML page? If no value is supplied, head/name[1] 
       will be used. -->
    <xsl:param name="preferred-html-title" as="xs:string?"/>
@@ -256,7 +268,7 @@
    <!-- Should a bibliography be added? If true, there will be a section inserted collecting
       information on the publications behind the sources. -->
    <xsl:param name="add-bibliography" as="xs:boolean" select="false()"/>
-   
+
    <!-- Should controller options be added? The controller will let users toggle TEI features on and off,
       or change the width. -->
    <xsl:param name="add-display-options" as="xs:boolean" select="true()"/>
@@ -273,7 +285,7 @@
       matching an element name. This does not override any other parameter, and does not mean
       that the element in question will actually be hidden. That is up to the CSS -->
    <xsl:param name="elements-to-be-given-class-hidden-regex" as="xs:string?"/>
-   
+
    <!-- What special insertions if any should be made into the output HTML? Expected are a series of 
       elements with attributes @before-ref or @after-ref. Anything inside those elements will be inserted 
       either before or after a <div> with a matching reference. Ideally, what's inside should be HTML, 
@@ -283,22 +295,22 @@
          <h2>Chapter...</h2>
       </tan:insertion>
    </xsl:param>
-   
-   
+
+
    <!-- When converting the merge to HTML, the process is a simple, straightforward conversion until
       reaching a place in the merge superstructure where the next level deeper has one or more versions.
       At that point we have a leaf merge, which will certain have leaf divs from one or more versions,
       but may include some versions that go deeper (they aren't leaf divs yet). Nevertheless, for
       comparison sake, the *leaf merge* not the leaf divs are the key factor in building the HTML file. -->
-   
+
    <!-- What class name should be applied to a <div> that wraps a leaf merge? -->
    <xsl:param name="version-wrapper-class-name" select="'version-wrapper'"/>
-   
+
    <!-- string differences -->
    <!-- For other related parameters, see:
       ../../parameters/params-function-diff.xsl
       ../../parameters/params-application-diff.xsl -->
-   
+
    <!-- In a group within a leaf merge, tan:diff() and tan:collate() can be turned on. If the versions are close
       enough to each other, they will be collapsed into a single reading that shows through markup where
       each version differs from the others. This is a very powerful benefit for comparative reading,
@@ -306,7 +318,7 @@
       text illustrating differences breaks up words and phrases, it interferes with browser-based
       searches, one of the more important utilities of this output format. So if you prioritize text
       searches over reading, do not turn on the diff/collate. -->
-   
+
    <!-- How similar should a group of versions in a div be before they are rendered as a difference or collation?
       Anything other than a number between 0 and 1 will be ignored. If the aggregate difference of a
       group of versions is less than the decimal provided, no diff/collate will be substituted. -->
@@ -332,12 +344,12 @@
    <!-- Should the width of each <td> be fixed according to string length? This will create uneven columns, 
       but balance space. Normally this can be handled by the browser via CSS. -->
    <xsl:param name="td-widths-proportionate-to-string-length" as="xs:boolean" select="false()"/>
-   
+
 
    <!-- Should color schemes for sources and their groups be imprinted in the HTML file? If false, then 
       color will be determined according to any external CSS files. -->
    <xsl:param name="imprint-color-css" as="xs:boolean" select="true()"/>
-   
+
    <!-- If the preceding parameter is true, then the following five parameters have force; if false, they are
       ignored.
          The color schemes below are based upon array. The primary color array will be used to allocate
@@ -348,7 +360,7 @@
          Note, three of these parameters are arrays, which are special data constructions introduced to
       XPath and XSLT.
  -->
-   
+
    <!-- What should the primary color scheme be? Expected: an array, each member consisting of three
       integers from 0 through 255, e.g., [(0,0,0), (255,255,255)], representing red, yellow, blue values. -->
    <xsl:param name="primary-color-array" as="array(xs:integer+)"
@@ -360,21 +372,20 @@
    <!-- What should the terminal color scheme be? Expected: an array, each member consisting of three
       integers from 0 through 255 and a fourth that is a decimal between 0 and 1 (opacity). -->
    <xsl:param name="terminal-color-array" as="array(xs:double+)"
-      select="[$tan:white-mask-a70, $tan:white-mask-a60, $tan:white-mask-a50, $tan:white-mask-a40, $tan:white-mask-a30, $tan:white-mask-a20, $tan:white-mask-a10]"
-   />
+      select="[$tan:white-mask-a70, $tan:white-mask-a60, $tan:white-mask-a50, $tan:white-mask-a40, $tan:white-mask-a30, $tan:white-mask-a20, $tan:white-mask-a10]"/>
 
    <!-- When two colors are blended, what midpoint should be adopted? Should be a decimal between 0 and 1.
       A value less than 0.5 will give greater emphasis to the first color. -->
    <xsl:param name="color-blend-midpoint" select="0.4" as="xs:decimal"/>
-   
-   
-   
+
+
+
    <!-- For what directory is the output intended? This is important to reconcile any relative
       links. -->
    <xsl:param name="output-directory-uri" as="xs:string"
       select="$tan:default-output-directory-resolved"/>
-   
-   
+
+
 
 
    <!-- THE APPLICATION -->
@@ -386,5 +397,5 @@
    <!-- Please don't change the following variable. It helps the application figure out where your directories
     are. -->
    <xsl:variable name="calling-stylesheet-uri" as="xs:anyURI" select="static-base-uri()"/>
-   
+
 </xsl:stylesheet>

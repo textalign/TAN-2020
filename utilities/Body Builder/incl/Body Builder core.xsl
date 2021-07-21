@@ -31,6 +31,17 @@
         documents need to be converted into TAN or TEI, as well as for developing workflows where live,
         ever-changing work needs to be regularly pushed into a TAN or TEI format. 
     </xsl:param>
+
+    <xsl:param name="tan:stylesheet-primary-input-desc" as="xs:string">a TAN-T or TAN-TEI file that
+        represents a target template for the parsed content coming from the secondary
+        input</xsl:param>
+    <xsl:param name="tan:stylesheet-secondary-input-desc" as="xs:string">one or more non-TAN files
+        in plain text, XML, or Word format (docx); perhaps configuration files for the
+        parameters</xsl:param>
+    <xsl:param name="tan:stylesheet-primary-output-desc" as="xs:string">the primary output with its
+        contents replaced by a tree parsed by applying rules to the source</xsl:param>
+    <xsl:param name="tan:stylesheet-secondary-output-desc" as="xs:string">none</xsl:param>
+    
     <xsl:param name="tan:stylesheet-url" select="static-base-uri()"/>
     <xsl:param name="tan:stylesheet-change-message" select="'Converting text from the following ' || 
         string(count($source-input-uris-resolved)) || ' files to TAN, based on ' ||

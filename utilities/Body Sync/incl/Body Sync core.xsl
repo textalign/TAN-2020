@@ -18,6 +18,14 @@
    <xsl:param name="tan:stylesheet-name" select="'Body Sync'"/>
    <xsl:param name="tan:stylesheet-activity"
       select="'updates a transcription in a class 1 file to match that in a redivision'"/>
+   
+   <xsl:param name="tan:stylesheet-primary-input-desc" as="xs:string">a class 1 file with a
+      redivision element in the head</xsl:param>
+   <xsl:param name="tan:stylesheet-secondary-input-desc" as="xs:string">the redivision</xsl:param>
+   <xsl:param name="tan:stylesheet-primary-output-desc" as="xs:string">the primary input, with the text
+      of its body revised to match the text in the chosen redivision</xsl:param>
+   <xsl:param name="tan:stylesheet-secondary-output-desc" as="xs:string">none</xsl:param>
+   
    <xsl:param name="tan:stylesheet-is-core-tan-application" select="true()"/>
    <xsl:param name="tan:stylesheet-change-log">
       <change xmlns="tag:textalign.net,2015:ns" who="kalvesmaki" when="2021-07-07">Edited,
