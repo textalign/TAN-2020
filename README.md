@@ -2,27 +2,31 @@
 
 [http://textalign.net](http://textalign.net)
 
-Version 2020 (alpha release), development branch
+Version 2021 (alpha release), development branch
 
-TAN has submodules, which must be invoked using the `--recurse-submodules` option:
-`git clone --recurse-submodules [GIT_SOURCE_PATH]`
+New to TAN? Start here:
 
-New to TAN? Start with directories marked with an asterisk.
+* [home page](http://textalign.net)
+* `examples/`: A small library of various TAN files.
+* `guidelines/`: the main documentation for TAN (see also [XHTML, 2020 verision](http://textalign.net/release/TAN-2020/guidelines/xhtml/index.xhtml)).
 
-* `applications/`: XSLT stylesheets for creating, editing, converting, and using TAN files.
-* \*`examples/`: A small library of example TAN files. Snippets of these examples appear in the guidelines.
-* `functions/`: The TAN function library, the core engine for validation and applications.
-* \* `guidelines/`: the main documentation for TAN. See also http://textalign.net/release/TAN-2018/guidelines/xhtml/index.xhtml.
-* `maintenance/`: reserved for TAN development
-* `output/`: empty directory for placing sample output
-* `parameters/`: Parameters that can be altered, to adjust both validation and activities.
-* `schemas/`: The principle schemas for validating TAN files.
-* `templates/`: Templates in various formats, both TAN and non-TAN. Useful for activities.
-* `tests/`: reserved for TAN development
+Want to do something practical? Start here:
+
+* `applications/`: XSLT applications for doing cutting-edge research and analysis with TAN / TEI files.
+* `utilities/`: XSLT applications for creating, editing, and converting TAN and TEI files.
+
+Want configure and develop? Start here:
+
+* `functions/`: The TAN function library, the heart of validation, applications, and utilities.
+* `output/`: directory for sample output
+* `parameters/`: configures TAN validation, applications, and utilities.
+* `schemas/`: validates TAN files.
+* `templates/`: blank files in various formats, both TAN and non-TAN, used by the applications and utilities.
 * `vocabularies/`:: standard TAN vocabulary files (TAN-voc).
 
-If you wish to include the TAN library in your XSLT project, you need only one line: `<xsl:include href="functions/TAN-function-library.xsl"/>` 
+If you are developing an XSLT application that could benefit from the TAN library, you need only one line: `<xsl:include href="functions/TAN-function-library.xsl"/>` 
 
-Directories marked `-old` represent the generation of schemas, functions, applications, and parameters that were part and parcel of the XSLT 2.0 versions of TAN, retained for reference.
+TAN has optional submodules for JavaScript dependencies in the output subdirectory. To get these, use:
+`git clone --recurse-submodules [GIT_SOURCE_PATH]`
 
 This is the development branch of a future alpha release of TAN. Many new features and enhancements are planned. Participation in developing TAN is welcome. If you create or maintain a library of TAN files, share it.
