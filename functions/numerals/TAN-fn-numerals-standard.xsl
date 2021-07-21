@@ -103,7 +103,7 @@
          indicating whether only numeral matches should be returned -->
       <!-- Output: the string with parts that look like numerals converted to Arabic numerals -->
       <!-- Does not take into account requests for help -->
-      <!--kw: numerals -->
+      <!--kw: numerals, strings -->
       <xsl:param name="string-to-analyze" as="xs:string?"/>
       <xsl:param name="ambig-is-roman" as="xs:boolean?"/>
       <xsl:param name="return-only-numerals" as="xs:boolean?"/>

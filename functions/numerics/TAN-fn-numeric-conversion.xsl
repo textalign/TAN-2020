@@ -142,7 +142,10 @@
    <!-- Conversions from decimal to base 2, 16, 26, & 64 and vice-versa -->
 
    <xsl:function name="tan:dec-to-bin" as="xs:string?" visibility="public">
-      <!-- One-parameter version of the full one below -->
+      <!-- Input: an integer -->
+      <!-- Output: the number in binary form, as a string -->
+      <!-- Input is assumed to be big-endian -->
+      <!--kw: numerics -->
       <xsl:param name="in" as="xs:integer?"/>
       <xsl:sequence select="tan:dec-to-n($in, 2)"/>
    </xsl:function>

@@ -239,11 +239,13 @@
     
     <xsl:function name="tan:xlsx-file-available" as="xs:boolean" visibility="public">
         <!-- Alias for the function below -->
+        <!--kw: files, archives -->
         <xsl:param name="element-with-attr-href-or-string-with-resolved-uri" as="item()?"/>
         <xsl:copy-of select="tan:archive-available($element-with-attr-href-or-string-with-resolved-uri)"/>
     </xsl:function>
     <xsl:function name="tan:docx-file-available" as="xs:boolean" visibility="public">
         <!-- Alias for the function below -->
+        <!--kw: files, archives -->
         <xsl:param name="element-with-attr-href-or-string-with-resolved-uri" as="item()?"/>
         <xsl:copy-of select="tan:archive-available($element-with-attr-href-or-string-with-resolved-uri)"/>
     </xsl:function>
@@ -591,12 +593,14 @@
 
     <xsl:function name="tan:save-docx" use-when="$advanced-functions-available" visibility="public">
         <!-- Alias for the function below -->
+        <!--kw: files, archives -->
         <xsl:param name="archive-components" as="document-node()*"/>
         <xsl:param name="resolved-uri" as="xs:string"/>
         <xsl:sequence select="tan:save-archive($archive-components, $resolved-uri)"/>
     </xsl:function>
     <xsl:function name="tan:save-xlsx" use-when="$advanced-functions-available" visibility="public">
         <!-- Alias for the function below -->
+        <!--kw: files, archives -->
         <xsl:param name="archive-components" as="document-node()*"/>
         <xsl:param name="resolved-uri" as="xs:string"/>
         <xsl:sequence select="tan:save-archive($archive-components, $resolved-uri)"/>

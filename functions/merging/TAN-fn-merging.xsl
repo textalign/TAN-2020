@@ -391,7 +391,7 @@
       <!-- Output: the fragment with the <div>s grouped according to their <ref> values -->
       <!-- If the 2nd parameter is true, for each leaf <div> in a group there will be a separate <div type="#version">; otherwise leaf divs will be merely copied -->
       <!-- For merging multiple files normally the value should be true; if they are misfits from a single source, false -->
-      <!--kw: merging, tree manipulation -->
+      <!--kw: merging, tree manipulation, grouping -->
       <xsl:param name="expanded-class-1-fragment" as="item()*"/>
       <xsl:param name="itemize-leaf-divs" as="xs:boolean"/>
       <xsl:param name="exclude-elements-with-duplicate-values-of-what-attribute" as="xs:string?"/>

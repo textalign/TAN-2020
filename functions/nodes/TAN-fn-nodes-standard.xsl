@@ -53,7 +53,7 @@
       <!-- Input: any fragment of XML; boolean indicating whether whitespace nodes should be ignored -->
       <!-- Output: a string representation of the fragment -->
       <!-- This function is a proxy of serialize(), used to represent XML fragments in plain text, useful in validation reports or in generating guidelines -->
-      <!--kw: nodes, serialization -->
+      <!--kw: nodes, serialization, strings -->
       <xsl:param name="fragment" as="item()*"/>
       <xsl:param name="ignore-whitespace-text-nodes" as="xs:boolean"/>
       <xsl:variable name="results" as="xs:string*">

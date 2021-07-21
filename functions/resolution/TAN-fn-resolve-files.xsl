@@ -1244,7 +1244,7 @@
       <!-- Input: any XML node, a boolean, a string -->
       <!-- Output: the same node, but with @href in itself and all descendant elements resolved to absolute form, with @orig-href inserted preserving the original if there is a change -->
       <!-- The second parameter is provided because this function works closely with tan:resolve-doc(). -->
-      <!--kw: resolution, irs, filenames -->
+      <!--kw: resolution, uris, filenames -->
       <xsl:param name="xml-node" as="node()?"/>
       <xsl:param name="add-q-ids" as="xs:boolean"/>
       <xsl:param name="this-base-uri" as="xs:string"/>

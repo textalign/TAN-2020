@@ -35,7 +35,10 @@
       <xsl:sequence select="tan:checksum-fletcher($str, 1, true())"/>
    </xsl:function>
    <xsl:function name="tan:checksum-fletcher-16" as="item()?" visibility="public">
-      <!-- two-parameter version of the fuller one, below -->
+      <!-- Input: a string, a boolean -->
+      <!-- Output: if the second parameter is true, a hexadecimal representation of the 
+         Fletcher 16 checksum on the string, otherwise its integer representation -->
+      <!-- kw: checksums -->
       <xsl:param name="str" as="xs:string?"/>
       <xsl:param name="output-hex" as="xs:boolean"/>
       <xsl:sequence select="tan:checksum-fletcher($str, 1, $output-hex)"/>
@@ -46,7 +49,10 @@
       <xsl:sequence select="tan:checksum-fletcher($str, 2, true())"/>
    </xsl:function>
    <xsl:function name="tan:checksum-fletcher-32" as="item()?" visibility="public">
-      <!-- two-parameter version of the fuller one, below -->
+      <!-- Input: a string, a boolean -->
+      <!-- Output: if the second parameter is true, a hexadecimal representation of the 
+         Fletcher 32 checksum on the string, otherwise its integer representation -->
+      <!-- kw: checksums -->
       <xsl:param name="str" as="xs:string?"/>
       <xsl:param name="output-hex" as="xs:boolean"/>
       <xsl:sequence select="tan:checksum-fletcher($str, 2, $output-hex)"/>
@@ -57,7 +63,10 @@
       <xsl:sequence select="tan:checksum-fletcher($str, 4, true())"/>
    </xsl:function>
    <xsl:function name="tan:checksum-fletcher-64" as="item()?" visibility="public">
-      <!-- two-parameter version of the fuller one, below -->
+      <!-- Input: a string, a boolean -->
+      <!-- Output: if the second parameter is true, a hexadecimal representation of the 
+         Fletcher 64 checksum on the string, otherwise its integer representation -->
+      <!-- kw: checksums -->
       <xsl:param name="str" as="xs:string?"/>
       <xsl:param name="output-hex" as="xs:boolean"/>
       <xsl:sequence select="tan:checksum-fletcher($str, 4, $output-hex)"/>

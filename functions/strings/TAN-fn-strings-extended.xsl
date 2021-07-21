@@ -192,7 +192,7 @@
          It also allows for exclusion of matches via @exclude-pattern. That is, if a span of text matches that value,
          the match will be ignored. -->
       <!-- The function was devised to convert raw text into TAN-T. Textual references can be turned into <div n=""/> anchors, and the result can then be changed into a traditional hierarchy. -->
-      <!--kw: strings, tree maniuplation, nodes -->
+      <!--kw: strings, tree manipulation, nodes -->
       <xsl:param name="items-with-strings" as="item()*"/>
       <xsl:param name="replace-elements" as="element()*"/>
       
