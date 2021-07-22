@@ -6,7 +6,8 @@
    
    <!-- Core global parameters for TAN applications. -->
    
-   <!-- Not all settings below will affect every TAN application. -->
+   <!-- These parameters apply to both TAN applications and utilities. Not all settings below are used by
+      every application/utility. -->
    
    <!-- START-OF-PROCESS PARAMETERS -->
    
