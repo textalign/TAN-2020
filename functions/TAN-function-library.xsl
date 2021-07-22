@@ -28,7 +28,7 @@
    <xsl:import href="setup/TAN-parameters-static.xsl"/>
 
    <!-- DYNAMIC PARAMETERS -->
-   <xsl:import href="setup/TAN-parameters-general.xsl"/>
+   <xsl:import href="setup/TAN-parameters-validation.xsl"/>
    <xsl:import href="setup/TAN-parameters-extended.xsl" use-when="not($tan:validation-mode-on)"/>
    <xsl:import href="../parameters/params-application.xsl" use-when="not($tan:validation-mode-on)"/>
    <xsl:import href="../parameters/params-application-diff.xsl"
