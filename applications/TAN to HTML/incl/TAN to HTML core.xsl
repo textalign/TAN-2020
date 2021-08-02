@@ -41,7 +41,7 @@
         <change xmlns="tag:textalign.net,2015:ns" who="kalvesmaki" when="2021-07-07">Edited,
             prepared for TAN 2021 release.</change>
     </xsl:param>
-    <xsl:param name="tan:stylesheet-change-message" select="'Converted merged TAN-A sources to HTML'"/>
+    <xsl:param name="tan:stylesheet-change-message" select="'Converted TAN ' || $tan:doc-uri || ' to HTML'"/>
     
     <xsl:variable name="output-directory-uri-resolved" as="xs:string"
         select="tan:uri-directory(resolve-uri($output-directory-uri, $calling-stylesheet-uri))"/>
