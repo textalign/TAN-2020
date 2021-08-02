@@ -7,13 +7,14 @@
       match that in a redivision -->
    <!-- Version 2021-07-07-->
    
-   <!-- This is the public interface for the application. The code that runs the application can
-      be found by following the links in the <xsl:include> or <xsl:import> at the bottom of this
-      file. You are invited to alter as you like any of the parameters in this file, to customize
-      the application to suit your needs. If you are relatively new to XSLT, or you are nervous
-      about making changes, make a copy of this file before changing it, or configure a
-      transformation scenario in Oxygen. If you are comfortable with XSLT, try creating your own
-      stylesheet, then import this one, selectively changing the parameters as needed.-->
+   <!-- This is the public interface for the application. The code that runs the application can be found by
+      following the links in the <xsl:include> or <xsl:import> at the bottom of this file. You are invited
+      to alter as you like any of the parameters in this file, to customize the application to suit your
+      needs. If you are relatively new to XSLT, or you are nervous about making changes, make a copy of
+      this file before changing it, or configure a transformation scenario in Oxygen. If you are
+      comfortable with XSLT, try creating your own stylesheet, then import this one, selectively changing
+      the parameters as needed. For more background on how to configure and use this file, see the TAN
+      Guidelines, Using TAN Applications and Utilities. -->
    
    
    <!-- DESCRIPTION -->

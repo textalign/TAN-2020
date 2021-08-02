@@ -21,13 +21,14 @@
       one leaf div to another, you will find that Body Builder can save you hours of editorial
       work.-->
 
-   <!-- This is the public interface for the application. The code that runs the application can
-      be found by following the links in the <xsl:include> or <xsl:import> at the bottom of this
-      file. You are invited to alter as you like any of the parameters in this file, to customize
-      the application to suit your needs. If you are relatively new to XSLT, or you are nervous
-      about making changes, make a copy of this file before changing it, or configure a
-      transformation scenario in Oxygen. If you are comfortable with XSLT, try creating your own
-      stylesheet, then import this one, selectively changing the parameters as needed.-->
+   <!-- This is the public interface for the application. The code that runs the application can be found by
+      following the links in the <xsl:include> or <xsl:import> at the bottom of this file. You are invited
+      to alter as you like any of the parameters in this file, to customize the application to suit your
+      needs. If you are relatively new to XSLT, or you are nervous about making changes, make a copy of
+      this file before changing it, or configure a transformation scenario in Oxygen. If you are
+      comfortable with XSLT, try creating your own stylesheet, then import this one, selectively changing
+      the parameters as needed. For more background on how to configure and use this file, see the TAN
+      Guidelines, Using TAN Applications and Utilities. -->
    
 
    <!-- DESCRIPTION -->
@@ -106,11 +107,11 @@
 
    <!-- What top-level divs should be excluded (preserved intact) from the remodeling? Expected: a 
       regular expression matching @n. If blank, this has no effect. -->
-   <xsl:param name="exclude-from-input-top-level-divs-with-attr-n-values-regex" as="xs:string?" select="'epilogue|^2$'"/>
+   <xsl:param name="exclude-from-input-top-level-divs-with-attr-n-values-regex" as="xs:string?" select="''"/>
    
    <!-- What div types should be excluded from the remodel? Expected: a regular expression matching @type. 
       If blank, this has no effect. -->
-   <xsl:param name="exclude-from-input-divs-with-attr-type-values-regex" as="xs:string?" select="'test'"/>
+   <xsl:param name="exclude-from-input-divs-with-attr-type-values-regex" as="xs:string?" select="''"/>
    
    <!-- At what level should remodeling begin? By setting this value to 1 or greater, you will 
       preserve existing <div> structures, and remodeling will occur starting only at the next tier

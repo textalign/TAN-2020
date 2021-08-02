@@ -11,13 +11,14 @@
       process any TAN-T or TAN-TEI file through existing TAN-A-lm language libraries, and online search
       services, looking for the best lexico-morphological profiles for the file's tokens. -->
     
-    <!-- This is the public interface for the application. The code that runs the application can
-        be found by following the links in the <xsl:include> or <xsl:import> at the bottom of this
-        file. You are invited to alter as you like any of the parameters in this file, to customize
-        the application to suit your needs. If you are relatively new to XSLT, or you are nervous
-        about making changes, make a copy of this file before changing it, or configure a
-        transformation scenario in Oxygen. If you are comfortable with XSLT, try creating your own
-        stylesheet, then import this one, selectively changing the parameters as needed.-->
+    <!-- This is the public interface for the application. The code that runs the application can be found by
+      following the links in the <xsl:include> or <xsl:import> at the bottom of this file. You are invited
+      to alter as you like any of the parameters in this file, to customize the application to suit your
+      needs. If you are relatively new to XSLT, or you are nervous about making changes, make a copy of
+      this file before changing it, or configure a transformation scenario in Oxygen. If you are
+      comfortable with XSLT, try creating your own stylesheet, then import this one, selectively changing
+      the parameters as needed. For more background on how to configure and use this file, see the TAN
+      Guidelines, Using TAN Applications and Utilities. -->
     
     
     <!-- DESCRIPTION -->
@@ -60,7 +61,7 @@
     
     <!-- Where is the TAN-A-lm file that should be used as a template for the output? The target uri
         must be resolved. By default, a search is made in the input for the first annotation location. -->
-    <xsl:param name="template-tan-a-lm-uri-resolved" as="xs:string"
+    <xsl:param name="template-tan-a-lm-uri-resolved" as="xs:string?"
         select="base-uri($tan:annotations-1st-da[tan:TAN-A-lm][1])"/>
     
     <!-- LEXICOMORPHOLOGICAL DATA SOURCES: LANGUAGE CATALOGS AND SEARCH SERVICES -->

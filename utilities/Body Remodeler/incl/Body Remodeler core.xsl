@@ -335,7 +335,7 @@
         </xsl:choose>
         
     </xsl:template>
-    
+
     <xsl:template match="*:body" mode="output-pass-1">
         <xsl:param name="new-body" tunnel="yes" as="element()"/>
         <xsl:param name="convert-to-tei" tunnel="yes" as="xs:boolean" select="false()"/>
@@ -369,14 +369,15 @@
     </xsl:template>
     
    
+    <xsl:template match="@_removed" mode="output-pass-1-indent"/> 
     
     <xsl:template match="*" mode="output-pass-1-indent">
         <xsl:param name="average-indentation" as="xs:integer?" tunnel="yes" select="0"/>
         <xsl:param name="depth" as="xs:integer" select="2"/>
         <xsl:copy-of select="'&#xa;' || tan:fill(' ', $average-indentation * $depth)"/>
         <xsl:copy>
-            <xsl:copy-of select="@*"/>
-            <xsl:apply-templates mode="#current">
+            <xsl:apply-templates select="@*" mode="#current"/>
+            <xsl:apply-templates select="node()" mode="#current">
                 <xsl:with-param name="depth" select="$depth + 1"/>
             </xsl:apply-templates>
         </xsl:copy>
@@ -391,7 +392,7 @@
 
     
     <!-- RESULT TREE -->
-    <xsl:param name="output-diagnostics-on" static="yes" select="true()"/>
+    <xsl:param name="output-diagnostics-on" static="yes" select="false()"/>
     <xsl:output indent="yes" use-when="$output-diagnostics-on"/>
     <xsl:template match="/" priority="1" use-when="$output-diagnostics-on">
         <xsl:variable name="text-in" as="xs:string" select="string($input-body-space-norm)"/>

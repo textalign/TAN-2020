@@ -59,8 +59,8 @@
     
     <!-- TEMPLATE, TAN-MOR -->
     
-    <xsl:variable name="template-tan-a-lm-original" as="document-node()" select="doc($template-tan-a-lm-uri-resolved)"/>
-    <xsl:variable name="template-tan-a-lm-resolved" as="document-node()"
+    <xsl:variable name="template-tan-a-lm-original" as="document-node()?" select="doc($template-tan-a-lm-uri-resolved)"/>
+    <xsl:variable name="template-tan-a-lm-resolved" as="document-node()?"
         select="tan:resolve-doc($template-tan-a-lm-original)"/>
     
     <xsl:variable name="template-doc-default-morphology" select="$template-tan-a-lm-resolved/tan:TAN-A-lm/tan:body/@morphology"/>

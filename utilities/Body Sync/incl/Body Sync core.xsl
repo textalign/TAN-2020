@@ -34,7 +34,7 @@
    <xsl:param name="tan:stylesheet-change-message"
       select="concat('Replaced body text with redivision ', xs:string($redivision-number))"/>
    
-   <xsl:output use-character-maps="tan:see-special-chars"/>
+   <xsl:output indent="true" use-character-maps="tan:see-special-chars"/>
    
    <!-- The application -->
    
@@ -91,7 +91,8 @@
       
       <xsl:choose>
          <!-- diagnostics -->
-         <xsl:when test="true()">
+         <xsl:when test="false()">
+            <xsl:message select="'Diagnostics on, tan:synchronize-class-1-text()'"/>
             <xsl:document>
                <diagnostics>
                   <self-expanded><xsl:copy-of select="tan:expand-doc($tan:self-resolved, 'verbose', true())"/></self-expanded>

@@ -44,8 +44,8 @@
     
     <xsl:param name="tan:stylesheet-url" select="static-base-uri()"/>
     <xsl:param name="tan:stylesheet-change-message" select="'Converting text from the following ' || 
-        string(count($source-input-uris-resolved)) || ' files to TAN, based on ' ||
-        $source-input-uri-resolved "/>
+        string(count($source-input-uris-resolved)) || ' files to TAN, using ' ||
+        $source-input-uri-resolved || ' as the basis for the source text'"/>
     <xsl:param name="tan:stylesheet-change-log">
         <change xmlns="tag:textalign.net,2015:ns" who="kalvesmaki" when="2021-07-07">Edited,
             prepared for TAN 2021 release.</change>
@@ -496,7 +496,7 @@
       specs of tan:sequence-to-tree()), then it is intended to be at the leafmost part
       of the tree.
    -->
-    <xsl:variable name="source-input-pass-2b" as="element()">
+    <xsl:variable name="source-input-pass-2b" as="element()?">
         <xsl:apply-templates select="$source-input-pass-2-map('text')"
             mode="fix-constructed-hierarchy"/>
     </xsl:variable>
@@ -567,14 +567,14 @@
 
 
 
-    <xsl:variable name="source-input-pass-3" as="element()"
+    <xsl:variable name="source-input-pass-3" as="element()?"
         select="tan:sequence-to-tree($source-input-pass-2b)"/>
     
 
 
 
 
-    <xsl:variable name="source-input-pass-3b" as="element()">
+    <xsl:variable name="source-input-pass-3b" as="element()?">
         <xsl:apply-templates select="$source-input-pass-3" mode="apply-comment-markup">
             <xsl:with-param name="comment-placement-arrays" tunnel="yes" select="$comments-of-interest-placement-arrays"/>
         </xsl:apply-templates>
@@ -1034,7 +1034,7 @@
     
     
     
-    <xsl:variable name="source-input-pass-4" as="element()">
+    <xsl:variable name="source-input-pass-4" as="element()?">
         <xsl:apply-templates select="tan:normalize-tree-space($source-input-pass-3b, false())"
             mode="consolidate-adjacent-identical-divs"/>
     </xsl:variable>
@@ -1069,7 +1069,7 @@
     </xsl:template>
     
     
-    <xsl:variable name="source-input-pass-5" as="element()">
+    <xsl:variable name="source-input-pass-5" as="element()?">
         <xsl:apply-templates select="$source-input-pass-4" mode="handle-orphan-text"/>
     </xsl:variable>
     
@@ -1184,6 +1184,9 @@
             <xsl:message
                 select="$source-input-uri-resolved || ' resolves into ' || string(count($source-input-uris-resolved)) || ' uris: ' || string-join($source-input-uris-resolved, ', ')"
             />
+        </xsl:if>
+        <xsl:if test="string-length(normalize-space($source-input-uri-resolved)) lt 1">
+            <xsl:message select="'No source URI has been supplied; output will have an empty body'"/>
         </xsl:if>
         <xsl:if test="$some-source-input-is-docx">
             <xsl:message select="'Source docx input detected.'"/>

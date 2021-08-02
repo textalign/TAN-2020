@@ -18,13 +18,14 @@
       pushed into a TAN or TEI format.-->
    <!-- Version 2021-07-13-->
 
-   <!-- This is the public interface for the application. The code that runs the application can
-      be found by following the links in the <xsl:include> or <xsl:import> at the bottom of this
-      file. You are invited to alter as you like any of the parameters in this file, to customize
-      the application to suit your needs. If you are relatively new to XSLT, or you are nervous
-      about making changes, make a copy of this file before changing it, or configure a
-      transformation scenario in Oxygen. If you are comfortable with XSLT, try creating your own
-      stylesheet, then import this one, selectively changing the parameters as needed.-->
+   <!-- This is the public interface for the application. The code that runs the application can be found by
+      following the links in the <xsl:include> or <xsl:import> at the bottom of this file. You are invited
+      to alter as you like any of the parameters in this file, to customize the application to suit your
+      needs. If you are relatively new to XSLT, or you are nervous about making changes, make a copy of
+      this file before changing it, or configure a transformation scenario in Oxygen. If you are
+      comfortable with XSLT, try creating your own stylesheet, then import this one, selectively changing
+      the parameters as needed. For more background on how to configure and use this file, see the TAN
+      Guidelines, Using TAN Applications and Utilities. -->
 
    <!-- DESCRIPTION -->
 
@@ -117,7 +118,7 @@
    <!-- SOURCE INPUT -->
    
    <!-- Where is the source input file? Any relative path will be resolved against this stylesheet. 
-      Yu may wish to us for this parameter a resolved URI, e.g., "file:/c:/myfile.txt", or work with an 
+      You may wish to us for this parameter a resolved URI, e.g., "file:/c:/myfile.txt", or work with an 
       @href that is in the catalyzing file, making sure to resolve it against the host file. In many 
       cases, a class 1 file that is based upon live work being conducted in another file will ideally 
       point to the source. Some suggestions:
