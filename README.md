@@ -25,7 +25,7 @@ Want configure and develop? Start here:
 * `templates/`: blank files in various formats, both TAN and non-TAN, used by the applications and utilities.
 * `vocabularies/`: standard TAN vocabulary files (TAN-voc).
 
-If you are developing an XSLT application that could benefit from the TAN library, you need only one line: `<xsl:include href="functions/TAN-function-library.xsl"/>` 
+If you want to incorporate the TAN library into your XSLT applications, you need only one line: `<xsl:include href="functions/TAN-function-library.xsl"/>` 
 
 TAN has optional submodules for JavaScript dependencies in the output and maintenance subdirectories. To get these, use:
 `git clone --recurse-submodules [GIT_SOURCE_PATH]`
