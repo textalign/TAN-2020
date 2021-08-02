@@ -10,3 +10,6 @@
 [submodule "output/js/tablesorter"]
 	path = output/js/tablesorter
 	url = https://github.com/Mottie/tablesorter.git
+[submodule "maintenance/xslt-quality-kalv"]
+	path = maintenance/xslt-quality-kalv
+	url = https://github.com/Arithmeticus/xslt-quality.git
