@@ -70,7 +70,8 @@
       If you are relatively new to XSLT, or you are nervous about making changes, make a copy of
       this file before changing it, or configure a transformation scenario in Oxygen. If you are
       comfortable with XSLT, try creating your own stylesheet, then import this one, selectively
-      changing the parameters as needed. </xsl:variable>
+      changing the parameters as needed. For more background on how to configure and use this file,
+      see the TAN Guidelines, Using TAN Applications and Utilities.</xsl:variable>
    <xsl:variable name="tan:standard-app-preamble-norm" as="xs:string"
       select="normalize-space($tan:standard-app-preamble)"/>
    <xsl:variable name="tan:standard-app-preamble-comment" as="comment()"

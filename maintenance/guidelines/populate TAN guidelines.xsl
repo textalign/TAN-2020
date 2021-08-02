@@ -26,11 +26,15 @@
    <!-- This stylesheet and its components are pretty messy, reflecting the accumulation of several years of development. Because
       it is not intended for mass consumption, I haven't tried to clean or streamline the code. -->
    
-   <xsl:param name="generate-inclusion-for-utilities-and-applications" as="xs:boolean" static="true" select="true()"/>
-   <xsl:param name="generate-inclusion-for-elements-attributes-and-patterns" as="xs:boolean" static="true" select="false()"/>
-   <xsl:param name="generate-inclusion-for-vocabularies" as="xs:boolean" static="true" select="false()"/>
-   <xsl:param name="generate-inclusion-for-keys-functions-and-templates" as="xs:boolean" static="true" select="false()"/>
-   <xsl:param name="generate-inclusion-for-errors" as="xs:boolean" static="true" select="false()"/>
+   <xsl:param name="generate-inclusion-for-utilities-and-applications" as="xs:boolean" static="true"
+      select="true()"/>
+   <xsl:param name="generate-inclusion-for-elements-attributes-and-patterns" as="xs:boolean"
+      static="true" select="true()"/>
+   <xsl:param name="generate-inclusion-for-vocabularies" as="xs:boolean" static="true"
+      select="true()"/>
+   <xsl:param name="generate-inclusion-for-keys-functions-and-templates" as="xs:boolean"
+      static="true" select="true()"/>
+   <xsl:param name="generate-inclusion-for-errors" as="xs:boolean" static="true" select="true()"/>
    
    <xsl:param name="tan:include-diagnostics-components" as="xs:boolean" select="true()" static="yes"/>
    
@@ -75,6 +79,8 @@
       select="$tan:rng-collection-without-TEI//rng:element[@name]"/>
    <xsl:variable name="attributes-excl-TEI" as="element()*"
       select="$tan:rng-collection-without-TEI//rng:attribute[@name]"/>
+   
+   <xsl:variable name="function-keyword-doc" as="document-node()" select="doc('../TAN-function-keywords.xml')"/>
 
    <xsl:variable name="sequence-of-sections" as="element()">
       <!-- Filters and arranges the function files into sequence sequence and hierarchy the documentation should follow. -->
@@ -306,8 +312,9 @@
    <xsl:mode name="comments-to-docbook" on-no-match="shallow-skip"/>
    
    <xsl:template match="comment()[matches(., '^\s*kw:')]" mode="comments-to-docbook" priority="1">
-      <para>Function groups: 
-         <xsl:for-each select="tokenize(replace(., '^\s*kw:\s*', ''), ',\s*')">
+      <para>
+         <xsl:text>Related: </xsl:text> 
+         <xsl:for-each select="tokenize(replace(normalize-space(.), '^kw: ?', ''), ', ?')">
             <xsl:if test="position() gt 1">
                <xsl:text>, </xsl:text>
             </xsl:if>
@@ -674,13 +681,36 @@
          </xsl:choose>
       </section>
    </xsl:template>
+   
+   
+   <xsl:mode name="function-keywords-to-docbook" on-no-match="shallow-skip"/>
+   
+   <xsl:template match="tan:desc" mode="function-keywords-to-docbook">
+      <para>
+         <xsl:copy-of select="tan:prep-string-for-docbook(.)"/>
+      </para>
+   </xsl:template>
+   <xsl:template match="tan:xref[1]" mode="function-keywords-to-docbook">
+      <para>
+         <xsl:text>See also: </xsl:text>
+         <xsl:for-each select="../tan:xref">
+            <xsl:if test="position() gt 1">
+               <xsl:text>, </xsl:text>
+            </xsl:if>
+            <link linkend="tan-function-group-{replace(., ' ', '_')}">
+               <xsl:value-of select="."/>
+            </link>
+         </xsl:for-each>
+      </para>
+   </xsl:template>
+   
+   
 
-   <xsl:param name="output-diagnostics-on" as="xs:boolean" select="true()" static="yes"/>
+   <xsl:param name="output-diagnostics-on" as="xs:boolean" select="false()" static="yes"/>
    
    <xsl:output method="xml" indent="no" use-when="not($output-diagnostics-on)"/>
    <xsl:output method="xml" indent="true" use-when="$output-diagnostics-on"/>
    
-   <xsl:param name="test-param" as="xs:boolean">falsch</xsl:param>
    <xsl:template match="/*" use-when="$output-diagnostics-on">
       <!--<xsl:variable name="rng-file-picked" as="document-node()" select="$tan:rng-collection-without-TEI[4]"/>-->
       <diagnostics xmlns="">
@@ -691,8 +721,6 @@
             <xsl:apply-templates select="$rng-file-picked" mode="formaldef"/>
          </rng-file-to-text>-->
          <!--<fun-lib><xsl:sequence select="count($function-docs-picked)"></xsl:sequence></fun-lib>-->
-         <testbool><xsl:copy-of select="$test-param"/></testbool>
-         <testbool-opp><xsl:copy-of select="not($test-param)"/></testbool-opp>
          <signatures>
             <xsl:for-each-group select="($util-collection, $app-collection)/*/xsl:param" group-by="@as">
                <xsl:sort select="count(current-group())" order="descending"/>
@@ -858,14 +886,18 @@
       <xsl:result-document use-when="$generate-inclusion-for-keys-functions-and-templates"
          href="{resolve-uri('../../guidelines/inclusions/variables-keys-functions-and-templates.xml',static-base-uri())}">
          <chapter version="5.0" xml:id="variables-keys-functions-and-templates">
-            <title>TAN variables, keys, functions, and templates</title>
-            <para>This chapter provides a technical reference to all the variables, keys, functions,
-               and templates in the TAN Function Library. It is written primarily for developers who
-               wish to use the TAN function library when programming their own applications.</para>
+            <title>TAN functions, templates, global variables, and keys</title>
+            <para>This chapter provides a technical reference to all the functions, templates,
+               global variables, and keys in the TAN Function Library. It is written primarily for
+               developers who wish to use the TAN function library when programming their own
+               applications.</para>
             <para>Dependencies refer exclusively to components of the TAN function library, both the
                core validation procedures and the extra functions. A variable, function, or template
-               listed as not being relied upon may have dependencies in the files in the
-               subdirectory <code>applications</code>.</para>
+               listed as not being relied upon may nevertheless have dependencies in the files in the
+               subdirectories <code>applications</code> and <code>utilities</code>.</para>
+            <para>Documentation is relatively good for functions, but not for global variables. For
+               a discussino on important global variables, see 
+               <xref xlink:href="#using-tan-global-variables"/></para>
             <xsl:copy-of select="$chapter-caveat"/>
             <section>
                <title>Indexes</title>
@@ -876,17 +908,29 @@
                      <xsl:sort select="lower-case(current-grouping-key())"/>
                      <xsl:variable name="this-keyword" as="xs:string"
                         select="lower-case(current-grouping-key())"/>
+                     <xsl:variable name="this-keyword-entry" as="element()?"
+                        select="$function-keyword-doc/*/tan:item[tan:keyword[lower-case(.) = $this-keyword]]"/>
 
                      <!-- keyword index -->
                      <section xml:id="tan-function-group-{replace(current-grouping-key(), ' ', '_')}">
                         <title><xsl:value-of select="current-grouping-key()"/></title>
+                        <xsl:apply-templates select="$this-keyword-entry"
+                           mode="function-keywords-to-docbook"/>
                         <para>
-                           <xsl:for-each-group select="current-group()" group-by="@name">
-                              <xsl:sort select="current-grouping-key()"/>
-                              <xsl:copy-of
-                                 select="tan:prep-string-for-docbook(tan:string-representation-of-component(current-grouping-key(), 'function', false()))"/>
-                              <xsl:text> </xsl:text>
-                           </xsl:for-each-group>
+                           <itemizedlist>
+                              <xsl:for-each-group select="current-group()" group-by="@name">
+                                 <xsl:sort select="current-grouping-key()"/>
+                                 <listitem>
+                                    <para>
+
+                                       <xsl:copy-of
+                                          select="tan:prep-string-for-docbook(tan:string-representation-of-component(current-grouping-key(), 'function', false()))"
+                                       />
+                                    </para>
+                                 </listitem>
+
+                              </xsl:for-each-group>
+                           </itemizedlist>
                         </para>
                         
                      </section>

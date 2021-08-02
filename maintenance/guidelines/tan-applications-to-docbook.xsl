@@ -14,7 +14,7 @@
         <xsl:variable name="current-base-uri" as="xs:anyURI" select="base-uri(.)"/>
         <xsl:variable name="uri-from-guidelines" as="xs:string"
             select="tan:uri-relative-to($current-base-uri, $target-base-uri-for-guidelines)"/>
-        <section>
+        <section xml:id="{replace(tan:cfn(.), '(%20|\+)', '_')}">
             <title><xsl:value-of select="replace(tan:cfn(.), '%20', ' ')"/></title>
             <para>
                 <emphasis>Location: </emphasis>

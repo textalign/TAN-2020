@@ -39,9 +39,14 @@
    
    <sch:let name="all-parameter-names" value="/*/xsl:param/@name"/>
    
+   <sch:let name="parent-directory-name" value="analyze-string(base-uri(.), '.+/([^/]+)/[^/]+$')/*:match/*:group"></sch:let>
+   
    
    <sch:pattern>
       <sch:rule context="/*">
+         <sch:assert test="tan:cfn(.) eq $parent-directory-name">The local filename must be
+            identical to the name of its parent directory.</sch:assert>
+         
          <sch:assert test="exists($tan:main-application)">There must be a main application
             available, through a single xsl:include.</sch:assert>
          <sch:assert test="exists($tan:app-iri)">Every TAN application must include in the main
