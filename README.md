@@ -13,14 +13,14 @@ New to TAN? Start here:
 Want to do something practical? Start here:
 
 * `applications/`: XSLT applications for doing cutting-edge publishing, research, and analysis with TAN / TEI files.
-* `utilities/`: XSLT applications for creating, editing, and converting TAN and TEI files.
+* `utilities/`: XSLT applications for creating, editing, and converting TAN / TEI files.
 
 Want configure and develop? Start here:
 
 * `functions/`: The TAN function library, the heart of validation, applications, and utilities.
 * `maintenance/`: resources for developers, to validate and update core TAN assets.
 * `output/`: directory for sample output
-* `parameters/`: configures TAN validation, applications, and utilities.
+* `parameters/`: settings to configure TAN validation, applications, and utilities.
 * `schemas/`: validates TAN files.
 * `templates/`: blank files in various formats, both TAN and non-TAN, used by the applications and utilities.
 * `vocabularies/`: standard TAN vocabulary files (TAN-voc).
