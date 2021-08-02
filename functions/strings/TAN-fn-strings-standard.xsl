@@ -669,9 +669,9 @@
       <xsl:param name="string-b" as="xs:string?"/>
       <xsl:param name="find-common-start" as="xs:boolean"/>
       
-      <!-- Two methods are being tried, one using a hash-like method to find the common string, and another
+      <!-- Two methods are being tried, one using a binary search method to find the common string, and another
          that proceeds block by block. -->
-      <xsl:variable name="try-hash-approach" as="xs:boolean" select="false()"/>
+      <xsl:variable name="try-binary-search" as="xs:boolean" select="false()"/>
       
       <!-- blocks of 100 slightly outperformed blocks of 10 or 1000 -->
       <xsl:variable name="block-size" as="xs:integer" select="100"/>
@@ -688,9 +688,9 @@
       
       <xsl:variable name="commonality" as="xs:integer*">
          <xsl:choose>
-            <xsl:when test="$try-hash-approach">
+            <xsl:when test="$try-binary-search">
                <xsl:iterate select="reverse($binary-progression)">
-                  <!-- This iteration applies a hash method to finding the first common substring -->
+                  <!-- This iteration applies a binary search method to finding the first common substring -->
                   <xsl:param name="amount-matching" as="xs:integer" select="0"/>
                   <xsl:param name="last-step" as="xs:integer" select="0"/>
                   <xsl:param name="go-ahead" as="xs:boolean" select="true()"/>
@@ -821,8 +821,8 @@
          <xsl:message select="'Input string b: ' || tan:ellipses($string-b, 100, 100)"/>
          <xsl:message select="'Find common start?', $find-common-start"/>
          <xsl:choose>
-            <xsl:when test="$try-hash-approach">
-               <xsl:message select="'Trying hash approach; binary progression: ', $binary-progression"/>
+            <xsl:when test="$try-binary-search">
+               <xsl:message select="'Trying binary search approach; binary progression: ', $binary-progression"/>
                <xsl:message select="
                      'Commonality: ' || (if ($find-common-start)
                      then
@@ -843,10 +843,10 @@
       </xsl:if>
       
       <xsl:choose>
-         <xsl:when test="$find-common-start and $try-hash-approach">
+         <xsl:when test="$find-common-start and $try-binary-search">
             <xsl:value-of select="substring($string-a, 1, $commonality)"/>
          </xsl:when>
-         <xsl:when test="$try-hash-approach">
+         <xsl:when test="$try-binary-search">
             <xsl:value-of select="substring($string-a, $string-a-length + 1 - $commonality)"/>
          </xsl:when>
          <xsl:when test="$find-common-start">

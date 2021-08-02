@@ -593,7 +593,7 @@
 
     <xsl:function name="tan:save-docx" use-when="$advanced-functions-available" visibility="public">
         <!-- Alias for the function below -->
-        <!--kw: files, archives -->
+        <!--kw: files, archives, docx -->
         <xsl:param name="archive-components" as="document-node()*"/>
         <xsl:param name="resolved-uri" as="xs:string"/>
         <xsl:sequence select="tan:save-archive($archive-components, $resolved-uri)"/>

@@ -69,7 +69,7 @@
       <!-- For those accustomed to handling ordinary XML nodes, maps can be frustrating to work with.
         This function allows one to change a map to XML, and do fun things with it, without requiring
         map functions. -->
-      <!--kw: maps, serialization, nodes -->
+      <!--kw: maps, nodes -->
       <xsl:param name="items-to-convert" as="map(*)*"/>
       <xsl:param name="sort-keys" as="xs:boolean"/>
       <xsl:apply-templates select="$items-to-convert" mode="tan:map-and-array-to-xml">

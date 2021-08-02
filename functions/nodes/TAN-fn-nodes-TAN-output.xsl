@@ -172,7 +172,7 @@
             <xsl:message select="'Matching vocabulary item found for ' || string-join($agent-names, ', ')"/>
          </xsl:when>
          <xsl:otherwise>
-            <xsl:message select="'No matching vocabulary item found for ' || string-join($agent-names, ', ') || '. New vocabulary item will be added.'"/>
+            <xsl:message select="'[tan:update-TAN-change-log()] No matching vocabulary item found for ' || string-join($agent-names, ', ') || '. New vocabulary item will be added.'"/>
          </xsl:otherwise>
       </xsl:choose>
       

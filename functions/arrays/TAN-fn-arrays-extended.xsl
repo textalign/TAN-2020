@@ -68,7 +68,7 @@
       <!-- Output: any arrays in each item serialized as XML elements; each 
          member of the array will be wrapped by an <array:member> with @type
          specifying the item type it encloses. -->
-      <!--kw: arrays, serialization, nodes -->
+      <!--kw: arrays, nodes -->
       <xsl:param name="arrays-to-convert" as="array(*)*"/>
       <xsl:apply-templates select="$arrays-to-convert" mode="tan:map-and-array-to-xml"/>
    </xsl:function>
