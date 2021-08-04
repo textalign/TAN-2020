@@ -159,3 +159,7 @@ item,
 group{
     -oxy-foldable: true
 }
+quote{
+   display: inline;
+   font-style: italic
+}
