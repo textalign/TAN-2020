@@ -5,7 +5,7 @@
     xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tei="http://www.tei-c.org/ns/1.0"
     xmlns:tan="tag:textalign.net,2015:ns" exclude-result-prefixes="#all" version="3.0">
     
-    <!-- Welcome to Pandiff, the TAN application that finds and analyzes text differences-->
+    <!-- Welcome to Diff+, the TAN application that finds and analyzes text differences-->
     <!-- Version 2021-07-13-->
     <!-- Take any number of versions of a text, compare them, and view and study all the text
         differences in an HTML page. The HTML output allows you to see precisely where one version

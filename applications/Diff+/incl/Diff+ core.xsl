@@ -15,7 +15,7 @@
 
     <!-- About this stylesheet -->
     
-    <xsl:param name="tan:stylesheet-name" select="'Pandiff'"/>
+    <xsl:param name="tan:stylesheet-name" select="'Diff+'"/>
     <xsl:param name="tan:stylesheet-activity" select="'finds and analyzes text differences'"/>
     <xsl:param name="tan:stylesheet-iri"
         select="'tag:textalign.net,2015:stylesheet:compare-texts'"/>
