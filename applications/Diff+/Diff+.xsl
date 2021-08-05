@@ -93,24 +93,25 @@
 
     <!-- STEP ONE: PICK YOUR DIRECTORIES AND FILES -->
 
-    <!-- Where directories of interest hold the target files? The following parameters are provided 
-        as examples, and for convenince, in case you want to have several commonly used directories 
-        handy. The main parameter can then be bound to the directory or directories you want. -->
+    <!-- What directories of interest hold the target files? The following parameters are provided as examples,
+      and for convenince, in case you want to have several commonly used directories handy. See below for
+      the main parameter to pick via variable name the directory or directories you want. -->
     <xsl:param name="directory-1-uri" select="'../../../library-arithmeticus/aristotle'" as="xs:string?"/>
     <xsl:param name="directory-2-uri" select="'../../../library-arithmeticus/evagrius/cpg2439'" as="xs:string?"/>
     <xsl:param name="directory-3-uri" select="'../../../library-arithmeticus/bible'" as="xs:string?"/>
     <xsl:param name="directory-4-uri" select="'file:/e:/joel/google%20drive/clio%20commons/TAN%20library/clio'" as="xs:string?"/>
-    <xsl:param name="directory-5-uri" select="'../../../library-arithmeticus/test'" as="xs:string?"/>
+    <xsl:param name="directory-5-uri" select="'../../../library-arithmeticus/test/marinis'" as="xs:string?"/>
     <xsl:param name="directory-6-uri" select="'../../../../publications%20and%20lectures/4%20in%20press/AR18%20TAN%20diff/cfr'" as="xs:string?"/>
     
-    <!-- What directory or directories has the main input files? Any relative path will be calculated relative 
-        to this application file. Multiple directories may be supplied. Results can be filtered below. -->
-    <xsl:param name="tan:main-input-relative-uri-directories" as="xs:string+" select="$directory-6-uri"/>
+    <!-- What directory or directories has the main input files? Any relative path will be calculated
+      against the location of this application file. Multiple directories may be supplied. Too many files?
+      Results can be filtered below. -->
+    <xsl:param name="tan:main-input-relative-uri-directories" as="xs:string+" select="$directory-5-uri"/>
 
     <!-- What pattern must each filename match (a regular expression, case-insensitive)? Of the files 
         in the directories chosen, only those whose names match this pattern will be included. A null 
         or empty string means ignore this parameter. -->
-    <xsl:param name="tan:input-filenames-must-match-regex" as="xs:string?" select="'title1-vol1'"/>
+    <xsl:param name="tan:input-filenames-must-match-regex" as="xs:string?" select="''"/>
 
     <!-- What pattern must each filename NOT match (a regular expression, case-insensitive)? Of the files 
         in the directories chosen, any whose names match this pattern will be excluded. A null 
@@ -143,24 +144,21 @@
     <!-- Should non-TAN input be space-normalized before processing? -->
     <xsl:param name="space-normalize-non-tan-input" as="xs:boolean" select="false()"/>
     
-    <!-- For any input files that are XML, should any attributes be removed before processing? The value 
-        must be a regular expression matching attribute names.  -->
-    <xsl:param name="input-attributes-to-remove-regex" as="xs:string?" select="'.+'"/>
     
     
     <!-- STEP THREE: NORMALIZE INPUT STRINGS -->
     
     <!-- Adjustments to diff/collate input strings -->
     <!-- Additional settings at:
-        ../../parameters/params-application-diff.xsl. 
+        ../../parameters/params-application-diff.xsl 
         ../../parameters/params-application-language.xsl 
     -->
     
-    <!-- You can make normalizations to the string before it goes through the comparison. The XML output will show
-      the normalized results, and statistics will be based on it. But when building the HTML output, this
-      application will try to reinject the original text into the adjusted difference. This is oftentimes
-      an imperfect process, because versions may differ on what the restoration should be. In general,
-      the first version will predominate. -->
+    <!-- You can make normalizations to the string before it goes through the comparison. The XML
+      output will show the normalized results, and statistics will be based on it. But when building the
+      HTML output, this application will try to reinject the original text into the adjusted difference.
+      This is oftentimes an imperfect process, because any restoration must broker between differences
+      across versions. In general, the first version will predominate. -->
     
     <!-- Should differences between the Greek grave and acute be ignored? -->
     <xsl:param name="ignore-greek-grave-acute-distinction" as="xs:boolean" select="false()"/>
@@ -174,16 +172,19 @@
     <!-- If Syriac (body's @xml:lang = 'syr'), should batch replacement set 1 be used? -->
     <xsl:param name="apply-to-syriac-batch-replacement-set-1" as="xs:boolean" select="true()"/>
     
-    <!-- Should <div> @ns be injected into the text? -->
+    <!-- Should <div> @ns be injected into the text? Normally you do not want to do this, but it can be
+      helpful when you want to indentify differences in reference systems. -->
     <xsl:param name="inject-attr-n" as="xs:boolean" select="false()"/>
     
-    <!-- What additional batch replacements if any should be applied? A batch replacement consists of
-        an element with attributes @pattern and @replacement and perhaps attributes @flags and @message.
-        For examples of batch replacements, see ../../parameters/params-application-language.xsl.
-        These ad-hoc batch replacements will be applied before any other batch replacements invoked by
-        the parameters above.
+    <!-- What additional batch replacements if any should be applied? A batch replacement consists of a sequence
+      of elements, each one with attributes @pattern and @replacement and perhaps attributes @flags and
+      @message. For examples of batch replacements, see ../../parameters/params-application-language.xsl.
+      These ad-hoc batch replacements will be applied before any other batch replacements invoked by the
+      parameters above.
     -->
     <xsl:param name="additional-batch-replacements" as="element()*">
+        <!-- Here's what an example batch replacement element looks like. Remember, these will be processed
+            in order, so watch out for conflicts. -->
         <!--<replace pattern="(abc)(def)" replacement="$2$1" message="example batch replacement"/>-->
     </xsl:param>
     
@@ -229,7 +230,11 @@
         forms or not? -->
     <xsl:param name="replace-diff-results-with-pre-alteration-forms" as="xs:boolean" select="true()"/>
     
-    
+    <!-- For any input files that are XML, should any attributes be removed before processing? The value 
+        must be a regular expression matching attribute names. These input attributes play no factor at 
+        all in the text that will be compared. Rather, this makes sure they do not feature in the HTML 
+        output. -->
+    <xsl:param name="input-attributes-to-remove-regex" as="xs:string?" select="'.+'"/>
     
     
     

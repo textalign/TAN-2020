@@ -398,7 +398,7 @@
         <xsl:analyze-string select="$string-to-parse" regex="(file|https?|ftp)://?\S+">
             <xsl:matching-substring>
                 <!-- Pull back from any characters at the end that aren't part of the URL proper. -->
-                <xsl:analyze-string select="." regex="(&lt;[^&gt;]+&gt;|[&lt;\)\].;])+$">
+                <xsl:analyze-string select="." regex="(&lt;[^&gt;]+&gt;|[&lt;\)\].;&quot;”&apos;])+$">
                     <xsl:matching-substring>
                         <xsl:sequence select="."/>
                     </xsl:matching-substring>

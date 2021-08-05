@@ -30,7 +30,8 @@
    <xsl:template match="/">
       <xsl:variable name="values" select="(1,2,3,4,5)" as="xs:double+"/>
       <test-common>
-         <self-resolved><xsl:copy-of select="$tan:self-resolved"/></self-resolved>
+         <unique-char><xsl:copy-of select="tan:unique-char(('abcd', '!@#$', 'βψγ'))"/></unique-char>
+         <!--<self-resolved><xsl:copy-of select="$tan:self-resolved"/></self-resolved>-->
          <!--<self-expanded count="{count($tan:self-expanded)}"><xsl:copy-of select="$tan:self-expanded"/></self-expanded>-->
          <!--<vocabularies-resolved><xsl:copy-of select="$tan:vocabularies-resolved"/></vocabularies-resolved>-->
          <!--<source-docs><xsl:copy-of select="tan:get-1st-doc($tan:head/tan:source)"/></source-docs>-->

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"
+    xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"
     xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tei="http://www.tei-c.org/ns/1.0"
     xmlns:tan="tag:textalign.net,2015:ns" exclude-result-prefixes="#all" version="3.0">
 
@@ -117,18 +118,18 @@
         <xsl:variable name="diagnostics-on" as="xs:boolean" select="false()"/>
         <xsl:if test="$diagnostics-on">
             <xsl:message select="'Diagnostics on, tan:diff-or-collate-to-html()'"/>
-            <xsl:message select="'Diff or collate results: ', $diff-or-collate-results"/>
+            <xsl:message select="'Diff or collate results: ', tan:trim-long-tree($diff-or-collate-results, 10, 20)"/>
             <xsl:message select="'Primary version ref: ' || $primary-version-ref"/>
             <xsl:message select="'Primary version ref adjusted (last wit ref): ' || $primary-version-ref-adjusted"/>
-            <xsl:message select="'Primary version tree: ', $primary-version-tree"/>
+            <xsl:message select="'Primary version tree: ', tan:trim-long-tree($primary-version-tree, 10, 20)"/>
             <xsl:message select="'Primary version tree text: ' || $primary-version-tree-text"/>
-            <xsl:message select="'Main diff node: ', $main-diff-node"/>
-            <xsl:message select="'Main collation node: ', $main-collation-node"/>
+            <xsl:message select="'Main diff node: ', tan:shallow-copy($main-diff-node)"/>
+            <xsl:message select="'Main collation node: ', tan:shallow-copy($main-collation-node)"/>
             <xsl:message select="'Collation refs: ', $collation-refs"/>
             <xsl:message select="'Is diff?', $is-diff"/>
-            <xsl:message select="'output pass 1: ', $html-output-pass-1"/>
-            <xsl:message select="'output pass 2: ', $html-output-pass-2"/>
-            <xsl:message select="'output pass 3: ', $html-output-pass-3"/>
+            <xsl:message select="'output pass 1: ', tan:trim-long-tree($html-output-pass-1, 10, 20)"/>
+            <xsl:message select="'output pass 2: ', tan:trim-long-tree($html-output-pass-2, 10, 20)"/>
+            <xsl:message select="'output pass 3: ', tan:trim-long-tree($html-output-pass-3, 10, 20)"/>
         </xsl:if>
         
         
@@ -873,18 +874,18 @@ div.selectAll(".venn-circle path").style("fill-opacity", .6);
 
         <xsl:variable name="witness-ids" as="xs:string*" select="tan:witness/@id"/>
 
-        <xsl:variable name="diagnostics-on" select="false()"/>
+        <xsl:variable name="diagnostics-on" select="true()"/>
         <xsl:if test="$diagnostics-on">
             <xsl:message
                 select="'Diagnostics on, template mode diff-or-collate-to-html-output-pass-1'"/>
-            <xsl:message select="'Primary version tree: ', $primary-version-tree"/>
-            <xsl:message select="'Primary version tree analyzed: ', $primary-tree-analyzed"/>
+            <xsl:message select="'Primary version tree: ', tan:trim-long-tree($primary-version-tree, 10, 20)"/>
+            <xsl:message select="'Primary version tree analyzed: ', tan:trim-long-tree($primary-tree-analyzed, 10, 20)"/>
             <xsl:message select="'Last wit id ref: ' || $last-wit-idref"/>
             <xsl:message
                 select="'Split diff or collation where? ' || string-join($split-collation-where/@_pos, ', ')"/>
-            <xsl:message select="'Diff/collation stamped: ', $this-diff-or-collation-stamped"/>
-            <xsl:message select="'Leaf elements infused: ', $leaf-element-replacements"/>
-            <xsl:message select="'Primary file adjusted, prepared for infusion: ', $primary-file-adjusted"/>
+            <xsl:message select="'Diff/collation stamped: ', tan:trim-long-tree($this-diff-or-collation-stamped, 10, 20)"/>
+            <xsl:message select="'Leaf elements infused: ', tan:trim-long-tree($leaf-element-replacements, 10, 20)"/>
+            <xsl:message select="'Primary file adjusted, prepared for infusion: ', tan:trim-long-tree($primary-file-adjusted, 10, 20)"/>
         </xsl:if>
 
         <h2>Comparison</h2>
@@ -936,7 +937,8 @@ div.selectAll(".venn-circle path").style("fill-opacity", .6);
     <xsl:template match="comment() | processing-instruction()"
         mode="infuse-primary-file-with-diff-results"/>
 
-    <xsl:template match="tan:unparsed-text" mode="infuse-primary-file-with-diff-results">
+    <xsl:template match="tan:unparsed-text | w:document" mode="infuse-primary-file-with-diff-results">
+        <!-- TODO: support the bare bones of a Word docx structure -->
         <xsl:param name="element-replacements" tunnel="yes" as="element()*"/>
         <xsl:apply-templates select="$element-replacements" mode="adjust-diff-infusion"/>
     </xsl:template>

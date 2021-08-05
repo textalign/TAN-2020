@@ -220,7 +220,7 @@
     
     <!-- Get string value of other input text; no normalization occurs -->
     <xsl:variable name="main-input-files-prepped" as="document-node()*">
-        <xsl:apply-templates select="$main-input-files-filtered" mode="prepare-input"/>
+        <xsl:apply-templates select="$main-input-files-resolved" mode="prepare-input"/>
     </xsl:variable>
     
     
@@ -251,6 +251,7 @@
         <xsl:variable name="this-filename" as="xs:string" select="tan:cfn(@xml:base)"/>
         <xsl:copy>
             <xsl:attribute name="xml:lang" select="$default-language"/>
+            <xsl:attribute name="xml:base" select="replace(@xml:base, '^jar:|!/$', '')"/>
             <xsl:attribute name="grouping-key" select="$default-language"/>
             <xsl:attribute name="sort-key" select="$this-filename"/>
             <xsl:attribute name="label" select="replace($this-filename, '(%20|\.)', '_')"/>
@@ -703,14 +704,14 @@
     
     
     <xsl:variable name="html-output-pass-2" as="document-node()*">
-        <xsl:apply-templates select="$html-output-pass-1" mode="html-output-pass-4"/>
+        <xsl:apply-templates select="$html-output-pass-1" mode="html-output-pass-2"/>
         
     </xsl:variable>
     
     
-    <xsl:mode name="html-output-pass-4" on-no-match="shallow-copy"/>
+    <xsl:mode name="html-output-pass-2" on-no-match="shallow-copy"/>
     
-    <xsl:template match="/*" mode="html-output-pass-4">
+    <xsl:template match="/*" mode="html-output-pass-2">
         <xsl:variable name="this-title" as="xs:string?">
             <xsl:sequence
                 select="'Comparison of ' || tan:cardinal(xs:integer(tan:find-class(., 'a-count')))
@@ -770,7 +771,7 @@
         </html>
     </xsl:template>
     
-    <xsl:template match="html:div[tan:has-class(., ('e-txt', 'e-a', 'e-b', 'e-common'))]/text()" mode="html-output-pass-4">
+    <xsl:template match="html:div[tan:has-class(., ('e-txt', 'e-a', 'e-b', 'e-common'))]/text()" mode="html-output-pass-2">
         <xsl:analyze-string select="." regex="\r?\n">
             <xsl:matching-substring>
                 <xsl:text>¶</xsl:text>
@@ -785,7 +786,7 @@
     <xsl:template
         match="html:div[tan:has-class(., ('a-cgk', 'a-count', 'e-group-name', 'e-group-label', 'e-file', 'a-part', 'a-org',
         'a-sample'))]"
-        mode="html-output-pass-4"/>
+        mode="html-output-pass-2"/>
     
     
     
@@ -838,11 +839,11 @@
             <!--<main-input-files count="{count($main-input-files)}"><xsl:copy-of select="tan:shallow-copy($main-input-files/*)"/></main-input-files>-->
             <!--<main-input-files-filtered count="{count($main-input-files-filtered)}"><xsl:copy-of select="tan:shallow-copy($main-input-files-filtered/*)"/></main-input-files-filtered>-->
             <!--<main-input-files-prepped count="{count($main-input-files-prepped)}"><xsl:sequence select="$main-input-files-prepped"/></main-input-files-prepped>-->
-            <main-input-files-space-norm count="{count($main-input-files-space-normalized)}"><xsl:sequence select="$main-input-files-space-normalized"/></main-input-files-space-norm>
-            <main-input-files-non-mixed count="{count($main-input-files-non-mixed)}"><xsl:sequence select="$main-input-files-non-mixed"/></main-input-files-non-mixed>
+            <!--<main-input-files-space-norm count="{count($main-input-files-space-normalized)}"><xsl:sequence select="$main-input-files-space-normalized"/></main-input-files-space-norm>-->
+            <!--<main-input-files-non-mixed count="{count($main-input-files-non-mixed)}"><xsl:sequence select="$main-input-files-non-mixed"/></main-input-files-non-mixed>-->
             <output-dir><xsl:value-of select="$output-directory-uri-resolved"/></output-dir>
-            <file-groups-diffed-and-collated><xsl:copy-of select="$file-groups-diffed-and-collated"/></file-groups-diffed-and-collated>
-            <xml-output-pass-1><xsl:copy-of select="$xml-output-pass-1"/></xml-output-pass-1>
+            <!--<file-groups-diffed-and-collated><xsl:copy-of select="$file-groups-diffed-and-collated"/></file-groups-diffed-and-collated>-->
+            <!--<xml-output-pass-1><xsl:copy-of select="$xml-output-pass-1"/></xml-output-pass-1>-->
             <xml-to-html-prep><xsl:copy-of select="$xml-to-html-prep"/></xml-to-html-prep>
             <html-output-pass-1><xsl:copy-of select="$html-output-pass-1"/></html-output-pass-1>
             <html-output-pass-2><xsl:copy-of select="$html-output-pass-2"/></html-output-pass-2>

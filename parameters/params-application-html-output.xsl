@@ -15,18 +15,19 @@
       the new <div>'s @class attribute might also have a value of ns-[PREFIX] to signal 
       the namespace. 
          It frequently happens, though, that some common changes need to be applied before
-      putting the output into tan:convert-to-html(). For example, some attributes or 
+      putting anything through tan:convert-to-html(). For example, some attributes or 
       elements can be removed en masse, or some elements might need to be grouped and 
-      labeled. Stripping the output eliminates clutter and allows CSS files to be simpler.
+      labeled. Stripping the XML to be converted eliminates clutter and allows CSS files 
+      to be simpler.
          Many of the parameters below serve a private function called
-      tan:prepare-to-convert-to-html(). Because TAN applications differ in important
-      ways with the output that is being converted, many of the parameters below will
-      feature as well in the applications. -->
+      tan:prepare-to-convert-to-html(). Because TAN applications differ in important ways 
+      with how they treat output that needs to be converted, many of the parameters below will
+      feature in the master stylesheet for a given application. -->
    
    <!-- For the preparation phase -->
    
-   <!-- In general, the parameters here are applied sequentially, which means that a change
-   made by one parameter may change the effect of a subsequent one. -->
+   <!-- In general, the order of parameters below reflect the order in which they take effect, 
+      which means that a change made by one parameter may change the effect of a subsequent one. -->
    
    <!-- When converting an element to an HTML <div>, what attributes should have their values
       added to the attribute @class? This should be a regular expression matching an attribute name. -->

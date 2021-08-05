@@ -27,13 +27,15 @@
    
    <!-- DIFF/COLLATE PROCESS PARAMETERS -->
    
-   <!-- Should diffs by default be rendered word-for-word (true) or character-for-character? The former renders imprecise but more legible results; the latter, precise but sometimes illegible results. -->
+   <!-- Should diffs by default be rendered word-for-word (true) or character-for-character? The former 
+      renders imprecise but more legible results; the latter, precise but sometimes illegible results. -->
    <xsl:param name="tan:snap-to-word" as="xs:boolean" select="true()"/>
    
    
    <!-- DIFF/COLLATE STATISTICS -->
    
-   <!-- Should Venn diagrams be inserted for collations of 3 or more versions? If true, processing will take longer, and the HTML file will be larger. -->
+   <!-- Should Venn diagrams be inserted for collations of 3 or more versions? If true, processing will take 
+      longer, and the HTML file will be larger. -->
    <xsl:param name="tan:include-venns" as="xs:boolean" select="false()"/>
    
    <!-- Adjustment of statistics -->
