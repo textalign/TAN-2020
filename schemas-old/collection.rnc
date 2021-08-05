@@ -1,2 +1,0 @@
-default namespace = "tag:textalign.net,2015:ns"
-include "catalog.tan.rnc"
