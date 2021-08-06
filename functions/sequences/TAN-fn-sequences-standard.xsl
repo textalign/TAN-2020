@@ -37,7 +37,8 @@
             <xsl:when test=". instance of xs:boolean">xs:boolean</xsl:when>
             <xsl:when test=". instance of xs:date">xs:date</xsl:when>
             <xsl:when test=". instance of xs:dateTime">xs:dateTime</xsl:when>
-            <xsl:when test=". instance of xs:dateTimeStamp">xs:dateTimeStamp</xsl:when>
+            <!-- The following is not recognized unless XSD 1.1 is enabled. -->
+            <!--<xsl:when test=". instance of xs:dateTimeStamp">xs:dateTimeStamp</xsl:when>-->
             
             <!-- derivation line #3 from decimal -->
             <xsl:when test=". instance of xs:negativeInteger">xs:negativeInteger</xsl:when>

@@ -252,11 +252,11 @@
       mode="tan:build-maps-and-arrays">
       <xsl:sequence select="xs:dateTime(.)"/>
    </xsl:template>
-   <xsl:template
+   <!--<xsl:template
       match="map:key[@type eq 'xs:dateTimeStamp'] | map:item[@type eq 'xs:dateTimeStamp'] | array:item[@type eq 'xs:dateTimeStamp']"
       mode="tan:build-maps-and-arrays">
       <xsl:sequence select="xs:dateTimeStamp(.)"/>
-   </xsl:template>
+   </xsl:template>-->
    <xsl:template
       match="map:key[@type eq 'xs:decimal'] | map:item[@type eq 'xs:decimal'] | array:item[@type eq 'xs:decimal']"
       mode="tan:build-maps-and-arrays">
