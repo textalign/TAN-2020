@@ -37,7 +37,7 @@
    <xsl:mode name="tan:get-and-resolve-dependency" on-no-match="shallow-skip"/>
    
    <!-- tan:key is retained for older TAN versions -->
-   <xsl:template match="tan:source | tan:morphology | tan:vocabulary | tan:key" mode="tan:get-and-resolve-dependency">
+   <xsl:template match="tan:source | tan:morphology | tan:vocabulary | tan:key | tan:inclusion" mode="tan:get-and-resolve-dependency">
 
       <xsl:variable name="this-element-expanded" select="
             if (exists(tan:location)) then

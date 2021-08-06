@@ -762,7 +762,7 @@
             <xsl:copy>
                <xsl:copy-of select="@*"/>
                <xsl:copy-of select="$target-1st-da/(tan:error, tan:warning, tan:fatal, tan:help)"/>
-               <xsl:copy-of select="node()"/>
+               <xsl:apply-templates mode="#current"/>
             </xsl:copy>
          </xsl:otherwise>
       </xsl:choose>
@@ -827,9 +827,9 @@
       <xsl:variable name="target-id" select="$target-resolved/*/@id"/>
       <xsl:variable name="target-last-change-agent" select="tan:last-change-agent($target-resolved)"/>
       <!-- We change TEI to TAN-T, just so that TEI and TAN-T files can be treated as copies of each other -->
-      <xsl:variable name="target-accessed"
+      <xsl:variable name="target-accessed" as="xs:decimal?"
          select="max(tan:dateTime-to-decimal((tan:location/@accessed-when, @accessed-when)))"/>
-      <xsl:variable name="target-updates"
+      <xsl:variable name="target-updates" as="element()*"
          select="$target-hist/*[number(@when-sort) gt $target-accessed]"/>
       <xsl:variable name="default-link-error-message"
          select="'targets file with root element: ' || $target-tan-type"/>

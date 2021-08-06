@@ -236,14 +236,14 @@
       <xsl:variable name="this-q" select="@q"/>
       <xsl:variable name="this-ref" select="text()"/>
       <xsl:variable name="this-is-in-adjustment-action" select="exists(ancestor::tan:head)"/>
+      <xsl:variable name="supplemental-messages" as="xs:string*">
+         <xsl:if test="parent::tan:passage and exists(ancestor::tan:head//tan:rename)">perhaps the passage has been renamed</xsl:if>
+      </xsl:variable>
       <xsl:variable name="ref-markers" as="element()*">
          <xsl:for-each
             select="$dependencies-adjusted-and-marked[*/(@work, @src) = ($these-work-ids, $these-src-ids)]">
             <xsl:variable name="this-src-id" select="*/@src"/>
             <xsl:variable name="these-ref-markers" select="key('tan:q-ref', $this-q, .)"/>
-            <xsl:variable name="supplemental-messages" as="xs:string*">
-               <xsl:if test="parent::tan:passage and exists(ancestor::tan:head//tan:rename)">perhaps the passage has been renamed</xsl:if>
-            </xsl:variable>
             <xsl:variable name="this-message" as="xs:string"
                select="string-join((($this-src-id || ' lacks @ref ' || $this-ref), $supplemental-messages), ';')"/>
             <xsl:choose>
