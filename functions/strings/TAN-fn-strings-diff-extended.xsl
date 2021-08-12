@@ -1185,6 +1185,248 @@
    
    <xsl:template match="@_pos-a | @_pos-b | @_len | @_pos" mode="tan:strip-text-data-stamps"/>
    
-
-
+   
+   
+   
+   <xsl:function name="tan:diff-to-delta" as="document-node()?" visibility="public">
+      <!-- Input: any output from tan:diff() -->
+      <!-- Output: a document node registering only the difference between strings a and b -->
+      <!-- Delta files are structured to support two-way conversion. That is, they are designed such 
+         that b can be reconstituted from a or vice versa. See tan:apply-deltas() for documentation.
+         -->
+      <!-- kw: diff, strings -->
+      <xsl:param name="diff-output" as="element(tan:diff)?"/>
+      <xsl:apply-templates select="$diff-output" mode="tan:diff-to-delta"/>
+   </xsl:function>
+   
+   <xsl:mode name="tan:diff-to-delta" on-no-match="shallow-skip"/>
+   
+   <xsl:template match="tan:diff" mode="tan:diff-to-delta">
+      <xsl:variable name="this-a" as="xs:string" select="string-join((tan:a | tan:common))"/>
+      <xsl:variable name="this-b" as="xs:string" select="string-join((tan:b | tan:common))"/>
+      <xsl:document>
+         <!-- The document is structured without attributes, and one text node per element, to take advantage of 
+            Saxon's optimization for such structures. -->
+         <delta>
+            <dateTime><xsl:value-of select="current-dateTime()"/></dateTime>
+            <version>0</version>
+            <checksums>
+               <type>fletcher-64</type>
+               <a><xsl:copy-of select="tan:checksum-fletcher-64($this-a)"/></a>
+               <b><xsl:copy-of select="tan:checksum-fletcher-64($this-b)"/></b>
+            </checksums>
+            <xsl:iterate select="*">
+               <xsl:param name="common-pos" as="xs:integer" select="1"/>
+               <xsl:param name="a-pos" as="xs:integer" select="1"/>
+               <xsl:param name="b-pos" as="xs:integer" select="1"/>
+               
+               <xsl:variable name="this-is-a" as="xs:boolean" select="local-name(.) eq 'a'"/>
+               <xsl:variable name="this-is-b" as="xs:boolean" select="local-name(.) eq 'b'"/>
+               <xsl:variable name="this-is-common" as="xs:boolean" select="local-name(.) eq 'common'"/>
+               
+               <xsl:variable name="this-length" as="xs:integer" select="string-length(.)"/>
+               
+               <xsl:choose>
+                  <xsl:when test="self::tan:a">
+                     <xsl:copy>
+                        <!-- A delta should be minimially small, therefore one-letter element names wrap the bulk of the delta. -->
+                        <!-- c for position within the string constituted only by common -->
+                        <c><xsl:value-of select="$common-pos"/></c>
+                        <!-- o for original position -->
+                        <o><xsl:value-of select="$a-pos"/></o>
+                        <!-- t for text -->
+                        <t><xsl:value-of select="."/></t>
+                     </xsl:copy>
+                  </xsl:when>
+                  <xsl:when test="self::tan:b">
+                     <xsl:copy>
+                        <c><xsl:value-of select="$common-pos"/></c>
+                        <o><xsl:value-of select="$b-pos"/></o>
+                        <t><xsl:value-of select="."/></t>
+                     </xsl:copy>
+                  </xsl:when>
+               </xsl:choose>
+               
+               <xsl:next-iteration>
+                  <xsl:with-param name="common-pos" select="
+                        if ($this-is-common) then
+                           $common-pos + $this-length
+                        else
+                           $common-pos"/>
+                  <xsl:with-param name="a-pos" select="
+                        if ($this-is-b) then
+                           $a-pos
+                        else
+                           $a-pos + $this-length"/>
+                  <xsl:with-param name="b-pos" select="
+                        if ($this-is-a) then
+                           $b-pos
+                        else
+                           $b-pos + $this-length"/>
+               </xsl:next-iteration>
+            </xsl:iterate>
+         </delta>
+      </xsl:document>
+   </xsl:template>
+   
+   
+   <xsl:function name="tan:apply-deltas" as="xs:string?" visibility="public">
+      <!-- 2-parameter version of the full one, below -->
+      <xsl:param name="string-to-convert" as="xs:string?"/>
+      <xsl:param name="deltas" as="document-node()*"/>
+      <xsl:sequence select="tan:apply-deltas($string-to-convert, $deltas, ())"></xsl:sequence>
+   </xsl:function>
+   
+   <xsl:function name="tan:apply-deltas" as="xs:string?" visibility="public">
+      <!-- Input: a string, a series of delta documents, perhaps a boolean -->
+      <!-- Output: another string, after any applicable deltas have been successively applied -->
+      <!-- Each delta will be applied only once. If any deltas are left over, a warning will be returned. -->
+      <!-- Output will be verified; if its checksum does not match what is in the given delta, a warning will be returned -->
+      <!-- kw: strings, diff -->
+      <xsl:param name="string-to-convert" as="xs:string?"/>
+      <xsl:param name="deltas" as="document-node()*"/>
+      <xsl:param name="input-is-string-a" as="xs:boolean?"/>
+      
+      <xsl:variable name="string-checksum" as="xs:string" select="tan:checksum-fletcher-64($string-to-convert)"/>
+      <xsl:variable name="delta-of-choice" as="document-node()*" select="
+            if (not(exists($input-is-string-a))) then
+               $deltas[*/tan:checksums/* = $string-checksum]
+            else
+               if ($input-is-string-a eq true()) then
+                  $deltas[*/tan:checksums/tan:a = $string-checksum]
+               else
+                  $deltas[*/tan:checksums/tan:b = $string-checksum]"/>
+      <xsl:variable name="versions-supported" as="xs:string+" select="'0'"/>
+      <xsl:choose>
+         <xsl:when test="not(exists($deltas)) or string-length($string-to-convert) lt 1">
+            <xsl:sequence select="$string-to-convert"/>
+         </xsl:when>
+         <xsl:when test="count($delta-of-choice) gt 1">
+            <xsl:message select="string(count($delta-of-choice)) || ' deltas are applicable, based on string checksum ' || $string-checksum || '. Terminating function with current results.'"/>
+            <xsl:sequence select="$string-to-convert"/>
+         </xsl:when>
+         <xsl:when test="count($delta-of-choice) eq 0">
+            <xsl:message select="'No deltas apply to string with checksum ' || $string-checksum || ', but ' || string(count($deltas)) || ' remain to be processed. Terminating function with current results.'"/>
+            <xsl:sequence select="$string-to-convert"/>
+         </xsl:when>
+         <xsl:when test="not($delta-of-choice/*/tan:version = $versions-supported)">
+            <xsl:message select="'A delta must be one of the following versions: ' || string-join($versions-supported, ', ') || '. Terminating function with current results.'"/>
+            <xsl:sequence select="$string-to-convert"/>
+         </xsl:when>
+         <xsl:otherwise>
+            <xsl:variable name="relevant-checksum" as="element()" select="
+                  if (not(exists($input-is-string-a))) then
+                     $delta-of-choice/*/tan:checksums/*[. eq $string-checksum][1]
+                  else
+                     if ($input-is-string-a eq true()) then
+                        $delta-of-choice/*/tan:checksums/tan:a[. eq $string-checksum][1]
+                     else
+                        $delta-of-choice/*/tan:checksums/tan:b[. eq $string-checksum][1]"
+            />
+            <xsl:variable name="input-is-string-a" as="xs:boolean" select="local-name($relevant-checksum) eq 'a'"/>
+            
+            <!-- Sort deletions by the original position, <o> -->
+            <xsl:variable name="deletions-to-apply" as="element()*">
+               <xsl:for-each select="
+                     if ($input-is-string-a) then
+                        $delta-of-choice/*/tan:a
+                     else
+                        $delta-of-choice/*/tan:b">
+                  <xsl:sort select="xs:integer(tan:o)" order="descending"/>
+                  <xsl:sequence select="."/>
+               </xsl:for-each>
+            </xsl:variable>
+            
+            <!-- Sort insertions by position within common-only text, <c> -->
+            <xsl:variable name="insertions-to-apply" as="element()*">
+               <xsl:for-each select="
+                     if ($input-is-string-a) then
+                        $delta-of-choice/*/tan:b
+                     else
+                        $delta-of-choice/*/tan:a">
+                  <xsl:sort select="xs:integer(tan:c)" order="descending"/>
+                  <xsl:sequence select="."/>
+               </xsl:for-each>
+            </xsl:variable>
+            
+            <xsl:variable name="output-pass-1" as="xs:string*">
+               <!-- This first pass applies deletions, in reverse order; the result will be a sequence of strings that need to be 
+                  reversed and string-joined before being processed through the next pass -->
+               <xsl:iterate select="$deletions-to-apply">
+                  <xsl:param name="string-so-far" as="xs:string" select="$string-to-convert"/>
+                  <xsl:on-completion select="$string-so-far"/>
+                  <xsl:variable name="this-pos" as="xs:integer" select="xs:integer(tan:o)"/>
+                  <xsl:variable name="this-len" as="xs:integer" select="string-length(tan:t)"/>
+                  <xsl:variable name="preceding-snippet" as="xs:string" select="substring($string-so-far, 1, $this-pos - 1)"/>
+                  <xsl:variable name="following-snippet" as="xs:string?" select="substring($string-so-far, $this-pos + $this-len)"/>
+                  <xsl:sequence select="$following-snippet"/>
+                  <xsl:next-iteration>
+                     <xsl:with-param name="string-so-far" select="$preceding-snippet"/>
+                  </xsl:next-iteration>
+               </xsl:iterate>
+            </xsl:variable>
+            
+            <xsl:variable name="output-pass-2" as="xs:string*">
+               <xsl:iterate select="$insertions-to-apply">
+                  <xsl:param name="string-so-far" as="xs:string" select="string-join(reverse($output-pass-1))"/>
+                  <xsl:on-completion select="$string-so-far"/>
+                  <xsl:variable name="this-pos" as="xs:integer" select="xs:integer(tan:c)"/>
+                  <xsl:variable name="this-len" as="xs:integer" select="string-length(tan:t)"/>
+                  <xsl:variable name="preceding-snippet" as="xs:string" select="substring($string-so-far, 1, $this-pos - 1)"/>
+                  <xsl:variable name="following-snippet" as="xs:string?" select="substring($string-so-far, $this-pos)"/>
+                  
+                  <xsl:variable name="diagnostics-on" as="xs:boolean" select="false()"/>
+                  <xsl:if test="$diagnostics-on">
+                     <xsl:message select="'Diagnostics on, $output-pass-2 in tan:apply-deltas()'"/>
+                     <xsl:message select="'Iteration: ', position()"/>
+                     <xsl:message select="'String so far: ' || tan:ellipses($string-so-far, 30, 30)"/>
+                     <xsl:message select="'Current insertion: ', ."/>
+                     <xsl:message select="'Preceding snippet: ' ||  tan:ellipses($preceding-snippet, 30, 30)"/>
+                     <xsl:message select="'Following snippet: ' ||  tan:ellipses($following-snippet, 30, 30)"/>
+                  </xsl:if>
+                  
+                  <xsl:sequence select="tan:t || $following-snippet"/>
+                  <xsl:next-iteration>
+                     <xsl:with-param name="string-so-far" select="$preceding-snippet"/>
+                  </xsl:next-iteration>
+                  
+               </xsl:iterate>
+            </xsl:variable>
+            
+            <xsl:variable name="output-string-result" as="xs:string" select="string-join(reverse($output-pass-2))"/>
+            <xsl:variable name="output-string-checksum" as="xs:string" select="tan:checksum-fletcher-64($output-string-result)"/>
+            <xsl:variable name="expected-checksum" as="xs:string" select="
+                  if ($input-is-string-a) then
+                     $delta-of-choice/*/tan:checksums/tan:b
+                  else
+                     $delta-of-choice/*/tan:checksums/tan:a"/>
+            <xsl:variable name="expected-output-returned" as="xs:boolean" select="$expected-checksum eq $output-string-checksum"/>
+            
+            <xsl:variable name="diagnostics-on" as="xs:boolean" select="false()"/>
+            <xsl:if test="$diagnostics-on">
+               <xsl:message select="'Diagnostics on, tan:apply-deltas()'"/>
+               <xsl:message select="'String to convert: ' || tan:ellipses($string-to-convert, 10, 10)"/>
+               <xsl:message select="'String checksum: ' || $string-checksum"/>
+               <xsl:message select="'Delta chosen: ', tan:trim-long-tree($delta-of-choice/*, 10, 20)"/>
+               <xsl:message select="'Input is string a: ', $input-is-string-a"/>
+               <xsl:message select="'Deletions to apply (' || string(count($deletions-to-apply)) || '), first three: ', subsequence($deletions-to-apply, 1, 3)"/>
+               <xsl:message select="'Insertions to apply (' || string(count($insertions-to-apply)) || '), first three: ', subsequence($insertions-to-apply, 1, 3)"/>
+               <xsl:message select="'Output pass 1: ' || tan:ellipses(string-join(reverse($output-pass-1)), 30, 30)"/>
+               <xsl:message select="'Output pass 2: ' || tan:ellipses($output-string-result, 30, 30)"/>
+               <xsl:message select="'Output checksum: ' || $output-string-checksum"/>
+            </xsl:if>
+            
+            <xsl:if test="not($expected-output-returned)">
+               <xsl:message select="'tan:apply-deltas() returned a malformed string from applying selected delta to the input: ' || $string-to-convert"/>
+               <xsl:message select="'output string: ' || tan:ellipses($output-string-result, 30, 30)"/>
+               <xsl:message select="'output checksum: ' || $output-string-checksum"/>
+               <xsl:message select="'delta chosen: ', tan:trim-long-tree($delta-of-choice/*, 10, 20)"/>
+            </xsl:if>
+            <xsl:sequence
+               select="tan:apply-deltas($output-string-result, $deltas except $delta-of-choice)"/>
+         </xsl:otherwise>
+      </xsl:choose>
+   </xsl:function>
+   
+   
 </xsl:stylesheet>
