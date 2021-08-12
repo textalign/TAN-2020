@@ -211,19 +211,22 @@
                   match="/*/tan:head/tan:name[last()]"/>
             </sqf:fix>
 
-            <sqf:fix id="replace-one-attribute" use-for-each="$replacement-attributes/@*">
+            <sqf:fix id="replace-one-attribute" use-for-each="$replacement-attributes/descendant-or-self::*/@*">
                <sqf:description>
-                  <sqf:title>Replace attribute <value-of select="tan:xml-to-string($sqf:current)"/>
-                     in self or descendants (first instance)</sqf:title>
+                  <sqf:title>Replace first @<value-of select="name($sqf:current)"/> with <value-of select="$sqf:current"/>
+                     in self or descendants</sqf:title>
                </sqf:description>
-               <sqf:replace match="(.//@*[name() = name($sqf:current)])[1]" select="$sqf:current"/>
+               <sqf:replace match="(.//@*[name() = name($sqf:current)])[1]"
+                  target="{name($sqf:current)}" node-type="attribute" select="string($sqf:current)"
+               />
             </sqf:fix>
-            <sqf:fix id="replace-all-attributes" use-for-each="$replacement-attributes/@*">
+            <sqf:fix id="replace-all-attributes" use-for-each="$replacement-attributes/descendant-or-self::*/@*">
                <sqf:description>
-                  <sqf:title>Replace attribute <value-of select="tan:xml-to-string($sqf:current)"/>
-                     in self or descendants (every instance)</sqf:title>
+                  <sqf:title>Replace every @<value-of select="name($sqf:current)"/> with <value-of select="$sqf:current"/>
+                     in self or descendants</sqf:title>
                </sqf:description>
-               <sqf:replace match="(.//@*[name() = name($sqf:current)])" select="$sqf:current"/>
+               <sqf:replace match="(.//@*[name() = name($sqf:current)])"
+                  target="{name($sqf:current)}" node-type="attribute" select="string($sqf:current)"/>
             </sqf:fix>
 
             <sqf:fix id="self-deletion" use-when="exists($self-deletions)">

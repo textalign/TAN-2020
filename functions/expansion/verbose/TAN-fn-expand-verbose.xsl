@@ -161,8 +161,9 @@
                ()"
       />
       <xsl:variable name="this-id" select="root()/*/@id"/>
-      <xsl:variable name="this-is-defective" select="exists($self-and-model-merged) and (count($matching-merged-div/tan:src) lt 2)"/>
-      <xsl:variable name="model-children-missing-here"
+      <xsl:variable name="this-is-defective" as="xs:boolean"
+         select="exists($self-and-model-merged) and (count($matching-merged-div/tan:src) lt 2)"/>
+      <xsl:variable name="model-children-missing-here" as="element()*"
          select="$matching-merged-div/tan:div[not(@type = '#version')][not(tan:src = $this-id)]"/>
       <xsl:variable name="n-needs-help" select="exists(tan:n/@help)"/>
       
@@ -172,6 +173,7 @@
          <xsl:message select="'checking: ', tan:shallow-copy(.)"/>
          <xsl:message select="'exists self and model merged? ', exists($self-and-model-merged)"/>
          <xsl:message select="'matching merged div: ', $matching-merged-div"/>
+         <xsl:message select="'model children missing here: ', $model-children-missing-here"/>
          <xsl:message select="'this is defective?', $this-is-defective"/>
       </xsl:if>
       

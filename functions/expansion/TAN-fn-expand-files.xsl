@@ -1013,7 +1013,8 @@
                select="tan:error('wrn07', 'The last change in the dependency was made by an algorithm.')"
             />
          </xsl:if>
-         <xsl:if
+         <!-- Getting help via catalogs has shifted to tan:catalogs(); commenting out Aug 2021 prior to complete deletion -->
+         <!--<xsl:if
             test="$target-is-faulty and not($target-is-self-referential or $target-is-wrong-version)">
             <xsl:variable name="these-catalogs"
                select="
@@ -1039,7 +1040,7 @@
             <xsl:if test="exists($possible-uris)">
                <xsl:copy-of select="tan:error('wrn08', (), $this-fix, 'append-content')"/>
             </xsl:if>
-         </xsl:if>
+         </xsl:if>-->
          <xsl:copy-of select="$target-resolved/(tan:error, tan:warning, tan:fatal, tan:help)"/>
          <xsl:apply-templates mode="#current">
             <xsl:with-param name="target-id" select="$target-id"/>

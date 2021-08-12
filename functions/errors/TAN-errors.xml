@@ -112,7 +112,6 @@
         <error xml:id="loc03"><rule>No element may point to a TAN file that has an identical @id value; the only exception is &lt;predecessor> and &lt;successor>.</rule></error>
         <warning xml:id="wrn03"><rule>If a target file has children items in the &lt;to-do>the corresponding comments will be returned as warnings.</rule></warning>
         <warning xml:id="wrn05"><rule>If a target file has a &lt;successor> a warning will be returned, noting the update.</rule></warning>
-        <warning xml:id="wrn08"><rule>If an element's &lt;location> is faulty and if a catalog file entry is found pointing to a document with the same IRI, location information on those alternative locations will be returned</rule></warning>
         <warning xml:id="wrn09"><rule>If a target file points only to non-local locations and no internet is available, the following message will be returned.</rule><message>No internet available.</message></warning>
     </group>
     <group affects-element="location inclusion source vocabulary redivision model annotation predecessor successor">

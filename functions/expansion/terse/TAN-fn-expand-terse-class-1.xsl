@@ -261,7 +261,7 @@
    <xsl:mode name="tan:rebuild-divs-with-ref-aliases" on-no-match="shallow-copy"/>
    
    <xsl:template match="*:div[@ref-alias]" mode="tan:rebuild-divs-with-ref-aliases">
-      <xsl:variable name="this-div" select="."/>
+      <xsl:variable name="this-div" select="." as="element()"/>
       <xsl:variable name="div-chain" select="ancestor-or-self::*:div" as="element()*"/>
       <xsl:variable name="depth-level" as="xs:integer" select="count($div-chain)"/>
       <xsl:variable name="ref-alias-components" select="tokenize(@ref-alias, ' ')" as="xs:string+"/>
@@ -292,7 +292,8 @@
       <xsl:param name="ref-alias-errors" tunnel="yes" as="element()*"/>
 
       <xsl:choose>
-         <xsl:when test="count($divs-to-model) gt 1">
+         <!-- Keep going, but only if there are more divs AND n components -->
+         <xsl:when test="count($divs-to-model) gt 1 and count($n-components) gt 1">
             <xsl:copy>
                <xsl:copy-of select="$divs-to-model[1]/@type"/>
                <xsl:attribute name="n" select="$n-components[1]"/>

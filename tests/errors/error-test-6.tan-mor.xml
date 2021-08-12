@@ -37,9 +37,11 @@
             <IRI>tag:textalign.net,2015:test:feature:number</IRI>
             <name>number</name>
          </feature>
+         <!-- loc04 -->
          <algorithm xml:id="algorithm1">
             <IRI>tag:textalign.net,2015:application:convert-tan-file</IRI>
             <name>TAN conversion</name>
+            <!-- wrn01 -->
             <location href="../../applications/convert/incl/convert%20TAN%202020%20to%202021%20core.xsl"
                       accessed-when="2021-04-29T02:46:00.609-04:00"/>
          </algorithm>

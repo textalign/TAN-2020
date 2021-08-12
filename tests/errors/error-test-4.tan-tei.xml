@@ -4,7 +4,7 @@
 <!-- this test file primed for verbose validation -->
 <!-- cat01 verbose cat04 verbose cat07 verbose cat03 verbose (make sure catalog.tan.xml has a bogus id in it for this file) 
     cat06 verbose (provided catalog doesn't have entry for this file)
-    lnk05 (from catalog) wrn04
+    wrn04
 -->
 <TEI xmlns="http://www.tei-c.org/ns/1.0" TAN-version="2021" id="tag:textalign.net,2015:error-test-4">
     <teiHeader>
@@ -51,7 +51,7 @@
             <name>test 1</name>
             <location href="error-test-1.tan-t.xml" accessed-when="2019-02-01"/>
         </model>
-        <!-- wrn08 loc01 -->
+        <!-- loc01 -->
         <predecessor>
             <IRI>tag:textalign.net,2015:error-test-2</IRI>
             <IRI>tag:textalign.net,9999:error-test-2</IRI>
@@ -80,9 +80,10 @@
             <div type="preface" n="preface"><p>This is a preface</p></div>
             <!-- cl104 verbose cl107 -->
             <div type="line" n="1"><p>Line 1</p></div>
+            <!-- cl107 -->
             <div type="line" n="2">
-                <!-- cl115 verbose cl116 verbose cl104 verbose cl107 verbose -->
-                <div type="part" n="ii"><p>2. Line 2, non-leaf div</p></div>
+                <!-- cl115 verbose cl104 verbose cl107 verbose -->
+                <div type="part" n="iii"><p>3. Line 3, non-leaf div</p></div>
             </div>
             <!-- cl107 verbose -->
             <div type="line" n="2a">

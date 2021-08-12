@@ -17,6 +17,7 @@ Below are listed significant changes that have been made since version 2020. See
 * Function library now subject to development schemas that check for best practices and other desiderata.
 * The inclusions that populate the applications folder are being liquidated. They either go into the official TAN function library, or they are moved to the specific application. 
 * New errors tan22, tan23
+* Removed error wrn08
 * Removed `@help`
 * Added `@exceptions` in `numerals`, to prevent specific `@ref` and `@n` values from being interpreted as numerals.
 * `<predecessor>` need not point to a TAN file, and they may use patterns to point to multiple files, since a TAN file might be based upon a number of previous files.

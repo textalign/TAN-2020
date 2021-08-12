@@ -98,17 +98,19 @@
             <xsl:when test="string-length($first-la) lt 1">
                <xsl:variable name="this-base-uri" select="tan:base-uri(.)"/>
                <xsl:variable name="these-hrefs-resolved" select="tan:resolve-href(.)"/>
-               <xsl:variable name="these-tan-catalog-uris" select="
+               <!--<xsl:variable name="these-tan-catalog-uris" select="
                      for $i in $these-hrefs-resolved//@href
                      return
-                        replace($i, '[^/]+$', 'catalog.tan.xml')"/>
-               <xsl:variable name="these-tan-catalogs"
-                  select="doc($these-tan-catalog-uris[doc-available(.)])"/>
+                        replace($i, '[^/]+$', 'catalog.tan.xml')"/>-->
+               <!--<xsl:variable name="these-tan-catalogs" as="document-node()*"
+                  select="doc($these-tan-catalog-uris[doc-available(.)])"/>-->
+               <xsl:variable name="these-tan-catalogs" as="document-node()*"
+                  select="tan:catalogs($this-element, false())"/>
                <xsl:variable name="these-IRIs" select="
                      if (self::tan:master-location) then
                         root()/*/@id
                      else
-                        tan:IRI"/>
+                        (descendant-or-self::tan:IRI | preceding-sibling::tan:IRI)"/>
                <xsl:variable name="possible-docs" as="element()*">
                   <xsl:apply-templates select="$these-tan-catalogs//doc[@id = $these-IRIs]"
                      mode="tan:resolve-href"/>
