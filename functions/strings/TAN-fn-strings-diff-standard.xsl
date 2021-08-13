@@ -379,7 +379,7 @@
                   <xsl:if test="not($string-b eq $b-reconstructed)">
                      <xsl:message select="'String b not intact. Output (' || string-length($b-reconstructed) || '): ' || $b-reconstructed"/>
                   </xsl:if>
-                  <xsl:message select="'Pass 1:', $pass-1"/>
+                  <xsl:message select="'Pass 1:',  $pass-1"/>
                </xsl:if>
 
                <xsl:for-each-group select="$pass-1[text()]" group-adjacent="name() = 'common'">
@@ -754,6 +754,12 @@
          <xsl:when test="$empty-input or $loop-overload or $out-of-vertical-stops">
             <xsl:variable name="str-a-chars" as="xs:string*" select="tan:chop-string($str-a)"/>
             <xsl:variable name="str-b-chars" as="xs:string*" select="tan:chop-string($str-b)"/>
+
+            <xsl:if test="$diagnostics-on">
+               <xsl:message select="'empty input? ', $empty-input"/>
+               <xsl:message select="'loop overload? ', $loop-overload"/>
+               <xsl:message select="'out of vertical stops? ', $out-of-vertical-stops"/>
+            </xsl:if>
             <xsl:if test="$loop-overload">
                <xsl:message
                   select="'tan:diff() cannot loop beyond ' || xs:string($tan:loop-tolerance) || 
@@ -767,6 +773,9 @@
                   <xsl:variable name="best-sequence" as="element()*"
                      select="tan:collate-pair-of-sequences($str-a-chars, $str-b-chars)"/>
                   
+                  <xsl:if test="$diagnostics-on">
+                     <xsl:message select="'best sequence: ', $best-sequence"/>
+                  </xsl:if>
                   <xsl:if test="$out-of-vertical-stops">
                      <xsl:message
                         select="'Out of vertical stops, and matches remain; ' || $string-lengths-for-messages"
@@ -994,9 +1003,8 @@
                   <xsl:message select="'$length-of-short-substring:', $length-of-short-substring"/>
                   <xsl:message select="'$length-of-play-in-short:', $length-of-play-in-short"/>
                   <xsl:message select="'$horizontal-stagger:', $horizontal-stagger"/>
-                  <xsl:message
-                     select="'$starting-pos-of-short-substring:', $starting-horizontal-locs"/>
                   <xsl:message select="'$starting-horizontal-locs:', $starting-horizontal-locs"/>
+                  <xsl:message select="'horizontal search: ', $horizontal-search"/>
                </xsl:if>
                
                <xsl:choose>
@@ -1055,6 +1063,13 @@
    
    
    <xsl:mode name="tan:adjust-horizontal-search" on-no-match="shallow-skip"/>
+   
+   <xsl:template match="tan:result" mode="tan:adjust-horizontal-search">
+      <!-- although this is the default behavior, it is made explicit, to avoid any importing
+         stylesheets from inadventently applying shallow copy to an element that is merely
+         a wrapper. -->
+      <xsl:apply-templates mode="#current"/>
+   </xsl:template>
    
    <xsl:template match="tan:common" mode="tan:adjust-horizontal-search">
       <xsl:copy-of select="."/>
