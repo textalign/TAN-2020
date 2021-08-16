@@ -122,7 +122,7 @@
             <xsl:message select="'Primary version ref: ' || $primary-version-ref"/>
             <xsl:message select="'Primary version ref adjusted (last wit ref): ' || $primary-version-ref-adjusted"/>
             <xsl:message select="'Primary version tree: ', tan:trim-long-tree($primary-version-tree, 10, 20)"/>
-            <xsl:message select="'Primary version tree text: ' || $primary-version-tree-text"/>
+            <xsl:message select="'Primary version tree text: ' || tan:ellipses($primary-version-tree-text, 30, 30)"/>
             <xsl:message select="'Main diff node: ', tan:shallow-copy($main-diff-node)"/>
             <xsl:message select="'Main collation node: ', tan:shallow-copy($main-collation-node)"/>
             <xsl:message select="'Collation refs: ', $collation-refs"/>
@@ -874,7 +874,7 @@ div.selectAll(".venn-circle path").style("fill-opacity", .6);
 
         <xsl:variable name="witness-ids" as="xs:string*" select="tan:witness/@id"/>
 
-        <xsl:variable name="diagnostics-on" select="true()"/>
+        <xsl:variable name="diagnostics-on" select="false()"/>
         <xsl:if test="$diagnostics-on">
             <xsl:message
                 select="'Diagnostics on, template mode diff-or-collate-to-html-output-pass-1'"/>
