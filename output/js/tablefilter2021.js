@@ -21,7 +21,7 @@
   </table> */
   
   
-document.querySelector(".tableFilter").addEventListener("keyup", filterFunction);
+document.querySelectorAll("input.tableFilter").forEach(filter => filter.addEventListener("keyup", filterFunction));
 
 // Do the work...
 function filterFunction(evt) {
