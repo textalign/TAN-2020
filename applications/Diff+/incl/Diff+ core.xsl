@@ -204,11 +204,27 @@
                     test="$restrict-to-matching-top-level-div-attr-ns and not(exists(*/tan:head))"/>
                 <xsl:when test="exists(*[@_archive-path][not(self::w:document)])"/>
                 <xsl:otherwise>
-                    <xsl:sequence select="."/>
+                    <!--<xsl:sequence select="."/>-->
+                    <xsl:apply-templates select="." mode="filter-input-files"/>
                 </xsl:otherwise>
             </xsl:choose>
         </xsl:for-each>
     </xsl:variable>
+    
+    <xsl:mode name="filter-input-files" on-no-match="shallow-copy"/>
+    
+    <xsl:template match="*:body/*:div" mode="filter-input-files">
+        <xsl:choose>
+            <xsl:when
+                test="$check-top-level-div-ns and matches(@n, $exclude-top-level-divs-with-attr-n-matching-what)"/>
+            <xsl:otherwise>
+                <xsl:copy>
+                    <xsl:copy-of select="@*"/>
+                    <xsl:apply-templates mode="#current"/>
+                </xsl:copy>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>    
     
     <xsl:variable name="main-input-files-resolved" as="document-node()*" select="
             for $i in $main-input-files-filtered
@@ -226,6 +242,10 @@
     
     <xsl:mode name="prepare-input" on-no-match="shallow-copy"/>
     
+    <xsl:template match="@q" priority="1" mode="prepare-input">
+        <!-- @q is used to re-infuse results; if it needs to be removed, that will happen later -->
+        <xsl:copy-of select="."/>
+    </xsl:template>
     <xsl:template match="@*" mode="prepare-input">
         <xsl:choose>
             <xsl:when test="string-length($input-attributes-to-remove-regex) lt 1 or not(tan:regex-is-valid($input-attributes-to-remove-regex))">
@@ -275,7 +295,7 @@
     </xsl:template>
     
     <!-- Ignore the tei header and tan header -->
-    <xsl:template match="tan:head | tei:teiHeader" priority="1" mode="prepare-input tan:normalize-tree-space"/>
+    <xsl:template match="tan:head | tei:teiHeader" priority="2" mode="prepare-input tan:normalize-tree-space"/>
     
     <xsl:template match="*:div[@n]" mode="prepare-input">
         <xsl:copy>
@@ -302,7 +322,7 @@
             for $i in $main-input-files-prepped
             return
                 if (
-                (not(exists($i/*/tan:head)) and not($space-normalize-non-tan-input))
+                (not(exists($i/*/@TAN-version)) and not($space-normalize-non-tan-input))
                 or exists($i/*/@_archive-path) (: don't space-normalize docx components :)
                 ) then
                     $i
@@ -689,6 +709,17 @@
                     mode="adjust-primary-tree-for-html"/>
             </xsl:variable>
             
+            <xsl:variable name="diagnostics-on" as="xs:boolean" select="false()"/>
+            <xsl:if test="$diagnostics-on">
+                <xsl:message select="'Diagnostics on, Diff+, $html-output-pass-1'"/>
+                <xsl:message select="'This xml to html prep: ', tan:trim-long-tree(., 10, 20)"/>
+                <xsl:message select="'Primary witness: ', $primary-witness"/>
+                <xsl:message select="'Primary file base uri: ' || $primary-file-base-uri"/>
+                <xsl:message select="'Primary file idref: ' || $primary-file-idref"/>
+                <xsl:message select="'Primary prepped file: ', tan:trim-long-tree($primary-prepped-file/*, 10, 20)"/>
+                <xsl:message select="'Primary prepped file adjusted: ', tan:trim-long-tree($primary-prepped-file-adjusted, 10, 20)"/>
+            </xsl:if>
+            
             <xsl:document>
                 <xsl:sequence
                     select="tan:diff-or-collate-to-html(., $primary-file-idref, $primary-prepped-file-adjusted/*)"
@@ -785,7 +816,7 @@
     
     <xsl:template
         match="html:div[tan:has-class(., ('a-cgk', 'a-count', 'e-group-name', 'e-group-label', 'e-file', 'a-part', 'a-org',
-        'a-sample'))]"
+        'a-sample', 'a-q'))]"
         mode="html-output-pass-2"/>
     
     
@@ -828,7 +859,8 @@
 
     <!-- Main output -->
     <xsl:param name="output-diagnostics-on" static="yes" as="xs:boolean" select="false()"/>
-    <xsl:output indent="no" use-character-maps="tan:see-special-chars"/>
+    <xsl:output indent="no" use-character-maps="tan:see-special-chars" use-when="not($output-diagnostics-on)"/>
+    <xsl:output indent="yes" use-character-maps="tan:see-special-chars" use-when="$output-diagnostics-on"/>
     <xsl:template match="/" priority="1" use-when="$output-diagnostics-on">
         <xsl:message select="'Output diagnostics on for ' || static-base-uri()"/>
         <xsl:apply-templates select="$notices" mode="return-final-messages"/>
@@ -836,17 +868,18 @@
             <input-directories count="{count($main-input-resolved-uri-directories)}"><xsl:sequence select="$main-input-resolved-uri-directories"/></input-directories>
             <main-input-resolved-uris count="{count($main-input-resolved-uris)}"><xsl:sequence select="$main-input-resolved-uris"/></main-input-resolved-uris>
             <MIRUs-chosen count="{count($mirus-chosen)}"><xsl:sequence select="$mirus-chosen"/></MIRUs-chosen>
-            <!--<main-input-files count="{count($main-input-files)}"><xsl:copy-of select="tan:shallow-copy($main-input-files/*)"/></main-input-files>-->
-            <!--<main-input-files-filtered count="{count($main-input-files-filtered)}"><xsl:copy-of select="tan:shallow-copy($main-input-files-filtered/*)"/></main-input-files-filtered>-->
-            <!--<main-input-files-prepped count="{count($main-input-files-prepped)}"><xsl:sequence select="$main-input-files-prepped"/></main-input-files-prepped>-->
-            <!--<main-input-files-space-norm count="{count($main-input-files-space-normalized)}"><xsl:sequence select="$main-input-files-space-normalized"/></main-input-files-space-norm>-->
-            <!--<main-input-files-non-mixed count="{count($main-input-files-non-mixed)}"><xsl:sequence select="$main-input-files-non-mixed"/></main-input-files-non-mixed>-->
+            <main-input-files count="{count($main-input-files)}"><xsl:copy-of select="tan:trim-long-tree($main-input-files, 10, 20)"/></main-input-files>
+            <main-input-files-filtered count="{count($main-input-files-filtered)}"><xsl:copy-of select="tan:trim-long-tree($main-input-files-filtered, 10, 20)"/></main-input-files-filtered>
+            <main-input-files-resolved count="{count($main-input-files-resolved)}"><xsl:sequence select="tan:trim-long-tree($main-input-files-resolved, 10, 20)"/></main-input-files-resolved>
+            <main-input-files-prepped count="{count($main-input-files-prepped)}"><xsl:sequence select="tan:trim-long-tree($main-input-files-prepped, 10, 20)"/></main-input-files-prepped>
+            <!--<main-input-files-space-norm count="{count($main-input-files-space-normalized)}"><xsl:sequence select="tan:trim-long-tree($main-input-files-space-normalized, 10, 20)"/></main-input-files-space-norm>-->
+            <main-input-files-non-mixed count="{count($main-input-files-non-mixed)}"><xsl:sequence select="$main-input-files-non-mixed"/></main-input-files-non-mixed>
             <output-dir><xsl:value-of select="$output-directory-uri-resolved"/></output-dir>
-            <!--<file-groups-diffed-and-collated><xsl:copy-of select="$file-groups-diffed-and-collated"/></file-groups-diffed-and-collated>-->
-            <!--<xml-output-pass-1><xsl:copy-of select="$xml-output-pass-1"/></xml-output-pass-1>-->
-            <xml-to-html-prep><xsl:copy-of select="$xml-to-html-prep"/></xml-to-html-prep>
-            <html-output-pass-1><xsl:copy-of select="$html-output-pass-1"/></html-output-pass-1>
-            <html-output-pass-2><xsl:copy-of select="$html-output-pass-2"/></html-output-pass-2>
+            <file-groups-diffed-and-collated><xsl:copy-of select="tan:trim-long-tree($file-groups-diffed-and-collated, 10, 20)"/></file-groups-diffed-and-collated>
+            <xml-output-pass-1><xsl:copy-of select="tan:trim-long-tree($xml-output-pass-1, 10, 20)"/></xml-output-pass-1>
+            <xml-to-html-prep><xsl:copy-of select="tan:trim-long-tree($xml-to-html-prep, 10, 20)"/></xml-to-html-prep>
+            <html-output-pass-1><xsl:copy-of select="tan:trim-long-tree($html-output-pass-1, 10, 20)"/></html-output-pass-1>
+            <html-output-pass-2><xsl:copy-of select="tan:trim-long-tree($html-output-pass-2, 10, 20)"/></html-output-pass-2>
         </diagnostics>
     </xsl:template>
     <xsl:template match="/">

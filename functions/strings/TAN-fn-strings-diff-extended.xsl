@@ -1069,13 +1069,14 @@
    
    <xsl:function name="tan:get-diff-output-transpositions" as="element()" visibility="public">
       <!-- Input: output from tan:diff(); an integer; a decimal (from 0 to 1) -->
-      <!-- Output: a <transpositions> element, wrapping a <parameters> element that contains the
-         settings specified, followed by zero or more <transposition> elements wrapping the portion
-         of the input diff output that is at least as long as the integer, and whose commonality is
-         greater than or equal to the percent specified by the decimal. -->
-      <!-- This function looks within the disalike sections of the results of tan:diff() for
-         passages that may represent a transposition. What constitutes a transposition differs greatly
-         from one situation to the next. In large stretches of running prose, a safe minimum length
+      <!-- Output: a <transpositions> element, wrapping the following: (1) a <checksums> element
+         that contains the checksums for strings a and b of the input; (2) a <parameters> element 
+         that contains the settings specified; (3) zero or more <transposition> elements wrapping 
+         the portion of the input diff output that is at least as long as the integer, and whose 
+         commonality is greater than or equal to the percent specified by the decimal. -->
+      <!-- This function looks within likely sections of the results of tan:diff() for passages that 
+         may represent a transposition. What constitutes a transposition differs greatly from one 
+         situation to the next. In large stretches of running prose, a safe minimum length
          might be 20 and a corresponding commonality 0.95, to accommodate very occasional changes. The
          lower the commonality number, the more results, but they may include on the edges material that
          is not part of the actual transposition. -->
@@ -1095,6 +1096,11 @@
       <xsl:param name="minimum-transposition-length" as="xs:integer"/>
       <xsl:param name="minimum-commonality" as="xs:decimal"/>
       
+      <xsl:variable name="string-a" as="xs:string?" select="string-join($diff-output/(tan:a | tan:common))"/>
+      <xsl:variable name="string-b" as="xs:string?" select="string-join($diff-output/(tan:b | tan:common))"/>
+      <xsl:variable name="checksum-string-a" as="xs:string?" select="tan:checksum-fletcher-64($string-a)"/>
+      <xsl:variable name="checksum-string-b" as="xs:string?" select="tan:checksum-fletcher-64($string-b)"/>
+      
       <xsl:variable name="diff-output-stamped" as="element(tan:diff)" select="tan:stamp-tree-with-text-data(tan:stamp-diff-with-text-data($diff-output), true())"/>
       <xsl:variable name="min-sl-norm" as="xs:integer" select="max((2, $minimum-transposition-length))"/>
       <xsl:variable name="min-comm-norm" as="xs:decimal" select="min((1.0, max(($minimum-commonality, 0))))"/>
@@ -1105,18 +1111,31 @@
          select="tan:get-diff-output-slices($diff-output-stamped, $min-sl-norm, (($min-sl-norm - 1) div $min-sl-norm), 0, true())"
       />
       
+      <!-- Slice keys point to the absolute starting point of the diff slice, when the diff output is flattened;
+         that is, it is @_pos, the position of a, b, or common (and so will always be larger than or equal to
+         the size of @_a-pos and @_b-pos.)-->
       <xsl:variable name="diff-slice-keys"
          select="map:keys($rough-diff-slices)[. instance of xs:integer]" as="xs:integer*"/>
       
       <xsl:variable name="rough-diff-slice-comparison" as="element()*">
          <xsl:for-each select="$diff-slice-keys">
-            <xsl:variable name="a-slice-key" select="." as="xs:integer"/>
-            <xsl:variable name="a-slice-diff" as="element()" select="$rough-diff-slices($a-slice-key)"/>
-            <xsl:variable name="this-a-text" as="xs:string" select="string-join($a-slice-diff/(tan:common | tan:a))"/>
-            <xsl:for-each select="$diff-slice-keys[not(. eq $a-slice-key)]">
-               <xsl:variable name="b-slice-key" select="." as="xs:integer"/>
-               <xsl:variable name="b-slice-diff" as="element()" select="$rough-diff-slices($b-slice-key)"/>
-               <xsl:variable name="this-b-text" as="xs:string" select="string-join($b-slice-diff/(tan:common | tan:b))"/>
+            <xsl:variable name="a-diff-slice-key" select="." as="xs:integer"/>
+            <xsl:variable name="a-diff-slice" as="element()" select="$rough-diff-slices($a-diff-slice-key)"/>
+            <!-- Where in the original string b does the slice begin? -->
+            <xsl:variable name="a-diff-slice-first-element" as="element()" select="$a-diff-slice/*[1]"/>
+            <xsl:variable name="a-slice-orig-a-pos" as="xs:integer"
+               select="xs:integer($a-diff-slice-first-element/@_pos-a) + (xs:integer($a-diff-slice-first-element/@_len - string-length($a-diff-slice-first-element)))"
+            />
+            <xsl:variable name="this-a-text" as="xs:string" select="string-join($a-diff-slice/(tan:common | tan:a))"/>
+            <xsl:for-each select="$diff-slice-keys[not(. eq $a-diff-slice-key)]">
+               <xsl:variable name="b-diff-slice-key" select="." as="xs:integer"/>
+               <xsl:variable name="b-diff-slice" as="element()" select="$rough-diff-slices($b-diff-slice-key)"/>
+               <!-- Where in the original string b does the slice begin? -->
+               <xsl:variable name="b-diff-slice-first-element" as="element()" select="$b-diff-slice/*[1]"/>
+               <xsl:variable name="b-slice-orig-b-pos" as="xs:integer"
+                  select="xs:integer($b-diff-slice-first-element/@_pos-b) + (xs:integer($b-diff-slice-first-element/@_len - string-length($b-diff-slice-first-element)))"
+               />
+               <xsl:variable name="this-b-text" as="xs:string" select="string-join($b-diff-slice/(tan:common | tan:b))"/>
                <xsl:variable name="this-new-diff" as="element()" select="tan:diff($this-a-text, $this-b-text, false())"/>
                <xsl:variable name="possible-transposition-slices" as="map(*)"
                   select="tan:get-diff-output-slices($this-new-diff, $min-sl-norm, 1.0, $min-comm-norm, true())"
@@ -1124,17 +1143,19 @@
                <xsl:variable name="successful-slice-keys" as="xs:integer*"
                   select="map:keys($possible-transposition-slices)[. instance of xs:integer]"/>
                
-               <xsl:variable name="output-diagnostics-on" as="xs:boolean" select="exists($successful-slice-keys)"/>
-               <xsl:if test="$output-diagnostics-on">
+               <xsl:variable name="inner-output-diagnostics-on" as="xs:boolean" select="false()"/>
+               <xsl:if test="$inner-output-diagnostics-on">
                   <diagnostics>
-                     <a-slice-key><xsl:copy-of select="$a-slice-key"/></a-slice-key>
-                     <a-slice-diff><xsl:copy-of select="$a-slice-diff"/></a-slice-diff>
+                     <iteration><xsl:value-of select="position()"/></iteration>
+                     <a-diff-slice-key><xsl:copy-of select="$a-diff-slice-key"/></a-diff-slice-key>
+                     <a-diff-slice><xsl:copy-of select="$a-diff-slice"/></a-diff-slice>
                      <a-text><xsl:copy-of select="$this-a-text"/></a-text>
-                     <b-slice-key><xsl:copy-of select="$b-slice-key"/></b-slice-key>
-                     <b-slice-diff><xsl:copy-of select="$b-slice-diff"/></b-slice-diff>
+                     <b-diff-slice-key><xsl:copy-of select="$b-diff-slice-key"/></b-diff-slice-key>
+                     <b-diff-slice><xsl:copy-of select="$b-diff-slice"/></b-diff-slice>
                      <b-text><xsl:copy-of select="$this-b-text"/></b-text>
                      <new-diff><xsl:copy-of select="$this-new-diff"/></new-diff>
                      <possible-transposition-slices><xsl:copy-of select="tan:map-to-xml($possible-transposition-slices)"/></possible-transposition-slices>
+                     <successful-slice-keys><xsl:value-of select="$successful-slice-keys"/></successful-slice-keys>
                   </diagnostics>
                </xsl:if>
                
@@ -1145,19 +1166,32 @@
                      select="xs:integer($first-result/@_len) - string-length($first-result)"/>
                   <xsl:variable name="first-_pos-a" as="xs:integer?" select="
                         xs:integer($first-result/@_pos-a) + (if (name($first-result) eq 'b') then
-                           ()
+                           0
                         else
                            $initial-string-length-omitted)"
                   />
                   <xsl:variable name="first-_pos-b" as="xs:integer?" select="
                         xs:integer($first-result/@_pos-b) + (if (name($first-result) eq 'a') then
-                           ()
+                           0
                         else
                            $initial-string-length-omitted)"/>
-                  <xsl:variable name="pos-a-abs" as="xs:integer" select="$a-slice-key + ($first-_pos-a, 0)[1] - 1"/>
-                  <xsl:variable name="pos-b-abs" as="xs:integer" select="$b-slice-key + ($first-_pos-b, 0)[1] - 1"/>
+                  <xsl:variable name="pos-a-orig" as="xs:integer" select="$a-slice-orig-a-pos + $first-_pos-a - 1"/>
+                  <xsl:variable name="pos-b-orig" as="xs:integer" select="$b-slice-orig-b-pos + $first-_pos-b - 1"/>
+                  <!-- These are positions relative to the original input's @_pos stamp, not the position within
+                     original strings a and b. -->
+                  <xsl:variable name="pos-a-abs" as="xs:integer" select="$a-diff-slice-key + ($first-_pos-a, 0)[1] - 1"/>
+                  <xsl:variable name="pos-b-abs" as="xs:integer" select="$b-diff-slice-key + ($first-_pos-b, 0)[1] - 1"/>
                   
-                  <transposition pos-a-abs="{$pos-a-abs}" pos-b-abs="{$pos-b-abs}">
+                  <xsl:if test="$inner-output-diagnostics-on">
+                     <diagnostics>
+                        <this-slice-key><xsl:value-of select="."/></this-slice-key>
+                        <first-result><xsl:copy-of select="$first-result"/></first-result>
+                        <initial-string-length-omitted><xsl:value-of select="$initial-string-length-omitted"/></initial-string-length-omitted>
+                        <first-_pos-a><xsl:value-of select="$first-_pos-a"/></first-_pos-a>
+                        <first-_pos-b><xsl:value-of select="$first-_pos-b"/></first-_pos-b>
+                     </diagnostics>
+                  </xsl:if>
+                  <transposition pos-a-orig="{$pos-a-orig}" pos-b-orig="{$pos-b-orig}" pos-a-abs="{$pos-a-abs}" pos-b-abs="{$pos-b-abs}">
                      <xsl:apply-templates select="$these-results" mode="tan:strip-text-data-stamps"/>
                   </transposition>
                </xsl:for-each>
@@ -1165,8 +1199,21 @@
          </xsl:for-each>
       </xsl:variable>
       
+      <xsl:variable name="output-diagnostics-on" as="xs:boolean" select="false()"/>
       
       <transpositions>
+         <xsl:if test="$output-diagnostics-on">
+            <diagnostics>
+               <string-a><xsl:value-of select="tan:ellipses($string-a, 20, 20)"/></string-a>
+               <string-b><xsl:value-of select="tan:ellipses($string-b, 20, 20)"/></string-b>
+               <diff-output-stamped><xsl:copy-of select="$diff-output-stamped"/></diff-output-stamped>
+            </diagnostics>
+         </xsl:if>
+         <checksums>
+            <type>fletcher-64</type>
+            <a><xsl:value-of select="$checksum-string-a"/></a>
+            <b><xsl:value-of select="$checksum-string-b"/></b>
+         </checksums>
          <parameters>
             <minimum-transposition-length>
                <xsl:value-of select="$min-sl-norm"/>
@@ -1427,6 +1474,51 @@
          </xsl:otherwise>
       </xsl:choose>
    </xsl:function>
+   
+   
+   <!-- TODO: calculate Damerau-Levenshtein distance: 
+      https://en.wikipedia.org/wiki/Damerau%E2%80%93Levenshtein_distance -->
+   <xsl:function name="tan:levenshtein-distance" as="xs:integer?" visibility="public">
+      <!-- Input: results of tan:diff() -->
+      <!-- Output: the Levenstein distance of the output -->
+      <!-- Levenstein distance assigns 1 point per character deletion, insertion, or substitution -->
+      <!-- kw: strings, diff -->
+      <xsl:param name="diff-output" as="element(tan:diff)?"/>
+      <xsl:variable name="counts" as="xs:integer*">
+         <xsl:apply-templates select="$diff-output" mode="tan:levenshtein-distance"/>
+      </xsl:variable>
+      <xsl:sequence select="sum($counts)"/>
+   </xsl:function>
+   
+   <xsl:mode name="tan:levenshtein-distance" on-no-match="shallow-skip"/>
+   
+   <xsl:template match="tan:a" mode="tan:levenshtein-distance">
+      <xsl:variable name="following-b" as="element()?" select="following-sibling::*[1]/self::tan:b"/>
+      <xsl:variable name="string-length-a" as="xs:integer" select="string-length(.)"/>
+      <xsl:variable name="string-length-b" as="xs:integer" select="string-length($following-b)"/>
+      <xsl:sequence select="max(($string-length-a, $string-length-b))"/>
+   </xsl:template>
+   
+   <xsl:template match="tan:b" mode="tan:levenshtein-distance">
+      <xsl:variable name="preceding-a" as="element()?" select="preceding-sibling::*[1]/self::tan:a"/>
+      <xsl:if test="not(exists($preceding-a))">
+         <xsl:sequence select="string-length(.)"/>
+      </xsl:if>
+   </xsl:template>
+   
+   
+   <xsl:function name="tan:lcs-distance" as="xs:integer?" visibility="public">
+      <!-- Input: results of tan:diff() -->
+      <!-- Output: the longest common subsequence distance of the output -->
+      <!-- LCS distance assigns 1 point per character deletion and insertion -->
+      <!-- kw: strings, diff -->
+      <xsl:param name="diff-output" as="element(tan:diff)?"/>
+      <xsl:sequence select="
+            sum(for $i in $diff-output/(tan:a | tan:b)
+            return
+               string-length($i))"/>
+   </xsl:function>
+   
    
    
 </xsl:stylesheet>

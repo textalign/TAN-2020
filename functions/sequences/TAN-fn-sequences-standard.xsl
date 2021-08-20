@@ -231,10 +231,10 @@
       Although the primary context is two sets of unique string-sequences, one could imagine situations 
       where one or both input strings have repetition, in which case it is best to retain information about the
       sequence. Hence the output is a sequence of elements, with @p1, @p2, or both signifying the position
-      of the original input. Hence the transformation is lossless, and the original input can be reconstructed
+      of the original input. The transformation is lossless, and the original input can be reconstructed
       if needed.
       -->
-      <!--kw: grouping, sequences -->
+      <!--kw: grouping, sequences, strings, diff -->
       <xsl:param name="string-sequence-1" as="xs:string*"/>
       <xsl:param name="string-sequence-2" as="xs:string*"/>
       
@@ -324,14 +324,13 @@
       <xsl:variable name="diagnostics-on" select="false()"/>
       <xsl:if test="$diagnostics-on">
          <xsl:message select="'Diagnostics on, tan:collate-pair-of-sequences()'"/>
-         <!--<xsl:message select="'string-2-sequence-of-p1-integers:', tan:array-to-xml($string-2-sequence-of-p1-integers)"/>-->
-         <!--<xsl:message select="'String 1 prepped (', count($string-1-prep/*),  '): ', string-join($string-1-prep/*/text(), ' ')"/>-->
-         <!--<xsl:message select="'String 2 prepped (', count($string-2-prep/*), '): ', string-join($string-2-prep/*//text(), ' ')"/>-->
-         <!--<xsl:message select="'Longest ascending subsequence: ', tan:array-to-xml($longest-ascending-subsquence)"/>-->
-         <!--<xsl:message select="'Longest ascending subsequence (', count($longest-ascending-subsquence), '): ', string-join($longest-ascending-subsquence, ' ')"/>-->
-         <!--<xsl:message select="'String 1 grouped: ', $string-1-groups"/>-->
-         <!--<xsl:message select="'String 2 grouped: ', $string-2-groups"/>-->
-         
+         <xsl:message select="'string-2-sequence-of-p1-integers:', tan:array-to-xml($string-2-sequence-of-p1-integers)"/>
+         <xsl:message select="'Longest ascending subsequence (' || string($las-size) || '): ', tan:array-to-xml($longest-ascending-subsquence)"/>
+         <xsl:message select="'String 1 longest ascending subsequence values: ', $str-1-las-values"/>
+         <xsl:message select="'String 2 longest ascending subsequence values: ', $str-2-las-values"/>
+         <xsl:message select="'Sequence 1 analyzed: ', $seq-1-analyzed"/>
+         <xsl:message select="'Sequence 2 analyzed: ', $seq-2-analyzed"/>
+         <xsl:message select="'String groups: ', $string-groups"/>
       </xsl:if>
       
       <sequence>
@@ -1016,7 +1015,7 @@
          arrays are not as easy to construct and extract in XSLT 3.0 as maps are. -->
       <!-- If an input array member consists of the empty sequence, its position impacts the positions that are returned in the output, but
          not the corresponding values (obviously). -->
-      <!--kw: items, sequences -->
+      <!--kw: items, sequences, numerics -->
       <xsl:param name="integer-sequence" as="item()*"/>
       
       <xsl:variable name="integer-sequence-arrays" as="array(*)*">

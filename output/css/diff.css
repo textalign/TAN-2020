@@ -100,7 +100,8 @@ div.e-collation > *,
 .venn-c,
 .fragment,
 .bottomline,
-.e-div > *{
+.e-div > *,
+.e-ab > *{
    display: inline
 }
 body .e-div > .e-div{
@@ -156,7 +157,8 @@ td div.label ~ .non-tok
 .title{
    font-weight: 900;
 }
-.explanation {
+.explanation,
+.e-quote {
    font-style: italic;
 }
 .title{

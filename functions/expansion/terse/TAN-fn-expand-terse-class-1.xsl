@@ -332,7 +332,7 @@
    <xsl:template match="tan:div | tei:div" mode="tan:core-expansion-terse">
       <xsl:param name="parent-new-refs" as="element()*" select="$tan:empty-element"/>
       
-      <xsl:variable name="is-tei" select="namespace-uri() = 'http://www.tei-c.org/ns/1.0'"
+      <xsl:variable name="is-tei" select="namespace-uri() eq 'http://www.tei-c.org/ns/1.0'"
          as="xs:boolean"/>
       <xsl:variable name="expand-n" select="not(exists(ancestor::tan:claim))"/>
       

@@ -1485,7 +1485,7 @@
             - if the 2nd parameter is true, any special end-div characters will be removed 
       -->
       <!-- Because this function attends to space normalization as a mixed-content problem, it
-         will normalize TEI constructions. -->
+         will space-normalize select TEI constructions. -->
       <!-- Expanded TAN files are space normalized via this function, so there is no sense in 
          running them again. In fact, it can introduce errors (because special div-end characters 
          have already been removed).
@@ -1507,7 +1507,7 @@
       <xsl:variable name="pass-3" as="item()*">
          <xsl:apply-templates select="$pass-2" mode="tan:selectively-adjust-tei-space"/>
       </xsl:variable>
-      
+
       <xsl:sequence select="$pass-3"/>
       
    </xsl:function>
@@ -1707,9 +1707,22 @@
    
    <xsl:mode name="tan:selectively-adjust-tei-space" on-no-match="shallow-copy"/>
    
+   <xsl:template match="text()[matches(., '\S')]" mode="tan:selectively-adjust-tei-space">
+      <!-- Sometimes tei space should be fully normalized, other times not; it is difficult
+         to lay down a policy. This is the fallback, a kind of soft space normalization upon
+         text nodes that have non-space text. -->
+      <xsl:if test="matches(., '^\s')">
+         <xsl:value-of select="' '"/>
+      </xsl:if>
+      <xsl:value-of select="normalize-space(.)"/>
+      <xsl:if test="matches(., '\S\s+$')">
+         <xsl:value-of select="' '"/>
+      </xsl:if>
+   </xsl:template>
+   
    <xsl:template match="tei:div[not(tei:div)]/node()[last()]/node()[last()]/self::tei:*"
       mode="tan:selectively-adjust-tei-space" priority="1">
-      <!-- tei leaf div, if the final grandchild is an element, not a text node, make sure it is followed by the titular space
+      <!-- given a tei leaf div, if the final grandchild is an element, not a text node, make sure it is followed by the titular space
          marking the end of a div. We do it in the grandchild position, because technically no text is allowed as a child of 
          a tei div, even a leaf one. We try a next match, in case that final grandchild element needs to have its space adjusted. -->
       <xsl:next-match/>
