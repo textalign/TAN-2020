@@ -6,7 +6,7 @@
         <name>TAN keywords for features</name>
         <desc>This file contains in TAN-voc format the core vocabulary adopted by OLiA for parts of
             speech: http://purl.org/olia/olia.owl.</desc>
-        <master-location href="http://textalign.net/release/TAN-2020/vocabularies/features.TAN-voc.xml"/>
+        <master-location href="http://textalign.net/release/TAN-2021/vocabularies/features.TAN-voc.xml"/>
         <license licensor="kalvesmaki" which="by 4.0"/>
         <vocabulary-key>
             <person xml:id="kalvesmaki">

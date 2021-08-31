@@ -5,7 +5,7 @@
     <head>
         <name>TAN keywords for types of divisions</name>
         <desc>Definitive list of key terms used for textual divisions.</desc>
-        <master-location href="http://textalign.net/release/TAN-2020/vocabularies/div-types.TAN-voc.xml"/>
+        <master-location href="http://textalign.net/release/TAN-2021/vocabularies/div-types.TAN-voc.xml"/>
         <license licensor="kalvesmaki" which="by 4.0"/>
         <vocabulary-key>
             <group-type xml:id="inline-start" which="no new line start"/>

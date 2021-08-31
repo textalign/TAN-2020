@@ -7,7 +7,7 @@
         <name>TAN keywords for types of groups</name>
         <desc>Definitive list of key terms used for types of groups.</desc>
         <master-location
-            href="http://textalign.net/release/TAN-2020/vocabularies/group-types.TAN-voc.xml"/>
+            href="http://textalign.net/release/TAN-2021/vocabularies/group-types.TAN-voc.xml"/>
         <license licensor="kalvesmaki" which="by 4.0"/>
         <vocabulary-key>
             <person xml:id="kalvesmaki">

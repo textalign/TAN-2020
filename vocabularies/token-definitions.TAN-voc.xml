@@ -5,7 +5,7 @@
     <head>
         <name>TAN keywords for types of token definitions</name>
         <desc>Definitive list of key terms used to name standard token definitions.</desc>
-        <master-location href="http://textalign.net/release/TAN-2020/vocabularies/token-definitions.TAN-voc.xml"/>
+        <master-location href="http://textalign.net/release/TAN-2021/vocabularies/token-definitions.TAN-voc.xml"/>
         <license licensor="kalvesmaki" which="by 4.0"/>
         <vocabulary-key>
             <person xml:id="kalvesmaki">

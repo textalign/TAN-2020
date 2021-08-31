@@ -4,7 +4,7 @@
 <TAN-voc xmlns="tag:textalign.net,2015:ns" TAN-version="2021" id="tag:textalign.net,2015:tan-voc:vocabularies">
     <head>
         <name>TAN vocabulary items for extra vocabularies</name>
-        <master-location href="http://textalign.net/release/TAN-2020/vocabularies/vocabularies.TAN-voc.xml"/>
+        <master-location href="http://textalign.net/release/TAN-2021/vocabularies/vocabularies.TAN-voc.xml"/>
         <license which="by 4.0" licensor="kalvesmaki"/>
         <vocabulary-key>
             <person xml:id="kalvesmaki">

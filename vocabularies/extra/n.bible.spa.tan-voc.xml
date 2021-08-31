@@ -4,7 +4,7 @@
 <TAN-voc xmlns="tag:textalign.net,2015:ns" TAN-version="2021" id="tag:textalign.net,2015:tan-voc:n:spa:bible">
     <head>
         <name>vocabulario de uso común para la biblia</name>
-        <master-location href="http://textalign.net/release/TAN-2020/vocabularies/extra/n.bible.spa.tan-voc.xml"/>
+        <master-location href="http://textalign.net/release/TAN-2021/vocabularies/extra/n.bible.spa.tan-voc.xml"/>
         <license which="by 4.0" licensor="kalvesmaki"/>
         <vocabulary-key>
             <person xml:id="kalvesmaki">

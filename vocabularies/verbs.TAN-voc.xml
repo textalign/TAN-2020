@@ -7,7 +7,7 @@
         <name>TAN keywords for verbs</name>
         <desc>This file has been created ad hoc to some basic terms for verbs involved in the
             creation and editing of TAN files.</desc>
-        <master-location href="http://textalign.net/release/TAN-2020/vocabularies/verbs.TAN-voc.xml"/>
+        <master-location href="http://textalign.net/release/TAN-2021/vocabularies/verbs.TAN-voc.xml"/>
         <license licensor="kalvesmaki" which="by 4.0"/>
         <vocabulary-key>
             <person xml:id="kalvesmaki">

@@ -6,7 +6,7 @@
         <name>TAN keywords for types of roles</name>
         <desc>This file has been created ad hoc to some basic terms for roles involved in the
             creation and editing of TAN files.</desc>
-        <master-location href="http://textalign.net/release/TAN-2020/vocabularies/roles.TAN-voc.xml"/>
+        <master-location href="http://textalign.net/release/TAN-2021/vocabularies/roles.TAN-voc.xml"/>
         <license licensor="kalvesmaki" which="by 4.0"/>
         <vocabulary-key>
             <person xml:id="kalvesmaki">

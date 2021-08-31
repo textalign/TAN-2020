@@ -7,7 +7,7 @@
    <head>
       <name>Commonly used names for Surahs in the Quran, incorporating English and Arabic.</name>
       <master-location
-         href="http://textalign.net/release/TAN-2020/vocabularies/extra/n.quran.eng-ara.tan-voc.xml"/>
+         href="http://textalign.net/release/TAN-2021/vocabularies/extra/n.quran.eng-ara.tan-voc.xml"/>
       <license which="by 4.0" licensor="kalvesmaki"/>
       <vocabulary-key>
          <person xml:id="kalvesmaki">
