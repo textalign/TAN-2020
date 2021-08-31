@@ -7,6 +7,7 @@
    <ns prefix="tan" uri="tag:textalign.net,2015:ns"/>
    <xsl:param name="tan:validation-mode-on" as="xs:boolean" select="true()" static="yes"/>
    <xsl:include href="../functions/TAN-function-library.xsl"/>
+   
    <phase id="terse" xmlns="http://purl.oclc.org/dsdl/schematron">
       <active pattern="terse-true"/>
       <active pattern="core-tests"/>
@@ -19,7 +20,7 @@
       <active pattern="verbose-true"/>
       <active pattern="core-tests"/>
    </phase>
-   <!--<include href="incl/sch-pattern-terse.sch"/>-->
+
    <pattern xmlns="http://purl.oclc.org/dsdl/schematron" id="terse-true">
       <xsl:param name="tan:validation-is-terse" select="true()" as="xs:boolean"/>
    </pattern>
@@ -93,9 +94,16 @@
          <let name="which-expansions" value="$these-fixes[@type = 'expand-which']"/>
 
          <!-- For diagnostic tests, where reported errors are actually successes -->
-         <let name="preceding-node" value="preceding-sibling::node()[1]"/>
-         <let name="preceding-comment"
-            value="($preceding-node/self::comment(), $preceding-node/preceding-sibling::node()[1]/self::comment())[1]"/>
+         <let name="preceding-node" value="
+               if ($tan:doc-is-error-test) then
+                  preceding-sibling::node()[1]
+               else
+                  ()"/>
+         <let name="preceding-comment" value="
+               if ($tan:doc-is-error-test) then
+                  ($preceding-node/self::comment(), $preceding-node/preceding-sibling::node()[1]/self::comment())[1]
+               else
+                  ()"/>
          <let name="these-intended-error-codes" value="
                tan:error-codes($preceding-comment)[($tan:internet-available and not(. = ('wrn09', 'wrn10')))
                or (not($tan:internet-available) and not(. = 'wrn11'))]"/>
