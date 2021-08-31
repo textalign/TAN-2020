@@ -79,7 +79,7 @@
       </xsl:copy>
    </xsl:template>
 
-   <xsl:template name="tan:save-file" visibility="public">
+   <xsl:template name="tan:save-as" visibility="public">
       <!-- Input: any document, perhaps a target URI and target format, and a boolean indicating whether every 
       top-level item should appear on its own line. -->
       <!-- The root element's attribute @_target-uri or @save-as supplies the default value, which may be overwritten. -->

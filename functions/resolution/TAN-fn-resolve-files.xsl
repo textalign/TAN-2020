@@ -119,8 +119,15 @@
                satisfies name($i) eq 'src'"/>
       
       <xsl:choose>
-         <xsl:when test="(exists($TAN-document/*) and not(namespace-uri($TAN-document/*) = ($tan:TAN-namespace, $tan:TEI-namespace))) 
-            or $this-is-collection-document">
+         <xsl:when test="$this-is-collection-document">
+            <xsl:apply-templates select="$TAN-document" mode="tan:first-stamp-shallow-copy">
+               <xsl:with-param name="add-q-ids" select="$add-q-ids" tunnel="yes"/>
+               <xsl:with-param name="root-element-attributes" tunnel="yes"
+                  select="$attributes-to-add-to-root-element"/>
+               <xsl:with-param name="doc-base-uri" tunnel="yes" select="$this-doc-base-uri"/>
+            </xsl:apply-templates>
+         </xsl:when>
+         <xsl:when test="(exists($TAN-document/*) and not(namespace-uri($TAN-document/*) = ($tan:TAN-namespace, $tan:TEI-namespace)))">
             <xsl:sequence select="$TAN-document"/>
          </xsl:when>
          <xsl:when test="$loop-counter gt $tan:loop-tolerance">

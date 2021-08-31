@@ -324,8 +324,8 @@
       <xsl:variable name="diagnostics-on" select="false()"/>
       <xsl:if test="$diagnostics-on">
          <xsl:message select="'Diagnostics on, tan:collate-pair-of-sequences()'"/>
-         <xsl:message select="'string-2-sequence-of-p1-integers:', tan:array-to-xml($string-2-sequence-of-p1-integers)"/>
-         <xsl:message select="'Longest ascending subsequence (' || string($las-size) || '): ', tan:array-to-xml($longest-ascending-subsquence)"/>
+         <xsl:message select="'string-2-sequence-of-p1-integers:', tan:array-to-xml($string-2-sequence-of-p1-integers)" use-when="not($tan:validation-mode-on)"/>
+         <xsl:message select="'Longest ascending subsequence (' || string($las-size) || '): ', tan:array-to-xml($longest-ascending-subsquence)" use-when="not($tan:validation-mode-on)"/>
          <xsl:message select="'String 1 longest ascending subsequence values: ', $str-1-las-values"/>
          <xsl:message select="'String 2 longest ascending subsequence values: ', $str-2-las-values"/>
          <xsl:message select="'Sequence 1 analyzed: ', $seq-1-analyzed"/>

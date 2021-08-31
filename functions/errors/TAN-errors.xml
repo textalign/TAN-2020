@@ -3,7 +3,7 @@
 <errors xmlns="tag:textalign.net,2015:ns">
     <!-- NB, @affects-element and @affects-attribute populate the guidelines; they do not trigger errors -->
 
-    <!-- Indicate which errors should be squelched at which phases -->
+    <!-- List of errors that should be squelched at specific phases -->
     <squelch phase="terse">
         <error-id>cl101</error-id>
         <error-id>wrn02</error-id>

@@ -1865,6 +1865,7 @@
                ()"/>
       <xsl:variable name="this-doc-root-element-name" select="name($this-doc/*)"/>
       <xsl:variable name="this-doc-id" select="$this-doc/*/@id"/>
+      
       <xsl:copy>
          <xsl:copy-of select="@*"/>
          <xsl:if test="@id = $duplicate-ids">
