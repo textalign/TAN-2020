@@ -894,7 +894,7 @@
             </xsl:for-each>
         </xsl:for-each>-->
         <xsl:for-each select="$xml-output-pass-1, $html-output-pass-2">
-            <xsl:call-template name="tan:save-file">
+            <xsl:call-template name="tan:save-as">
                 <xsl:with-param name="document-to-save" select="."/>
             </xsl:call-template>
         </xsl:for-each>

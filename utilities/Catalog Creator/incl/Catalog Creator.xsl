@@ -141,7 +141,7 @@
     
     <xsl:output indent="yes"/>
     <xsl:template match="/">
-        <xsl:call-template name="tan:save-file">
+        <xsl:call-template name="tan:save-as">
             <xsl:with-param name="document-to-save" select="$output-pass-1"/>
         </xsl:call-template>
     </xsl:template>

@@ -64,7 +64,7 @@
                 <!-- reserved for error reporting -->
             </xsl:when>
             <xsl:otherwise>
-                <xsl:call-template name="tan:save-file">
+                <xsl:call-template name="tan:save-as">
                     <xsl:with-param name="document-to-save" select="$self-pass-2"/>
                     <xsl:with-param name="target-uri" select="$target-uri-resolved"/>
                 </xsl:call-template>

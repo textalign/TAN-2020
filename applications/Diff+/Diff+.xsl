@@ -97,7 +97,7 @@
       and for convenince, in case you want to have several commonly used directories handy. See below for
       the main parameter to pick via variable name the directory or directories you want. -->
     <xsl:param name="directory-1-uri" select="'../../../library-arithmeticus/aristotle'" as="xs:string?"/>
-    <xsl:param name="directory-2-uri" select="'../../../library-arithmeticus/evagrius/cpg2439'" as="xs:string?"/>
+    <xsl:param name="directory-2-uri" select="'../../../library-arithmeticus/evagrius/cpg2455'" as="xs:string?"/>
     <xsl:param name="directory-3-uri" select="'../../../library-arithmeticus/bible'" as="xs:string?"/>
     <xsl:param name="directory-4-uri" select="'file:/e:/joel/google%20drive/clio%20commons/TAN%20library/clio'" as="xs:string?"/>
     <xsl:param name="directory-5-uri" select="'../../../library-arithmeticus/test/marinis'" as="xs:string?"/>
@@ -106,7 +106,7 @@
     <!-- What directory or directories has the main input files? Any relative path will be calculated
       against the location of this application file. Multiple directories may be supplied. Too many files?
       Results can be filtered below. -->
-    <xsl:param name="tan:main-input-relative-uri-directories" as="xs:string+" select="$directory-5-uri"/>
+    <xsl:param name="tan:main-input-relative-uri-directories" as="xs:string+" select="$directory-2-uri"/>
 
     <!-- What pattern must each filename match (a regular expression, case-insensitive)? Of the files 
         in the directories chosen, only those whose names match this pattern will be included. A null 
@@ -141,7 +141,8 @@
       German, etc. -->
     <xsl:param name="default-language" as="xs:string?" select="'eng'"/>
     
-    <!-- Should non-TAN input be space-normalized before processing? -->
+    <!-- Should non-TAN input be space-normalized before processing? Note, all TAN files will be space
+        normalized before processing. -->
     <xsl:param name="space-normalize-non-tan-input" as="xs:boolean" select="false()"/>
     
     
@@ -160,21 +161,18 @@
       This is oftentimes an imperfect process, because any restoration must broker between differences
       across versions. In general, the first version will predominate. -->
     
-    <!-- Should differences between the Greek grave and acute be ignored? -->
-    <xsl:param name="ignore-greek-grave-acute-distinction" as="xs:boolean" select="false()"/>
     
-    <!-- If Latin (body's @xml:lang = 'lat'), should batch replacement set 1 be used? -->
-    <xsl:param name="apply-to-latin-batch-replacement-set-1" as="xs:boolean" select="true()"/>
-    
-    <!-- Should placement of marks in Syriac be ignored? -->
-    <xsl:param name="ignore-syriac-dot-placement" as="xs:boolean" select="true()"/>
-    
-    <!-- If Syriac (body's @xml:lang = 'syr'), should batch replacement set 1 be used? -->
-    <xsl:param name="apply-to-syriac-batch-replacement-set-1" as="xs:boolean" select="true()"/>
+    <!-- ~ ~ ~ All languages in general -->
     
     <!-- Should <div> @ns be injected into the text? Normally you do not want to do this, but it can be
       helpful when you want to indentify differences in reference systems. -->
     <xsl:param name="inject-attr-n" as="xs:boolean" select="false()"/>
+    
+    <!-- Should differences in case be ignored? -->
+    <xsl:param name="tan:ignore-case-differences" as="xs:boolean?" select="true()"/>
+    
+    <!-- Should punctuation be ignored? -->
+    <xsl:param name="tan:ignore-punctuation-differences" as="xs:boolean" select="true()"/>
     
     <!-- What additional batch replacements if any should be applied? A batch replacement consists of a sequence
       of elements, each one with attributes @pattern and @replacement and perhaps attributes @flags and
@@ -187,6 +185,28 @@
             in order, so watch out for conflicts. -->
         <!--<replace pattern="(abc)(def)" replacement="$2$1" message="example batch replacement"/>-->
     </xsl:param>
+    
+    
+    <!-- ~ ~ ~ Specific languages -->
+    
+    <!-- ~ ~ ~ ~ ~ ~ Greek -->
+    
+    <!-- Should differences between the Greek grave and acute be ignored? -->
+    <xsl:param name="ignore-greek-grave-acute-distinction" as="xs:boolean" select="true()"/>
+    
+    <!-- ~ ~ ~ ~ ~ ~ Latin -->
+    
+    <!-- If Latin (body's @xml:lang = 'lat'), should batch replacement set 1 be used? -->
+    <xsl:param name="apply-to-latin-batch-replacement-set-1" as="xs:boolean" select="true()"/>
+    
+    <!-- ~ ~ ~ ~ ~ ~ Syriac -->
+    
+    <!-- Should placement of marks in Syriac be ignored? -->
+    <xsl:param name="ignore-syriac-dot-placement" as="xs:boolean" select="true()"/>
+    
+    <!-- If Syriac (body's @xml:lang = 'syr'), should batch replacement set 1 be used? -->
+    <xsl:param name="apply-to-syriac-batch-replacement-set-1" as="xs:boolean" select="true()"/>
+    
     
 
 
@@ -209,10 +229,10 @@
     <!-- In what directory should the output be saved? -->
     <xsl:param name="output-directory-uri" as="xs:string" select="$tan:default-output-directory-resolved"/>
     
-    <!-- What should the base output filename be? If missing, the base filename of the first item in each group
-      will be used, with suffixes of "-compared.xml" and "-compared.html". If multiple comparisons are
-      made on the same output base filename, they will be numerically incremented. This process will
-      overwrite any files. -->
+    <!-- What should the base output filename be? If missing, the base filename of the first item in
+      each group will be used, with suffixes of "-compared.xml" and "-compared.html". If multiple
+      comparisons are made on the same output base filename, they will be numerically incremented. The
+      outcome of this process will overwrite any files. -->
     <xsl:param name="output-base-filename" as="xs:string?"/>
     
     
@@ -234,7 +254,7 @@
         must be a regular expression matching attribute names. These input attributes play no factor at 
         all in the text that will be compared. Rather, this makes sure they do not feature in the HTML 
         output. -->
-    <xsl:param name="input-attributes-to-remove-regex" as="xs:string?" select="'.+'"/>
+    <xsl:param name="input-attributes-to-remove-regex" as="xs:string?" select="''"/>
     
     
     
