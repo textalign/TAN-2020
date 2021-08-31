@@ -311,6 +311,9 @@
    
    <xsl:mode name="comments-to-docbook" on-no-match="shallow-skip"/>
    
+   <!-- We are interested only in those annotations that are part of top-level declarations -->
+   <xsl:template match="/xsl:*/xsl:*/xsl:*" mode="comments-to-docbook"/>
+   
    <xsl:template match="comment()[matches(., '^\s*kw:')]" mode="comments-to-docbook" priority="1">
       <para>
          <xsl:text>Related: </xsl:text> 
@@ -408,6 +411,9 @@
                select="$this-type-of-component"/>.</para>
       </xsl:if>
    </xsl:function>
+   
+   <xsl:variable name="ignore-template-modes-regex" as="xs:string" select="'ad-hoc'"/>
+   
    <xsl:function name="tan:component-dependencies-to-docbook" as="element()*">
       <!-- Input: one or more XSLT elements -->
       <!-- Output: one docbook <para> per type listing other components upon which the input component depends -->
@@ -425,7 +431,7 @@
                   tan:prep-string-for-docbook(tan:string-representation-of-component($j/@name, 'template'))"/>
          <xsl:copy-of
             select="
-               for $k in $xslt-elements//xsl:apply-templates
+               for $k in $xslt-elements//xsl:apply-templates[not(matches(@mode, $ignore-template-modes-regex))]
                return
                   tan:prep-string-for-docbook(tan:string-representation-of-component($k/@mode, 'template', true()))"
          />
@@ -1007,7 +1013,8 @@
                      />
                   </title>
                   <xsl:for-each-group select="$these-components-to-traverse" group-by="name()">
-                     <!-- This is a group of variables, keys, functions, and named templates, but not template modes, which are handled later -->
+                     <!-- This is a group of variables, keys, functions, and named templates, but not template modes, 
+                        which are handled later -->
                      <xsl:sort
                         select="index-of(('xsl:variable', 'xsl:key', 'xsl:function', 'xsl:template'), current-grouping-key())"/>
                      <xsl:variable name="this-type-of-component" as="xs:string"

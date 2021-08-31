@@ -111,6 +111,7 @@ Added:
 * `tan:expand-numerical-sequence()` renamed `tan:expand-numerical-expression()`
 * `tan:diff-to-delta()`. Converts `tan:diff()` output into a special delta format, to support two-way conversion.
 * `tan:apply-deltas()`. Takes a string and one or more deltas, and returns the corresponding string, after applying all deltas.
+* `tan:levenstein-distance()` and `tan:lcs-distance()`: calculates scores on the output of `tan:diff()`.
 
 Altered:
 * `tan:diff()` has been greatly simplified and improved. It runs about 40% faster, and easily handles pairs of strings 3M characters in length.
