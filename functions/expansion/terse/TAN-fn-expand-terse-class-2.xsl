@@ -1068,14 +1068,25 @@
       <xsl:variable name="relevant-rules" as="element()*" select="
             for $i in $morphology-ids
             return
-               $morphology-rule-map($i)[some $j in (self::*, tan:where)
+               $morphology-rule-map($i)[some $j in (if (exists(tan:where)) then
+                  tan:where
+               else
+                  self::*)
                   satisfies tan:all-conditions-hold($j, $this-m, (), true())]"/>
       <xsl:variable name="disobeyed-asserts" as="element()*"
          select="$relevant-rules/tan:assert[not(tan:all-conditions-hold(., $this-m, (), true()))]"/>
       <xsl:variable name="disobeyed-reports" as="element()*"
          select="$relevant-rules/tan:report[tan:all-conditions-hold(., $this-m, (), true())]"/>
       
-      
+      <xsl:variable name="diagnostics-on" as="xs:boolean" select="false()"/>
+      <xsl:if test="$diagnostics-on">
+         <xsl:message select="'= = Diagnostics on, template mode tan:TAN-a-lm-expansion-terse on element ', ."/>
+         <xsl:message select="'Morphology ids:', $morphology-ids"/>
+         <xsl:message select="'f elements:', $these-fs"/>
+         <xsl:message select="'Relevant rules: ', $relevant-rules"/>
+         <xsl:message select="'Disobeyed asserts:', $disobeyed-asserts"/>
+         <xsl:message select="'Disobeyed reports:', $disobeyed-reports"/>
+      </xsl:if>
       
       <xsl:copy>
          <xsl:copy-of select="@*"/>

@@ -852,7 +852,7 @@
       <xsl:variable name="these-conditions" as="element()*">
          <xsl:analyze-string select="." regex="(\+ )?\S+">
             <xsl:matching-substring>
-               <xsl:variable name="this-item" select="tokenize(., ' ')"/>
+               <xsl:variable name="this-item" as="xs:string+" select="tokenize(., ' ')"/>
                <xsl:element name="{if (count($this-item) gt 1) then 'and' else 'feature'}">
                   <xsl:value-of select="$this-item[last()]"/>
                </xsl:element>
@@ -870,7 +870,16 @@
             </group>
          </xsl:for-each-group>
       </xsl:variable>
-      <xsl:attribute name="{name()}">
+
+      <xsl:variable name="diagnostics-on" as="xs:boolean" select="false()"/>
+      <xsl:if test="$diagnostics-on">
+         <xsl:message select="'= = Diagnostics on template mode tan:evaluate-conditions on @' || name(.) || ' with value ' || string(.)"/>
+         <xsl:message select="'Context: ', $context"/>
+         <xsl:message select="'Conditions pass 1:', $these-conditions"/>
+         <xsl:message select="'Conditions pass 2:', $these-conditions-pass-2"/>
+         
+      </xsl:if>
+      <xsl:attribute name="{name(.)}">
          <xsl:value-of select="
                some $i in $these-conditions-pass-2
                   satisfies
