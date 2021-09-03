@@ -292,7 +292,7 @@
       </xsl:copy>
    </xsl:template>
    
-   <xsl:template match="tan:div[not(tan:div)]" mode="tan:class-1-expansion-verbose-pass-3">
+   <xsl:template match="tan:div[not(tan:div)][@_pos]" mode="tan:class-1-expansion-verbose-pass-3">
       <xsl:param name="rediv-diff-maps" tunnel="yes" as="map(*)*"/>
       
       <xsl:variable name="this-string-pos" select="xs:integer(@_pos)" as="xs:integer"/>

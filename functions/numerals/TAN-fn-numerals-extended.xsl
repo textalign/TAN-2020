@@ -80,7 +80,7 @@
       <xsl:param name="numerical-letters" as="xs:anyAtomicType*"/>
       <xsl:for-each select="$numerical-letters">
          <xsl:choose>
-            <xsl:when test="matches(., '^', $tan:arabic-indic-numeral-regex || '$')">
+            <xsl:when test="matches(., '^' || $tan:arabic-indic-numeral-regex || '$')">
                <xsl:copy-of select="tan:ara-to-int(.)"/>
             </xsl:when>
             <xsl:otherwise>
