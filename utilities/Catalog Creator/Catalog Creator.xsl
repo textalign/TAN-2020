@@ -42,11 +42,18 @@
         <head>, or do you want only minimal metadata (the children of <head> before <vocabulary-key>)? -->
     <xsl:param name="include-fully-resolved-metadata" as="xs:boolean" select="false()"/>
     
-    <!-- What files do you want to exclude from results? Expected: a regular expression. It is recommended that
-      you include /\. because that pattern will ignore hidden files and directories, such as those used
-      in Git or other version control managers. -->
+    <!-- What files do you want to exclude from results? Expected: a regular expression. Patterns perhaps
+        to include:
+        /\.             ignores hidden files and directories
+        %20-%20Copy     ignores copies of files (Windows default)
+        /te?mp-?\d*/      ignores directories such as temp tmp tmp2
+        private-        ignores files marked as private
+        /archive        ignores files in subdirectories marked as archives
+        /transformation ignores files in subdirectories marked as holding transformations
+        /output         ignores files in subdirectories marked as XSLT output
+    -->
     <xsl:param name="exclude-filenames-that-match-what-pattern" as="xs:string?"
-        select="'private-|archive|transformations|temp-|/\.'"/>
+        select="'private-|/archive|/transformations|/output|/te?mp-?\d*/|%20-%20copy|temp-|/\.'"/>
     
     <!-- Do you wish to index deeply? If true, then the catolog file will look in subdirectories for 
         candidate documents. -->
