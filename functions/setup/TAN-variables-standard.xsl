@@ -8,7 +8,7 @@
    <!-- Core general variables for the TAN function library. -->
    
    <xsl:variable name="tan:TAN-version" as="xs:string">2021</xsl:variable>
-   <xsl:variable name="tan:TAN-version-is-under-development" as="xs:boolean" select="true()"/>
+   <xsl:variable name="tan:TAN-version-is-under-development" as="xs:boolean" select="false()"/>
    <xsl:variable name="tan:previous-TAN-versions" select="('1 dev', '2018', '2020')"/>
    <xsl:variable name="tan:internet-available" as="xs:boolean">
       <xsl:choose>
@@ -138,82 +138,16 @@
    <xsl:variable name="tan:all-selector" select="'*'" as="xs:string+"/>
    
    
-   <!-- URN namespaces come from the Official IANA Registry of URN Namespaces, https://www.iana.org/assignments/urn-namespaces/urn-namespaces.xhtml, accessed 2020-05-24 -->
-   <xsl:variable name="tan:official-urn-namespaces" as="xs:string+" select="
-         ('3gpp',
-         '3gpp2',
-         'adid',
-         'alert',
-         'bbf',
-         'broadband-forum-org',
-         'cablelabs',
-         'ccsds',
-         'cgi',
-         'clei',
-         'dgiwg',
-         'dslforum-org',
-         'dvb',
-         'ebu',
-         'eidr',
-         'epc',
-         'epcglobal',
-         'etsi',
-         'eurosystem',
-         'example',
-         'fdc',
-         'fipa',
-         'geant',
-         'globus',
-         'gsma',
-         'hbbtv',
-         'ieee',
-         'ietf',
-         'iptc',
-         'isan',
-         'isbn',
-         'iso',
-         'issn',
-         'itu',
-         'ivis',
-         'liberty',
-         'mace',
-         'mef',
-         'mpeg',
-         'mrn',
-         'nato',
-         'nbn',
-         'nena',
-         'newsml',
-         'nfc',
-         'nzl',
-         'oasis',
-         'ogc',
-         'ogf',
-         'oid',
-         'oipf',
-         'oma',
-         'onf',
-         'pin',
-         'publicid',
-         's1000d',
-         'schac',
-         'service',
-         'smpte',
-         'swift',
-         'tva',
-         'uci',
-         'ucode',
-         'uuid',
-         'web3d',
-         'xmlorg',
-         'xmpp',
-         'urn-1',
-         'urn-2',
-         'urn-3',
-         'urn-4',
-         'urn-5',
-         'urn-6',
-         'urn-7')"/>
+   <!-- URN namespaces come from the Official IANA Registry of URN Namespaces, 
+      https://www.iana.org/assignments/urn-namespaces/urn-namespaces.xhtml, accessed 2021-09-04 -->
+   <xsl:variable name="tan:official-urn-namespaces" as="xs:string+"
+      select="('3gpp', '3gpp2', 'adid', 'alert', 'bbf', 'broadband-forum-org', 'cablelabs', 'ccsds', 'cgi', 'clei', 'ddi', 'dev', 
+      'dgiwg', 'dslforum-org', 'dvb', 'ebu', 'eidr', 'epc', 'epcglobal', 'etsi', 'eurosystem', 'example', 'fdc', 'fipa', 'geant', 
+      'globus', 'gsma', 'hbbtv', 'ieee', 'ietf', 'iptc', 'isan', 'isbn', 'iso', 'issn', 'itu', 'ivis', 'liberty', 'mace', 'mef', 
+      'mpeg', 'mrn', 'nato', 'nbn', 'nena', 'newsml', 'nfc', 'nzl', 'oasis', 'ogc', 'ogf', 'oid', 'oipf', 'oma', 'onf', 'pin', 
+      'publicid', 'reso', 's1000d', 'schac', 'service', 'smpte', 'swift', 'tva', 'uci', 'ucode', 'uuid', 'web3d', 'xmlorg', 'xmpp', 
+      'urn-1', 'urn-2', 'urn-3', 'urn-4', 'urn-5', 'urn-6', 'urn-7')"
+   />
    
    <!-- TAN file components -->
    

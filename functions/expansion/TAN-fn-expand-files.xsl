@@ -34,6 +34,7 @@
       <xsl:param name="target-phase" as="xs:string"/>
       <xsl:param name="use-validation-mode" as="xs:boolean"/>
       <xsl:document>
+         <xsl:message select="'Running tan:expand-doc-test()'"/>
          <test-expansion>
             <!-- Normally this is empty, to be replaced only when running diagnostics. -->
          </test-expansion>
@@ -1013,34 +1014,6 @@
                select="tan:error('wrn07', 'The last change in the dependency was made by an algorithm.')"
             />
          </xsl:if>
-         <!-- Getting help via catalogs has shifted to tan:catalogs(); commenting out Aug 2021 prior to complete deletion -->
-         <!--<xsl:if
-            test="$target-is-faulty and not($target-is-self-referential or $target-is-wrong-version)">
-            <xsl:variable name="these-catalogs"
-               select="
-                  if ($this-doc-id = $tan:doc-id) then
-                     $tan:doc-catalogs
-                  else
-                     tan:catalogs(., false())"/>
-            <xsl:variable name="these-iris" select="tan:IRI"/>
-            <xsl:variable name="catalog-matches"
-               select="$these-catalogs/collection/doc[@id = $these-iris]"/>
-            <xsl:variable name="possible-uris"
-               select="
-                  for $i in $catalog-matches,
-                  $j in tan:base-uri($i)[not(. = $this-base-uri)]
-                  return
-                     resolve-uri($i/@href[tan:is-valid-uri(.)], xs:string($j))"/>
-            <xsl:variable name="this-fix" as="element()*">
-               <xsl:for-each select="$possible-uris">
-                  <location href="{tan:uri-relative-to(xs:string(.), xs:string($this-base-uri))}"
-                     accessed-when="{current-date()}"/>
-               </xsl:for-each>
-            </xsl:variable>
-            <xsl:if test="exists($possible-uris)">
-               <xsl:copy-of select="tan:error('wrn08', (), $this-fix, 'append-content')"/>
-            </xsl:if>
-         </xsl:if>-->
          <xsl:copy-of select="$target-resolved/(tan:error, tan:warning, tan:fatal, tan:help)"/>
          <xsl:apply-templates mode="#current">
             <xsl:with-param name="target-id" select="$target-id"/>

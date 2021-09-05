@@ -13,15 +13,15 @@
       documentation in each enclosed file. -->
 
    <!-- A sharp distinction is made between validation mode and non-validation mode. As many components as possible
-      are removed during validation mode, to improve efficiency. Because the validation mode is explicitly turned on 
-      only when Schematron validation occurs, any application that includes this file should have access to the entire
-      library. Some parts may have restrictions if advanced processing features are not supported.
+      are removed during validation mode, to improve efficiency. By default validation mode is turned off, which means
+      that any application that includes this file will have access to the entire library. 
    -->
+   <!-- Some functions may not be available, or be restricted, if advanced processing features are not supported. -->
    
    <!-- Maintenance notes:
-      * During development this stylesheet is checked with validation scerarios
-      drawn from /maintenance, as well as Matthieu Ricaud-Dussarget's XSLT Quality,
-      modified. That can be a time-consuming process, so it may be turned off.
+      * During development this stylesheet is checked with validation scenarios drawn from /maintenance, as well 
+      as Matthieu Ricaud-Dussarget's XSLT Quality, modified. That can be a time-consuming process, because it is
+      checked against all the master files, so that validation routine may be turned off.
    -->
 
    <!-- STATIC PARAMETERS -->
