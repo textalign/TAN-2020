@@ -5,8 +5,11 @@
    xmlns:array="http://www.w3.org/2005/xpath-functions/array"
    exclude-result-prefixes="#all" version="3.0">
 
-   <!-- Welcome to TAN to HTML, the TAN application that converts TAN / TEI files to HTML -->
-   <!-- Version 2021-07-07-->
+   <!-- Welcome to TAN Out, the TAN application that exports TAN / TEI files -->
+   <!-- Version 2021-09-06 -->
+   <!-- This utility exports a TAN or TEI file to other media. Currently only HTML is supported, optimized
+      for JavaScript and CSS within the output/js and output/css directories in the TAN file structure. -->
+
    <!-- This utility quickly renders a TAN or TEI file as HTML. It has been optimized for JavaScript and CSS
       within the output/js and output/css in the TAN file structure. -->
 
@@ -34,23 +37,28 @@
    
    <!-- WARNING: CERTAIN FEATURES HAVE YET TO BE IMPLEMENTED -->
    <!-- * Need to wholly overhaul the default CSS and JavaScript files in output/css and output/js 
-      * Need to build parameters to allow users to drop elements from the HTML DOM. -->
+      * Need to build parameters to allow users to drop elements from the HTML DOM.
+      * Need to enrich output message with parameter settings.
+      * Need to support export to odt. 
+      * Need to support export to docx. 
+      * Need to support export to plain text.
+   -->
    
 
    <!-- PARAMETERS -->
    
    <!-- INPUT ADJUSTMENT -->
    
-   <!-- In what state would you like the TAN/TEI file rendered? Options: 'raw' (default), 'resolved', 
-      or 'expanded' -->
-   <xsl:param name="TAN-file-state" as="xs:string?" select="'expanded'"/>
+   <!-- In what state would you like the TAN/TEI file rendered? Options: 'raw', 'resolved', 
+      or 'expanded'. If the value is not recognized 'raw' will be used. -->
+   <xsl:param name="TAN-file-state" as="xs:string?" select="'raw'"/>
    
    <!-- If rendering an expanded TAN/TEI file, what level of expansion do you want? Options: 'terse',
       'normal', 'verbose'. -->
    <xsl:param name="tan:validation-phase" select="'terse'"/>
    
    <!-- Do you want to treat the file as if being validated or not? This does not affect either a raw
-      or a resolved file, but it will affect the expanded file. In validation mode, only the errors 
+      or a resolved file, but it will affect the expanded file. In validation mode, only errors 
       are returned. -->
    <xsl:param name="tan:validation-mode-on" as="xs:boolean" select="false()"/>
    
@@ -69,14 +77,15 @@
    <!-- Should any hrefs in the text of the source file be converted to hyperlinks in the output? -->
    <xsl:param name="parse-text-for-urls" as="xs:boolean" select="true()"/>
    
-   <!-- Where specifically do you want the output inserted? Expected is a string naming the value of 
-      @id of some HTML element in the template. If this value is missing or is a zero-length string,
-      then the content will be inserted as the first child of the <body> -->
+   <!-- Where specifically do you want the output inserted? Expected is a string naming the @id value 
+      of some HTML element in the template. If this value is missing or is a zero-length string,
+      then the content will be inserted as the first child of the HTML template document's <body> -->
    <xsl:param name="target-id-for-html-content" as="xs:string?"/>
    
    
    <!-- For what directory is the output intended? This is important to reconcile any relative
-      links. -->
+      links. If you provide a relative path, that path will be resolved relative to the location
+      of this application file. -->
    <xsl:param name="output-directory-uri" as="xs:string"
       select="$tan:default-output-directory-resolved"/>
    

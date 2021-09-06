@@ -16,12 +16,12 @@
     
     <xsl:param name="tan:stylesheet-iri"
         select="'tag:textalign.net,2015:stylesheet:display-tan-as-html'"/>
-    <xsl:param name="tan:stylesheet-name" as="xs:string" select="'TAN to HTML'"/>
+    <xsl:param name="tan:stylesheet-name" as="xs:string" select="'TAN Out'"/>
     <xsl:param name="tan:stylesheet-activity"
-        select="'converts TAN / TEI files to HTML'"/>
-    <xsl:param name="tan:stylesheet-description">This utility quickly renders a TAN or TEI file
-        as HTML. It has been optimized for JavaScript and CSS within the output/js and output/css
-        in the TAN file structure.</xsl:param>
+        select="'exports TAN / TEI files'"/>
+    <xsl:param name="tan:stylesheet-description">This utility exports a TAN or TEI file to
+        other media. Currently only HTML is supported, optimized for JavaScript and CSS within the
+        output/js and output/css directories in the TAN file structure.</xsl:param>
     <xsl:param name="tan:stylesheet-primary-input-desc" as="xs:string">any TAN or TEI
         file</xsl:param>
     <xsl:param name="tan:stylesheet-secondary-input-desc" as="xs:string">none</xsl:param>
@@ -35,11 +35,19 @@
         <to-do xmlns="tag:textalign.net,2015:ns">
             <comment who="kalvesmaki" when="2020-07-28">Need to wholly overhaul the default CSS and JavaScript files in output/css and output/js</comment>
             <comment who="kalvesmaki" when="2020-07-28">Need to build parameters to allow users to drop elements from the HTML DOM.</comment>
+            <comment who="kalvesmaki" when="2020-09-05">Need to enrich output message with parameter settings.</comment>
+            <comment who="kalvesmaki" when="2020-09-06">Need to support export to odt.</comment>
+            <comment who="kalvesmaki" when="2020-09-06">Need to support export to docx.</comment>
+            <comment who="kalvesmaki" when="2020-09-06">Need to support export to plain text.</comment>
         </to-do>
     </xsl:param>
     <xsl:param name="tan:stylesheet-change-log">
         <change xmlns="tag:textalign.net,2015:ns" who="kalvesmaki" when="2021-07-07">Edited,
             prepared for TAN 2021 release.</change>
+        <change xmlns="tag:textalign.net,2015:ns" who="kalvesmaki" when="2021-09-05">Tested for TAN
+            2021 release</change>
+        <change xmlns="tag:textalign.net,2015:ns" who="kalvesmaki" when="2021-09-06">Changed name,
+            adjusted descriptions</change>
     </xsl:param>
     <xsl:param name="tan:stylesheet-change-message" select="'Converted TAN ' || $tan:doc-uri || ' to HTML'"/>
     
@@ -150,6 +158,7 @@
         <xsl:choose>
             <xsl:when test="exists($output-target-filename)">
                 <xsl:result-document href="{$output-target-filename}">
+                    <xsl:message select="'Saving to target ' || $output-target-filename"/>
                     <xsl:copy-of select="$output-pass-5"/>
                 </xsl:result-document>
             </xsl:when>
