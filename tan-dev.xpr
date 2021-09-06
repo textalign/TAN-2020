@@ -1151,11 +1151,31 @@ ancestor-or-self::*:return[namespace-uri() = "http://www.oxygenxml.com/ns/doc/xs
                         <scenarioAssociation-array>
                             <scenarioAssociation>
                                 <field name="url">
-                                    <String>../library-arithmeticus/evagrius/cpg2430/cpg2430.syr.0700.bl14578.tei.xml</String>
+                                    <String>examples/lords-prayer.eng.kjv.1760.xml</String>
                                 </field>
                                 <field name="scenarioIds">
                                     <list>
-                                        <String>DEV: Test TAN Function Library</String>
+                                        <String>APP: TAN Out, run as-is</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioTypes">
+                                    <list>
+                                        <String>XSL</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioStorageLocations">
+                                    <list>
+                                        <Byte>2</Byte>
+                                    </list>
+                                </field>
+                            </scenarioAssociation>
+                            <scenarioAssociation>
+                                <field name="url">
+                                    <String>maintenance/guidelines/populate%20TAN%20guidelines.xsl</String>
+                                </field>
+                                <field name="scenarioIds">
+                                    <list>
+                                        <String>DEV: Run XSLT against itself, XML out</String>
                                     </list>
                                 </field>
                                 <field name="scenarioTypes">
@@ -1191,11 +1211,11 @@ ancestor-or-self::*:return[namespace-uri() = "http://www.oxygenxml.com/ns/doc/xs
                             </scenarioAssociation>
                             <scenarioAssociation>
                                 <field name="url">
-                                    <String>maintenance/guidelines/populate%20TAN%20guidelines.xsl</String>
+                                    <String>../library-arithmeticus/evagrius/cpg2430/cpg2430.syr.0700.bl14578.tei.xml</String>
                                 </field>
                                 <field name="scenarioIds">
                                     <list>
-                                        <String>DEV: Run XSLT against itself, XML out</String>
+                                        <String>DEV: Test TAN Function Library</String>
                                     </list>
                                 </field>
                                 <field name="scenarioTypes">
@@ -1801,7 +1821,7 @@ ancestor-or-self::*:return[namespace-uri() = "http://www.oxygenxml.com/ns/doc/xs
                                     <null/>
                                 </field>
                                 <field name="name">
-                                    <String>APP: TAN to HTML</String>
+                                    <String>APP: TAN Out, run as-is</String>
                                 </field>
                                 <field name="baseURL">
                                     <String></String>
@@ -1819,7 +1839,7 @@ ancestor-or-self::*:return[namespace-uri() = "http://www.oxygenxml.com/ns/doc/xs
                                     <String></String>
                                 </field>
                                 <field name="inputXSLURL">
-                                    <String>${pdu}/applications/TAN%20to%20HTML/TAN%20to%20HTML.xsl</String>
+                                    <String>${pdu}/applications/TAN%20Out/TAN%20Out.xsl</String>
                                 </field>
                                 <field name="inputXMLURL">
                                     <String>${currentFileURL}</String>
@@ -6778,7 +6798,7 @@ ancestor-or-self::*:return[namespace-uri() = "http://www.oxygenxml.com/ns/doc/xs
             <file name="applications/Parabola/Parabola.xsl"/>
             <file name="guidelines/populate/populate%20TAN%20guidelines.xsl"/>
             <file name="maintenance/guidelines/populate%20TAN%20guidelines.xsl"/>
-            <file name="applications/TAN%20to%20HTML/TAN%20to%20HTML.xsl"/>
+            <file name="applications/TAN%20Out/TAN%20Out.xsl"/>
             <file name="utilities/TAN-A-lm%20Builder/TAN-A-lm%20Builder.xsl"/>
             <file name="utilities/TAN-A-lm%20Calibrator/TAN-A-lm%20Calibrator.xsl"/>
             <file name="schemas/TAN-A-lm.rnc"/>
