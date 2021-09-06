@@ -12,14 +12,15 @@
    <!-- This application allows you to take a library of TAN/TEI files with multiple versions of
       each work and present them in an interactive HTML page.-->
 
-   <!-- This is the public interface for the application. The code that runs the application can be found by
-      following the links in the <xsl:include> or <xsl:import> at the bottom of this file. You are invited
-      to alter as you like any of the parameters in this file, to customize the application to suit your
-      needs. If you are relatively new to XSLT, or you are nervous about making changes, make a copy of
-      this file before changing it, or configure a transformation scenario in Oxygen. If you are
-      comfortable with XSLT, try creating your own stylesheet, then import this one, selectively changing
-      the parameters as needed. For more background on how to configure and use this file, see the TAN
-      Guidelines, Using TAN Applications and Utilities. -->
+   <!-- This master stylesheet is the public interface for the application. The parameters you will most
+      likely want to change are listed and documented below, to help you customize the application to suit
+      your needs. If you are relatively new to XSLT, or TAN applications, see Using TAN Applications and
+      Utilities in the TAN Guidelines for general instructions. If you want to avoid changing the master
+      application file, use the accompanying configuration file. Or make a copy of this file and edit and
+      run it directly. Or create and configure a transformation scenario in Oxygen, defining the relevant
+      parameters as you like. If you are comfortable with XSLT, try creating your own stylesheet, then
+      import this one, and customize the process. To access the code base, follow the link in the
+      <xsl:include> at the bottom of this file. -->
 
    <!-- Examples of output: 
       * http://textalign.net/output/aristotle-categories-ref-bekker-page-col-line.html
@@ -39,17 +40,17 @@
       in parallel, with annotations -->
    <!-- Secondary output: none -->
 
-   <!-- This application is the flagship TAN application, and was the catalyst for TAN itself. It was
-      developed not only for highly polished, finalized web publication, but for complex editorial
-      processes. The test case that laid the groundwork was a project of five scholars translating into
-      English an ancient text that survives only fragmentarily in its original Greek, and that was
-      translated into Syriac several times. The team intended to translate into English the Greek
-      fragments that survive, as well as the Syriac translations, and to do so with rigorous consistency.
-      In passages where the author (Evagrius of Pontus) quoted from Scripture or Aristotle, they needed
-      to be able to consult the Greek or Syriac text behind the quoted source. Such demands required a
-      shared digital infrastructure to coordinate roughly forty different versions, including the team's
-      working English translations, which were changing week to week. Parabola was indispensible.
-   -->
+   <!-- This flagship TAN application was the catalyst for TAN itself. It was developed not only for
+      highly polished, finalized web publication, but to support complex editorial processes. The impetus
+      was a project of five scholars translating into English an ancient text that survives only
+      fragmentarily in its original Greek, and that was translated into Syriac several times. The team
+      intended to translate into English the Greek fragments that survive, as well as the Syriac
+      translations, and to do so with rigorous consistency. In passages where the author (Evagrius of
+      Pontus) quoted from Scripture or Aristotle, they needed to be able to consult the Greek or Syriac
+      text behind the quoted source. Such demands required a shared digital infrastructure to coordinate
+      roughly forty different versions, including the team's working English translations, which were
+      changing week to week. Parabola was indispensible.
+ -->
 
    <!-- Nota bene:
       * This application has many fine-tuned configuration options. Read through the whole file

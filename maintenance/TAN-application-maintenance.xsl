@@ -68,15 +68,16 @@
       <xsl:comment> Version {$tan:main-app-history/*[1]/@when}</xsl:comment>
    </xsl:variable>
    
-   <xsl:variable name="tan:standard-app-preamble" as="xs:string">This is the public interface for
-      the application. The code that runs the application can be found by following the links in the
-      &lt;xsl:include> or &lt;xsl:import> at the bottom of this file. You are invited to alter as
-      you like any of the parameters in this file, to customize the application to suit your needs.
-      If you are relatively new to XSLT, or you are nervous about making changes, make a copy of
-      this file before changing it, or configure a transformation scenario in Oxygen. If you are
-      comfortable with XSLT, try creating your own stylesheet, then import this one, selectively
-      changing the parameters as needed. For more background on how to configure and use this file,
-      see the TAN Guidelines, Using TAN Applications and Utilities.</xsl:variable>
+   <xsl:variable name="tan:standard-app-preamble" as="xs:string">This master stylesheet is the
+      public interface for the application. The parameters you will most likely want to change are
+      listed and documented below, to help you customize the application to suit your needs. If you
+      are relatively new to XSLT, or TAN applications, see Using TAN Applications and Utilities in
+      the TAN Guidelines for general instructions. If you want to avoid changing the master
+      application file, use the accompanying configuration file. Or make a copy of this file and
+      edit and run it directly. Or create and configure a transformation scenario in Oxygen,
+      defining the relevant parameters as you like. If you are comfortable with XSLT, try creating
+      your own stylesheet, then import this one, and customize the process. To access the code base,
+      follow the link in the &lt;xsl:include> at the bottom of this file. </xsl:variable>
    <xsl:variable name="tan:standard-app-preamble-norm" as="xs:string"
       select="normalize-space($tan:standard-app-preamble)"/>
    <xsl:variable name="tan:standard-app-preamble-comment" as="comment()"

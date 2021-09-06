@@ -45,7 +45,8 @@
                 still work?</comment>
             <comment who="kalvesmaki" when="2021-04-10">Ensure the responsible repopulation of the
                 metadata of the template</comment>
-            
+            <comment who="kalvesmaki" when="2021-09-06">Support false value for
+                $retain-morphological-codes-as-is</comment>
         </to-do>
     </xsl:param>
     <xsl:param name="tan:stylesheet-change-log">

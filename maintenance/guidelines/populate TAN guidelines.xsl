@@ -29,12 +29,12 @@
    <xsl:param name="generate-inclusion-for-utilities-and-applications" as="xs:boolean" static="true"
       select="true()"/>
    <xsl:param name="generate-inclusion-for-elements-attributes-and-patterns" as="xs:boolean"
-      static="true" select="true()"/>
+      static="true" select="false()"/>
    <xsl:param name="generate-inclusion-for-vocabularies" as="xs:boolean" static="true"
-      select="true()"/>
+      select="false()"/>
    <xsl:param name="generate-inclusion-for-keys-functions-and-templates" as="xs:boolean"
-      static="true" select="true()"/>
-   <xsl:param name="generate-inclusion-for-errors" as="xs:boolean" static="true" select="true()"/>
+      static="true" select="false()"/>
+   <xsl:param name="generate-inclusion-for-errors" as="xs:boolean" static="true" select="false()"/>
    
    <xsl:param name="tan:include-diagnostics-components" as="xs:boolean" select="true()" static="yes"/>
    
@@ -64,7 +64,7 @@
       select="collection('../../examples/?select=*.xml;recurse=yes'), collection('../../vocabularies/?select=*.xml;recurse=yes')"/>
    <xsl:variable name="app-collection" as="document-node()*" select="
          for $i in
-         uri-collection('../../applications/?select=*.xsl;recurse=yes')[matches(., 'applications/[^/]+/[^/]+$')]
+         uri-collection('../../applications/?select=*.xsl;recurse=yes')[matches(., 'applications/[^/]+/[^/]+$')][not(matches(., 'configuration'))]
          return
             doc($i)"/>
    <xsl:variable name="util-collection" as="document-node()*" select="
@@ -745,7 +745,7 @@
    </xsl:template>
 
    <xsl:template match="/*" use-when="not($output-diagnostics-on)">
-      <xsl:message select="'Generating inclusion for utilities and attributes: ', $generate-inclusion-for-utilities-and-applications"/>
+      <xsl:message select="'Generating inclusion for utilities and applications: ', $generate-inclusion-for-utilities-and-applications"/>
       <xsl:message select="'Generating inclusion for elements, attributes, and patterns: ', $generate-inclusion-for-elements-attributes-and-patterns"/>
       <xsl:message select="'Generating inclusion for vocabularies: ', $generate-inclusion-for-vocabularies"/>
       <xsl:message select="'Generating inclusion for keys, functions, and templates: ', $generate-inclusion-for-keys-functions-and-templates"/>
@@ -769,11 +769,11 @@
          href="{resolve-uri('../../guidelines/inclusions/applications.xml',static-base-uri())}">
          <section xml:id="tan-applications" version="5.0">
             <title>TAN Applications</title>
-            <para>Standard TAN applications are designed to take TAN or TEI files and create HTML 
-               assets that allow users to study particular aspects of the text through interaction, statistics,
-               and visualization. These are advanced, complex programs, and not all the intended features may have
-               been planned. </para>
-            <para>Because of their power, these applications feature numerous parameters for
+            <para>Standard TAN applications are designed to take TAN or TEI files and create output
+               that allows users to study particular aspects of the text through interaction,
+               statistics, and visualization. These are advanced, complex programs, and not all the
+               intended features may have been implemented. </para>
+            <para>Because of their power, these applications have numerous parameters for
                configuration. You are encouraged to read closely the documentation in the
                application to determine how to make the application work for your particular
                goals.</para>

@@ -18,14 +18,16 @@
       pushed into a TAN or TEI format.-->
    <!-- Version 2021-07-13-->
 
-   <!-- This is the public interface for the application. The code that runs the application can be found by
-      following the links in the <xsl:include> or <xsl:import> at the bottom of this file. You are invited
-      to alter as you like any of the parameters in this file, to customize the application to suit your
-      needs. If you are relatively new to XSLT, or you are nervous about making changes, make a copy of
-      this file before changing it, or configure a transformation scenario in Oxygen. If you are
-      comfortable with XSLT, try creating your own stylesheet, then import this one, selectively changing
-      the parameters as needed. For more background on how to configure and use this file, see the TAN
-      Guidelines, Using TAN Applications and Utilities. -->
+   <!-- This master stylesheet is the public interface for the application. The parameters you will most
+      likely want to change are listed and documented below, to help you customize the application to suit
+      your needs. If you are relatively new to XSLT, or TAN applications, see Using TAN Applications and
+      Utilities in the TAN Guidelines for general instructions. If you want to avoid changing the master
+      application file, use the accompanying configuration file. Or make a copy of this file and edit and
+      run it directly. Or create and configure a transformation scenario in Oxygen, defining the relevant
+      parameters as you like. If you are comfortable with XSLT, try creating your own stylesheet, then
+      import this one, and customize the process. To access the code base, follow the link in the
+      <xsl:include> at the bottom of this file. -->
+   
 
    <!-- DESCRIPTION -->
 
@@ -100,12 +102,14 @@
       through this application, to refresh the results.
         * Currently, this application focuses only select Word docx components: the main text, comments,
       deletions, insertions. No support is yet provided for the header, footer, footnotes, endnotes.
-        * This application is still being refined and developed. If you find problems, please raise an
-      issue via GitHub.
+        * This application was developed in tandem with two sets of actual workflows, whose results have
+      been documented in the files in the config subdirectory. No doubt other concrete examples will 
+      cause this application to grow and change, or bring out bugs. Feel free to register problems
+      or feature requests via github.
  -->
 
    <!-- WARNING: CERTAIN FEATURES HAVE YET TO BE IMPLEMENTED -->
-   <!-- * Allow comments to be anchored in zero width. 
+   <!-- * Anchor comments to gaps between characters, so they are not lost when the anchored text is lost. 
       * Support HTML input 
       * Support ODT input 
       * Let the default template be a document with the root element body. 
@@ -118,10 +122,10 @@
    <!-- SOURCE INPUT -->
    
    <!-- Where is the source input file? Any relative path will be resolved against this stylesheet. 
-      You may wish to us for this parameter a resolved URI, e.g., "file:/c:/myfile.txt", or work with an 
-      @href that is in the catalyzing file, making sure to resolve it against the host file. In many 
-      cases, a class 1 file that is based upon live work being conducted in another file will ideally 
-      point to the source. Some suggestions:
+      You may wish to use for this parameter a resolved URI, e.g., "file:/c:/myfile.txt", or work with an 
+      @href that is in the catalyzing file, making sure to resolve it. In many cases, a class 1 file that 
+      is based upon live work being conducted in another file will ideally point to it through a linking
+      element. Some suggestions:
          /*/tan:head/tan:source/tan:location/@href 
          /*/tan:head/tan:predecessor[1]/tan:location/@href 
       If the source input consists of multiple files, then the path can include glob-like wildcard
@@ -359,7 +363,7 @@
          <note>$0</note>
       </markup>
 
-      <!-- For examples of advanced use of this parameter, see the following configuration file. -->
+      <!-- For examples of advanced use of this parameter, see the following file. -->
       <!--<xsl:sequence select="doc('config/adjustments-clio.xml')/*/tan:comments-to-markup/tan:markup"/>-->
    </xsl:param>
    

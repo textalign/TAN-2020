@@ -6,7 +6,7 @@
 
    <!-- Welcome to Body Remodeler, the TAN application that remodels a text to resemble the
       existing div structure of the body of a TAN-T text-->
-   <!-- Version 2021-07-13-->
+   
    <!-- Suppose you have a text in a well-structured TAN-T file, and you want to use it to model
       the structure of another version of that same work. This application will take the input, and
       infuse the text into the structure of the model, using the proportionate lengths of the
@@ -20,15 +20,17 @@
       editing tools for Oxygen, which allow you to push and pull words, clauses, and sentences from
       one leaf div to another, you will find that Body Builder can save you hours of editorial
       work.-->
+   <!-- Version 2021-07-13-->
 
-   <!-- This is the public interface for the application. The code that runs the application can be found by
-      following the links in the <xsl:include> or <xsl:import> at the bottom of this file. You are invited
-      to alter as you like any of the parameters in this file, to customize the application to suit your
-      needs. If you are relatively new to XSLT, or you are nervous about making changes, make a copy of
-      this file before changing it, or configure a transformation scenario in Oxygen. If you are
-      comfortable with XSLT, try creating your own stylesheet, then import this one, selectively changing
-      the parameters as needed. For more background on how to configure and use this file, see the TAN
-      Guidelines, Using TAN Applications and Utilities. -->
+   <!-- This master stylesheet is the public interface for the application. The parameters you will most
+      likely want to change are listed and documented below, to help you customize the application to suit
+      your needs. If you are relatively new to XSLT, or TAN applications, see Using TAN Applications and
+      Utilities in the TAN Guidelines for general instructions. If you want to avoid changing the master
+      application file, use the accompanying configuration file. Or make a copy of this file and edit and
+      run it directly. Or create and configure a transformation scenario in Oxygen, defining the relevant
+      parameters as you like. If you are comfortable with XSLT, try creating your own stylesheet, then
+      import this one, and customize the process. To access the code base, follow the link in the
+      <xsl:include> at the bottom of this file. -->
    
 
    <!-- DESCRIPTION -->

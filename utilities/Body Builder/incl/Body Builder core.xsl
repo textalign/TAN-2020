@@ -53,7 +53,7 @@
     <xsl:param name="tan:stylesheet-is-core-tan-application" select="true()"/>
     <xsl:param name="tan:stylesheet-to-do-list">
         <to-do xmlns="tag:textalign.net,2015:ns">
-            <comment who="kalvesmaki" when="2021-07-13">Allow comments to be anchored in zero width.</comment>
+            <comment who="kalvesmaki" when="2021-07-13">Anchor comments to gaps between characters, so they are not lost when the anchored text is lost.</comment>
             <comment who="kalvesmaki" when="2021-07-13">Support HTML input</comment>
             <comment who="kalvesmaki" when="2021-07-13">Support ODT input</comment>
             <comment who="kalvesmaki" when="2021-07-13">Let the default template be a document with
