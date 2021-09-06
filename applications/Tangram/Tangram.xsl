@@ -7,6 +7,8 @@
 
    <!--  Welcome to Tangram, the TAN application that finds and scores clusters of words (ngrams)
       shared across two groups of texts -->
+   <!-- WARNING: CERTAIN FEATURES HAVE YET TO BE IMPLEMENTED -->
+   
    
    <!-- This application searches for and scores clusters of words shared across two groups of texts, allowing
       you to look for quotations, paraphrases, or shared topics. When configured correctly, Tangram can
@@ -29,7 +31,7 @@
       which has rather demanding requirements. Because of these objectives, Tangram frequently operates
       in quadratic or cubic time, so can be quite time-consuming to run. A feature allows the user to
       save intermediate stages as temporary files, to reduce processing time. -->
-   <!-- Version 2021-07-07-->
+   <!-- Version 2021-09-06-->
    
 
    <!-- This is the public interface for the application. The code that runs the application can be found by
@@ -54,10 +56,15 @@
    <!-- WARNING: CERTAIN FEATURES HAVE YET TO BE IMPLEMENTED-->
    <!-- * Support the method pioneered by Shmidman, Koppel, and Porat:
       https://arxiv.org/abs/1602.08715v2 
-      * Make sure texts run against themselves work.-->
+      * Make sure texts run against themselves work.
+      * Incorporate simpler tablesorter javascript
+   -->
 
    <!-- Nota bene: -->
-   <!-- * A file may be placed in both groups, to explore cases of self-quotation or 
+   <!-- 
+      * This application is one of the most experimental, and may not perform as expected. It has been 
+      successfully tested on several dozen classical Greek texts. 
+      * A file may be placed in both groups, to explore cases of self-quotation or 
       repetition. 
       * This process can take a very long time for lengthy texts, particuarly at the stage where a 1gram 
       gets added to an Ngram, because the process takes quadratic time. Many messages could appear during
@@ -87,22 +94,16 @@
    <!-- Where directories of interest hold the target files? The following parameters are provided 
         as examples, and for convenince, in case you want to have several commonly used directories 
         handy. The main parameter can then be bound to the directory or directories you want. -->
-   <xsl:param name="directory-1-uri" select="'../../../library-arithmeticus/aristotle'" as="xs:string?"/>
+   <xsl:param name="directory-1-uri" select="'../../examples'" as="xs:string?"/>
    <xsl:param name="directory-2-uri" select="'../../../library-arithmeticus/evagrius/cpg2439'" as="xs:string?"/>
    <xsl:param name="directory-3-uri" select="'../../../library-arithmeticus/bible'" as="xs:string?"/>
-   <xsl:param name="directory-4-uri" select="'file:/e:/joel/google%20drive/clio%20commons/TAN%20library/clio'" as="xs:string?"/>
+   <xsl:param name="directory-4-uri" select="'../../../library-arithmeticus/aristotle'" as="xs:string?"/>
    <xsl:param name="directory-5-uri" select="'../../../pre-TAN/evagrius'" as="xs:string?"/>
-   <xsl:param name="directory-6-uri" select="'../../../../epubs/TLG/xml/gregorius_nazianzenus'" as="xs:string?"/>
-   <xsl:param name="directory-7-uri" select="'../../../../epubs/TLG/xml/didymus_caecus'" as="xs:string?"/>
-   <xsl:param name="directory-8-uri" select="'../../../library-arithmeticus/evagrius/cpg2458.4'" as="xs:string?"/>
-   <xsl:param name="directory-9-uri" select="'../../../library-arithmeticus/evagrius/cpg2455'" as="xs:string?"/>
-   <xsl:param name="directory-10-uri" select="'../../../library-arithmeticus/evagrius/cpg2441'" as="xs:string?"/>
-   <xsl:param name="directory-11-uri" select="'../../../../epubs/TLG/xml/clemens_alexandrinus'" as="xs:string?"/>
    
    <!-- What directory or directories has the main input files? Any relative path will be calculated relative 
         to this application file. Multiple directories may be supplied. Results can be filtered below. -->
    <xsl:param name="tan:main-input-relative-uri-directories" as="xs:string+"
-      select="$directory-2-uri, $directory-3-uri, $directory-10-uri"/>
+      select="$directory-1-uri, $directory-2-uri, $directory-3-uri"/>
    
    <!-- What pattern must each filename match (a regular expression, case-insensitive)? Of the files 
         in the directories chosen, only those whose names match this pattern will be included. A null 
@@ -117,12 +118,11 @@
    
    <!-- What pattern must each filename match for it to be included in group one? A null or
       empty string will include every file. -->
-   <xsl:param name="group-one-filenames-regex" as="xs:string?" select="'gribomont|2441'"/>
+   <xsl:param name="group-one-filenames-regex" as="xs:string?" select="''"/>
    
    <!-- What pattern must each filename match for it to be included in group two? A null or
       empty string will include every file. -->
-   <xsl:param name="group-two-filenames-regex" as="xs:string?" select="'nt\.grc\.sbl-2010\.xml'"/>
-   <!-- nt\.grc\.sbl-2010\.xml -->
+   <xsl:param name="group-two-filenames-regex" as="xs:string?" select="''"/>
    
    <!-- If a particular file does not explicitly declare the language, what should the fallback value 
       be? Expected is an ISO code. -->

@@ -9,6 +9,8 @@
    
    <xsl:include href="TAN-application-maintenance.xsl"/>
    
+   <sch:let name="is-blank-configuration-file" value="contains(base-uri(.), 'configuration') and count(/*/*) eq 1"/>
+   
    <sch:let name="top-level-comments" value="/*/comment()"/>
    <sch:let name="welcome-message" value="/*/comment()[contains(normalize-space(.), $tan:welcome-message-starter)]"/>
    <sch:let name="app-description" value="/*/comment()[contains(normalize-space(.), normalize-space($tan:app-description))]"/>
@@ -27,6 +29,11 @@
    
    <sch:let name="app-preamble"
       value="/*/comment()[normalize-space(.) eq $tan:standard-app-preamble-norm]"/>
+
+   <sch:let name="config-preamble-1"
+      value="/*/comment()[normalize-space(.) eq $tan:config-file-preamble-1-norm]"/>
+   <sch:let name="config-preamble-2"
+      value="/*/comment()[normalize-space(.) eq $tan:config-file-preamble-2-norm]"/>
    
    <sch:let name="app-output-examples-not-mentioned" value="
          for $i in $tan:app-output-examples/*
@@ -43,6 +50,31 @@
    
    
    <sch:pattern>
+      <sch:rule context="/*[count(*) eq 1][contains(base-uri(.), 'configuration')]">
+         <sch:assert test="exists($config-preamble-1)" sqf:fix="config-preamble-1">Every blank
+            configuration file must include the first preamble.</sch:assert>
+         <sch:assert test="exists($config-preamble-2)" sqf:fix="config-preamble-2">Every blank
+            configuration file must include the second preamble.</sch:assert>
+         
+         <sqf:fix id="config-preamble-1">
+            <sqf:description>
+               <sqf:title>Add preamble 1 to the blank configuration file</sqf:title>
+            </sqf:description>
+            <sqf:add match="." position="first-child">
+               <xsl:value-of select="'&#xa;'"/>
+               <xsl:copy-of select="$tan:config-file-preamble-1-comment"/>
+            </sqf:add>
+         </sqf:fix>
+         <sqf:fix id="config-preamble-2">
+            <sqf:description>
+               <sqf:title>Add preamble 2 to the blank configuration file</sqf:title>
+            </sqf:description>
+            <sqf:add match="." position="first-child">
+               <xsl:value-of select="'&#xa;'"/>
+               <xsl:copy-of select="$tan:config-file-preamble-2-comment"/>
+            </sqf:add>
+         </sqf:fix>
+      </sch:rule>
       <sch:rule context="/*">
          <sch:assert test="tan:cfn(.) eq $parent-directory-name">The local filename must be
             identical to the name of its parent directory.</sch:assert>
@@ -74,6 +106,9 @@
             stylesheet an xsl:param whose name is tan:stylesheet-change-log, which takes a sequence
             of elements named change, and attributes @who and @when, listing changes made to the
             application.</sch:assert>
+         
+         <sch:assert test="$tan:configuration-file-exists">Every TAN application must be accompanied
+            by at least one configuration file.</sch:assert>
          
          <sch:report test="exists($app-output-examples-not-mentioned)"
             sqf:fix="add-example-output-comment">

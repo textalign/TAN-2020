@@ -77,6 +77,7 @@
     <xsl:param name="tan:stylesheet-to-do-list">
         <to-do xmlns="tag:textalign.net,2015:ns">
             <comment who="kalvesmaki" when="2020-10-06">Revise process that reinfuses a class 1 file with a diff/collate into a standard extra TAN function.</comment>
+            <comment who="kalvesmaki" when="2021-09-06">Add parameter to allow serialization of input XML, for closer comparison of XML structures.</comment>
         </to-do>
     </xsl:param>
     

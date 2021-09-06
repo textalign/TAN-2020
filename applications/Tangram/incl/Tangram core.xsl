@@ -71,6 +71,7 @@
             <comment who="kalvesmaki" when="2021-03-10">Support the method pioneered by Shmidman,
                 Koppel, and Porat: https://arxiv.org/abs/1602.08715v2</comment>
             <comment who="kalvesmaki" when="2021-03-11">Make sure texts run against themselves work.</comment>
+            <comment who="kalvesmaki" when="2021-09-06">Incorporate simpler tablesorter javascript</comment>
         </to-do>
     </xsl:param>
     <xsl:param name="tan:stylesheet-change-log">

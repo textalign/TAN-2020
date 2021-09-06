@@ -6,7 +6,7 @@
     xmlns:tan="tag:textalign.net,2015:ns" exclude-result-prefixes="#all" version="3.0">
     
     <!-- Welcome to Diff+, the TAN application that finds and analyzes text differences-->
-    <!-- Version 2021-07-13-->
+    <!-- Version 2021-09-06 -->
     <!-- Take any number of versions of a text, compare them, and view and study all the text
         differences in an HTML page. The HTML output allows you to see precisely where one version
         differs from the other. A small Javascript library allows you to change focus, remove
@@ -65,7 +65,9 @@
     
     <!-- WARNING: CERTAIN FEATURES HAVE YET TO BE IMPLEMENTED-->
     <!-- * Revise process that reinfuses a class 1 file with a diff/collate into a standard extra
-        TAN function.-->
+        TAN function.
+        * Add parameter to allow serialization of input XML, for closer comparison of XML structures.
+    -->
     
     <!-- This application currently just scratches the surface of what is possible. New features are
         planned! Some desiderata:
@@ -96,17 +98,16 @@
     <!-- What directories of interest hold the target files? The following parameters are provided as examples,
       and for convenince, in case you want to have several commonly used directories handy. See below for
       the main parameter to pick via variable name the directory or directories you want. -->
-    <xsl:param name="directory-1-uri" select="'../../../library-arithmeticus/aristotle'" as="xs:string?"/>
+    <xsl:param name="directory-1-uri" select="'../../examples'" as="xs:string?"/>
     <xsl:param name="directory-2-uri" select="'../../../library-arithmeticus/evagrius/cpg2455'" as="xs:string?"/>
     <xsl:param name="directory-3-uri" select="'../../../library-arithmeticus/bible'" as="xs:string?"/>
-    <xsl:param name="directory-4-uri" select="'file:/e:/joel/google%20drive/clio%20commons/TAN%20library/clio'" as="xs:string?"/>
-    <xsl:param name="directory-5-uri" select="'../../../library-arithmeticus/test/marinis'" as="xs:string?"/>
-    <xsl:param name="directory-6-uri" select="'../../../../publications%20and%20lectures/4%20in%20press/AR18%20TAN%20diff/cfr'" as="xs:string?"/>
+    <xsl:param name="directory-4-uri" select="'../../../library-arithmeticus/test/ring1'" as="xs:string?"/>
+    <xsl:param name="directory-5-uri" select="'../../../library-arithmeticus/test/ring2'" as="xs:string?"/>
     
     <!-- What directory or directories has the main input files? Any relative path will be calculated
       against the location of this application file. Multiple directories may be supplied. Too many files?
       Results can be filtered below. -->
-    <xsl:param name="tan:main-input-relative-uri-directories" as="xs:string+" select="$directory-2-uri"/>
+    <xsl:param name="tan:main-input-relative-uri-directories" as="xs:string+" select="$directory-5-uri"/>
 
     <!-- What pattern must each filename match (a regular expression, case-insensitive)? Of the files 
         in the directories chosen, only those whose names match this pattern will be included. A null 

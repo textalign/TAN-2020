@@ -30,6 +30,11 @@
    <xsl:variable name="tan:app-change-log" as="element()?" select="$tan:main-application/*/xsl:param[@name eq 'tan:stylesheet-change-log']"/>
    <xsl:variable name="tan:app-to-do-list" as="element()?" select="$tan:main-application/*/xsl:param[@name eq 'tan:stylesheet-to-do-list']"/>
    
+   <xsl:variable name="tan:app-local-uri-collection" as="xs:anyURI*" select="uri-collection($tan:doc-parent-directory)"/>
+   <xsl:variable name="tan:configuration-file-exists" as="xs:boolean" select="
+         some $i in $tan:app-local-uri-collection
+            satisfies contains($i, 'configuration')"/>
+   
    <xsl:variable name="tan:welcome-message-starter" select="
          'Welcome to ' || (if (exists($tan:app-name)) then
             (substring($tan:app-name/@select, 2, string-length($tan:app-name/@select) - 2) || ', ')
@@ -77,6 +82,25 @@
    <xsl:variable name="tan:standard-app-preamble-comment" as="comment()"
       select="tan:text-to-comment($tan:standard-app-preamble-norm, $total-indentation, $maximum-column-width-for-comments)"/>
    
+   <xsl:variable name="tan:config-file-preamble-1" as="xs:string">Use this file to build
+      configurations for specific projects. Do so by copying from the master application file select
+      &lt;xsl:param> elements that you wish to customize, paste them in this document, and change
+      the settings to what you prefer. Remember that any parameter you do not redefine here will be
+      given the value specified in the master XSLT file.</xsl:variable>
+   <xsl:variable name="tan:config-file-preamble-2" as="xs:string">You may wish to make a copy of
+      this file for each configuration, with a meaningful filename. If you are using Oxygen XML
+      Editor, you should also adjust the entries in Configure Transformation Scenario(s)
+      dialogue.</xsl:variable>
+   <xsl:variable name="tan:config-file-preamble-1-norm" as="xs:string"
+      select="normalize-space($tan:config-file-preamble-1)"/>
+   <xsl:variable name="tan:config-file-preamble-2-norm" as="xs:string"
+      select="normalize-space($tan:config-file-preamble-2)"/>
+   <xsl:variable name="tan:config-file-preamble-1-comment" as="comment()"
+      select="tan:text-to-comment($tan:config-file-preamble-1-norm, $total-indentation, $maximum-column-width-for-comments)"
+   />
+   <xsl:variable name="tan:config-file-preamble-2-comment" as="comment()"
+      select="tan:text-to-comment($tan:config-file-preamble-2-norm, $total-indentation, $maximum-column-width-for-comments)"
+   />
    
    <xsl:variable name="tan:standard-inclusion-warning" as="xs:string">The main engine for the
       application is in this file, and in other files it links to. Feel free to explore, but make

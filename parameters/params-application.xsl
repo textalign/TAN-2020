@@ -16,7 +16,7 @@
       the files of interest. -->
    
    <!-- What directory or directories has the main input files? Any relative path will be calculated relative 
-        against the master application file (i.e., not this parameter file). Multiple directories may be 
+        to the master application file (i.e., not this parameter file). Multiple directories may be 
         supplied. Results can be filtered below. -->
    <xsl:param name="tan:main-input-relative-uri-directories" as="xs:string+"
       select="resolve-uri('../examples', static-base-uri())"/>
