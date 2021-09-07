@@ -58,6 +58,7 @@
             <comment who="kalvesmaki" when="2021-07-13">Support ODT input</comment>
             <comment who="kalvesmaki" when="2021-07-13">Let the default template be a document with
                 the root element body.</comment>
+            <comment who="kalvesmaki" when="2021-07-13">Support parsing of docx endnotes and footnotes.</comment>
             <comment who="kalvesmaki" when="2021-07-13">Demonstrate how to convert a raw index to TAN-A.</comment>
         </to-do>
     </xsl:param>

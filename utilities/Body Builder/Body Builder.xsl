@@ -7,6 +7,7 @@
 
    <!-- Welcome to Body Builder, the TAN application that converts structured texts to a TEI/TAN
       body based on user-specified rules-->
+   
    <!-- Suppose you have texts, aspects of whose syntax, structure, or format correspond to TAN or
       TEI elements or markup. This application allows you to write regular-expression-based rules
       to convert that text into a TAN or TEI format. Input consists of one or more files in plain
@@ -39,21 +40,24 @@
       the source -->
    <!-- Secondary output: none -->
 
-   <!-- This application is intended to help users convert a text to TAN-T, TAN-TEI, or TAN-A.
-      This is a difficult task, mainly because the source text could be either plain text, 
-      an XML file, or a Word document. If a Word document, the formatting might mean something,
-      or it might not. Users tend to be inconsistent and incomplete in such formatting, and
-      the Word format provides difficult challenges. The XML structure in a Word file might 
-      break up adjacent text identically formatted, because it is preserving a record of editing 
-      history, or noting where the cursor was when the document was last edited. -->
+   <!-- This application is intended to help users convert a text to TAN-T, TAN-TEI, or TAN-A. This is
+      a difficult task, mainly because the source text could be either plain text, an XML file, or a Word
+      document, which requires either going from unstructured to structured text, or from one type of
+      structure to another. If a Word document, the formatting might mean something, or it might not.
+      Structure might be embedded in the text, or in formatting, or both. Users tend to be inconsistent
+      and incomplete, and the docx format has challenges not apparent to the user. The XML structure in a
+      Word file might break up adjacent text identically formatted, because it is preserving a record of
+      editing history, or noting where the cursor was when the document was last edited. In sum, one
+      should not take for granted the challenge of building a pipeline from pre-TAN/TEI files to TAN/TEI
+      ones! -->
    <!-- The "plain" text itself poses challenges. We assume that there are in the text various 
       numerals or words that signal reference numbers. But there are thousands of ways an editor
-      might choose to use those reference numbers. Some editors combine into a single document 
+      might choose to use those reference numbers. Some editors interleave into a single document 
       multiple overlapping or competing reference systems. A TAN file allows only one primary
-      tree, so only one of those reference systems can be used to build that tree. -->
-   <!-- The answer adopted here is to allow the editor to declare patterns in the text that 
-      should be used to build the textual hierarchy correctly. To use it properly, you must
-      have a very good command of regular expressions. To get you started, some examples have 
+      tree, so only one of those reference systems can be used. -->
+   <!-- Body Builder handles these problems by allowing the editor to declare a sequence of patterns
+      in the text that are the key to the textual hierarchy. To build that sequence of patterns properly,
+      you must have a very good command of regular expressions. To get you started, some examples have
       been provided, based on actual conversions into TAN from challenging real-world documents. -->
    <!-- This utility has been designed based on select test cases, and there are no doubt many ways it
       could be developed and enhanced. If you encounter a problem, raise a ticket in the GitHub account. -->
@@ -113,6 +117,7 @@
       * Support HTML input 
       * Support ODT input 
       * Let the default template be a document with the root element body. 
+      * Support parsing of docx endnotes and footnotes.
       * Demonstrate how to convert a raw index to TAN-A.-->
    
    
