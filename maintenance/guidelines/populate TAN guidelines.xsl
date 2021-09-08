@@ -174,11 +174,7 @@
             string-join(for $i in $string-regexes
             return
                replace($i, 'name', $capture-group-replacement), '|')"/>
-      <!-- The next variables specify the second and third parameters for fn:replace() applied to a result from a function -->
-      <!--<xsl:variable name="replacement-for-function-result-to-put-inside-link" select="('\(', '')"
-         as="xs:string+"/>-->
-      <!--<xsl:variable name="replacement-for-function-result-to-put-outside-link" select="('.+', '(')"
-         as="xs:string+"/>-->
+
       <xsl:variable name="pass-1-new" as="element()">
          <pass1>
             <xsl:analyze-string select="$text" regex="{$url-vel-sim-regex}">
@@ -306,132 +302,25 @@
          </pass1>
       </xsl:variable>
       
-      <!--<xsl:variable name="pass-1-prev" as="element()">
-         <!-\- This <analyze-string> regular expression looks for <ELEMENT> ~PATTERN @ATTRIBUTE key('KEY') tan:FUNCTION() $VARIABLE as endpoints -\->
-         <!-\- It also looks for, but does not treat as an endpoint, {template (mode|named) TEMPLATE}, to at least put it inside of <code> -\->
-         <!-\- We coin initial ~ as representing a pattern, similar to the @ prefix to signal an attribute -\->
-         <!-\- former regex: {$lt || '([-:\w]+)&gt;|[~@]([-:\w]+)|key\('||$apos||'([-\w]+)'||$apos||'\)|tan:([-\w]+)\(\)|\$([-\w]+)|[Ŧŧ] ([-#\w]+)'} -\->
-         <pass1>
-            <xsl:for-each select="$text">
-               <xsl:analyze-string select="." regex="{$master-regex}">
-                  <!-\- First look for components (variables, functions, templates, etc.) -\->
-                  <xsl:matching-substring>
-                     <xsl:variable name="first-match" as="xs:integer?"
-                        select="((1 to 11)[string-length(regex-group(.)) gt 0])[1]"/>
-                     <xsl:variable name="match-type" as="xs:string?"
-                        select="tokenize($component-syntax/*/*[$first-match]/@type, ' ')[1]"/>
-                     <!-\- The regex group sometimes has to be massaged -\->
-                     <xsl:variable name="match-name-parts" as="xs:string*">
-                        <xsl:analyze-string select="regex-group($first-match)" regex="(\.)$">
-                           <xsl:matching-substring>
-                              <xsl:value-of select="."/>
-                           </xsl:matching-substring>
-                           <xsl:non-matching-substring>
-                              <xsl:value-of select="."/>
-                           </xsl:non-matching-substring>
-                        </xsl:analyze-string>
-                     </xsl:variable>
-                     <xsl:variable name="match-name" as="xs:string?" select="$match-name-parts[1]"/>
-                     <xsl:variable name="is-valid-link" as="xs:boolean">
-                        <xsl:choose>
-                           <xsl:when
-                              test="
-                                 ($match-type = 'attribute' and not(exists($attributes-excl-TEI[@name = $match-name]))) or
-                                 ($match-type = 'element' and not(exists($elements-excl-TEI[@name = $match-name]))) or
-                                 ($match-type = 'key' and not(exists($function-library-keys[@name = $match-name]))) or
-                                 ($match-type = 'function' and not(exists($function-library-functions[@name = $match-name]))) or
-                                 ($match-type = 'variable' and not(exists($function-library-variables[@name = $match-name])))">
-                              <xsl:sequence select="false()"/>
-                           </xsl:when>
-                           <xsl:otherwise>
-                              <xsl:sequence select="true()"/>
-                           </xsl:otherwise>
-                        </xsl:choose>
-                     </xsl:variable>
-                     <xsl:variable name="linkend" as="xs:string"
-                        select="$match-type || '-' || replace($match-name, '[:#]|(tan|rgx):', '')"/>
-                     
-                     <code>
-                        <xsl:choose>
-                           <xsl:when test="$is-valid-link">
-                              <link linkend="{$linkend}">
-                                 <xsl:choose>
-                                    <xsl:when test="$truncate-text-of-long-urls-at-what gt 0">
-                                       <xsl:value-of select="replace(., '\($', '') => tan:ellipses($truncate-text-of-long-urls-at-what idiv 2, $truncate-text-of-long-urls-at-what idiv 2)"/>  
-                                    </xsl:when>
-                                    <xsl:otherwise>
-                                       <xsl:value-of select="replace(., '\($', '')"/>  
-                                    </xsl:otherwise>
-                                 </xsl:choose>
-                              </link>
-                              <!-\- commented out July 2021; I think I have the function parentheses problem solved elsewhere,
-                              rendering this hack incorrect -\->
-                              <!-\-<xsl:if test="$match-type = 'function'">
-                                 <xsl:text>(</xsl:text>
-                              </xsl:if>-\->
-                           </xsl:when>
-                           <xsl:otherwise>
-                              <xsl:value-of select="."/>
-                           </xsl:otherwise>
-                        </xsl:choose>
-                     </code>
-                     <xsl:value-of select="$match-name-parts[2]"/>
-                  </xsl:matching-substring>
-                  <xsl:non-matching-substring>
-                     <!-\- now we look for URLs and internal cross-references -\->
-                     <xsl:analyze-string select="." regex="main\.xml#[-_\w]+|iris\.xml|https?://\S+">
-                        <xsl:matching-substring>
-                           <xsl:choose>
-                              <!-\- The documentation of the relax-ng schemas may point to the guidelines
-                                 by hard-coding main.xml#[ID]. That's an internal cross-reference. -\->
-                              <xsl:when test="starts-with(., 'main')">
-                                 <xref linkend="{replace(.,'main\.xml#','')}"/>
-                              </xsl:when>
-                              <xsl:otherwise>
-                                 <!-\- Walk back any final characters that aren't really part of the URL. -\->
-                                 <xsl:analyze-string select="." regex="[\)\].]+$">
-                                    <xsl:matching-substring>
-                                       <xsl:value-of select="."/>
-                                    </xsl:matching-substring>
-                                    <xsl:non-matching-substring>
-                                       <link xlink:href="{.}">
-                                          <xsl:choose>
-                                             <xsl:when test="$truncate-text-of-long-urls-at-what gt 0">
-                                                <xsl:value-of select="tan:ellipses(., $truncate-text-of-long-urls-at-what idiv 2, $truncate-text-of-long-urls-at-what idiv 2)"/>  
-                                             </xsl:when>
-                                             <xsl:otherwise>
-                                                <xsl:value-of select="."/>
-                                             </xsl:otherwise>
-                                          </xsl:choose>
-                                       </link>
-                                    </xsl:non-matching-substring>
-                                 </xsl:analyze-string>
-                              </xsl:otherwise>
-                           </xsl:choose>
-                        </xsl:matching-substring>
-                        <xsl:non-matching-substring>
-                           <xsl:value-of select="."/>
-                        </xsl:non-matching-substring>
-                     </xsl:analyze-string>
-                  </xsl:non-matching-substring>
-               </xsl:analyze-string>
-            </xsl:for-each>
-         </pass1>
-      </xsl:variable>-->
-      
       
       <xsl:apply-templates select="$pass-1-new/node()" mode="prep-string-for-docbook-pass-2"/>
-      <!--<xsl:sequence select="$pass-1-prev/node()"/>-->
-      <!--<xsl:apply-templates select="$pass-1/node()" mode="adjust-parentheses"/>-->
       
    </xsl:function>
    
    <xsl:mode name="prep-string-for-docbook-pass-2" on-no-match="shallow-copy"/>
    
    <xsl:template match="text()" mode="prep-string-for-docbook-pass-2">
-      <xsl:analyze-string select="." regex="\p{{C}}">
+      <xsl:analyze-string select="." regex="\p{{Cc}}">
          <xsl:matching-substring>
-            <xsl:value-of select="'&amp;#x' || string(string-to-codepoints(.)) || ';'"/>
+            <xsl:variable name="this-cp" as="xs:integer" select="string-to-codepoints(.)"/>
+            <xsl:choose>
+               <xsl:when test="$this-cp lt 32 and not($this-cp = (9, 10))">
+                  <xsl:value-of select="'&amp;#' || string(string-to-codepoints(.)) || ';'"/>
+               </xsl:when>
+               <xsl:otherwise>
+                  <xsl:value-of select="."/>
+               </xsl:otherwise>
+            </xsl:choose>
          </xsl:matching-substring>
          <xsl:non-matching-substring>
             <xsl:value-of select="."/>
