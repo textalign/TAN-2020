@@ -5,8 +5,7 @@
     id="tag:textalign.net,2015:tan-voc:verbs">
     <head>
         <name>TAN keywords for verbs</name>
-        <desc>This file has been created ad hoc to some basic terms for verbs involved in the
-            creation and editing of TAN files.</desc>
+        <desc>Vocabulary below supports commonly used verbs in TAN-A claims involving intertextuality.</desc>
         <master-location href="http://textalign.net/release/TAN-2021/vocabularies/verbs.TAN-voc.xml"/>
         <license licensor="kalvesmaki" which="by 4.0"/>
         <vocabulary-key>
