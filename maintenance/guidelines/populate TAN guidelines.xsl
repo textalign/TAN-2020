@@ -29,12 +29,12 @@
    <xsl:param name="generate-inclusion-for-utilities-and-applications" as="xs:boolean" static="true"
       select="true()"/>
    <xsl:param name="generate-inclusion-for-elements-attributes-and-patterns" as="xs:boolean"
-      static="true" select="false()"/>
+      static="true" select="true()"/>
    <xsl:param name="generate-inclusion-for-vocabularies" as="xs:boolean" static="true"
-      select="false()"/>
+      select="true()"/>
    <xsl:param name="generate-inclusion-for-keys-functions-and-templates" as="xs:boolean"
-      static="true" select="false()"/>
-   <xsl:param name="generate-inclusion-for-errors" as="xs:boolean" static="true" select="false()"/>
+      static="true" select="true()"/>
+   <xsl:param name="generate-inclusion-for-errors" as="xs:boolean" static="true" select="true()"/>
    
    <xsl:param name="tan:include-diagnostics-components" as="xs:boolean" select="true()" static="yes"/>
    
@@ -51,10 +51,8 @@
    <xsl:param name="max-example-size" as="xs:integer" select="2000"/>
 
    <xsl:variable name="chapter-caveat" as="element()">
-      <para>The contents of this chapter have been generated automatically. Although much effort has
-         been spent to ensure accurate representation of the schemas and function library, you may
-         find errors or inconsistencies. In such cases, the functions and schemas (particularly the
-         RELAX-NG, compact syntax) are to be given priority.</para>
+      <para>The contents of this chapter have been generated automatically. In case of errors or
+         inconsistencies, the master files should be consulted.</para>
    </xsl:variable>
 
    <xsl:variable name="target-base-uri-for-guidelines" as="xs:anyURI" select="resolve-uri('../../guidelines/main.xml',static-base-uri())"/>
@@ -68,7 +66,7 @@
          return
             doc($i)"/>
    <xsl:variable name="util-collection" as="document-node()*" select="
-         for $i in uri-collection('../../utilities/?select=*.xsl;recurse=yes')[matches(., 'utilities/[^/]+/[^/]+$')][not(contains(., 'Oxygen'))]
+         for $i in uri-collection('../../utilities/?select=*.xsl;recurse=yes')[matches(., 'utilities/[^/]+/[^/]+$')][not(matches(., 'Oxygen|configuration'))]
          return
             doc($i)"/>
    <xsl:variable name="fn-collection" as="document-node()*"
@@ -158,9 +156,16 @@
       <xsl:copy-of select="tan:prep-string-for-docbook(.)"/>
    </xsl:template>
 
-   <xsl:function name="tan:prep-string-for-docbook" as="item()*">
-      <xsl:param name="text" as="xs:string*"/>
-      <!-- we assume that all components defined in component syntax.xml are to be marked -->
+   <xsl:function name="tan:prep-string-for-docbook" as="item()*" visibility="private">
+      <xsl:param name="text" as="xs:string?"/>
+      <xsl:sequence select="tan:prep-string-for-docbook($text, 100)"/>
+   </xsl:function>
+   <xsl:function name="tan:prep-string-for-docbook" as="item()*" visibility="private">
+      <xsl:param name="text" as="xs:string?"/>
+      <xsl:param name="truncate-text-of-long-urls-at-what" as="xs:integer?"/>
+      
+      <xsl:variable name="url-vel-sim-regex" as="xs:string" select="'main\.xml#[-_\w]+|iris\.xml|https?://\S+|tag:textalign.net,2015\S+'"/>
+      <!-- we assume that all components defined in component%20syntax.xml are to be marked -->
       <xsl:variable name="capture-group-replacement" as="xs:string"
          select="'(' || $component-syntax/*/@name-replacement || ')'"/>
       <xsl:variable name="string-regexes" as="xs:string*" select="$component-syntax/*/*/@string-matching-pattern"/>
@@ -174,20 +179,148 @@
          as="xs:string+"/>-->
       <!--<xsl:variable name="replacement-for-function-result-to-put-outside-link" select="('.+', '(')"
          as="xs:string+"/>-->
-      <xsl:variable name="pass-1" as="element()">
-         <!-- This <analyze-string> regular expression looks for <ELEMENT> ~PATTERN @ATTRIBUTE key('KEY') tan:FUNCTION() $VARIABLE as endpoints -->
-         <!-- It also looks for, but does not treat as an endpoint, {template (mode|named) TEMPLATE}, to at least put it inside of <code> -->
-         <!-- We coin initial ~ as representing a pattern, similar to the @ prefix to signal an attribute -->
-         <!-- former regex: {$lt || '([-:\w]+)&gt;|[~@]([-:\w]+)|key\('||$apos||'([-\w]+)'||$apos||'\)|tan:([-\w]+)\(\)|\$([-\w]+)|[Ŧŧ] ([-#\w]+)'} -->
+      <xsl:variable name="pass-1-new" as="element()">
+         <pass1>
+            <xsl:analyze-string select="$text" regex="{$url-vel-sim-regex}">
+               <xsl:matching-substring>
+                  <xsl:choose>
+                     <!-- The documentation of the relax-ng schemas may point to the guidelines
+                                 by hard-coding main.xml#[ID]. That's an internal cross-reference. -->
+                     <xsl:when test="starts-with(., 'main')">
+                        <xref linkend="{replace(.,'main\.xml#','')}"/>
+                     </xsl:when>
+                     <xsl:when test="starts-with(., 'tag:')">
+                        <code>
+                           <xsl:value-of select="."/>
+                        </code>
+                     </xsl:when>
+                     <xsl:when test="matches(., '[\(\[]')">
+                        <link xlink:href="{.}">
+                           <code>
+                              <xsl:choose>
+                                 <xsl:when test="$truncate-text-of-long-urls-at-what gt 0">
+                                    <xsl:value-of select="tan:ellipses(., $truncate-text-of-long-urls-at-what idiv 2, $truncate-text-of-long-urls-at-what idiv 2)"/>  
+                                 </xsl:when>
+                                 <xsl:otherwise>
+                                    <xsl:value-of select="."/>
+                                 </xsl:otherwise>
+                              </xsl:choose>
+                           </code>
+                        </link>
+                     </xsl:when>
+                     <xsl:otherwise>
+                        <!-- Walk back any final characters that aren't really part of the URL. -->
+                        <xsl:analyze-string select="." regex="[\)\].]+$">
+                           <xsl:matching-substring>
+                              <xsl:value-of select="."/>
+                           </xsl:matching-substring>
+                           <xsl:non-matching-substring>
+                              <link xlink:href="{.}">
+                                 <code>
+                                    <xsl:choose>
+                                       <xsl:when test="$truncate-text-of-long-urls-at-what gt 0">
+                                          <xsl:value-of select="tan:ellipses(., $truncate-text-of-long-urls-at-what idiv 2, $truncate-text-of-long-urls-at-what idiv 2)"/>  
+                                       </xsl:when>
+                                       <xsl:otherwise>
+                                          <xsl:value-of select="."/>
+                                       </xsl:otherwise>
+                                    </xsl:choose>
+                                 </code>
+                              </link>
+                           </xsl:non-matching-substring>
+                        </xsl:analyze-string>
+                     </xsl:otherwise>
+                  </xsl:choose>
+               </xsl:matching-substring>
+               <xsl:non-matching-substring>
+                  <xsl:analyze-string select="." regex="{$master-regex}">
+                     <xsl:matching-substring>
+                        <xsl:variable name="first-match" as="xs:integer?"
+                           select="((1 to 11)[string-length(regex-group(.)) gt 0])[1]"/>
+                        <xsl:variable name="match-type" as="xs:string?"
+                           select="tokenize($component-syntax/*/*[$first-match]/@type, ' ')[1]"/>
+                        <!-- The regex group sometimes has to be massaged -->
+                        <xsl:variable name="match-name-parts" as="xs:string*">
+                           <xsl:analyze-string select="regex-group($first-match)" regex="(\.)$">
+                              <xsl:matching-substring>
+                                 <xsl:value-of select="."/>
+                              </xsl:matching-substring>
+                              <xsl:non-matching-substring>
+                                 <xsl:value-of select="."/>
+                              </xsl:non-matching-substring>
+                           </xsl:analyze-string>
+                        </xsl:variable>
+                        <xsl:variable name="match-name" as="xs:string?" select="$match-name-parts[1]"/>
+                        <xsl:variable name="is-valid-link" as="xs:boolean">
+                           <xsl:choose>
+                              <xsl:when
+                                 test="
+                                 ($match-type = 'attribute' and not(exists($attributes-excl-TEI[@name = $match-name]))) or
+                                 ($match-type = 'element' and not(exists($elements-excl-TEI[@name = $match-name]))) or
+                                 ($match-type = 'key' and not(exists($function-library-keys[@name = $match-name]))) or
+                                 ($match-type = 'function' and not(exists($function-library-functions[@name = $match-name]))) or
+                                 ($match-type = 'variable' and not(exists($function-library-variables[@name = $match-name])))">
+                                 <xsl:sequence select="false()"/>
+                              </xsl:when>
+                              <xsl:otherwise>
+                                 <xsl:sequence select="true()"/>
+                              </xsl:otherwise>
+                           </xsl:choose>
+                        </xsl:variable>
+                        <xsl:variable name="linkend" as="xs:string"
+                           select="$match-type || '-' || replace($match-name, '[:#]|(tan|rgx):', '')"/>
+                        
+                        <code>
+                           <xsl:choose>
+                              <xsl:when test="$is-valid-link">
+                                 <link linkend="{$linkend}">
+                                    <xsl:choose>
+                                       <xsl:when test="$truncate-text-of-long-urls-at-what gt 0">
+                                          <xsl:value-of select="replace(., '\($', '') => tan:ellipses($truncate-text-of-long-urls-at-what idiv 2, $truncate-text-of-long-urls-at-what idiv 2)"/>  
+                                       </xsl:when>
+                                       <xsl:otherwise>
+                                          <xsl:value-of select="replace(., '\($', '')"/>  
+                                       </xsl:otherwise>
+                                    </xsl:choose>
+                                 </link>
+                                 <!-- commented out July 2021; I think I have the function parentheses problem solved elsewhere,
+                              rendering this hack incorrect -->
+                                 <!--<xsl:if test="$match-type = 'function'">
+                                 <xsl:text>(</xsl:text>
+                              </xsl:if>-->
+                              </xsl:when>
+                              <xsl:otherwise>
+                                 <xsl:value-of select="."/>
+                              </xsl:otherwise>
+                           </xsl:choose>
+                        </code>
+                        <xsl:value-of select="$match-name-parts[2]"/>
+                     </xsl:matching-substring>
+                     <xsl:non-matching-substring>
+                        <xsl:value-of select="."/>
+                     </xsl:non-matching-substring>
+                  </xsl:analyze-string>
+               </xsl:non-matching-substring>
+               
+            </xsl:analyze-string>
+         </pass1>
+      </xsl:variable>
+      
+      <!--<xsl:variable name="pass-1-prev" as="element()">
+         <!-\- This <analyze-string> regular expression looks for <ELEMENT> ~PATTERN @ATTRIBUTE key('KEY') tan:FUNCTION() $VARIABLE as endpoints -\->
+         <!-\- It also looks for, but does not treat as an endpoint, {template (mode|named) TEMPLATE}, to at least put it inside of <code> -\->
+         <!-\- We coin initial ~ as representing a pattern, similar to the @ prefix to signal an attribute -\->
+         <!-\- former regex: {$lt || '([-:\w]+)&gt;|[~@]([-:\w]+)|key\('||$apos||'([-\w]+)'||$apos||'\)|tan:([-\w]+)\(\)|\$([-\w]+)|[Ŧŧ] ([-#\w]+)'} -\->
          <pass1>
             <xsl:for-each select="$text">
                <xsl:analyze-string select="." regex="{$master-regex}">
+                  <!-\- First look for components (variables, functions, templates, etc.) -\->
                   <xsl:matching-substring>
                      <xsl:variable name="first-match" as="xs:integer?"
                         select="((1 to 11)[string-length(regex-group(.)) gt 0])[1]"/>
                      <xsl:variable name="match-type" as="xs:string?"
                         select="tokenize($component-syntax/*/*[$first-match]/@type, ' ')[1]"/>
-                     <!-- The regex group sometimes has to be massaged -->
+                     <!-\- The regex group sometimes has to be massaged -\->
                      <xsl:variable name="match-name-parts" as="xs:string*">
                         <xsl:analyze-string select="regex-group($first-match)" regex="(\.)$">
                            <xsl:matching-substring>
@@ -222,13 +355,20 @@
                         <xsl:choose>
                            <xsl:when test="$is-valid-link">
                               <link linkend="{$linkend}">
-                                 <xsl:value-of select="replace(., '\($', '')"/>
+                                 <xsl:choose>
+                                    <xsl:when test="$truncate-text-of-long-urls-at-what gt 0">
+                                       <xsl:value-of select="replace(., '\($', '') => tan:ellipses($truncate-text-of-long-urls-at-what idiv 2, $truncate-text-of-long-urls-at-what idiv 2)"/>  
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                       <xsl:value-of select="replace(., '\($', '')"/>  
+                                    </xsl:otherwise>
+                                 </xsl:choose>
                               </link>
-                              <!-- commented out July 2021; I think I have the function parentheses problem solved elsewhere,
-                              rendering this hack incorrect -->
-                              <!--<xsl:if test="$match-type = 'function'">
+                              <!-\- commented out July 2021; I think I have the function parentheses problem solved elsewhere,
+                              rendering this hack incorrect -\->
+                              <!-\-<xsl:if test="$match-type = 'function'">
                                  <xsl:text>(</xsl:text>
-                              </xsl:if>-->
+                              </xsl:if>-\->
                            </xsl:when>
                            <xsl:otherwise>
                               <xsl:value-of select="."/>
@@ -238,16 +378,34 @@
                      <xsl:value-of select="$match-name-parts[2]"/>
                   </xsl:matching-substring>
                   <xsl:non-matching-substring>
+                     <!-\- now we look for URLs and internal cross-references -\->
                      <xsl:analyze-string select="." regex="main\.xml#[-_\w]+|iris\.xml|https?://\S+">
                         <xsl:matching-substring>
                            <xsl:choose>
+                              <!-\- The documentation of the relax-ng schemas may point to the guidelines
+                                 by hard-coding main.xml#[ID]. That's an internal cross-reference. -\->
                               <xsl:when test="starts-with(., 'main')">
                                  <xref linkend="{replace(.,'main\.xml#','')}"/>
                               </xsl:when>
                               <xsl:otherwise>
-                                 <link xlink:href="{.}">
-                                    <xsl:value-of select="."/>
-                                 </link>
+                                 <!-\- Walk back any final characters that aren't really part of the URL. -\->
+                                 <xsl:analyze-string select="." regex="[\)\].]+$">
+                                    <xsl:matching-substring>
+                                       <xsl:value-of select="."/>
+                                    </xsl:matching-substring>
+                                    <xsl:non-matching-substring>
+                                       <link xlink:href="{.}">
+                                          <xsl:choose>
+                                             <xsl:when test="$truncate-text-of-long-urls-at-what gt 0">
+                                                <xsl:value-of select="tan:ellipses(., $truncate-text-of-long-urls-at-what idiv 2, $truncate-text-of-long-urls-at-what idiv 2)"/>  
+                                             </xsl:when>
+                                             <xsl:otherwise>
+                                                <xsl:value-of select="."/>
+                                             </xsl:otherwise>
+                                          </xsl:choose>
+                                       </link>
+                                    </xsl:non-matching-substring>
+                                 </xsl:analyze-string>
                               </xsl:otherwise>
                            </xsl:choose>
                         </xsl:matching-substring>
@@ -259,36 +417,26 @@
                </xsl:analyze-string>
             </xsl:for-each>
          </pass1>
-      </xsl:variable>
+      </xsl:variable>-->
       
-      <xsl:sequence select="$pass-1/node()"/>
+      
+      <xsl:apply-templates select="$pass-1-new/node()" mode="prep-string-for-docbook-pass-2"/>
+      <!--<xsl:sequence select="$pass-1-prev/node()"/>-->
       <!--<xsl:apply-templates select="$pass-1/node()" mode="adjust-parentheses"/>-->
       
    </xsl:function>
    
-   <xsl:mode name="adjust-parentheses" on-no-match="shallow-skip"/>
+   <xsl:mode name="prep-string-for-docbook-pass-2" on-no-match="shallow-copy"/>
    
-   <xsl:template match="text()" mode="adjust-parentheses">
-      <xsl:variable name="next-text" as="text()*" select="ancestor::*/following-sibling::node()[1]/self::text()"/>
-      <xsl:variable name="ends-with-separated-opening-paren"
-         as="xs:boolean"
-         select="
-            ancestor::docbook:code and ends-with(., '(') and (some $i in $next-text
-               satisfies starts-with($i, ')'))"
-      />
-      <xsl:variable name="starts-with-separated-closing-paren" as="xs:boolean"
-         select="starts-with(., ')') and ends-with(preceding-sibling::*[1], '(')"/>
-      <xsl:choose>
-         <xsl:when test="$ends-with-separated-opening-paren">
-            <xsl:value-of select=". || ')'"/>
-         </xsl:when>
-         <xsl:when test="$starts-with-separated-closing-paren">
-            <xsl:value-of select="replace(., '^\)', '')"/>
-         </xsl:when>
-         <xsl:otherwise>
+   <xsl:template match="text()" mode="prep-string-for-docbook-pass-2">
+      <xsl:analyze-string select="." regex="\p{{C}}">
+         <xsl:matching-substring>
+            <xsl:value-of select="'&amp;#x' || string(string-to-codepoints(.)) || ';'"/>
+         </xsl:matching-substring>
+         <xsl:non-matching-substring>
             <xsl:value-of select="."/>
-         </xsl:otherwise>
-      </xsl:choose>
+         </xsl:non-matching-substring>
+      </xsl:analyze-string>
    </xsl:template>
 
    <xsl:function name="tan:component-comments-to-docbook" as="element()*">
@@ -298,14 +446,18 @@
       
       <xsl:for-each select="$xslt-elements">
          <!-- template mode comments are hard to read, because they have so many instances, so we need label based on @match -->
-         <xsl:if test="self::xsl:template/@match">
-            <para>
-               <code>
-                  <xsl:value-of select="tan:xml-to-string(tan:shallow-copy(.))"/>
-               </code>
-            </para>
-         </xsl:if>
-         <xsl:apply-templates mode="comments-to-docbook"/>
+         <xsl:choose>
+            <xsl:when test="self::xsl:template/@match">
+               <para>
+                  <code>
+                     <xsl:value-of select="tan:xml-to-string(tan:shallow-copy(.))"/>
+                  </code>
+               </para>
+            </xsl:when>
+            <xsl:otherwise>
+               <xsl:apply-templates mode="comments-to-docbook"/>
+            </xsl:otherwise>
+         </xsl:choose>
       </xsl:for-each>
    </xsl:function>
    
@@ -324,7 +476,7 @@
             <link linkend="tan-function-group-{replace(., ' ', '_')}"><xsl:value-of select="."/></link>
          </xsl:for-each></para>
    </xsl:template>
-   <xsl:template match="comment()[not(preceding-sibling::*)]" mode="comments-to-docbook">
+   <xsl:template match="comment()[not(preceding-sibling::*)][matches(., '\S')]" mode="comments-to-docbook">
       <xsl:for-each select="tokenize(., '\n(\s+\n)+')">
          <xsl:variable name="this-para-norm" as="xs:string" select="tan:rewrap-para(., 72)"/>
          <programlisting>
@@ -930,7 +1082,7 @@
                                     <para>
 
                                        <xsl:copy-of
-                                          select="tan:prep-string-for-docbook(tan:string-representation-of-component(current-grouping-key(), 'function', false()))"
+                                          select="tan:prep-string-for-docbook(tan:string-representation-of-component(current-grouping-key(), 'function', false()), -1)"
                                        />
                                     </para>
                                  </listitem>
@@ -983,7 +1135,7 @@
                            <xsl:variable name="node-type-and-name" as="xs:string+"
                               select="tokenize(current-grouping-key(), '\s+')"/>
                            <xsl:copy-of
-                              select="tan:prep-string-for-docbook(tan:string-representation-of-component($node-type-and-name[2], $node-type-and-name[1], exists(current-group()/@mode)))"/>
+                              select="tan:prep-string-for-docbook(tan:string-representation-of-component($node-type-and-name[2], $node-type-and-name[1], exists(current-group()/@mode)), -1)"/>
                            <xsl:text> </xsl:text>
                         </xsl:for-each-group>
                      </para>
@@ -997,152 +1149,159 @@
             <!-- First, group according to place in the TAN hierarchy the variables, keys, functions, and named templates, 
                which are all unique and so can take an id; because template modes spread out across components, they need 
                to be handled outside the TAN hierarchical structure -->
-            <xsl:for-each-group group-by="replace(tan:cfn(.), '-functions', '')"
-               select="($function-library-keys, $function-library-functions[not(@name = $names-of-functions-to-append)], 
-               $function-library-variables-unique, $function-library-templates[@name])">
-               <xsl:sort
-                  select="count($sequence-of-sections//*[@n = current-grouping-key()]/(preceding::*, ancestor-or-self::*))"
-               />
-               <xsl:variable name="this-file-name" as="xs:string" select="current-grouping-key()"/>
-               <xsl:variable name="these-components-to-traverse" as="element()*"
-                  select="current-group()"/>
-               <section xml:id="vkft-{$this-file-name}">
-                  <title>
-                     <xsl:value-of
-                        select="$this-file-name || ' global variables, keys, and functions summarized'"
-                     />
-                  </title>
-                  <xsl:for-each-group select="$these-components-to-traverse" group-by="name()">
-                     <!-- This is a group of variables, keys, functions, and named templates, but not template modes, 
-                        which are handled later -->
-                     <xsl:sort
-                        select="index-of(('xsl:variable', 'xsl:key', 'xsl:function', 'xsl:template'), current-grouping-key())"/>
-                     <xsl:variable name="this-type-of-component" as="xs:string"
-                        select="replace(current-grouping-key(), 'xsl:(.+)', '$1')"/>
-                     <section>
-                        <title>
-                           <xsl:value-of select="tan:title-case($this-type-of-component) || 's'"/>
-                        </title>
-                        <xsl:for-each-group select="current-group()" group-by="@name">
-                           <!-- This is a group of variables, keys, functions, or named templates that share the same 
-                              name (grouping is mainly for functions) -->
-                           <xsl:sort select="lower-case(@name)"/>
-                           <xsl:variable name="what-depends-on-this" as="element()*"
-                              select="tan:xslt-dependencies(current-grouping-key(), $this-type-of-component, false(), $tan:all-functions)[name() = ('xsl:function', 'xsl:variable', 'xsl:template', 'xsl:key')]"/>
-                           <xsl:variable name="this-group-count" as="xs:integer" select="count(current-group())"/>
-                           <section
-                              xml:id="{$this-type-of-component || '-' || replace(current-grouping-key(),'^\w+:','')}">
-                              <title>
-                                 <code>
-                                    <xsl:value-of
-                                       select="tan:string-representation-of-component(current-grouping-key(), $this-type-of-component)"
-                                    />
-                                 </code>
-                              </title>
-                              <xsl:for-each select="current-group()">
-                                 <!-- This fetches an individual variable, key, function, or named template -->
-                                 <para>
-                                    <emphasis>
-                                       <xsl:choose>
-                                          <xsl:when test="$this-group-count gt 1">
-                                             <xsl:value-of
-                                                select="'Option ' || position() || ' (' || tan:cfn(.) || ')'"/>
-                                          </xsl:when>
-                                          <xsl:otherwise>
-                                             <xsl:value-of select="tan:cfn(.)"/>
-                                          </xsl:otherwise>
-                                       </xsl:choose>
-                                    </emphasis>
-                                 </para>
-                                 
-                                 <!-- Insert remarks specific to the type of component, e.g., the input and output expectations of a function -->
-                                 <xsl:choose>
-                                    <xsl:when test="$this-type-of-component = 'key'">
-                                       <para>Looks for elements matching <code>
-                                             <xsl:value-of select="@match"/>
-                                          </code>
-                                       </para>
-                                    </xsl:when>
-                                    <xsl:when test="$this-type-of-component = 'function'">
-                                       <xsl:variable name="these-params" as="element()*" select="xsl:param"/>
-                                       <xsl:variable name="param-text" as="xs:string*"
-                                          select="
-                                             for $i in $these-params
-                                             return
-                                                '$' || $i/@name || (if (exists($i/@as)) then
-                                                   (' as ' || $i/@as)
-                                                else
-                                                   ())"/>
-                                       <para>
-                                          <code>
-                                             <xsl:value-of select="@name"/>(<xsl:value-of
-                                                select="string-join($param-text, ', ')"/>) <xsl:if
-                                                test="exists(@as)">as <xsl:value-of select="@as"/>
-                                             </xsl:if>
-                                          </code>
-                                       </para>
-                                    </xsl:when>
-                                    <xsl:when test="$this-type-of-component = 'variable'">
-                                       <xsl:choose>
-                                          <xsl:when test="exists(@select)">
-                                             <para>
-                                                <xsl:text>Definition: </xsl:text>
-                                                <code>
-                                                  <xsl:copy-of
-                                                  select="tan:copy-of-except(tan:prep-string-for-docbook(@select), (), (), (), (), 'code')"
-                                                  />
-                                                </code>
-                                             </para>
-                                          </xsl:when>
-                                          <xsl:when test="exists(text()[matches(., '\S')]) and not(exists(*))">
-                                             <para>
-                                                <xsl:text>Definition: </xsl:text>
-                                                <code>
-                                                  <xsl:copy-of
-                                                  select="tan:copy-of-except(tan:prep-string-for-docbook(string(.)), (), (), (), (), 'code')"
-                                                  />
-                                                </code>
-                                             </para>
-                                          </xsl:when>
-                                          <xsl:otherwise>
-                                             <para>This variable has a complex definition. See
-                                                stylesheet for definiton.</para>
-                                          </xsl:otherwise>
-                                       </xsl:choose>
-                                    </xsl:when>
-                                 </xsl:choose>
-                                 <!-- Insert prefatory comments placed inside the component -->
-                                 <xsl:copy-of select="tan:component-comments-to-docbook(.)"/>
-                                 <!-- State what depends on this -->
-                                 <xsl:copy-of select="tan:component-dependees-to-docbook(.)"/>
-                                 <!-- State what it depends upon -->
-                                 <xsl:copy-of select="tan:component-dependencies-to-docbook(.)"/>
-                              </xsl:for-each>
-                           </section>
-                           <xsl:text>
-</xsl:text>
-                        </xsl:for-each-group>
-                     </section>
-                     <xsl:text>
-</xsl:text>
-                  </xsl:for-each-group>
-                  <xsl:if test="not(exists($these-components-to-traverse))">
-                     <para>
+            <!-- replace(tan:cfn(.), '-functions', '') -->
+            <section xml:id="vkft-summaries">
+               <title>Functions, global variables, keys, and named templates</title>
+               <para>Functions, global variables, keys, and named templates are summarized below, grouped by parent
+                  subdirectory from the TAN function directory. For templates called by mode, see the next section.</para>
+               
+               <xsl:for-each-group group-by="replace(base-uri(.), '.+functions/([^/]+)/.+$', '$1')"
+                  select="($function-library-keys, $function-library-functions[not(@name = $names-of-functions-to-append)], 
+                  $function-library-variables-unique, $function-library-templates[@name])">
+                  <xsl:sort
+                     select="count($sequence-of-sections//*[@n = current-grouping-key()]/(preceding::*, ancestor-or-self::*))"
+                  />
+                  <xsl:variable name="this-subdirectory-name" as="xs:string" select="current-grouping-key()"/>
+                  <xsl:variable name="these-components-to-traverse" as="element()*"
+                     select="current-group()"/>
+                  <section xml:id="vkft-{$this-subdirectory-name}">
+                     <title>
                         <xsl:value-of
-                           select="'No variables, keys, functions, or named templates are defined for ' || $this-file-name || '.'"
+                           select="tan:initial-upper-case($this-subdirectory-name)"
                         />
-                     </para>
-                  </xsl:if>
-               </section>
-               <xsl:text>
+                     </title>
+                     <xsl:for-each-group select="$these-components-to-traverse" group-by="name()">
+                        <!-- This is a group of variables, keys, functions, and named templates, but not template modes, 
+                           which are handled later -->
+                        <xsl:sort
+                           select="index-of(('xsl:variable', 'xsl:key', 'xsl:function', 'xsl:template'), current-grouping-key())"/>
+                        <xsl:variable name="this-type-of-component" as="xs:string"
+                           select="replace(current-grouping-key(), 'xsl:(.+)', '$1')"/>
+                        <section>
+                           <title>
+                              <xsl:value-of select="tan:title-case($this-type-of-component) || 's'"/>
+                           </title>
+                           <xsl:for-each-group select="current-group()" group-by="@name">
+                              <!-- This is a group of variables, keys, functions, or named templates that share the same 
+                                 name (grouping is mainly for functions) -->
+                              <xsl:sort select="lower-case(@name)"/>
+                              <xsl:variable name="what-depends-on-this" as="element()*"
+                                 select="tan:xslt-dependencies(current-grouping-key(), $this-type-of-component, false(), $tan:all-functions)[name() = ('xsl:function', 'xsl:variable', 'xsl:template', 'xsl:key')]"/>
+                              <xsl:variable name="this-group-count" as="xs:integer" select="count(current-group())"/>
+                              <section
+                                 xml:id="{$this-type-of-component || '-' || replace(current-grouping-key(),'^\w+:','')}">
+                                 <title>
+                                    <code>
+                                       <xsl:value-of
+                                          select="tan:string-representation-of-component(current-grouping-key(), $this-type-of-component)"
+                                       />
+                                    </code>
+                                 </title>
+                                 <xsl:for-each select="current-group()">
+                                    <!-- This fetches an individual variable, key, function, or named template -->
+                                    <para>
+                                       <emphasis>
+                                          <xsl:choose>
+                                             <xsl:when test="$this-group-count gt 1">
+                                                <xsl:value-of
+                                                   select="'Option ' || position() || ' (' || tan:cfn(.) || ')'"/>
+                                             </xsl:when>
+                                             <xsl:otherwise>
+                                                <xsl:value-of select="tan:cfn(.)"/>
+                                             </xsl:otherwise>
+                                          </xsl:choose>
+                                       </emphasis>
+                                    </para>
+                                    
+                                    <!-- Insert remarks specific to the type of component, e.g., the input and output expectations of a function -->
+                                    <xsl:choose>
+                                       <xsl:when test="$this-type-of-component = 'key'">
+                                          <para>Looks for elements matching <code>
+                                                <xsl:value-of select="@match"/>
+                                             </code>
+                                          </para>
+                                       </xsl:when>
+                                       <xsl:when test="$this-type-of-component = 'function'">
+                                          <xsl:variable name="these-params" as="element()*" select="xsl:param"/>
+                                          <xsl:variable name="param-text" as="xs:string*"
+                                             select="
+                                                for $i in $these-params
+                                                return
+                                                   '$' || $i/@name || (if (exists($i/@as)) then
+                                                      (' as ' || $i/@as)
+                                                   else
+                                                      ())"/>
+                                          <para>
+                                             <code>
+                                                <xsl:value-of select="@name"/>(<xsl:value-of
+                                                   select="string-join($param-text, ', ')"/>) <xsl:if
+                                                   test="exists(@as)">as <xsl:value-of select="@as"/>
+                                                </xsl:if>
+                                             </code>
+                                          </para>
+                                       </xsl:when>
+                                       <xsl:when test="$this-type-of-component = 'variable'">
+                                          <xsl:choose>
+                                             <xsl:when test="exists(@select)">
+                                                <para>
+                                                   <xsl:text>Definition: </xsl:text>
+                                                   <code>
+                                                     <xsl:copy-of
+                                                     select="tan:copy-of-except(tan:prep-string-for-docbook(@select), (), (), (), (), 'code')"
+                                                     />
+                                                   </code>
+                                                </para>
+                                             </xsl:when>
+                                             <xsl:when test="exists(text()[matches(., '\S')]) and not(exists(*))">
+                                                <para>
+                                                   <xsl:text>Definition: </xsl:text>
+                                                   <code>
+                                                     <xsl:copy-of
+                                                     select="tan:copy-of-except(tan:prep-string-for-docbook(string(.)), (), (), (), (), 'code')"
+                                                     />
+                                                   </code>
+                                                </para>
+                                             </xsl:when>
+                                             <xsl:otherwise>
+                                                <para>This variable has a complex definition. See
+                                                   stylesheet for definiton.</para>
+                                             </xsl:otherwise>
+                                          </xsl:choose>
+                                       </xsl:when>
+                                    </xsl:choose>
+                                    <!-- Insert prefatory comments placed inside the component -->
+                                    <xsl:copy-of select="tan:component-comments-to-docbook(.)"/>
+                                    <!-- State what depends on this -->
+                                    <xsl:copy-of select="tan:component-dependees-to-docbook(.)"/>
+                                    <!-- State what it depends upon -->
+                                    <xsl:copy-of select="tan:component-dependencies-to-docbook(.)"/>
+                                 </xsl:for-each>
+                              </section>
+                              <xsl:text>
 </xsl:text>
-            </xsl:for-each-group>
+                           </xsl:for-each-group>
+                        </section>
+                        <xsl:text>
+</xsl:text>
+                     </xsl:for-each-group>
+                     <xsl:if test="not(exists($these-components-to-traverse))">
+                        <para>
+                           <xsl:value-of
+                              select="'No variables, keys, functions, or named templates are defined for ' || $this-subdirectory-name || '.'"
+                           />
+                        </para>
+                     </xsl:if>
+                  </section>
+                  <xsl:text>
+</xsl:text>
+               </xsl:for-each-group>
+            </section>
             <xsl:for-each-group
                select="($function-library-templates[@mode], $function-library-variables-duplicate, $function-library-functions[@name = $names-of-functions-to-append])"
                group-by="name()">
                <xsl:variable name="this-type-of-component" as="xs:string"
                   select="replace(current-grouping-key(), '^.+:', '')"/>
-               <section>
+               <section xml:id="vkft-{$this-type-of-component}">
                   <xsl:choose>
                      <xsl:when test="$this-type-of-component = 'variable'">
                         <title>Cross-format global variables</title>
@@ -1155,9 +1314,10 @@
                            another.</para>
                      </xsl:when>
                      <xsl:otherwise>
-                        <title>Mode templates</title>
-                        <para>Templates based on modes are frequently found across constituent
-                           files, so they are collated here separately, one entry per mode.</para>
+                        <title>Templates (by mode)</title>
+                        <para>Templates based on modes are frequently found in multiple files and
+                           directories, so they are collated here separately, one entry per
+                           mode.</para>
                      </xsl:otherwise>
                   </xsl:choose>
                   <xsl:for-each-group select="current-group()" group-by="tokenize((@mode, @name)[1], '\s+')">

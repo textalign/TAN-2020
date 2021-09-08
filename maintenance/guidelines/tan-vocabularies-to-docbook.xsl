@@ -18,11 +18,15 @@
     <xsl:template match="tan:name" mode="vocabularies-to-docbook">
         <title>
             <xsl:value-of select=". || ' ('"/>
-            <xsl:copy-of
-                select="
-                    for $i in tokenize(/tan:TAN-voc/tan:body/@affects-element, '\s+')
+            <xsl:copy-of select="
+                    for $i in tokenize(/tan:TAN-voc/tan:body/(@affects-element), '\s+')
                     return
                         tan:prep-string-for-docbook(tan:string-representation-of-component($i, 'element'))"
+            />
+            <xsl:copy-of select="
+                    for $i in tokenize(/tan:TAN-voc/tan:body/(@affects-attribute), '\s+')
+                    return
+                        tan:prep-string-for-docbook(tan:string-representation-of-component($i, 'attribute'))"
             />
             <xsl:text>)</xsl:text>
         </title>
@@ -74,8 +78,7 @@
                     <colspec colname="c3" colnum="3" colwidth="1.0*"/>
                     <thead>
                         <row>
-                            <entry>vocabularies (optional values of <link linkend="attribute-which"
-                                        ><code>@which</code></link>)</entry>
+                            <entry>names</entry>
                             <entry>
                                 <xsl:value-of
                                     select="
@@ -93,42 +96,17 @@
                         <xsl:for-each select="tan:TAN-voc/tan:body//(tan:item, tan:verb)">
                             <row>
                                 <entry>
-                                    <itemizedlist>
-                                        <xsl:for-each select="tan:name">
-                                            <listitem>
-                                                <para>
-                                                  <xsl:value-of select="."/>
-                                                </para>
-                                            </listitem>
-                                        </xsl:for-each>
-                                    </itemizedlist>
+                                    <xsl:apply-templates select="tan:name"
+                                        mode="vocabularies-to-docbook-entries"/>
                                 </entry>
                                 <entry>
-                                    <itemizedlist>
-                                        <xsl:for-each select="tan:IRI, tan:token-definition/@pattern">
-                                            <listitem>
-                                                <para>
-                                                    <xsl:choose>
-                                                        <xsl:when test="matches(.,'^(ftp|https?)://')">
-                                                            <link xlink:href="{.}">
-                                                                <xsl:value-of select="."/>
-                                                            </link>
-                                                        </xsl:when>
-                                                        <xsl:otherwise>
-                                                            <xsl:value-of select="."/>
-                                                        </xsl:otherwise>
-                                                    </xsl:choose>
-                                                </para>
-                                            </listitem>
-                                        </xsl:for-each>
-                                    </itemizedlist>
+                                    <xsl:apply-templates
+                                        select="tan:IRI | tan:token-definition/@pattern"
+                                        mode="vocabularies-to-docbook-entries"/>
                                 </entry>
                                 <entry>
-                                    <xsl:for-each select="tan:desc">
-                                        <para>
-                                            <xsl:apply-templates select="tan:prep-string-for-docbook(.)" mode="adjust-docbook-vocabulary-desc"/>
-                                        </para>
-                                    </xsl:for-each>
+                                    <xsl:apply-templates select="tan:desc | tan:constraints"
+                                        mode="vocabularies-to-docbook-entries"/>
                                 </entry>
                             </row>
                         </xsl:for-each>
@@ -137,4 +115,39 @@
             </table>
         </section>
     </xsl:template>
+    
+    <xsl:mode name="vocabularies-to-docbook-entries" on-no-match="shallow-skip"/>
+    
+    <xsl:template match="tan:desc | tan:name" mode="vocabularies-to-docbook-entries">
+        <para>
+            <xsl:apply-templates select="tan:prep-string-for-docbook(., 20)" mode="adjust-docbook-vocabulary-desc"/>
+        </para>
+    </xsl:template>
+    <xsl:template match="tan:IRI | tan:token-definition/@pattern" mode="vocabularies-to-docbook-entries">
+        <para>
+            <xsl:apply-templates select="tan:prep-string-for-docbook(., -1)"
+                mode="adjust-docbook-vocabulary-desc"/>
+        </para>
+    </xsl:template>
+    <xsl:template match="tan:constraints" mode="vocabularies-to-docbook-entries">
+        <para>
+            <xsl:apply-templates mode="#current"/>
+        </para>
+    </xsl:template>
+    <xsl:template match="tan:constraints/*[@*]" mode="vocabularies-to-docbook-entries">
+        <emphasis role="bold">
+            <xsl:value-of select="name(.) || ':'"/>
+        </emphasis>
+        <itemizedlist>
+            <xsl:apply-templates select="@*" mode="#current"/>
+        </itemizedlist>
+    </xsl:template>
+    <xsl:template match="tan:constraints/*/@*" mode="vocabularies-to-docbook-entries">
+        <listitem>
+            <para>
+                <xsl:value-of select="name(.) || ': ' || string(.)"/>
+            </para>
+        </listitem>
+    </xsl:template>
+    
 </xsl:stylesheet>
