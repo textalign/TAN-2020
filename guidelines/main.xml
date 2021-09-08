@@ -38,7 +38,7 @@
          </info>
          <revision>
             <revnumber>Version 2021 (alpha)</revnumber>
-            <date>2021-07-08</date>
+            <date>2021-09-07</date>
             <revdescription>
                <para>Formats: <link
                      xlink:href="http://textalign.net/release/TAN-2020/guidelines/xhtml/index.xhtml"
@@ -62,27 +62,28 @@
          <title>Introduction</title>
          <section xml:id="tan_definition">
             <title>Overview</title>
-            <para>The Text Alignment Network (TAN) is a suite of XML formats designed to maximize
-               the syntactic and semantic interoperability of texts, annotations, and language
-               resources. </para>
-            <para>Simple, modular, and networked, TAN formats allow users, working independently and
-               collaboratively, to find, create, edit, study, align, and share texts and
-               annotations. An extension of Text Encoding Initiative (TEI) XML, TAN is particularly
-               suited for organizing and aligning texts with multiple versions (copies,
-               translations, paraphrases), and for curating text annotations such as quotations,
-               translation clusters (word-to-word), and linguistic features. </para>
+            <para>The Text Alignment Network (TAN) is a digital framework that allows users, working
+               independently and collaboratively, to create, edit, study, find, align, and share
+               texts and annotations. </para>
+            <para>A customized extension of <link xlink:href="http://tei-c.org">Text Encoding
+                  Initiative (TEI)</link> XML, TAN is particularly suited for organizing and
+               aligning texts with multiple versions (copies, translations, paraphrases), and for
+               creating and editing text annotations such as quotations, translation clusters
+               (word-to-word), and linguistic features. </para>
+            <para>TAN is a suite of XML formats designed to maximize the syntactic and semantic
+               interoperability of texts, annotations, and language resources. Its applications and
+               utilities are specially designed to enhance scholarly publishing, research, and
+               teaching. </para>
             <para>Why use TAN? </para>
             <para><emphasis role="bold">Extensive error checking</emphasis>. Built-in TAN validation
-               rules go well beyond the customary error-checking performed by other systems (e.g.,
-               TEI) and report back on more than one hundred types of errors, e.g., Unicode
-               normalization, unwanted textual variance, and changes and updates in dependencies.
-               The TAN-mor format allows anyone to write their own rules describing the grammar of
-               human languages, to report errors in linguistic data.</para>
-            <para><emphasis role="bold">Time-saving utilities</emphasis>. TAN's function library
-               drives Schematron Quick Fixes and a framework, enhancing Text and Author modes in
-               Oxygen XML Editor. Many corrections are a simple keystroke or two away.</para>
-            <para>Several special XSLT utilities help you create and edit your TEI and TAN files.
-               For example: </para>
+               rules go well beyond the customary error-checking performed by other formats. More
+               than one hundred types of content-based errors are checked. Files linked in the
+               network "talk" to each other, to let users know about changes and updates. Many of
+               the problems detected in files are associated with Schematron Quick Fixes, which
+               allows users to make corrections in a matter of seconds.</para>
+            <para><emphasis role="bold">Time-saving utilities</emphasis>. Enjoy enhanced editing
+               functions in Oxygen XML Editor's Author mode. Highly customizable TAN utilities help
+               you create, edit, and maintain TEI and TAN files. For example: </para>
             <para><itemizedlist>
                   <listitem>
                      <para><emphasis>Body Builder</emphasis>: write rules to convert plain text or
@@ -91,22 +92,24 @@
                   <listitem>
                      <para><emphasis>Body Remodeler</emphasis>: incrementally restructure a text to
                         imitate an existing TAN/TEI file; in conjunction with Oxygen Author tools,
-                        this utility can save hours of time getting texts into TAN/TEI.</para>
+                        this utility can save hours of labor in creating a collection of
+                        versions.</para>
                   </listitem>
                   <listitem>
                      <para><emphasis>Body Sync</emphasis>: update a TAN/TEI file so its text exactly
-                        matches that of a model TAN/TEI file.</para>
+                        matches that of another TAN/TEI file.</para>
                   </listitem>
                   <listitem>
                      <para><emphasis>TAN-A-lm Builder</emphasis>: generate lexico-morphological data
                         for a TAN/TEI file.</para>
                   </listitem>
                </itemizedlist></para>
-            <para><emphasis role="bold">Novel applications</emphasis>. Standard TAN applications in
-               XSLT provide cutting-edge tools for textual research and analysis, for example: </para>
+            <para><emphasis role="bold">Pathbreaking applications</emphasis>. Standard TAN
+               applications in XSLT provide cutting-edge tools for textual research and analysis.
+               For example: </para>
             <para><itemizedlist>
                   <listitem>
-                     <para><emphasis>Diff+</emphasis>: find and statistically analyze text
+                     <para><emphasis>Diff+</emphasis>: identify, analyze, and visualize text
                         differences between any number of versions of a text.</para>
                   </listitem>
                   <listitem>
@@ -114,29 +117,31 @@
                         page all the versions of a work, along with annotations. </para>
                   </listitem>
                   <listitem>
-                     <para><emphasis>Tangram</emphasis> identify quotations, paraphrases, and common
-                        text between two groups of texts, via scored Ngrams.</para>
+                     <para><emphasis>Tangram</emphasis>: identify quotations, paraphrases, and
+                        common text between two groups of texts.</para>
                   </listitem>
                </itemizedlist></para>
             <para><emphasis role="bold">Intuitive text referencing</emphasis>. Unlike TEI, HTML, or
-               other markup systems that rely heavily upon identifiers that can be difficult to
-               navigate, edit, and maintain, TAN uses a text pointer syntax based upon the reference
-               systems already customarily used when referencing texts in ordinary prose.</para>
+               other markup systems that rely heavily upon arbitrary identifiers that can be
+               difficult to navigate, edit, and maintain, TAN points to text using familiar
+               reference systems.</para>
             <para><emphasis role="bold">Development</emphasis>. TAN is built upon an extensive and
                robust XSLT function library, one of the few of its kind, facilitating development of
                applications for TAN/TEI files. Do you already use <link
                   xlink:href="https://www.nltk.org/">Natural Language Toolkit</link>, <link
                   xlink:href="http://cltk.org/">Classical Language Toolkit</link>, or comparable
-               packages to program tools for textual and linguistic research? The TAN function
-               library might have everything you need, and more, to do it within an XSLT / XPath
-               environment. Many of the functions have significant widespread application, well
-               beyond TAN or TEI files.</para>
+               packages to program tools for textual and linguistic research? Do you have to
+               process, analyze, and transform texts that are in tree structures? The TAN function
+               library might have everything you need, and more, to do all this within a single
+               environment. Many TAN functions have significant application well beyond the TAN or
+               TEI world.</para>
             <para><emphasis role="bold">Semantic Web compatibility</emphasis>. TAN was designed at
                the outset to ensure that texts and their annotations would be rooted in the
-               disciplines of the Semantic Web. Unlike TEI, whose attribute values are almost always
-               only human-readable, most components in TAN files are tied to URIs. TAN files can be
-               converted to any number of RDF formats for use in Semantic Web applications. (An
-               export tool to RDF is under development.)</para>
+               practices of the Semantic Web. Unlike many other formats, whose attribute values are
+               almost always only human-readable, most components in TAN files are tied to URIs.
+               When words are tagged for grammatical part of speech, the codes are tethered to URIs
+               that connect them with part-of-speech tags from other languages. All TAN files are
+               RDF-centric, making them suitable for use in Semantic Web applications.</para>
          </section>
          <section>
             <title>Rationale and purpose</title>
@@ -297,12 +302,12 @@
                   branch</link>. If you have a TAN library, sharing it with other participants,
                particularly via Git, will help developers test any changes that have been made to
                the function library, and encourage others to contribute to your project.</para>
-            <para>The TAN project is by no means finished. The current release scratches the surface
-               of what is possible. The current codebase can be improved in numerous ways. New
-               participants to test, use, and develop TAN's schemas, functions, guidelines, and
-               applications are welcome. Inquiries about participation should be sent to the project
-               director, <link xlink:href="http://kalvesmaki.com/">Joel Kalvesmaki</link>, by email:
-               director at textalign.net.</para>
+            <para>The TAN project is by no means finished. This version TAN merely scratches the
+               surface of what is possible. New participants to test, use, and develop TAN's
+               schemas, functions, guidelines, and applications are welcome. Inquiries about
+               participation should be sent to the project director, <link
+                  xlink:href="http://kalvesmaki.com/">Joel Kalvesmaki</link>, by email:
+                  <code>director</code> at <code>textalign.net</code>.</para>
             <para>Official announcements are made by <link
                   xlink:href="http://groups.google.com/group/textalign?hl=en">email (Google
                   Group)</link> and by <link xlink:href="https://twitter.com/textalign"
@@ -311,14 +316,15 @@
       </chapter>
       <chapter xml:id="gentle_guide">
          <title>Starting off with the TAN format</title>
-         <para>If you are new to markup languages, or unfamiliar or uncomfortable with acronyms and
-            technical terms such as <emphasis role="italic">XML</emphasis>, <emphasis role="italic"
-               >RDF</emphasis>, <emphasis role="italic">XPath</emphasis>, and
-               <emphasis>Unicode</emphasis>, you should start with this chapter, which uses a simple
-            example to illustrate the steps typically taken to create and and edit TAN files, and to
-            introduce new terminology. By the end of this chapter, you will have a sense of how to
-            create and edit a small collection of TAN transcriptions and alignments.<footnote
-               xml:id="transcription_and_transliteration">
+         <para>If you think you are ready to jump in and get going, try <xref
+               xlink:href="#local_setup"/>.  But if you are new to markup languages, or unfamiliar
+            or uncomfortable with acronyms and technical terms such as <emphasis role="italic"
+               >XML</emphasis>, <emphasis role="italic">RDF</emphasis>, <emphasis role="italic"
+               >XPath</emphasis>, and <emphasis>Unicode</emphasis>, you should start with this
+            chapter, which uses a simple example to illustrate the steps typically taken to create
+            and edit TAN files, and to introduce new terminology. By the end of this chapter, you
+            will have a sense of how to create and edit a small collection of TAN transcriptions and
+               alignments.<footnote xml:id="transcription_and_transliteration">
                <para>In the TAN system, <termdef>a <firstterm>transcription</firstterm> is a plain
                      digital text that replicates a text found somewhere else, usually reproducing
                      its script and spelling</termdef>. The following—"In pluribus unum"—is a
@@ -1974,12 +1980,9 @@
          <para><xref linkend="class_common"/>, <xref linkend="class_1"/>, <xref linkend="class_2"/>,
             and <xref linkend="class_3"/> describe each TAN format, class by class. Each chapter
             starts with theory or scholarly context before expanding on technical points. </para>
-         <para>The chapters in this part provide a narrative counterpart to the much more detailed
-            technical appendixes, <xref linkend="elements-attributes-and-patterns"/> and <xref
-               linkend="vocabularies-master-list"/>, which are derived from the master schemas and
-            vocabularies. They have been written with the assumption that you have already read the
-            previous part (<xref linkend="general_overview"/>) and that you have already started to
-            create or edit a TAN collection.</para>
+         <para>The chapters in this part have been written with the assumption that you have already
+            read the previous part (<xref linkend="general_overview"/>) and that you have already
+            started to create or edit a TAN collection.</para>
          <para>Because readers will come from different specialties, all acronyms, abbreviations,
             and concepts are defined and explained, albeit tersely, to explain how they affect the
             use of TAN. Suggestions for further reading are provided for those who want a more
@@ -2410,7 +2413,7 @@
                      is assumed to be made exclusively of individual base (non-combining) characters
                      (each perhaps followed by one or more combining characters). Therefore one
                      character is defined as the regular expression <code>\P{M}\p{M}*</code>, bound
-                     to global variable <xref xlink:href="#variable-char-reg-exp"/>. Any numerical
+                     to global variable <xref xlink:href="#variable-char-regex"/>. Any numerical
                      reference made in a TAN file to an individual character, i.e., through
                            <code><link linkend="attribute-chars">@chars</link></code>, is
                      interpreted by counting only non-combining characters. When the nth character
@@ -2733,7 +2736,7 @@
                            linkend="element-for-lang">&lt;for-lang></link></code> in the context of
                      a TAN-mor file indicates which languages the file was written for.</para>
                   <para>TAN has several global variables and functions useful for working with
-                     language codes. See <xref xlink:href="#vkft-TAN-language"/>.</para>
+                     language codes. See <xref xlink:href="#tan-function-group-language"/>.</para>
                </section>
                <section xml:id="date_and_datetime">
                   <title>Dates and times</title>
@@ -3342,7 +3345,7 @@ tag:bbrb@example.org,1995-04-01:pos-grc</programlisting>
                         linkend="combining_characters"/>).</para>
                </warning>
                <para>TAN includes several functions that usefully extend XML regular expressions.
-                  See <xref xlink:href="#vkft-regex-ext-tan"/>.</para>
+                  See <xref xlink:href="#tan-function-group-regular_expressions"/>.</para>
                <para>Further reading:<itemizedlist>
                      <listitem>
                         <para>Various <link
@@ -4214,7 +4217,8 @@ tag:bbrb@example.org,1995-04-01:pos-grc</programlisting>
          </section>
       </chapter>
       <chapter xml:id="class_1">
-         <title>Class-1 TAN files, representations of textual objects (scripta)</title>
+         <title>Class-1 TAN files, representations of textual objects
+            (<emphasis>scripta</emphasis>)</title>
          <para>This chapter provides general background to class-1 TAN files and their elements and
             attributes. For detailed discussion of individual elements or attributes, see <xref
                linkend="elements-attributes-and-patterns"/>.</para>
@@ -6727,7 +6731,8 @@ tag:bbrb@example.org,1995-04-01:pos-grc</programlisting>
          <title>Working with TAN files</title>
          <para>This chapter presents ways to manage, create, edit, and share TAN files. These
             suggestions, based upon the experience of users, are both brief and general. To get into
-            specifics, read the following chapters, as well as the appendixes. </para>
+            specifics, read the other chapters in this part of the guidelines, as well as the
+            appendixes. </para>
          <section xml:id="local_setup">
             <title>Installation and local setup</title>
             <para>The TAN suite can be downloaded from a master data repository listed at <link
@@ -6740,15 +6745,15 @@ tag:bbrb@example.org,1995-04-01:pos-grc</programlisting>
                      from TAN applications. Documentation in a TAN application will let you know
                      what Javascript dependencies are required.</para>
                </footnote></para>
-            <para>Unlike many other applications, you do not install the TAN suite, and you should
-               not put it with other programs. There is no executable file in the suite. You will
-               work with it through Oxygen, another XML editor, a text editor, or the command
-               line.</para>
+            <para>Unlike many other applications, you do not install the TAN suite, and you do not
+               have to put it in a specific place on your local drive. There is no executable file
+               in the suite. You will work with TAN through Oxygen, another XML editor, a text
+               editor, or (if you are a power user) the command line.</para>
             <para>You will be creating and editing TAN files. Those files may be set up in whatever
-               directory structure you prefer. Because TAN files are meant to be shared and
-               interlinked, it is beneficial to develop predictable directory structures. However
-               you organize your TAN files, keep them separate from the suite of core TAN
-               files.</para>
+               directory structure you prefer. Because TAN files are part of a network, they are
+               meant to be shared and interlinked. So it is beneficial to develop predictable
+               directory structures. However you organize your TAN files, keep them separate from
+               the suite of core TAN files.</para>
             <para>Many TAN projects will involve dozens of versions of a particular work, and it is
                easy to get confused as to what file does what. Naming files becomes a challenge (the
                filename, not the <code><link linkend="attribute-id">@id</link></code>, on which see
@@ -6853,11 +6858,12 @@ tag:bbrb@example.org,1995-04-01:pos-grc</programlisting>
          <section>
             <title>Working with Oxygen XML Editor</title>
             <para>If you use an advanced XML editor such as Oxygen, you should edit your TAN
-               collection through a project, which will help you easily administer your TAN files
-               and validate them automatically. Included with the standard TAN suite is a basic
-               Oxygen project file, <code>tan.xpr</code>. Make a copy and configure it to your
-               tastes. You will find that under Configure Transformation Scenarios there are
-               preinstalled generic options for the standard TAN utilities and applications. </para>
+               collection through a project file, which will help you easily administer your TAN
+               files and validate them automatically. Included with the standard TAN suite is a
+               basic Oxygen project file, <code>TAN.xpr</code>. Use it as-is, or make a copy and
+               configure it to your tastes. You will find that under Configure Transformation
+               Scenarios there are preinstalled generic options for the standard TAN utilities and
+               applications. </para>
             <para>When you open a TAN file in Author mode, you will find a variety of editing tools,
                primarily for class-1 files. Browse the options in the menu, the toolbars, and the
                context-click menu, to see what is possible. In a future version of TAN, more
@@ -6865,20 +6871,20 @@ tag:bbrb@example.org,1995-04-01:pos-grc</programlisting>
             <para>The project file discussed above relies upon an Oxygen framework file,
                   <code>tan.frameworks</code>, which drives the functionality of the project. If you
                have another project already underway, you can incorporate the the
-                  <code>tan.frameworks</code> file directly, combine it with your other Oxygen
+                  <code>tan.frameworks</code> file directly, combining it with your other Oxygen
                tools.</para>
          </section>
          <section>
             <title>Creating and populating TAN files</title>
             <para>TAN is a representational format. Every TAN file models some source. If those
                sources are non-digital, it is a relatively straightforward task to create and
-               populate a TAN file. You just start editing everything by hand. In some cases, you
-               might get a head start with an algorithm. For example, optical character recognition
-               (OCR) on an edition might give you a dirty but useful start for a TAN-T file.
-               Applying OCR to a printed index of quotations might be the first step to a TAN-A
-               file. Despite the computer's assistance, the majority of the task will be spent in
-               correcting any conversions. Thoughtful, scholarly attention is needed to making these
-               files suitable for use.</para>
+               populate a TAN file. Just start editing, using a template (e.g., a file from the
+                  <code>examples</code> directory). In some cases, you might benefit by starting
+               with an algorithm. For example, optical character recognition (OCR) on an edition
+               might give you a dirty but useful start for a TAN-T file. Applying OCR to a printed
+               index of quotations might be the first step to a TAN-A file. Despite the computer's
+               assistance, the majority of the task will be spent in correcting any conversions.
+               Thoughtful attention is needed to making these files suitable for use.</para>
             <para>In many other cases, you want to take something that already exists digitally and
                convert it into a TAN format. Many times, when you find a Word file, a web page, or a
                plain text file that can serve as the basis for a TAN file, the first impulse is to
@@ -6960,7 +6966,7 @@ tag:bbrb@example.org,1995-04-01:pos-grc</programlisting>
                   messages any errors or warnings found in the generated file, and any suggested
                   corrections as Schematron Quick Fixes.</para>
                <para>For more details about the TAN validation process, see <xref
-                     xlink:href="validation_mechanics"/>. </para>
+                     xlink:href="#validation_mechanics"/>. </para>
             </section>
             <section>
                <title>Efficiency</title>
@@ -7034,17 +7040,17 @@ tag:bbrb@example.org,1995-04-01:pos-grc</programlisting>
             in the subdirectories <code>applications</code> and <code>utilities</code>. </para>
          <para>Utilities are designed to assist in import, export, creating, and editing TAN files.
             They tend to support straightforward tasks, and the code is relatively stable.</para>
-         <para>Applications support study and research. Most of these take a set of master TAN
-            files, process them, and create interactive, dynamic HTML files that let you study and
-            analyze textual features and relationships. Applications can have quite lengthy code
-            bases, and tend to have features that are not fully supported, or are in the planning
-            phase.</para>
-         <para>TAN utilites and applications are written in XSLT, which stands for XSL
-            Transformations, version 3.0.<footnote>
+         <para>Applications, on the other hand, support study and research. Most of these take a set
+            of TAN files, process them, and create interactive, dynamic HTML files that let you
+            study and analyze textual features and relationships. Applications can have quite
+            complicated code bases, and tend to have features that are not fully supported, or are
+            in the planning phase.</para>
+         <para>TAN utilites and applications are written in XSLT. XSLT, which stands for XSL
+            Transformations, version 3.0,<footnote>
                <para>XSL, which stands for Extensible Stylesheet Language, was the predecessor
                   language.</para>
-            </footnote> XSLT is very powerful, and has a distinctive syntax and design. Many people
-            do not know how even to begin to use it. Even some seasoned programmers approaching XSLT
+            </footnote> is very powerful, and has a distinctive syntax and design. Many people do
+            not know how even to begin to use it. Even some seasoned programmers approaching XSLT
             for the first time can find it baffling or impenetrable. An XSLT application is rather
             different from others that may be more familiar to you. </para>
          <para>This chapter begins with a basic orientation to XSLT. You may not be ready to write
@@ -7054,7 +7060,7 @@ tag:bbrb@example.org,1995-04-01:pos-grc</programlisting>
          <section xml:id="xslt-orientation">
             <title>First things to know about XSLT</title>
                <section>
-                  <title>The Process</title>
+                  <title>The process</title>
                   <para>In most computer applications, the expected rules are rather
                   straightforward. Given zero or more inputs, zero or more outputs are returned.
                   Many times the application is driven by a graphical user interface (GUI), to allow
@@ -7501,38 +7507,45 @@ return x</programlisting>
                   may want to configure it by adjusting the values given to the global parameters.
                   You have several possible strategies:<orderedlist>
                      <listitem>
-                        <para><emphasis role="bold">Overwrite the values directly</emphasis>. This
-                           method is quick, but it also means that you might not easily restore the
-                           original settings, unless you make a backup copy.</para>
+                        <para><emphasis role="bold">Work with a configuration file</emphasis>. If
+                           you are comfortable writing some simple XSLT code, you might create a
+                           small XSLT file that has nothing but an <code>&lt;xsl:import></code>
+                           whose <code>@href</code> value points to the original stylesheet. Copy
+                           from the master XSLT stylesheet only those <code>&lt;xsl:param></code>s
+                           that you want to change. This method is quick to set up and easy to use,
+                           but it also means that you do not have immediate access to
+                           documentation.</para>
                      </listitem>
                      <listitem>
-                        <para><emphasis role="bold">Work from a copy of the file</emphasis>. This
-                           method allows you to restore the file to its original settings, when you
-                           need to. It also allows you to add copies as new situations emerge. You
-                           should make certain that any working copies are in the same subdirectory
-                           as the original, to keep links intact.</para>
+                        <para><emphasis role="bold">Overwrite the values in the master XSLT
+                              stylesheet directly</emphasis>. This method is quick, but it also
+                           means that you might not easily restore the original settings, unless you
+                           make a backup copy. Also, if you are using configuration files, their
+                           default values will change. That could be good or bad, depending upon
+                           your setup.</para>
                      </listitem>
                      <listitem>
-                        <para><emphasis role="bold">Create a new XSLT file that imports the
-                              master</emphasis>. If you are comfortable writing XSLT code, you might
-                           create a small XSLT file that has nothing but an
-                              <code>&lt;xsl:import></code> pointing to the original stylesheet, and
-                           only those <code>&lt;xsl:param></code>s that focus on the values you
-                           intend to change. This method is quick to set up and easy to use, but it
-                           also means that you do not have immediate access to documentation.</para>
+                        <para><emphasis role="bold">Work from a copy of the master XSLT
+                              file</emphasis>. This method allows you to customize the entire
+                           application, and consult as needed the original settings in the master
+                           file. Like configuration files (see above), you can make new copies for
+                           new situations emerge. You should make certain that any working copies
+                           are in the same subdirectory as the original, to keep links
+                           intact.</para>
                      </listitem>
                      <listitem>
                         <para><emphasis role="bold">Manage transformations from Oxygen</emphasis>.
                            Oxygen XML Editor has a powerful feature, Configure Transformation
                            Scenarios, which allows you to create custom configurations for an XSLT
                            application. Oxygen has good documentation on how to use this flexible
-                           feature, which can be combine with any of the preceding three options.
+                           feature, which can be combined with any of the preceding three options.
                            Oxygen allows you not only to configure the parameters but to manage
-                           input and output. One drawback is that you are presented with all the
-                           global parameters that can be found, whether or not they are really
-                           relevant. Documentation associated with a particular parameter may be
-                           missing or truncated. You should use this feature in conjunction with any
-                           documentation that comes with the XSLT application. </para>
+                           input and output. One drawback is that you are presented with
+                              <emphasis>all</emphasis> the global parameters that can be found,
+                           whether or not they are really relevant. Documentation associated with a
+                           particular parameter may be missing or truncated. You should use this
+                           feature in conjunction with any documentation that comes with the XSLT
+                           application. </para>
                      </listitem>
                   </orderedlist></para>
                <para>Whatever method you adopt for configuration, first find the relevant global
@@ -7745,18 +7758,20 @@ return x</programlisting>
                   from the others. Nevertheless, all TAN utilities and applications share a common
                   set of features, to assist users.</para>
                <section>
-                  <title>Application setup</title>
+                  <title>Application/utility setup</title>
                   <para>All TAN utilities are in the <code>utilities</code> directory of the TAN
                      files; the applications are in the <code>applications</code> directory. Within
                      those directories, there is one subdirectory per utility or application. And
-                     within that subdirectory, there is only one XSLT file, accompanied perhaps by
-                     further subdirectories. That XSLT file is the master stylesheet for the utility
-                     or application in question, and it has the same name as its parent directory.
+                     within that subdirectory, there are only two XSLT file, accompanied perhaps by
+                     further subdirectories. One of the XSLT files has "configuration" in the name,
+                     and it allows you to customize a particular application or utility for your
+                     projects. The other XSLT file is the master stylesheet for the utility or
+                     application in question, and it has the same name as its parent directory.
                      Subdirectories contain the heart of the code, and other important
                      dependencies.</para>
                   <para>The file structure is designed to make quite clear the main point of entry.
-                     It also makes it easier for a user to make copies and administer them, for
-                     specific situations.</para>
+                     Having a directory with so few files should hopefully inspire you to fill it up
+                     with copies designed for specific situations.</para>
                </section>
                <section>
                   <title>The master stylesheet</title>
@@ -8251,8 +8266,8 @@ return x</programlisting>
    </part>
    <part xml:id="appendixes">
       <title>Appendixes</title>
-      <xi:include href="inclusions/elements-attributes-and-patterns.xml"/>
       <xi:include href="inclusions/vocabularies.xml"/>
+      <xi:include href="inclusions/elements-attributes-and-patterns.xml"/>
       <xi:include href="inclusions/variables-keys-functions-and-templates.xml"/>
       <xi:include href="inclusions/errors.xml"/>
    </part>
