@@ -429,6 +429,8 @@ element-numerals =
    element numerals {
       
       ## lists strings that should not be interpreted as numerics; this is most commonly used in rare cases where a string label for @n or @ref might be interpreted as a Roman numeral or a letter numeral
+      
+      ## Expected is a space delimited list of atomic values of @n. Because @n is not case-sensitive, every item in @exceptions is as well.
       attribute exceptions { text }?,
       
       ## specifies whether roman numerals should have interpretive priority over letter numerals. For example, should "c" be interpreted as 3 or 100? Default is roman.

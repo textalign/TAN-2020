@@ -570,6 +570,7 @@
       <optional>
         <attribute name="exceptions">
           <a:documentation>lists strings that should not be interpreted as numerics; this is most commonly used in rare cases where a string label for @n or @ref might be interpreted as a Roman numeral or a letter numeral</a:documentation>
+          <a:documentation>Expected is a space delimited list of atomic values of @n. Because @n is not case-sensitive, every item in @exceptions is as well.</a:documentation>
         </attribute>
       </optional>
       <optional>

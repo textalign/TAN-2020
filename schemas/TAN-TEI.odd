@@ -321,9 +321,14 @@
                 main.xml#vocabularies-n-bible-spa main.xml#vocabularies-n-quran-eng-ara
                 main.xml#vocabularies-n-unlabeled-divs-1-eng</desc>
               <datatype>
-                <rng:data type="string">
+                <!-- The TAN definition for @n, commented out below, is not enforced on the 
+                  RNC level, because it should pertain only to <div>, not to @n values in the
+                  teiHeader's descendants. The regular expression below is enforced within the 
+                  <body> via TAN schematron validation. -->
+                <rng:data type="string"/>
+                <!--<rng:data type="string">
                   <rng:param name="pattern">[\w/_]+([\- ,;]+[\w/_]+)*</rng:param>
-                </rng:data>
+                </rng:data>-->
               </datatype>
             </attDef>
           </attList>

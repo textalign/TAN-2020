@@ -9,7 +9,7 @@ namespace teix = "http://www.tei-c.org/ns/Examples"
 namespace xi = "http://www.w3.org/2001/XInclude"
 namespace xlink = "http://www.w3.org/1999/xlink"
 
-# Schema generated from ODD source 2021-07-02T14:25:49Z. .
+# Schema generated from ODD source 2021-09-11T23:34:16Z. .
 # TEI Edition: Version 4.1.0. Last updated on
 #	19th August 2020, revision b414ba550
 # TEI Edition Location: https://www.tei-c.org/Vault/P5/Version 4.1.0/
@@ -402,6 +402,8 @@ div {
       element numerals {
         
         ## lists strings that should not be interpreted as numerics; this is most commonly used in rare cases where a string label for @n or @ref might be interpreted as a Roman numeral or a letter numeral
+        
+        ## Expected is a space delimited list of atomic values of @n. Because @n is not case-sensitive, every item in @exceptions is as well.
         attribute exceptions { text }?,
         
         ## specifies whether roman numerals should have interpretive priority over letter numerals. For example, should "c" be interpreted as 3 or 100? Default is roman.
@@ -880,7 +882,7 @@ anyElement-content =
     (text | anyElement-content)*
   }
   >> sch:pattern [
-       id = "d9e111134-constraint"
+       id = "d9e111132-constraint"
        "\x{a}" ~
        "         "
        sch:rule [
@@ -911,7 +913,7 @@ anyElement-datatype =
     (text | anyElement-datatype)*
   }
   >> sch:pattern [
-       id = "d9e112298-constraint"
+       id = "d9e112296-constraint"
        "\x{a}" ~
        "         "
        sch:rule [
@@ -1524,9 +1526,7 @@ att.global.attribute.xmlid =
 att.global.attribute.n =
   
   ## (number) names a <div> or <group>, or refers to a <div>'s @n. ¶ @n may consist of one or more values, space delimited, which are to be treated as synonyms. ¶ Each synonymous value of @n may be simple or complex. A simple value of @n is a set of word characters (or the underbar). A complex value of @n consists of word characters (or the underbar) separated by commas and hyphens. A complex value of @n refers to a range of references. The sequence of items in a complex value are significant. For example n="6, 8" signifies that the text straddles reference 6 then 8. But n="8, 6" signifies the converse. In the context of a <div>, the implication is that in neither case can the text be securely disentangled so as to create one <div> for 6 and another for 8. ¶ The hyphen-minus, - (U+002D, the most common form of hyphen), is reserved to specify a range. This feature is useful for cases where a <div> straddles more than one standard reference number (e.g., a translation of Aristotle that cannot be easily tied to Bekker numbers). ¶ If you need to use a hyphen-like character in an @n that does not specify a range, consider ‐ (U+2010 HYPHEN), ‑ (U+2011 NON-BREAKING HYPHEN), ‒ (U+2012 FIGURE DASH), – (U+2013 EN DASH), or − (U+2212 MINUS SIGN). ¶ The comma is reserved to specify a sequence of references. ¶ The space is reserved to separate synonymous values, or to pad commas and hyphens. If you wish to use a value of @n that would normally use word spaces, use the underbar, _, instead. ¶ @n does not permit other non-word spaces reserved by @ref, i.e., the period/full stop or colon, which delimit a hierarchy of @n's. ¶ Because @n is used to construct @ref, it is indirectly cumulatively inheritable. See main.xml#inheritable_attributes. ¶ Extra TAN vocabulary is available for @n, to provide built-in aliases. For more on this feature see main.xml#extra_n_vocabulary. For specific extra vocabulary see main.xml#vocabularies-n-bible-eng main.xml#vocabularies-n-bible-spa main.xml#vocabularies-n-quran-eng-ara main.xml#vocabularies-n-unlabeled-divs-1-eng
-  attribute n {
-    xsd:string { pattern = "[\w/_]+([\- ,;]+[\w/_]+)*" }
-  }?
+  attribute n { xsd:string }?
 att.global.attribute.xmllang =
   [
     a:documentation [
