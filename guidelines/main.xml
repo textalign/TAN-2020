@@ -62,25 +62,26 @@
          <title>Introduction</title>
          <section xml:id="tan_definition">
             <title>Overview</title>
-            <para>The Text Alignment Network (TAN) is a digital framework that allows users, working
-               independently and collaboratively, to create, edit, study, find, align, and share
+            <para>The Text Alignment Network (TAN) is a framework that allows users, working
+               independently and collaboratively, to share, find, create, edit, and explore digital
                texts and annotations. </para>
             <para>A customized extension of <link xlink:href="http://tei-c.org">Text Encoding
                   Initiative (TEI)</link> XML, TAN is particularly suited for organizing and
                aligning texts with multiple versions (copies, translations, paraphrases), and for
                creating and editing text annotations such as quotations, translation clusters
                (word-to-word), and linguistic features. </para>
-            <para>TAN is a suite of XML formats designed to maximize the syntactic and semantic
-               interoperability of texts, annotations, and language resources. Its applications and
-               utilities are specially designed to enhance scholarly publishing, research, and
-               teaching. </para>
+            <para>The foundation of TAN is a suite of XML formats, each designed for a specific
+               task. The extensive valid routines maximize the syntactic and semantic
+               interoperability of texts, annotations, and language resources. TAN's applications
+               and utilities are specially designed to cut new trails in scholarly publishing,
+               research, and teaching. </para>
             <para>Why use TAN? </para>
             <para><emphasis role="bold">Extensive error checking</emphasis>. Built-in TAN validation
-               rules go well beyond the customary error-checking performed by other formats. More
-               than one hundred types of content-based errors are checked. Files linked in the
-               network "talk" to each other, to let users know about changes and updates. Many of
-               the problems detected in files are associated with Schematron Quick Fixes, which
-               allows users to make corrections in a matter of seconds.</para>
+               rules go well beyond the customary error-checking performed by other formats. Files
+               linked in the network "talk" to each other, to let users know about changes and
+               updates. More than one hundred types of content-based errors are checked. Through
+               Schematron Quick Fixes, many of the problems can be corrected in a matter of
+               seconds.</para>
             <para><emphasis role="bold">Time-saving utilities</emphasis>. Enjoy enhanced editing
                functions in Oxygen XML Editor's Author mode. Highly customizable TAN utilities help
                you create, edit, and maintain TEI and TAN files. For example: </para>
@@ -123,25 +124,24 @@
                </itemizedlist></para>
             <para><emphasis role="bold">Intuitive text referencing</emphasis>. Unlike TEI, HTML, or
                other markup systems that rely heavily upon arbitrary identifiers that can be
-               difficult to navigate, edit, and maintain, TAN points to text using familiar
-               reference systems.</para>
-            <para><emphasis role="bold">Development</emphasis>. TAN is built upon an extensive and
-               robust XSLT function library, one of the few of its kind, facilitating development of
-               applications for TAN/TEI files. Do you already use <link
-                  xlink:href="https://www.nltk.org/">Natural Language Toolkit</link>, <link
-                  xlink:href="http://cltk.org/">Classical Language Toolkit</link>, or comparable
-               packages to program tools for textual and linguistic research? Do you have to
-               process, analyze, and transform texts that are in tree structures? The TAN function
-               library might have everything you need, and more, to do all this within a single
-               environment. Many TAN functions have significant application well beyond the TAN or
-               TEI world.</para>
-            <para><emphasis role="bold">Semantic Web compatibility</emphasis>. TAN was designed at
-               the outset to ensure that texts and their annotations would be rooted in the
-               practices of the Semantic Web. Unlike many other formats, whose attribute values are
-               almost always only human-readable, most components in TAN files are tied to URIs.
-               When words are tagged for grammatical part of speech, the codes are tethered to URIs
-               that connect them with part-of-speech tags from other languages. All TAN files are
-               RDF-centric, making them suitable for use in Semantic Web applications.</para>
+               difficult to navigate and maintain, TAN points to text portions using familiar
+               reference systems, or user-customized tokenization rules.</para>
+            <para><emphasis role="bold">Application development</emphasis>. TAN is built upon an
+               extensive and robust XSLT function library, one of the few of its kind. Do you
+               already use <link xlink:href="https://www.nltk.org/">Natural Language Toolkit</link>,
+                  <link xlink:href="http://cltk.org/">Classical Language Toolkit</link>, or
+               comparable packages in programming languages to develop tools for textual and
+               linguistic research? Do you have to process, analyze, and transform texts that are in
+               tree structures? The TAN function library might have everything you need, and more,
+               to do all this within a single environment. Many TAN functions are extremely useful,
+               even outside of TEI or TAN.</para>
+            <para><emphasis role="bold">Semantic Web</emphasis>. TAN was designed at the outset to
+               ensure that texts and their annotations would be rooted in the practices of the
+               Semantic Web. Unlike many other formats, whose attribute values are almost always
+               only human-readable, most TAN file components are tied to URIs. When words are tagged
+               for grammatical part of speech, the codes are tethered to URIs that connect them with
+               part-of-speech tags from other languages. All TAN files are RDF-centric, making them
+               suitable for use in Semantic Web applications.</para>
          </section>
          <section>
             <title>Rationale and purpose</title>
@@ -419,7 +419,7 @@
     type="application/relax-ng-compact-syntax"?>
 &lt;?xml-model href="http://textalign.net/release/TAN-2020/schemas/TAN-T.sch" 
     type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
-&lt;TAN-T xmlns="tag:textalign.net,2015:ns" TAN-version="2020" 
+&lt;TAN-T xmlns="tag:textalign.net,2015:ns" TAN-version="2021" 
     id="tag:parkj@textalign.net,2015:ring01">
     &lt;head>
     . . . . . . .
@@ -624,7 +624,7 @@
     type="application/relax-ng-compact-syntax"?>
 &lt;?xml-model href="http://textalign.net/release/TAN-2018/schemas/TAN.sch" 
     type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
-&lt;<emphasis role="bold">TAN-A</emphasis> xmlns="tag:textalign.net,2015:ns" TAN-version="2020" 
+&lt;<emphasis role="bold">TAN-A</emphasis> xmlns="tag:textalign.net,2015:ns" TAN-version="2021" 
     id="tag:parkj@textalign.net,2015:<emphasis role="bold">ring-alignment</emphasis>">
     &lt;head>
     . . . . . . .
@@ -1067,7 +1067,7 @@
             <para>Now that we have explored various IRI vocabularies for concepts related to our
                files concerning <emphasis>Ring-a-ring-a-roses</emphasis>, we can now complete the
                metadata in our four TAN files. Let us start with the TAN-T file of the 1881
-               version:<programlisting>&lt;TAN-T xmlns="tag:textalign.net,2015:ns" TAN-version="2020" 
+               version:<programlisting>&lt;TAN-T xmlns="tag:textalign.net,2015:ns" TAN-version="2021" 
     id="tag:parkj@textalign.net,2015:ring01">
     &lt;head>
         <emphasis role="bold">&lt;name>TAN transcription of Ring a Ring o' Roses&lt;/name>
@@ -1235,7 +1235,7 @@
                and you can design your own vocabulary, so that you can shorten the work involved,
                and to adhere to the best DRY principles.</para>
             <para>Our second example will look similar to the first one, but notice some
-               shortcuts:<programlisting>&lt;TAN-T xmlns="tag:textalign.net,2015:ns" TAN-version="2020" 
+               shortcuts:<programlisting>&lt;TAN-T xmlns="tag:textalign.net,2015:ns" TAN-version="2021" 
     id="tag:parkj@textalign.net,2015:ring02">
     &lt;head>
       &lt;name>TAN transcription of <emphasis role="bold">Ring around the Rosie</emphasis>&lt;/name>
@@ -1282,7 +1282,7 @@
                TAN's standard vocabulary for licenses (see <xref xlink:href="#vocabularies-licenses"
                />). Here is what that looks like under the hood:</para>
             <para>
-               <programlisting>&lt;<emphasis role="bold">TAN-voc</emphasis> xmlns="tag:textalign.net,2015:ns" TAN-version="2020" 
+               <programlisting>&lt;<emphasis role="bold">TAN-voc</emphasis> xmlns="tag:textalign.net,2015:ns" TAN-version="2021" 
    id="tag:textalign.net,2015:<emphasis role="bold">tan-voc:licenses</emphasis>">
     . . . . . . .
    &lt;body <emphasis role="bold">affects-element="license"</emphasis>>
@@ -1314,7 +1314,7 @@
                item looks like (invisible to you, but you can look at it any time you like in the
                   <code>vocabularies</code> subdirectory of the TAN files):</para>
             <para>
-               <programlisting>&lt;<emphasis role="bold">TAN-voc</emphasis> xmlns="tag:textalign.net,2015:ns" TAN-version="2020" id="tag:textalign.net,2015:<emphasis role="bold">tan-voc:normalizations</emphasis>">
+               <programlisting>&lt;<emphasis role="bold">TAN-voc</emphasis> xmlns="tag:textalign.net,2015:ns" TAN-version="2021" id="tag:textalign.net,2015:<emphasis role="bold">tan-voc:normalizations</emphasis>">
     . . . . . . .
    &lt;body <emphasis role="bold">affects-element="normalization"</emphasis>>
       <emphasis role="bold">&lt;item>
@@ -1393,7 +1393,7 @@
 &lt;?xml-model href="../../schemas/<emphasis role="bold">TAN-voc.rnc</emphasis>" type="application/relax-ng-compact-syntax"?>
 &lt;?xml-model href="../../schemas/TAN.sch" type="application/xml" 
     schematypens="http://purl.oclc.org/dsdl/schematron"?>
-&lt;TAN-voc xmlns="tag:textalign.net,2015:ns" TAN-version="2020" 
+&lt;TAN-voc xmlns="tag:textalign.net,2015:ns" TAN-version="2021" 
     id="tag:parkj@textalign.net,2015:<emphasis role="bold">TAN-voc:standard</emphasis>">
     &lt;head>
         <emphasis role="bold">&lt;name>Keywords for TAN files edited by Jenny Park&lt;/name></emphasis>
@@ -1451,7 +1451,7 @@
                our two TAN-T files, and see how to incorporate our new TAN-voc vocabulary
                file.</para>
             <para>
-               <programlisting>&lt;TAN-T xmlns="tag:textalign.net,2015:ns" TAN-version="2020" 
+               <programlisting>&lt;TAN-T xmlns="tag:textalign.net,2015:ns" TAN-version="2021" 
     id="tag:parkj@textalign.net,2015:ring01">
     &lt;head>
         &lt;name>TAN transcription of Ring a Ring o' Roses&lt;/name>
@@ -1481,7 +1481,7 @@
 &lt;/TAN-T></programlisting>
             </para>
             <para>
-               <programlisting>&lt;TAN-T xmlns="tag:textalign.net,2015:ns" TAN-version="2020" 
+               <programlisting>&lt;TAN-T xmlns="tag:textalign.net,2015:ns" TAN-version="2021" 
     id="tag:parkj@textalign.net,2015:ring02">
     &lt;head>
       &lt;name>TAN transcription of Ring around the Rosie&lt;/name>
@@ -1544,7 +1544,7 @@
                alignment files. Those <code><link linkend="element-head">&lt;head></link></code>s
                will look slightly different, because they are not concerned with transcriptions per
                se. We start with the TAN-A
-               file:<programlisting>&lt;TAN-A xmlns="tag:textalign.net,2015:ns" TAN-version="2020" 
+               file:<programlisting>&lt;TAN-A xmlns="tag:textalign.net,2015:ns" TAN-version="2021" 
     id="tag:parkj@textalign.net,2015:<emphasis role="bold">ring-alignment</emphasis>">
     &lt;head>
        &lt;name><emphasis role="bold">div-based alignment of multiple versions of Ring o Roses</emphasis>&lt;/name>
@@ -1635,7 +1635,7 @@
                   <code>a/x+/b</code>, pointing to a standard TAN vocabulary item for <link
                   xlink:href="#vocabularies-bitext-relations">bitext relations</link>:</para>
             <para>
-               <programlisting>&lt;TAN-voc xmlns="tag:textalign.net,2015:ns" TAN-version="2020" 
+               <programlisting>&lt;TAN-voc xmlns="tag:textalign.net,2015:ns" TAN-version="2021" 
    id="tag:textalign.net,2015:tan-voc:bitext-relation">
 . . . . . .
         &lt;item>
@@ -1652,7 +1652,7 @@
                tokenization rule should be applied to both sources. <link linkend="attribute-which"
                      ><code>@which</code></link> points to this standard TAN vocabulary item:</para>
             <para>
-               <programlisting>&lt;TAN-voc xmlns="tag:textalign.net,2015:ns" TAN-version="2020" 
+               <programlisting>&lt;TAN-voc xmlns="tag:textalign.net,2015:ns" TAN-version="2021" 
    id="tag:textalign.net,2015:tan-voc:tokenizations">
 . . . . . .
         &lt;item>
@@ -1827,7 +1827,7 @@
                </footnote></para>
             <para>These are points we can easily reconcile in our TAN-A file, which we now expand to
                include the German version. We make the following adjustments
-               (emphasized):<programlisting>&lt;TAN-A xmlns="tag:textalign.net,2015:ns" TAN-version="2020" 
+               (emphasized):<programlisting>&lt;TAN-A xmlns="tag:textalign.net,2015:ns" TAN-version="2021" 
     id="tag:parkj@textalign.net,2015:ring-alignment">
     &lt;head>
        &lt;name>div-based alignment of multiple versions of Ring o Roses&lt;/name>
@@ -3585,7 +3585,7 @@ tag:bbrb@example.org,1995-04-01:pos-grc</programlisting>
                   >@id</link></code> and <code><link linkend="attribute-TAN-version"
                      >@TAN-version</link></code>. On <code><link linkend="attribute-id"
                   >@id</link></code>, see below. <code><link linkend="attribute-TAN-version"
-                     >@TAN-version</link></code> must be <code>2020</code>, the current version of
+                     >@TAN-version</link></code> must be <code>2021</code>, the current version of
                TAN.</para>
             <para>All TAN elements fall under the namespace <code>tag:textalign.net,2015:ns</code>.
                In most cases, the namespace is declared in the root element. (The only exceptions
@@ -5230,24 +5230,26 @@ tag:bbrb@example.org,1995-04-01:pos-grc</programlisting>
                                        to a vocabulary item</para>
                                  </listitem>
                                  <listitem>
-                                    <para><code><link linkend="attribute-n">@n</link></code> must
-                                       consist of word characters or the underscore, conforming to
-                                       the following regular expression: <code>[\w\._]+([\-
-                                          ,]+[\w\._]+)*</code>. If <code><link linkend="attribute-n"
-                                             >@n</link></code> is to be given more than one value,
-                                       those items must be separated by a space or a comma. A
-                                       hyphen-minus, - (U+002D, the most common form of hyphen),
-                                       always has special meaning in <code><link
-                                             linkend="attribute-n">@n</link></code>, specifying a
-                                       range. This feature is useful for cases where a <code><link
-                                             linkend="element-div">&lt;div></link></code> straddles
-                                       more than one standard reference number (e.g., a translation
-                                       of Aristotle that cannot be easily tied to Bekker numbers).
-                                       If you need to use a hyphen-like character in an <code><link
-                                             linkend="attribute-n">@n</link></code> that does not
-                                       specify a range of numbers, consider ‐ (U+2010 HYPHEN), ‑
-                                       (U+2011 NON-BREAKING HYPHEN), ‒ (U+2012 FIGURE DASH), –
-                                       (U+2013 EN DASH), or − (U+2212 MINUS SIGN).</para>
+                                    <para><code><link linkend="attribute-n">@n</link></code> allows
+                                          synonyms, sequences, and ranges, and must match the
+                                          regular expression defined by <code><link
+                                                linkend="variable-attr-n-regex"
+                                                >$tan:attr-n-regex</link></code>. If <code><link
+                                                linkend="attribute-n">@n</link></code> is to be
+                                          given more than one value, those items must be separated
+                                          by a space or a comma. A hyphen-minus, - (U+002D, the most
+                                          common form of hyphen), always has special meaning in
+                                                <code><link linkend="attribute-n">@n</link></code>,
+                                          specifying a range. This feature is useful for cases where
+                                          a <code><link linkend="element-div">&lt;div></link></code>
+                                          straddles more than one standard reference number (e.g., a
+                                          translation of Aristotle that cannot be easily tied to
+                                          Bekker numbers). If you need to use a hyphen-like
+                                          character in an <code><link linkend="attribute-n"
+                                                >@n</link></code> that does not specify a range of
+                                          numbers, consider ‐ (U+2010 HYPHEN), ‑ (U+2011
+                                          NON-BREAKING HYPHEN), ‒ (U+2012 FIGURE DASH), – (U+2013 EN
+                                          DASH), or − (U+2212 MINUS SIGN).</para>
                                  </listitem>
                               </itemizedlist>
                            </entry>
@@ -7573,7 +7575,7 @@ return x</programlisting>
                      <thead>
                         <row>
                            <entry>Quantity</entry>
-                           <entry>Symbol used</entry>
+                           <entry>Symbol</entry>
                            <entry>Atomic type example</entry>
                            <entry>Node type example</entry>
                         </row>
