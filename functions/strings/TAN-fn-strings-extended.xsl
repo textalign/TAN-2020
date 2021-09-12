@@ -542,7 +542,7 @@
                <xsl:value-of select="true()"/>
             </xsl:when>
             <xsl:otherwise>
-               <xsl:value-of select="matches($string-to-test, $string-must-match-regex, $flags)"/>
+               <xsl:value-of select="tan:matches($string-to-test, $string-must-match-regex, $flags)"/>
             </xsl:otherwise>
          </xsl:choose>
       </xsl:variable>
@@ -557,7 +557,7 @@
             </xsl:when>
             <xsl:otherwise>
                <xsl:value-of
-                  select="not(matches($string-to-test, $string-must-not-match-regex, $flags))"/>
+                  select="not(tan:matches($string-to-test, $string-must-not-match-regex, $flags))"/>
             </xsl:otherwise>
          </xsl:choose>
       </xsl:variable>

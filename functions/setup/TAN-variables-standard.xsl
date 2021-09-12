@@ -90,17 +90,17 @@
    <xsl:variable name="tan:names-of-attributes-that-take-idrefs" as="xs:string+" select="$tan:id-idrefs/tan:id-idrefs/tan:id/tan:idrefs/@attribute"/>
    <xsl:variable name="tan:names-of-attributes-that-may-take-multiple-space-delimited-values" as="xs:string+"
       select="$tan:names-of-attributes-that-take-idrefs, ('affects-element', 'affects-attribute', 'item-type')"/>
-   <xsl:variable name="tan:names-of-attributes-that-permit-keyword-last" select="('pos', 'chars', 'm-has-how-many-features')"/>
+   <xsl:variable name="tan:names-of-attributes-that-permit-keyword-last" as="xs:string+" select="('pos', 'chars', 'm-has-how-many-features')"/>
    <xsl:variable name="tan:names-of-attributes-that-are-case-indifferent" as="xs:string+" select="('n', 'ref', 'affects-element', 'affects-attribute', 'item-type', 'in-lang')"/>
    <xsl:variable name="tan:names-of-elements-that-take-idrefs" as="xs:string+" select="$tan:id-idrefs/tan:id-idrefs/tan:id/tan:idrefs/@element"/>
    <xsl:variable name="tan:names-of-elements-that-take-which" as="xs:string+"
       select="('object', 'unit', 'lexicon', 'license', 'see-also', 'work', 'role', 'source', 'group-type', 'morphology', 'source', 'work', 'verb', 'scriptum', 'relationship', 'person', 'period', 'organization', 'div-type', 'algorithm', 'vocabulary', 'successor', 'source', 'predecessor', 'inclusion', 'companion-version', 'token-definition', 'bitext-relation', 'checksum', 'redivision', 'model', 'annotation', 'version', 'normalization', 'item', 'feature', 'version', 'reuse-type', 'topic', 'place', 'modal', 'subject', 'at-ref')"
    />
-   <xsl:variable name="tan:names-of-elements-that-must-always-refer-to-tan-files"
+   <xsl:variable name="tan:names-of-elements-that-must-always-refer-to-tan-files" as="xs:string+"
       select="('morphology', 'inclusion', 'vocabulary', 'redivision', 'model', 'successor', 'annotation')"/>
-   <xsl:variable name="tan:names-of-elements-that-describe-text-creators" select="('person', 'organization')"/>
-   <xsl:variable name="tan:names-of-elements-that-describe-text-bearers" select="('scriptum', 'work', 'version', 'source')"/>
-   <xsl:variable name="tan:names-of-elements-that-make-adjustments" select="('skip', 'rename', 'equate', 'reassign')"/>
+   <xsl:variable name="tan:names-of-elements-that-describe-text-creators" as="xs:string+" select="('person', 'organization')"/>
+   <xsl:variable name="tan:names-of-elements-that-describe-text-bearers" as="xs:string+" select="('scriptum', 'work', 'version', 'source')"/>
+   <xsl:variable name="tan:names-of-elements-that-make-adjustments" as="xs:string+" select="('skip', 'rename', 'equate', 'reassign')"/>
    <xsl:variable name="tan:names-of-elements-that-describe-textual-entities"
       select="$tan:names-of-elements-that-describe-text-creators, $tan:names-of-elements-that-describe-text-bearers"/>
    <xsl:variable name="tan:names-of-elements-targeted-by-subjects"
@@ -108,11 +108,12 @@
    <xsl:variable name="tan:names-of-elements-targeted-by-objects"
       select="$tan:id-idrefs/tan:id-idrefs/tan:id[tan:idrefs[@attribute = 'object']]/tan:element"/>
    
-   <xsl:variable name="tan:tag-urn-regex-pattern"
+   <xsl:variable name="tan:tag-urn-regex-pattern" as="xs:string"
       select="'tag:([\-a-zA-Z0-9._%+]+@)?[\-a-zA-Z0-9.]+\.[A-Za-z]{2,4},\d{4}(-(0\d|1[0-2]))?(-([0-2]\d|3[01]))?:\S+'"/>
+   <xsl:variable name="tan:attr-n-regex" as="xs:string" select="'^[\w/_]+([\- ,;]+[\w/_]+)*$'"/>
    
    <!-- The next variable contains the map between elements and attributes that may point to names or ids of those elements -->
-   <xsl:variable name="tan:id-idrefs" select="doc('TAN-idrefs.xml')"/>
+   <xsl:variable name="tan:id-idrefs" as="document-node()" select="doc('TAN-idrefs.xml')"/>
    
    <xsl:variable name="tan:TAN-namespace" select="'tag:textalign.net,2015:ns'"/>
    <xsl:variable name="tan:TEI-namespace" select="'http://www.tei-c.org/ns/1.0'"/>
