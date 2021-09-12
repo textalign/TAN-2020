@@ -218,6 +218,7 @@
 
    <!-- TEI adjustments -->
 
+   <!-- Do you want to ignore internal TEI markup and treat it as plain text? -->
    <xsl:param name="tei-should-be-plain-text" as="xs:boolean" select="false()"/>
    <!-- Do you wish to omit any TEI elements that have no text nodes? If false, the output may include 
       text or other items that break up the main text, making searching difficult. -->
@@ -363,16 +364,24 @@
       XPath and XSLT.
  -->
 
-   <!-- What should the primary color scheme be? Expected: an array, each member consisting of three
-      integers from 0 through 255, e.g., [(0,0,0), (255,255,255)], representing red, yellow, blue values. -->
+   <!-- What should the primary color scheme be? The primary color array refers to the background
+      color that will be applied to first group of sources. Expected: an array, each member consisting of
+      three integers from 0 through 255, e.g., [(0,0,0), (255,255,255)], representing red, green, blue
+      values. If the parameter points to variables of whose names begin tan:ryb- note that these too are
+      red, green, blue integer sequences, but they summon one of the twelve colors made from the three
+      primary colors (red, yellow, blue), the three secondary colors (orange, green, purple), and the
+      mixture of adjacent primary and secondary colors. -->
    <xsl:param name="primary-color-array" as="array(xs:integer+)"
       select="[$tan:ryb-red, $tan:ryb-red-orange, $tan:ryb-orange, $tan:ryb-yellow-orange, $tan:ryb-yellow, $tan:ryb-yellow-green, $tan:ryb-green, $tan:ryb-blue-green, $tan:ryb-blue, $tan:ryb-blue-purple, $tan:ryb-purple, $tan:ryb-red-purple]"/>
-   <!-- What should the secondary color scheme be? Expected: an array, each member consisting of three
-      integers from 0 through 255. -->
+   <!-- What should the secondary color scheme be? The secondary color array refers to the background
+      color that will be applied to groups of sources after the first. Expected: an array, each member
+      consisting of three integers from 0 through 255. -->
    <xsl:param name="secondary-color-array" as="array(xs:integer+)"
       select="[$tan:ryb-yellow-green, $tan:ryb-green, $tan:ryb-blue-green, $tan:ryb-blue, $tan:ryb-blue-purple, $tan:ryb-purple, $tan:ryb-red-purple, $tan:ryb-red, $tan:ryb-red-orange, $tan:ryb-orange, $tan:ryb-yellow-orange, $tan:ryb-yellow]"/>
-   <!-- What should the terminal color scheme be? Expected: an array, each member consisting of three
-      integers from 0 through 255 and a fourth that is a decimal between 0 and 1 (opacity). -->
+   <!-- What should the terminal color scheme be? The terminal color scheme refers to the background
+      color that will be applied to versions of texts within a final group of sources. Expected: an
+      array, each member consisting of three integers from 0 through 255 and a fourth that is a decimal
+      between 0 and 1 (opacity). -->
    <xsl:param name="terminal-color-array" as="array(xs:double+)"
       select="[$tan:white-mask-a70, $tan:white-mask-a60, $tan:white-mask-a50, $tan:white-mask-a40, $tan:white-mask-a30, $tan:white-mask-a20, $tan:white-mask-a10]"/>
 

@@ -971,13 +971,16 @@
         <!-- If a div was subject to an equate action, because it's a specific version, retreive that info. -->
         <xsl:variable name="this-q" select="@q"/>
         <xsl:variable name="fetch-src-qualifier" as="xs:boolean" select="($item-group-count gt 1) and (count(tan:ref) gt 1)"/>
+        <!-- Normally this would be element()?, but there is the possibility that
+            a class 1 source is fed in multiple times, in which q-ref would hit multiple
+            targets. TODO: disallow the same source to appear multiple times. -->
         <xsl:variable name="this-div-rewound" select="
                 if ($fetch-src-qualifier) then
                     (for $i in $input-pass-1
                     return
                         key('tan:q-ref', $this-q, $i))
                 else
-                    ()" as="element()?"/>
+                    ()" as="element()*"/>
         <xsl:variable name="these-equate-original-ns"
             select="$this-div-rewound/ancestor-or-self::tan:div[tan:equate]/(@orig-n, @n)[1]"/>
         
