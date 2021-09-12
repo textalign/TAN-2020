@@ -27,6 +27,7 @@ Below are listed significant changes that have been made since version 2020. See
 * Every reference system is now declared, explicitly or implicitly. A new optional element `<reference-system>` declares the type of reference system (logical or material) 
 * Added `reference-system`, to allow class 1 files to be parsed by Writing Fragment Identifier URIs
 * `div` may now take `@ref-alias`, which provides an alternative reference for the `div`. The number of steps in each reference must match exactly the depth of the `div` within `body`, and each step in each reference is assumed to inherit the corresponding type of the ancestor or self `div`. This feature was added particularly to support class 1 files representing scripta that preserve a work only fragmentarily (i.e., via quotation). In some cases, a quotation might be assigned to more than one place in the reference system of the target work, perhaps because that passage appears more than once in the work. In such cases, 
+* added error tei01 to enforce @n syntax
 
 ### Class 2
 * Fix: adjustment reference systems are converted into the target source file's preferred @n system before application.
