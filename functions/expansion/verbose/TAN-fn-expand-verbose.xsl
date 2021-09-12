@@ -10,6 +10,9 @@
       <!-- Pass 1: fetch <redivision> normalized text and imprint a <diff> against the current base text; fetch <model> div structure -->
    <xsl:template match="tan:head" mode="tan:class-1-expansion-verbose-pass-1">
       <xsl:variable name="base-text" select="string-join(../tan:body//tan:div[not(tan:div)]/text(), '')"/>
+      <!-- TODO: investigate an SQF to replace children of the root element with a master location's corresponding one -->
+      <!--<xsl:variable name="errant-master-locations" as="element()*" select="tan:master-location[tan:*[@xml:id eq 'tan18']]"/>-->
+      
       <xsl:copy>
          <xsl:copy-of select="@*"/>
          <xsl:apply-templates mode="#current">
@@ -221,15 +224,17 @@
          </xsl:if>
          <!-- Check to see if the values of @n or @ref are present -->
          <xsl:if test="$is-leaf-div">
-            <xsl:variable name="this-text" select="text()"/>
-            <xsl:variable name="go-up-to" select="20"/>
-            <xsl:variable name="opening-text" select="substring($this-text, 1, $go-up-to)"/>
-            <xsl:variable name="opening-text-analyzed"
+            <xsl:variable name="this-text" as="xs:string" select="text()"/>
+            <!-- The following is an arbitrary value that may be converted to a parameter one day -->
+            <xsl:variable name="go-up-to" as="xs:integer" select="20"/>
+            <xsl:variable name="opening-text" as="xs:string" select="substring($this-text, 1, $go-up-to)"/>
+            <xsl:variable name="opening-text-analyzed" as="element()*"
                select="tan:analyze-numbers-in-string($opening-text, true(), (), ())"/>
-            <xsl:variable name="opening-text-as-numerals"
+            <xsl:variable name="opening-text-as-numerals" as="xs:string?"
                select="tan:string-to-numerals($opening-text, true(), true(), (), ())"/>
-            <xsl:variable name="opening-text-replacement"
+            <xsl:variable name="opening-text-replacement" as="xs:string"
                select="string-join($opening-text-analyzed/text(), '')"/>
+            <xsl:variable name="is-tei" as="xs:boolean" select="exists(tei:*)"/>
 
             <xsl:if test="$diagnostics-on">
                <xsl:message select="'opening text: ', $opening-text"/>
@@ -237,15 +242,19 @@
                <xsl:message select="'opening text as numerals: ', $opening-text-as-numerals"/>
                <xsl:message select="'opening text replacement: ', $opening-text-replacement"/>
                <xsl:message select="'first ota tok:', ($opening-text-analyzed/self::tan:tok)[1]"/>
-               
-                  
-               
             </xsl:if>
+            
             <xsl:if test="($opening-text-analyzed/self::tan:tok)[1] = tan:n">
-               <xsl:copy-of
-                  select="tan:error('cl115', 'opening seems to duplicate @n ', 
-                  $opening-text-replacement || substring($this-text, $go-up-to + 1), 'replace-text')"
-               />
+               <xsl:choose>
+                  <xsl:when test="$is-tei">
+                     <xsl:copy-of select="tan:error('cl115', 'opening seems to duplicate @n ')"/>
+                  </xsl:when>
+                  <xsl:otherwise>
+                     <xsl:copy-of
+                        select="tan:error('cl115', 'opening seems to duplicate @n ', $opening-text-replacement || substring($this-text, $go-up-to + 1), 'replace-text')"
+                     />
+                  </xsl:otherwise>
+               </xsl:choose>
             </xsl:if>
             <xsl:for-each select="tan:ref[tan:n]">
                <xsl:variable name="n-qty" select="count(tan:n)"/>
@@ -255,9 +264,19 @@
                      ($n-qty gt 1) and
                      (every $i in (1 to $n-qty)
                         satisfies tan:n[$i] = ($opening-text-analyzed[@number])[$i])">
-                  <xsl:copy-of
-                     select="tan:error('cl116', concat('opening seems to duplicate the reference for this &lt;div>: ', $this-ref), concat($opening-text-replacement, substring($this-text, $go-up-to + 1)), 'replace-text')"
-                  />
+                  <xsl:choose>
+                     <xsl:when test="$is-tei">
+                        <xsl:copy-of
+                           select="tan:error('cl116', concat('opening seems to duplicate the reference for this &lt;div>: ', $this-ref))"
+                        />
+                     </xsl:when>
+                     <xsl:otherwise>
+                        <xsl:copy-of
+                           select="tan:error('cl116', concat('opening seems to duplicate the reference for this &lt;div>: ', $this-ref), concat($opening-text-replacement, substring($this-text, $go-up-to + 1)), 'replace-text')"
+                        />
+                     </xsl:otherwise>
+                  </xsl:choose>
+                  
                </xsl:if>
             </xsl:for-each>
          </xsl:if>
