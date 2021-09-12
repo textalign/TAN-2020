@@ -762,10 +762,10 @@
                select="tan:error('clm09', ('The verb ' || string-join($verbs-that-disallow-period/tan:name[1], ', ') || ' must not have period; the verb ' || string-join($verbs-that-require-period/tan:name[1], ', ') || ' must have it'))"
             />
          </xsl:if>
-         <xsl:if test="exists($verbs-that-require-place) and not(exists(tan:place))">
+         <xsl:if test="exists($verbs-that-require-place) and not(exists(tan:where))">
             <xsl:copy-of select="tan:error('clm08', ('The verb ' || string-join($verbs-that-require-place/tan:name[1], ', ') || ' must have place'))"/>
          </xsl:if>
-         <xsl:if test="exists($verbs-that-disallow-place) and exists(tan:place)">
+         <xsl:if test="exists($verbs-that-disallow-place) and exists(tan:where)">
             <xsl:copy-of select="tan:error('clm08', ('The verb ' || string-join($verbs-that-require-place/tan:name[1], ', ') || ' must not have place'))"/>
          </xsl:if>
          <xsl:if test="exists($verbs-that-require-place) and exists($verbs-that-disallow-place)">
