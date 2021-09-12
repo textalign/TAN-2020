@@ -1227,22 +1227,22 @@
                               ()"/>
                      <xsl:variable name="variable-repeats-itself"
                         select="count($these-vals[. = $this-val]) gt 1"/>
-                     <xsl:variable name="this-val-esc" select="tan:escape($this-val)"/>
-                     <!--<xsl:variable name="these-qs" select="current-group()/../@q"/>-->
+                     <!--<xsl:variable name="this-val-esc" select="tan:escape($this-val)"/>-->
 
-                     <xsl:variable name="this-val-without-help-request"
+                     <xsl:variable name="this-val-without-help-request" as="element()?"
                         select="tan:help-extracted($this-val)"/>
-                     <xsl:variable name="this-val-name-normalized" select="
+                     <xsl:variable name="this-val-name-normalized" as="xs:string" select="
                            if ($this-is-which) then
-                              $this-val
+                              string($this-val-without-help-request)
                            else
-                              tan:normalize-name($this-val-without-help-request)"
+                              tan:normalize-name(string($this-val-without-help-request))"
                      />
                      <xsl:variable name="help-requested" as="xs:boolean" select="
                            if ($this-is-which) then
                               (matches(., $tan:help-trigger-regex))
                            else
                               exists($this-val-without-help-request/@help)"/>
+                     <xsl:variable name="this-val-esc" as="xs:string" select="tan:escape($this-val-name-normalized)"/>
                      
 
                      <xsl:variable name="this-vocabulary"
@@ -2044,12 +2044,23 @@
                <xsl:copy-of select="$this-master-doc/*"/>
             </xsl:when>
             <xsl:when test="not(deep-equal($tan:orig-self/*, $this-master-doc/*))">
-               <xsl:variable name="target-hist" select="tan:get-doc-history($this-master-doc)"/>
-               <xsl:variable name="target-changes"
-                  select="tan:xml-to-string(tan:copy-of-except($target-hist/*[position() lt 4], (), 'when-sort', ()))"/>
-               <xsl:copy-of
-                  select="tan:error('tan18', ('Master document differs from this one; last three edits: ' || $target-changes))"
-               />
+               <xsl:variable name="target-unparsed-text" as="xs:string?" select="unparsed-text(@href)"/>
+               <xsl:variable name="self-unparsed-text" as="xs:string?" select="unparsed-text($tan:doc-uri)"/>
+               <xsl:variable name="second-diff" as="element()" select="tan:diff($self-unparsed-text, $target-unparsed-text)"/>
+               <xsl:variable name="second-diff-truncated" as="element()">
+                  <xsl:apply-templates select="$second-diff" mode="tan:ellipses"/>
+               </xsl:variable>
+               
+               <xsl:if test="not(exists($second-diff)) or exists($second-diff/(tan:a | tan:b))">
+                  <xsl:variable name="target-hist" select="tan:get-doc-history($this-master-doc)"/>
+                  <xsl:variable name="target-changes"
+                     select="tan:xml-to-string(tan:copy-of-except($target-hist/*[position() lt 4], (), 'when-sort', ()))"/>
+                  
+                  <xsl:copy-of
+                     select="tan:error('tan18', ('Master document differs from this one; last three edits: ' || $target-changes || '; differences: ' || tan:xml-to-string($second-diff-truncated)))"
+                  />
+                  
+               </xsl:if>
             </xsl:when>
          </xsl:choose>
          <xsl:apply-templates mode="#current"/>
