@@ -1,6 +1,6 @@
-# Changes from TAN-2020 to development branch
+# Changes since version 2020
 
-Below are listed significant changes that have been made since version 2020. See the git log of the dev branch for a complete account of all changes.
+Below are listed significant changes that have been made since version 2020 to the Text Alignment Network. See the git log of the dev branch for a complete account of all changes.
 
 ## General
 

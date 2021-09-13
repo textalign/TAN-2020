@@ -72,9 +72,9 @@
                (word-to-word), and linguistic features. </para>
             <para>The foundation of TAN is a suite of XML formats, each designed for a specific
                task. The extensive valid routines maximize the syntactic and semantic
-               interoperability of texts, annotations, and language resources. TAN's applications
-               and utilities are specially designed to cut new trails in scholarly publishing,
-               research, and teaching. </para>
+               interoperability of texts, annotations, and language resources. TAN comes with
+               applications and utilities that open new frontiers in scholarly publishing, research,
+               and teaching. </para>
             <para>Why use TAN? </para>
             <para><emphasis role="bold">Extensive error checking</emphasis>. Built-in TAN validation
                rules go well beyond the customary error-checking performed by other formats. Files
@@ -92,22 +92,22 @@
                   </listitem>
                   <listitem>
                      <para><emphasis>Body Remodeler</emphasis>: incrementally restructure a text to
-                        imitate an existing TAN/TEI file; in conjunction with Oxygen Author tools,
-                        this utility can save hours of labor in creating a collection of
-                        versions.</para>
+                        imitate an existing TAN/TEI file. In conjunction with Oxygen Author tools,
+                        this utility can save hours of labor in creating a collection of many
+                        versions of the same work.</para>
                   </listitem>
                   <listitem>
-                     <para><emphasis>Body Sync</emphasis>: update a TAN/TEI file so its text exactly
-                        matches that of another TAN/TEI file.</para>
+                     <para><emphasis>Body Sync</emphasis>: update a TAN/TEI file so its
+                        transcription exactly matches that of another TAN/TEI file.</para>
                   </listitem>
                   <listitem>
                      <para><emphasis>TAN-A-lm Builder</emphasis>: generate lexico-morphological data
                         for a TAN/TEI file.</para>
                   </listitem>
                </itemizedlist></para>
-            <para><emphasis role="bold">Pathbreaking applications</emphasis>. Standard TAN
-               applications in XSLT provide cutting-edge tools for textual research and analysis.
-               For example: </para>
+            <para><emphasis role="bold">Pathbreaking applications</emphasis>. Core TAN applications,
+               written in XSLT, provide cutting-edge tools for textual research and analysis. For
+               example: </para>
             <para><itemizedlist>
                   <listitem>
                      <para><emphasis>Diff+</emphasis>: identify, analyze, and visualize text
@@ -132,15 +132,14 @@
                   <link xlink:href="http://cltk.org/">Classical Language Toolkit</link>, or
                comparable packages in programming languages to develop tools for textual and
                linguistic research? Do you have to process, analyze, and transform texts that are in
-               tree structures? The TAN function library might have everything you need, and more,
-               to do all this within a single environment. Many TAN functions are extremely useful,
-               even outside of TEI or TAN.</para>
+               tree structures? With more than 250 public functions, covering a range of tasks, from
+               numerics to maps, checksums to tree manipulation, the TAN function library might have
+               everything you need, and more, and help you stay within an XML environment. Many TAN
+               functions are extremely useful, even outside of TEI or TAN.</para>
             <para><emphasis role="bold">Semantic Web</emphasis>. TAN was designed at the outset to
                ensure that texts and their annotations would be rooted in the practices of the
                Semantic Web. Unlike many other formats, whose attribute values are almost always
-               only human-readable, most TAN file components are tied to URIs. When words are tagged
-               for grammatical part of speech, the codes are tethered to URIs that connect them with
-               part-of-speech tags from other languages. All TAN files are RDF-centric, making them
+               only human-readable, most TAN file components are tied to URIs, making them
                suitable for use in Semantic Web applications.</para>
          </section>
          <section>
