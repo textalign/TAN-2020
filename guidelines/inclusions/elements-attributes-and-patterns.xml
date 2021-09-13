@@ -648,7 +648,7 @@
 </programlisting></example><note><para>Taken from <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="../../vocabularies/div-types.TAN-voc.xml">div-types.TAN-voc</link></para></note></para></section><section xml:id="attribute-href"><title><code>@href</code></title><para><emphasis><code><link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="../../schemas/catalog.tan.rng">catalog.tan.rng</link></code></emphasis></para><para> </para><para><emphasis><code><link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="../../schemas/incl/TAN-core.rng">TAN-core.rng</link></code></emphasis></para><para>The attribute <code>href</code> points to the location of a file. In some contexts, this attribute is permitted only as a temporary measure, to assist editing via Schematron Quick Fixes.</para><para> </para><para>Used by: <code><link linkend="element-doc">&lt;doc&gt;</link></code>, <code><link linkend="pattern-element-location">~element-location</link></code>, <code><link linkend="pattern-element-master-location">~element-master-location</link></code>, <code><link linkend="pattern-entity-digital-tan-other-content">~entity-digital-tan-other-content</link></code></para><caution><para><code><link linkend="attribute-href">@href</link></code> must have <code><link linkend="element-location">&lt;location&gt;</link></code> or <code><link linkend="element-master-location">&lt;master-location&gt;</link></code> as a parent; any other parent will trigger a quick fix to populate the element with the IRI + name pattern of the target file.</para></caution><important><para>If an <code><link linkend="attribute-href">@href</link></code> points to a local file that is not available, a warning will be returned. <quote><code><link linkend="attribute-href">@href</link></code> points to file that is either (1) not available or (2) not valid XML</quote></para></important><important><para>If an <code><link linkend="attribute-href">@href</link></code> points to a file that is not local, and no internet is available, a warning will be returned. <quote>No internet access.</quote></para></important><important><para>If the internet is available, and an <code><link linkend="attribute-href">@href</link></code> points to a non-local file that is not available, a warning will be returned. <quote><code><link linkend="attribute-href">@href</link></code> points to non-local file that is either (1) not available, (2) not valid XML, or (3) at a server not trusted by the validation engine.</quote></para></important><caution><para>The only <code><link linkend="attribute-href">@href</link></code> in a TAN document that may point to another document with the same document id is that of <code><link linkend="element-master-location">&lt;master-location&gt;</link></code> or <code><link linkend="element-see-also">&lt;see-also&gt;</link></code></para></caution><caution><para>No <code><link linkend="attribute-href">@href</link></code> should point to the URI of the document itself.</para></caution><caution><para>An <code><link linkend="attribute-href">@href</link></code> that points to a local drive should have "file:/" prepended.</para></caution><caution><para>No <code><link linkend="element-master-location">&lt;master-location&gt;</link></code> may have an <code><link linkend="attribute-href">@href</link></code> that points to a compressed archive.</para></caution><caution><para>Every <code><link linkend="attribute-href">@href</link></code> in a catalog.tan.xml file must point to a document that is available.</para></caution><important><para><code><link linkend="attribute-href">@href</link></code> values in catalog.tan.xml should be unique</para></important><para><example><title><code>@href</code></title><programlisting>&lt;TAN-T id="tag:kalvesmaki.com,2014:tan-t:ar.cat.eng.1926.edghill:semantic-refs" TAN-version="2021"&gt;
    &lt;head&gt;
       &lt;name&gt;Categories, Aristotle, English translation by E. M. Edghill&lt;/name&gt;
-      &lt;master-location<emphasis> href="https://raw.githubusercontent.com/textalign/TAN-2020/master/examples/ar.cat.eng.1926.edghill.ref-logical.xml"</emphasis>/&gt;
+      &lt;master-location<emphasis> href="https://raw.githubusercontent.com/textalign/TAN-2021/master/examples/ar.cat.eng.1926.edghill.ref-logical.xml"</emphasis>/&gt;
       &lt;license licensor="kalvesmaki"&gt;
          .........
       &lt;/license&gt;
@@ -864,7 +864,7 @@
 &lt;/TAN-A-lm&gt;
 </programlisting></example><note><para>Taken from <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="../../examples/TAN-A-lm/ring-o-roses.eng.1881.lm.xml">ring-o-roses.eng.1881.lm</link></para></note></para></section><section xml:id="attribute-licensor"><title><code>@licensor</code></title><para><emphasis><code><link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="../../schemas/incl/TAN-core.rng">TAN-core.rng</link></code></emphasis></para><para>The attribute <code>licensor</code> specifies one or more persons or organizations who hold the rights over the material specified by the parent element (either the data of the current file, or of the source that forms the basis for the data).</para><para>For more, see <xref linkend="key_declarations"/></para><para> </para><para>Takes IDrefs to vocabulary items <code><link linkend="element-person">&lt;person&gt;</link></code>, <code><link linkend="element-organization">&lt;organization&gt;</link></code></para><para>Used by: <code><link linkend="pattern-element-license">~element-license</link></code></para><caution><para>Every idref in an attribute must point to a vocabulary item (by <code><link linkend="attribute-xmlid">@xml:id</link></code> or name) that is of the appropriate corresponding element.</para></caution><caution><para>All idrefs in an attribute must be unique.</para></caution><caution><para>Multiple idrefs in a single attribute should not point to the same entity.</para></caution><para><example><title><code>@licensor</code></title><programlisting>   &lt;head&gt;
       .........
-      &lt;master-location href="https://raw.githubusercontent.com/textalign/TAN-2020/master/examples/ar.cat.eng.1926.edghill.ref-logical.xml"/&gt;
+      &lt;master-location href="https://raw.githubusercontent.com/textalign/TAN-2021/master/examples/ar.cat.eng.1926.edghill.ref-logical.xml"/&gt;
       &lt;license<emphasis> licensor="kalvesmaki"</emphasis>&gt;
          &lt;IRI&gt;http://creativecommons.org/licenses/by/4.0/deed.en_US&lt;/IRI&gt;
          &lt;name&gt;Creative Commons Attribution 4.0 International License&lt;/name&gt;
@@ -879,7 +879,7 @@
    &lt;/head&gt;
 </programlisting></example><note><para>Taken from <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="../../examples/ar.cat.eng.1926.edghill.ref-logical.xml">ar.cat.eng.1926.edghill.ref-logical</link></para></note></para><para><example><title><code>@licensor</code></title><programlisting>   &lt;head&gt;
       .........
-      &lt;master-location href="https://raw.githubusercontent.com/textalign/TAN-2020/master/examples/ar.cat.eng.1926.edghill.ref-scriptum.xml"/&gt;
+      &lt;master-location href="https://raw.githubusercontent.com/textalign/TAN-2021/master/examples/ar.cat.eng.1926.edghill.ref-scriptum.xml"/&gt;
       &lt;license<emphasis> licensor="kalvesmaki"</emphasis>&gt;
          &lt;IRI&gt;http://creativecommons.org/licenses/by/4.0/deed.en_US&lt;/IRI&gt;
          &lt;name&gt;Creative Commons Attribution 4.0 International License&lt;/name&gt;
@@ -894,7 +894,7 @@
    &lt;/head&gt;
 </programlisting></example><note><para>Taken from <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="../../examples/ar.cat.eng.1926.edghill.ref-scriptum.xml">ar.cat.eng.1926.edghill.ref-scriptum</link></para></note></para><para><example><title><code>@licensor</code></title><programlisting>   &lt;head&gt;
       .........
-      &lt;master-location href="https://raw.githubusercontent.com/textalign/TAN-2020/master/examples/ar.cat.fra.1844.saint-hilaire.ref-logical-after-1949.xml"/&gt;
+      &lt;master-location href="https://raw.githubusercontent.com/textalign/TAN-2021/master/examples/ar.cat.fra.1844.saint-hilaire.ref-logical-after-1949.xml"/&gt;
       &lt;license<emphasis> licensor="kalvesmaki"</emphasis>&gt;
          &lt;IRI&gt;http://creativecommons.org/licenses/by/4.0/deed.en_US&lt;/IRI&gt;
          &lt;name&gt;Creative Commons Attribution 4.0 International License&lt;/name&gt;
@@ -909,7 +909,7 @@
    &lt;/head&gt;
 </programlisting></example><note><para>Taken from <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="../../examples/ar.cat.fra.1844.saint-hilaire.ref-logical-after-1949.xml">ar.cat.fra.1844.saint-hilaire.ref-logical-after-1949</link></para></note></para><para><example><title><code>@licensor</code></title><programlisting>   &lt;head&gt;
       .........
-      &lt;master-location href="https://raw.githubusercontent.com/textalign/TAN-2020/master/examples/ar.cat.fra.1844.saint-hilaire.ref-logical-after.xml"/&gt;
+      &lt;master-location href="https://raw.githubusercontent.com/textalign/TAN-2021/master/examples/ar.cat.fra.1844.saint-hilaire.ref-logical-after.xml"/&gt;
       &lt;license<emphasis> licensor="kalvesmaki"</emphasis>&gt;
          &lt;IRI&gt;http://creativecommons.org/licenses/by/4.0/deed.en_US&lt;/IRI&gt;
          &lt;name&gt;Creative Commons Attribution 4.0 International License&lt;/name&gt;
@@ -2809,7 +2809,7 @@ The order of consecutive <code><link linkend="element-category">&lt;category&gt;
 </programlisting></example><note><para>Taken from <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="../../vocabularies/div-types.TAN-voc.xml">div-types.TAN-voc</link></para></note></para></section><section xml:id="element-head"><title><code>&lt;head&gt;</code></title><para><emphasis><code><link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="../../schemas/incl/TAN-core.rng">TAN-core.rng</link></code></emphasis></para><para>The element <code>head</code> contains the metadata (data about the data in the <code><link linkend="element-body">&lt;body&gt;</link></code>)</para><para>For more see <xref linkend="metadata_head"/></para><para> </para><para>Used by: <code><link linkend="pattern-TAN-root">~TAN-root</link></code></para><para><example><title><code>&lt;head&gt;</code></title><programlisting>&lt;TAN-T id="tag:kalvesmaki.com,2014:tan-t:ar.cat.eng.1926.edghill:semantic-refs" TAN-version="2021"&gt;
    <emphasis>&lt;head&gt;</emphasis>
       &lt;name&gt;Categories, Aristotle, English translation by E. M. Edghill&lt;/name&gt;
-      &lt;master-location href="https://raw.githubusercontent.com/textalign/TAN-2020/master/examples/ar.cat.eng.1926.edghill.ref-logical.xml"/&gt;
+      &lt;master-location href="https://raw.githubusercontent.com/textalign/TAN-2021/master/examples/ar.cat.eng.1926.edghill.ref-logical.xml"/&gt;
       &lt;license licensor="kalvesmaki"&gt;
          .........
       &lt;/license&gt;
@@ -2822,7 +2822,7 @@ The order of consecutive <code><link linkend="element-category">&lt;category&gt;
 </programlisting></example><note><para>Taken from <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="../../examples/ar.cat.eng.1926.edghill.ref-logical.xml">ar.cat.eng.1926.edghill.ref-logical</link></para></note></para><para><example><title><code>&lt;head&gt;</code></title><programlisting>&lt;TAN-T id="tag:kalvesmaki.com,2014:tan-t:ar.cat.eng.1926.edghill:model-object-refs" TAN-version="2021"&gt;
    <emphasis>&lt;head&gt;</emphasis>
       &lt;name&gt;Categories, Aristotle, English translation by E. M. Edghill&lt;/name&gt;
-      &lt;master-location href="https://raw.githubusercontent.com/textalign/TAN-2020/master/examples/ar.cat.eng.1926.edghill.ref-scriptum.xml"/&gt;
+      &lt;master-location href="https://raw.githubusercontent.com/textalign/TAN-2021/master/examples/ar.cat.eng.1926.edghill.ref-scriptum.xml"/&gt;
       &lt;license licensor="kalvesmaki"&gt;
          .........
       &lt;/license&gt;
@@ -2836,7 +2836,7 @@ The order of consecutive <code><link linkend="element-category">&lt;category&gt;
    <emphasis>&lt;head&gt;</emphasis>
       &lt;name&gt;Realignment of Categories, Aristotle, French translation by J. Barthélemy
          Saint-Hilaire&lt;/name&gt;
-      &lt;master-location href="https://raw.githubusercontent.com/textalign/TAN-2020/master/examples/ar.cat.fra.1844.saint-hilaire.ref-logical-after-1949.xml"/&gt;
+      &lt;master-location href="https://raw.githubusercontent.com/textalign/TAN-2021/master/examples/ar.cat.fra.1844.saint-hilaire.ref-logical-after-1949.xml"/&gt;
       &lt;license licensor="kalvesmaki"&gt;
          .........
       &lt;/license&gt;
@@ -2849,7 +2849,7 @@ The order of consecutive <code><link linkend="element-category">&lt;category&gt;
 </programlisting></example><note><para>Taken from <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="../../examples/ar.cat.fra.1844.saint-hilaire.ref-logical-after-1949.xml">ar.cat.fra.1844.saint-hilaire.ref-logical-after-1949</link></para></note></para><para><example><title><code>&lt;head&gt;</code></title><programlisting>&lt;TAN-T id="tag:kalvesmaki.com,2014:tan-t:ar.cat.fra.1844.saint-hilaire:semantic-refs" TAN-version="2021"&gt;
    <emphasis>&lt;head&gt;</emphasis>
       &lt;name&gt;Categories, Aristotle, French translation by J. Barthélemy Saint-Hilaire&lt;/name&gt;
-      &lt;master-location href="https://raw.githubusercontent.com/textalign/TAN-2020/master/examples/ar.cat.fra.1844.saint-hilaire.ref-logical-after.xml"/&gt;
+      &lt;master-location href="https://raw.githubusercontent.com/textalign/TAN-2021/master/examples/ar.cat.fra.1844.saint-hilaire.ref-logical-after.xml"/&gt;
       &lt;license licensor="kalvesmaki"&gt;
          .........
       &lt;/license&gt;
@@ -3045,7 +3045,7 @@ The order of consecutive <code><link linkend="element-category">&lt;category&gt;
       &lt;/vocabulary-key&gt;
 </programlisting></example><note><para>Taken from <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="../../examples/TAN-A-lm/grc-tan-a-lm-%CE%B1.xml">grc-tan-a-lm-%CE%B1</link></para></note></para></section><section xml:id="element-license"><title><code>&lt;license&gt;</code></title><para><emphasis><code><link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="../../schemas/incl/TAN-core.rng">TAN-core.rng</link></code></emphasis></para><para>The element <code>license</code> states the license under which the data is distributed and the rights associated with it, exclusive of any rights attached to the source.</para><para>Diligently check to ensure that the license you have claimed respects the rights of your sources' rightsholders. It is recommended that you license your data under a license that is similar to or more liberal than the one under which your sources have been released.</para><para>For more discussion, see <xref linkend="key_declarations"/> and for a list of standard TAN vocabulary, <xref linkend="vocabularies-licenses"/></para><para> </para><para>Used by: <code><link linkend="pattern-declaration-core">~declaration-core</link></code></para><para><example><title><code>&lt;license&gt;</code></title><programlisting>   &lt;head&gt;
       .........
-      &lt;master-location href="https://raw.githubusercontent.com/textalign/TAN-2020/master/examples/ar.cat.eng.1926.edghill.ref-logical.xml"/&gt;
+      &lt;master-location href="https://raw.githubusercontent.com/textalign/TAN-2021/master/examples/ar.cat.eng.1926.edghill.ref-logical.xml"/&gt;
       <emphasis>&lt;license licensor="kalvesmaki"&gt;</emphasis>
          &lt;IRI&gt;http://creativecommons.org/licenses/by/4.0/deed.en_US&lt;/IRI&gt;
          &lt;name&gt;Creative Commons Attribution 4.0 International License&lt;/name&gt;
@@ -3060,7 +3060,7 @@ The order of consecutive <code><link linkend="element-category">&lt;category&gt;
    &lt;/head&gt;
 </programlisting></example><note><para>Taken from <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="../../examples/ar.cat.eng.1926.edghill.ref-logical.xml">ar.cat.eng.1926.edghill.ref-logical</link></para></note></para><para><example><title><code>&lt;license&gt;</code></title><programlisting>   &lt;head&gt;
       .........
-      &lt;master-location href="https://raw.githubusercontent.com/textalign/TAN-2020/master/examples/ar.cat.eng.1926.edghill.ref-scriptum.xml"/&gt;
+      &lt;master-location href="https://raw.githubusercontent.com/textalign/TAN-2021/master/examples/ar.cat.eng.1926.edghill.ref-scriptum.xml"/&gt;
       <emphasis>&lt;license licensor="kalvesmaki"&gt;</emphasis>
          &lt;IRI&gt;http://creativecommons.org/licenses/by/4.0/deed.en_US&lt;/IRI&gt;
          &lt;name&gt;Creative Commons Attribution 4.0 International License&lt;/name&gt;
@@ -3075,7 +3075,7 @@ The order of consecutive <code><link linkend="element-category">&lt;category&gt;
    &lt;/head&gt;
 </programlisting></example><note><para>Taken from <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="../../examples/ar.cat.eng.1926.edghill.ref-scriptum.xml">ar.cat.eng.1926.edghill.ref-scriptum</link></para></note></para><para><example><title><code>&lt;license&gt;</code></title><programlisting>   &lt;head&gt;
       .........
-      &lt;master-location href="https://raw.githubusercontent.com/textalign/TAN-2020/master/examples/ar.cat.fra.1844.saint-hilaire.ref-logical-after-1949.xml"/&gt;
+      &lt;master-location href="https://raw.githubusercontent.com/textalign/TAN-2021/master/examples/ar.cat.fra.1844.saint-hilaire.ref-logical-after-1949.xml"/&gt;
       <emphasis>&lt;license licensor="kalvesmaki"&gt;</emphasis>
          &lt;IRI&gt;http://creativecommons.org/licenses/by/4.0/deed.en_US&lt;/IRI&gt;
          &lt;name&gt;Creative Commons Attribution 4.0 International License&lt;/name&gt;
@@ -3090,7 +3090,7 @@ The order of consecutive <code><link linkend="element-category">&lt;category&gt;
    &lt;/head&gt;
 </programlisting></example><note><para>Taken from <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="../../examples/ar.cat.fra.1844.saint-hilaire.ref-logical-after-1949.xml">ar.cat.fra.1844.saint-hilaire.ref-logical-after-1949</link></para></note></para><para><example><title><code>&lt;license&gt;</code></title><programlisting>   &lt;head&gt;
       .........
-      &lt;master-location href="https://raw.githubusercontent.com/textalign/TAN-2020/master/examples/ar.cat.fra.1844.saint-hilaire.ref-logical-after.xml"/&gt;
+      &lt;master-location href="https://raw.githubusercontent.com/textalign/TAN-2021/master/examples/ar.cat.fra.1844.saint-hilaire.ref-logical-after.xml"/&gt;
       <emphasis>&lt;license licensor="kalvesmaki"&gt;</emphasis>
          &lt;IRI&gt;http://creativecommons.org/licenses/by/4.0/deed.en_US&lt;/IRI&gt;
          &lt;name&gt;Creative Commons Attribution 4.0 International License&lt;/name&gt;
@@ -3171,7 +3171,7 @@ The order of consecutive <code><link linkend="element-category">&lt;category&gt;
 &lt;/TAN-T&gt;
 </programlisting></example><note><para>Taken from <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="../../examples/ar.cat.eng.1926.edghill.ref-logical.xml">ar.cat.eng.1926.edghill.ref-logical</link></para></note></para></section><section xml:id="element-m"><title><code>&lt;m&gt;</code></title><para><emphasis><code><link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="../../schemas/TAN-A-lm.rng">TAN-A-lm.rng</link></code></emphasis></para><para>The element <code>m</code> carries a morphological code that conforms to the rules or patterns defined in the TAN-mor file upon which the data depends.</para><para>Codes are space-delimited. If a value of <code><link linkend="element-m">&lt;m&gt;</link></code> violates the rules established by the dependency TAN-mor file, an error will be generated. For more about how codes are built, and how they function, see <xref linkend="tan-a-lm"/>.</para><para>The sequence of consecutive <code><link linkend="element-m">&lt;m&gt;</link></code>s is immaterial.</para><para> </para><para>Used by: <code><link linkend="pattern-element-lm">~element-lm</link></code></para><caution><para>When using a category-based morphology, the number of feature codes in an <code><link linkend="element-m">&lt;m&gt;</link></code> may not exceed the number of categories.</para></caution><caution><para>Every feature code in an <code><link linkend="element-m">&lt;m&gt;</link></code> must be found in the target morphology file.</para></caution><caution><para>Every condition of a relevant dependency morphology <code><link linkend="element-assert">&lt;assert&gt;</link></code> (<code><link linkend="element-report">&lt;report&gt;</link></code>) must be true (false) otherwise an error will be returned.</para></caution></section><section xml:id="element-master-location"><title><code>&lt;master-location&gt;</code></title><para><emphasis><code><link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="../../schemas/incl/TAN-core.rng">TAN-core.rng</link></code></emphasis></para><para>The element <code>master-location</code> points to a location where a master copy of the file is to be found. Use of this element entails a commitment to updating the TAN file in that location.</para><para>The URL may be absolute or relative to the current document. </para><para><code><link linkend="element-master-location">&lt;master-location&gt;</link></code> does not disallow the file from being kept, published, or distributed elsewhere. It merely indicates where an authoritative version of the file is to be found. </para><para> </para><para>Used by: <code><link linkend="pattern-entity-digital-tan-self-content">~entity-digital-tan-self-content</link></code></para><caution><para>Any TAN file without a to-do list will be treated as being no longer in progress and should have at least one master-location.</para></caution><caution><para><code><link linkend="attribute-href">@href</link></code> must have <code><link linkend="element-location">&lt;location&gt;</link></code> or <code><link linkend="element-master-location">&lt;master-location&gt;</link></code> as a parent; any other parent will trigger a quick fix to populate the element with the IRI + name pattern of the target file.</para></caution><important><para>If an <code><link linkend="attribute-href">@href</link></code> points to a local file that is not available, a warning will be returned. <quote><code><link linkend="attribute-href">@href</link></code> points to file that is either (1) not available or (2) not valid XML</quote></para></important><important><para>If an <code><link linkend="attribute-href">@href</link></code> points to a file that is not local, and no internet is available, a warning will be returned. <quote>No internet access.</quote></para></important><important><para>If the internet is available, and an <code><link linkend="attribute-href">@href</link></code> points to a non-local file that is not available, a warning will be returned. <quote><code><link linkend="attribute-href">@href</link></code> points to non-local file that is either (1) not available, (2) not valid XML, or (3) at a server not trusted by the validation engine.</quote></para></important><caution><para>The only <code><link linkend="attribute-href">@href</link></code> in a TAN document that may point to another document with the same document id is that of <code><link linkend="element-master-location">&lt;master-location&gt;</link></code> or <code><link linkend="element-see-also">&lt;see-also&gt;</link></code></para></caution><caution><para>No <code><link linkend="attribute-href">@href</link></code> should point to the URI of the document itself.</para></caution><caution><para>An <code><link linkend="attribute-href">@href</link></code> that points to a local drive should have "file:/" prepended.</para></caution><caution><para>No <code><link linkend="element-master-location">&lt;master-location&gt;</link></code> may have an <code><link linkend="attribute-href">@href</link></code> that points to a compressed archive.</para></caution><important><para>Files should match the version kept at <code><link linkend="element-master-location">&lt;master-location&gt;</link></code>.</para></important><para><example><title><code>&lt;master-location&gt;</code></title><programlisting>   &lt;head&gt;
       &lt;name&gt;Categories, Aristotle, English translation by E. M. Edghill&lt;/name&gt;
-      <emphasis>&lt;master-location href="https://raw.githubusercontent.com/textalign/TAN-2020/master/examples/ar.cat.eng.1926.edghill.ref-logical.xml"/&gt;</emphasis>
+      <emphasis>&lt;master-location href="https://raw.githubusercontent.com/textalign/TAN-2021/master/examples/ar.cat.eng.1926.edghill.ref-logical.xml"/&gt;</emphasis>
       &lt;license licensor="kalvesmaki"&gt;
          .........
       &lt;/license&gt;
@@ -3179,7 +3179,7 @@ The order of consecutive <code><link linkend="element-category">&lt;category&gt;
    &lt;/head&gt;
 </programlisting></example><note><para>Taken from <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="../../examples/ar.cat.eng.1926.edghill.ref-logical.xml">ar.cat.eng.1926.edghill.ref-logical</link></para></note></para><para><example><title><code>&lt;master-location&gt;</code></title><programlisting>   &lt;head&gt;
       &lt;name&gt;Categories, Aristotle, English translation by E. M. Edghill&lt;/name&gt;
-      <emphasis>&lt;master-location href="https://raw.githubusercontent.com/textalign/TAN-2020/master/examples/ar.cat.eng.1926.edghill.ref-scriptum.xml"/&gt;</emphasis>
+      <emphasis>&lt;master-location href="https://raw.githubusercontent.com/textalign/TAN-2021/master/examples/ar.cat.eng.1926.edghill.ref-scriptum.xml"/&gt;</emphasis>
       &lt;license licensor="kalvesmaki"&gt;
          .........
       &lt;/license&gt;
@@ -3188,7 +3188,7 @@ The order of consecutive <code><link linkend="element-category">&lt;category&gt;
 </programlisting></example><note><para>Taken from <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="../../examples/ar.cat.eng.1926.edghill.ref-scriptum.xml">ar.cat.eng.1926.edghill.ref-scriptum</link></para></note></para><para><example><title><code>&lt;master-location&gt;</code></title><programlisting>   &lt;head&gt;
       &lt;name&gt;Realignment of Categories, Aristotle, French translation by J. Barthélemy
          Saint-Hilaire&lt;/name&gt;
-      <emphasis>&lt;master-location href="https://raw.githubusercontent.com/textalign/TAN-2020/master/examples/ar.cat.fra.1844.saint-hilaire.ref-logical-after-1949.xml"/&gt;</emphasis>
+      <emphasis>&lt;master-location href="https://raw.githubusercontent.com/textalign/TAN-2021/master/examples/ar.cat.fra.1844.saint-hilaire.ref-logical-after-1949.xml"/&gt;</emphasis>
       &lt;license licensor="kalvesmaki"&gt;
          .........
       &lt;/license&gt;
@@ -3196,7 +3196,7 @@ The order of consecutive <code><link linkend="element-category">&lt;category&gt;
    &lt;/head&gt;
 </programlisting></example><note><para>Taken from <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="../../examples/ar.cat.fra.1844.saint-hilaire.ref-logical-after-1949.xml">ar.cat.fra.1844.saint-hilaire.ref-logical-after-1949</link></para></note></para><para><example><title><code>&lt;master-location&gt;</code></title><programlisting>   &lt;head&gt;
       &lt;name&gt;Categories, Aristotle, French translation by J. Barthélemy Saint-Hilaire&lt;/name&gt;
-      <emphasis>&lt;master-location href="https://raw.githubusercontent.com/textalign/TAN-2020/master/examples/ar.cat.fra.1844.saint-hilaire.ref-logical-after.xml"/&gt;</emphasis>
+      <emphasis>&lt;master-location href="https://raw.githubusercontent.com/textalign/TAN-2021/master/examples/ar.cat.fra.1844.saint-hilaire.ref-logical-after.xml"/&gt;</emphasis>
       &lt;license licensor="kalvesmaki"&gt;
          .........
       &lt;/license&gt;
@@ -3341,7 +3341,7 @@ The order of consecutive <code><link linkend="element-category">&lt;category&gt;
 </programlisting></example><note><para>Taken from <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="../../examples/matt.eng.kjv.1760.xml">matt.eng.kjv.1760</link></para></note></para></section><section xml:id="element-name"><title><code>&lt;name&gt;</code></title><para><emphasis><code><link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="../../schemas/incl/TAN-core.rng">TAN-core.rng</link></code></emphasis></para><para>The element <code>name</code> provides a human-readable name of a concept, person, or thing referred to by the parent element (or the current document, if the parent element is <code><link linkend="element-head">&lt;head&gt;</link></code>).</para><para>A name must be unique within a file for a given class of items. That is, if "page" is the name of a div type, there must be no other div type vocabulary item with that name, but "page" could still be used as the <code><link linkend="element-name">&lt;name&gt;</link></code> of a verb or person.  </para><para>The sequence of consecutive <code><link linkend="element-name">&lt;name&gt;</link></code>s is immaterial. Some applications may adopt the first <code><link linkend="element-name">&lt;name&gt;</link></code> as the primary one.  </para><para> </para><para>Used by: <code><link linkend="pattern-metadata-human-readable">~metadata-human-readable</link></code></para><caution><para>All text must be normalized (Unicode NFC).</para></caution><caution><para>Names must be unique for vocabulary items assigned to a given element name.</para></caution><caution><para>Names may not duplicate names reserved by standard TAN vocabulary for the affected element.</para></caution><caution><para>Names may not be duplicates of, case-variants of, or hyphen variants of other names for the same element.</para></caution><caution><para>Each <code><link linkend="element-name">&lt;name&gt;</link></code> in standard TAN vocabulary must already be normalized.</para></caution><para><example><title><code>&lt;name&gt;</code></title><programlisting>&lt;TAN-T id="tag:kalvesmaki.com,2014:tan-t:ar.cat.eng.1926.edghill:semantic-refs" TAN-version="2021"&gt;
    &lt;head&gt;
       <emphasis>&lt;name&gt;</emphasis>Categories, Aristotle, English translation by E. M. Edghill<emphasis>&lt;/name&gt;</emphasis>
-      &lt;master-location href="https://raw.githubusercontent.com/textalign/TAN-2020/master/examples/ar.cat.eng.1926.edghill.ref-logical.xml"/&gt;
+      &lt;master-location href="https://raw.githubusercontent.com/textalign/TAN-2021/master/examples/ar.cat.eng.1926.edghill.ref-logical.xml"/&gt;
       &lt;license licensor="kalvesmaki"&gt;
          &lt;IRI&gt;http://creativecommons.org/licenses/by/4.0/deed.en_US&lt;/IRI&gt;
          <emphasis>&lt;name&gt;</emphasis>Creative Commons Attribution 4.0 International License<emphasis>&lt;/name&gt;</emphasis>

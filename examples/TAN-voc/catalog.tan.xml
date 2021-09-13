@@ -9,7 +9,7 @@
         root="TAN-voc">
       <name xmlns="tag:textalign.net,2015:ns">Keywords for Aristotle's Categories</name>
       <master-location xmlns="tag:textalign.net,2015:ns"
-                       href="https://raw.githubusercontent.com/textalign/TAN-2020/master/examples/TAN-voc/ar.cat.TAN-voc.xml"/>
+                       href="https://raw.githubusercontent.com/textalign/TAN-2021/master/examples/TAN-voc/ar.cat.TAN-voc.xml"/>
       <license xmlns="tag:textalign.net,2015:ns" licensor="park">
          <IRI>http://creativecommons.org/licenses/by/4.0/deed.en_US</IRI>
          <name>Creative Commons Attribution 4.0 International License</name>

@@ -9,7 +9,7 @@
         root="TAN-T">
       <name xmlns="tag:textalign.net,2015:ns">Categories, Aristotle, English translation by E. M. Edghill</name>
       <master-location xmlns="tag:textalign.net,2015:ns"
-                       href="https://raw.githubusercontent.com/textalign/TAN-2020/master/examples/ar.cat.eng.1926.edghill.ref-logical.xml"/>
+                       href="https://raw.githubusercontent.com/textalign/TAN-2021/master/examples/ar.cat.eng.1926.edghill.ref-logical.xml"/>
       <license xmlns="tag:textalign.net,2015:ns" licensor="kalvesmaki">
          <IRI>http://creativecommons.org/licenses/by/4.0/deed.en_US</IRI>
          <name>Creative Commons Attribution 4.0 International License</name>
@@ -59,7 +59,7 @@
         root="TAN-T">
       <name xmlns="tag:textalign.net,2015:ns">Categories, Aristotle, English translation by E. M. Edghill</name>
       <master-location xmlns="tag:textalign.net,2015:ns"
-                       href="https://raw.githubusercontent.com/textalign/TAN-2020/master/examples/ar.cat.eng.1926.edghill.ref-scriptum.xml"/>
+                       href="https://raw.githubusercontent.com/textalign/TAN-2021/master/examples/ar.cat.eng.1926.edghill.ref-scriptum.xml"/>
       <license xmlns="tag:textalign.net,2015:ns" licensor="kalvesmaki">
          <IRI>http://creativecommons.org/licenses/by/4.0/deed.en_US</IRI>
          <name>Creative Commons Attribution 4.0 International License</name>
@@ -105,7 +105,7 @@
       <name xmlns="tag:textalign.net,2015:ns">Realignment of Categories, Aristotle, French translation by J. Barthélemy
          Saint-Hilaire</name>
       <master-location xmlns="tag:textalign.net,2015:ns"
-                       href="https://raw.githubusercontent.com/textalign/TAN-2020/master/examples/ar.cat.fra.1844.saint-hilaire.ref-logical-after-1949.xml"/>
+                       href="https://raw.githubusercontent.com/textalign/TAN-2021/master/examples/ar.cat.fra.1844.saint-hilaire.ref-logical-after-1949.xml"/>
       <license xmlns="tag:textalign.net,2015:ns" licensor="kalvesmaki">
          <IRI>http://creativecommons.org/licenses/by/4.0/deed.en_US</IRI>
          <name>Creative Commons Attribution 4.0 International License</name>
@@ -147,7 +147,7 @@
         root="TAN-T">
       <name xmlns="tag:textalign.net,2015:ns">Categories, Aristotle, French translation by J. Barthélemy Saint-Hilaire</name>
       <master-location xmlns="tag:textalign.net,2015:ns"
-                       href="https://raw.githubusercontent.com/textalign/TAN-2020/master/examples/ar.cat.fra.1844.saint-hilaire.ref-logical-after.xml"/>
+                       href="https://raw.githubusercontent.com/textalign/TAN-2021/master/examples/ar.cat.fra.1844.saint-hilaire.ref-logical-after.xml"/>
       <license xmlns="tag:textalign.net,2015:ns" licensor="kalvesmaki">
          <IRI>http://creativecommons.org/licenses/by/4.0/deed.en_US</IRI>
          <name>Creative Commons Attribution 4.0 International License</name>
@@ -185,7 +185,7 @@
         root="TAN-T">
       <name xmlns="tag:textalign.net,2015:ns">Categories, Aristotle, Greek text by Minio-Paluello</name>
       <master-location xmlns="tag:textalign.net,2015:ns"
-                       href="https://raw.githubusercontent.com/textalign/TAN-2020/master/examples/ar.cat.grc.1949.minio-paluello.ref-logical.xml"/>
+                       href="https://raw.githubusercontent.com/textalign/TAN-2021/master/examples/ar.cat.grc.1949.minio-paluello.ref-logical.xml"/>
       <license xmlns="tag:textalign.net,2015:ns" licensor="kalvesmaki">
          <IRI>http://creativecommons.org/licenses/by/4.0/deed.en_US</IRI>
          <name>Creative Commons Attribution 4.0 International License</name>
@@ -219,7 +219,7 @@
         root="TAN-T">
       <name xmlns="tag:textalign.net,2015:ns">Categories, Aristotle, Greek text edited in 1949 by Minio-Paluello, native scriptum-based reference system</name>
       <master-location xmlns="tag:textalign.net,2015:ns"
-                       href="https://raw.githubusercontent.com/textalign/TAN-2020/master/examples/ar.cat.grc.1949.minio-paluello.ref-scriptum.xml"/>
+                       href="https://raw.githubusercontent.com/textalign/TAN-2021/master/examples/ar.cat.grc.1949.minio-paluello.ref-scriptum.xml"/>
       <license xmlns="tag:textalign.net,2015:ns" licensor="kalvesmaki">
          <IRI>http://creativecommons.org/licenses/by/4.0/deed.en_US</IRI>
          <name>Creative Commons Attribution 4.0 International License</name>
@@ -271,7 +271,7 @@
       <name xmlns="tag:textalign.net,2015:ns">Categories, Aristotle, Latin translation by Boethius, first recension, edited by
          Minio-Paluello</name>
       <master-location xmlns="tag:textalign.net,2015:ns"
-                       href="https://raw.githubusercontent.com/textalign/TAN-2020/master/examples/ar.cat.lat.1949.minio-paluello.ref-scriptum.xml"/>
+                       href="https://raw.githubusercontent.com/textalign/TAN-2021/master/examples/ar.cat.lat.1949.minio-paluello.ref-scriptum.xml"/>
       <license xmlns="tag:textalign.net,2015:ns" licensor="kalvesmaki">
          <IRI>http://creativecommons.org/licenses/by/4.0/deed.en_US</IRI>
          <name>Creative Commons Attribution 4.0 International License</name>
@@ -406,7 +406,7 @@
       <name xmlns="tag:textalign.net,2015:ns">Matthew's version of the Lord's Prayer, King James Version of the Bible, 1760
          edition</name>
       <master-location xmlns="tag:textalign.net,2015:ns"
-                       href="https://raw.githubusercontent.com/textalign/TAN-2020/master/examples/lords-prayer.eng.kjv.1760.xml"/>
+                       href="https://raw.githubusercontent.com/textalign/TAN-2021/master/examples/lords-prayer.eng.kjv.1760.xml"/>
       <license xmlns="tag:textalign.net,2015:ns" which="by 4.0" licensor="park"/>
       <reference-system xmlns="tag:textalign.net,2015:ns" type="logical" wf-ready="false"/>
       <work xmlns="tag:textalign.net,2015:ns">
@@ -436,7 +436,7 @@
         root="TAN-T">
       <name xmlns="tag:textalign.net,2015:ns">Gospel of Matthew, King James Version of the Bible, 1760 edition</name>
       <master-location xmlns="tag:textalign.net,2015:ns"
-                       href="https://raw.githubusercontent.com/textalign/TAN-2020/master/examples/matt.eng.kjv.1760.xml"/>
+                       href="https://raw.githubusercontent.com/textalign/TAN-2021/master/examples/matt.eng.kjv.1760.xml"/>
       <license xmlns="tag:textalign.net,2015:ns" which="by 4.0" licensor="park"/>
       <reference-system xmlns="tag:textalign.net,2015:ns" type="logical" wf-ready="true"/>
       <n-alias xmlns="tag:textalign.net,2015:ns" div-type="book"/>
@@ -751,7 +751,7 @@
         root="TAN-T">
       <name xmlns="tag:textalign.net,2015:ns">Sermon on the Mount, King James Version of the Bible, 1760 edition</name>
       <master-location xmlns="tag:textalign.net,2015:ns"
-                       href="https://raw.githubusercontent.com/textalign/TAN-2020/master/examples/sermon-on-the-mount.eng.kjv.1760.xml"/>
+                       href="https://raw.githubusercontent.com/textalign/TAN-2021/master/examples/sermon-on-the-mount.eng.kjv.1760.xml"/>
       <license xmlns="tag:textalign.net,2015:ns" which="by 4.0" licensor="park"/>
       <work xmlns="tag:textalign.net,2015:ns">
          <IRI>http://dbpedia.org/resource/Sermon_on_the_Mount</IRI>
@@ -899,63 +899,6 @@
                    href="matt.eng.kjv.1760.xml"
                    orig-href="../matt.eng.kjv.1760.xml"/>
       </source>
-   </doc>
-   <doc href="TAN-A/ringoroses.div.1%20-%20Copy.xml"
-        TAN-version="2020"
-        id="tag:parkj@textalign.net,2015:ring01-TAN-A-ring02"
-        claimant="park"
-        root="TAN-A">
-      <name xmlns="tag:textalign.net,2015:ns">div-based alignment of multiple versions of Ring o Roses</name>
-      <master-location xmlns="tag:textalign.net,2015:ns"
-                       href="http://textalign.net/release/TAN-2020/examples/TAN-A/ringoroses.div.1.xml"/>
-      <license xmlns="tag:textalign.net,2015:ns" which="by_4.0" licensor="park"/>
-      <token-definition xmlns="tag:textalign.net,2015:ns" src="eng-us" pattern="[-\w]+"/>
-      <source xmlns="tag:textalign.net,2015:ns" xml:id="eng-uk">
-         <IRI>tag:parkj@textalign.net,2015:ring01</IRI>
-         <name>Transcription of ring around the roses in English (UK)</name>
-         <location accessed-when="2015-03-10"
-                   href="ring-o-roses.eng.1881.xml"
-                   orig-href="../ring-o-roses.eng.1881.xml"/>
-      </source>
-      <source xmlns="tag:textalign.net,2015:ns" xml:id="bibletest">
-         <IRI>tag:parkj@textalign.net,2015:bible:matthew</IRI>
-         <name>Gospel of Matthew, King James Version of the Bible, 1760 edition</name>
-         <location accessed-when="2020-12-08-05:00"
-                   href="matt.eng.kjv.1760%20-%20Copy.xml"
-                   orig-href="../matt.eng.kjv.1760%20-%20Copy.xml"/>
-         <location accessed-when="2020-12-08-05:00"
-                   href="matt.eng.kjv.1760.xml"
-                   orig-href="../matt.eng.kjv.1760.xml"/>
-      </source>
-      <source xmlns="tag:textalign.net,2015:ns" xml:id="eng-us">
-         <IRI>tag:parkj@textalign.net,2015:ring02</IRI>
-         <name>Transcription of ring around the roses in English (US)</name>
-         <location accessed-when="2014-08-13"
-                   href="ring-o-roses.eng.1987%20-%20Copy.xml"
-                   orig-href="../ring-o-roses.eng.1987%20-%20Copy.xml"/>
-         <location accessed-when="2014-08-13"
-                   href="ring-o-roses.eng.1987.xml"
-                   orig-href="../ring-o-roses.eng.1987.xml"/>
-      </source>
-      <source xmlns="tag:textalign.net,2015:ns" xml:id="ger">
-         <IRI>tag:hans@beispiel.com,2014:ringel</IRI>
-         <name>Transcription of an ancestor of Ring around the roses in German</name>
-         <location accessed-when="2014-08-13"
-                   href="ring-o-roses.deu.1897.xml"
-                   orig-href="../ring-o-roses.deu.1897.xml"/>
-      </source>
-      <source xmlns="tag:textalign.net,2015:ns" xml:id="eng-1790">
-         <IRI>tag:parkj@textalign.net,2015:ring04</IRI>
-         <name>TAN transcription of 1790 version of Ring around the Rosie reported by Newell in
-                1883</name>
-         <location accessed-when="2017-10-21"
-                   href="ring-o-roses.eng.1957.xml"
-                   orig-href="../ring-o-roses.eng.1957.xml"/>
-      </source>
-      <adjustments xmlns="tag:textalign.net,2015:ns" src="ger">
-         <skip div-type="Gedicht"/>
-         <rename n="e" by="-1"/>
-      </adjustments>
    </doc>
    <doc href="TAN-A/ringoroses.div.1.xml"
         TAN-version="2021"
@@ -1257,7 +1200,7 @@
         root="TAN-voc">
       <name xmlns="tag:textalign.net,2015:ns">Keywords for Aristotle's Categories</name>
       <master-location xmlns="tag:textalign.net,2015:ns"
-                       href="https://raw.githubusercontent.com/textalign/TAN-2020/master/examples/TAN-voc/ar.cat.TAN-voc.xml"/>
+                       href="https://raw.githubusercontent.com/textalign/TAN-2021/master/examples/TAN-voc/ar.cat.TAN-voc.xml"/>
       <license xmlns="tag:textalign.net,2015:ns" licensor="park">
          <IRI>http://creativecommons.org/licenses/by/4.0/deed.en_US</IRI>
          <name>Creative Commons Attribution 4.0 International License</name>

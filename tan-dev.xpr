@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project>
+<project version="22.1">
     <meta>
         <filters directoryPatterns="" filePatterns="\QTAN.xpr\E" positiveFilePatterns="" showHiddenFiles="false"/>
         <options>
-            <serialized xml:space="preserve">
+            <serialized version="22.1" xml:space="preserve">
                 <serializableOrderedMap>
                     <entry>
                         <String>additional.frameworks.directories</String>
@@ -1122,7 +1122,30 @@ ancestor-or-self::*:return[namespace-uri() = "http://www.oxygenxml.com/ns/doc/xs
                         <scenarioAssociation-array>
                             <scenarioAssociation>
                                 <field name="url">
-                                    <String>../SERVER/make%20webpage.xsl</String>
+                                    <String>guidelines/main.xml</String>
+                                </field>
+                                <field name="scenarioIds">
+                                    <list>
+                                        <String>SETUP: convert TAN guidelines to XHTML</String>
+                                        <String>SETUP: convert TAN guidelines to PDF</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioTypes">
+                                    <list>
+                                        <String>XSL</String>
+                                        <String>XSL</String>
+                                    </list>
+                                </field>
+                                <field name="scenarioStorageLocations">
+                                    <list>
+                                        <Byte>2</Byte>
+                                        <Byte>2</Byte>
+                                    </list>
+                                </field>
+                            </scenarioAssociation>
+                            <scenarioAssociation>
+                                <field name="url">
+                                    <String>maintenance/guidelines/populate%20TAN%20guidelines.xsl</String>
                                 </field>
                                 <field name="scenarioIds">
                                     <list>
@@ -1142,7 +1165,7 @@ ancestor-or-self::*:return[namespace-uri() = "http://www.oxygenxml.com/ns/doc/xs
                             </scenarioAssociation>
                             <scenarioAssociation>
                                 <field name="url">
-                                    <String>maintenance/guidelines/populate%20TAN%20guidelines.xsl</String>
+                                    <String>../SERVER/make%20webpage.xsl</String>
                                 </field>
                                 <field name="scenarioIds">
                                     <list>
@@ -1174,29 +1197,6 @@ ancestor-or-self::*:return[namespace-uri() = "http://www.oxygenxml.com/ns/doc/xs
                                     <list>
                                         <String>ANT</String>
                                         <String>ANT</String>
-                                    </list>
-                                </field>
-                                <field name="scenarioStorageLocations">
-                                    <list>
-                                        <Byte>2</Byte>
-                                        <Byte>2</Byte>
-                                    </list>
-                                </field>
-                            </scenarioAssociation>
-                            <scenarioAssociation>
-                                <field name="url">
-                                    <String>guidelines/main.xml</String>
-                                </field>
-                                <field name="scenarioIds">
-                                    <list>
-                                        <String>SETUP: convert TAN guidelines to XHTML</String>
-                                        <String>SETUP: convert TAN guidelines to PDF</String>
-                                    </list>
-                                </field>
-                                <field name="scenarioTypes">
-                                    <list>
-                                        <String>XSL</String>
-                                        <String>XSL</String>
                                     </list>
                                 </field>
                                 <field name="scenarioStorageLocations">
@@ -6872,7 +6872,6 @@ ancestor-or-self::*:return[namespace-uri() = "http://www.oxygenxml.com/ns/doc/xs
         <folder path="../library-clio/"/>
         <folder path="../library-lm/"/>
         <folder path="../pre-TAN/"/>
-        <folder path="../TAN-2021-tutorials/"/>
         <folder path="."/>
         <folder path="applications/"/>
         <folder path="examples/"/>

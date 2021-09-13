@@ -5,7 +5,7 @@
    <head>
       <name>Greek fragment of the Letters of Evagrius from Géhin's edition of Evagrius's Scholia on
          Proverbs</name>
-      <master-location href="https://raw.githubusercontent.com/Arithmeticus/TAN-Evagrius/master/cpg2437/cpg2437.43.grc.1987.géhin.xml"/>
+      <master-location href="https://raw.githubusercontent.com/Arithmeticus/TAN-Evagrius/master/cpg2437/cpg2437.43.grc.1987.g%C3%A9hin.xml"/>
       <license which="by_4.0" licensor="kalvesmaki"/>
       <work>
          <IRI>tag:evagriusponticus.net,2015:cpg2437</IRI>

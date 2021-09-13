@@ -6,7 +6,7 @@
       <name>Categories, Aristotle, Latin translation by Boethius, first recension, edited by
          Minio-Paluello</name>
       <master-location
-         href="https://raw.githubusercontent.com/textalign/TAN-2020/master/examples/ar.cat.lat.1949.minio-paluello.ref-scriptum.xml"/>
+         href="https://raw.githubusercontent.com/textalign/TAN-2021/master/examples/ar.cat.lat.1949.minio-paluello.ref-scriptum.xml"/>
       <license licensor="kalvesmaki">
          <IRI>http://creativecommons.org/licenses/by/4.0/deed.en_US</IRI>
          <name>Creative Commons Attribution 4.0 International License</name>
